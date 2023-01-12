@@ -1,0 +1,76 @@
+.config-wrapper {
+  margin: 0;
+
+  & .Field {
+    padding: 30px 20px;
+    margin: 0;
+  }
+
+  & .FieldLabel {
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    line-height: 16.2px !important;
+  }
+
+  .FieldLabel + div {
+    display: inline-block;
+  }
+
+  .tippy-wrapper {
+    margin-right: 10px;
+  }
+
+  .radio-wrapper {
+    padding: 20px 10px;
+  }
+
+  .radio-button {
+    margin-right: 20px;
+  }
+
+  .toggle-save-response {
+    padding: 20px 10px;
+  }
+
+  .Radio-wrapper {
+    padding: 20px 10px 0;
+
+    & .Radio {
+      margin-right: 20px;
+    }
+  }
+
+  .InstructionText {
+    visibility: visible;
+  }
+
+  & .dam-keys {
+    padding-top: 0;
+    margin-left: 0;
+  }
+
+  .Select__value-container > div:nth-child(-n + 4) {
+    pointer-events: none;
+    cursor: alias;
+
+    .Select__multi-value__remove {
+      display: unset;
+      display: none !important;
+    }
+  }
+
+  .Select__option--is-disabled {
+    cursor: not-allowed;
+
+    .Checkbox {
+      input {
+        background-color: -internal-light-dark(
+          rgba(239, 239, 239, 0.3),
+          rgba(59, 59, 59, 0.3)
+        );
+        color: -internal-light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
+        border-color: rgba(118, 118, 118, 0.3);
+      }
+    }
+  }
+}
