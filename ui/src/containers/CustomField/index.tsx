@@ -188,7 +188,7 @@ const CustomField: React.FC = function () {
   const removeAsset = useCallback(
     (removedId: string) => {
       setSelectedAssets(
-        selectedAssets.filter((asset) => asset[uniqueID] !== removedId)
+        selectedAssets?.filter((asset) => asset?.[uniqueID] !== removedId)
       );
     },
     [selectedAssets]
