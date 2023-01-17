@@ -8,9 +8,12 @@ This boilerplate provides a template to customize your own marketplace DAM app.
 * Nodejs - v14.18.2 & NPM - 8.1.4
 
 ## Structure of the Marketplace DAM App Boilerplate
-
+<details>
+  <summary>
+    Reveal/Collapse the code structure
+  </summary>
+  
 ```bash
-
 marketplace-dam-boilerplate-app
 |-- ui
     |-- README.md
@@ -123,6 +126,8 @@ marketplace-dam-boilerplate-app
     |-- tsconfig.json
 |-- build.sh
 ```
+
+</details>
 
 * To start the development of a DAM app using boilerplate, first Clone DAM Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP. 
 * The new app repo source folder will be referred to as APP_DIRECTORY from now on.
