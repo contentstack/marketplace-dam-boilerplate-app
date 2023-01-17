@@ -1,4 +1,3 @@
-/* eslint-disable */
 const path = require("path");
 const dotenv = require("dotenv").config({ path: path.join(__dirname, ".env") });
 const webpack = require("webpack");

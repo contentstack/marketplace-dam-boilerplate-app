@@ -29,6 +29,8 @@ updateUIConfigFile $1
 npm install
 npm run precommit
 npm run build
+
+#RTE Build
 cd rte
 updateRTEConfigFile() {
 	if [ "$1" == "" ]
