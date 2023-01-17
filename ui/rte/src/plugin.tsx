@@ -1,4 +1,3 @@
-/* eslint-disable */
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import ContentstackSDK from "@contentstack/app-sdk";
