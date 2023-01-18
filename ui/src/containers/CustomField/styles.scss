@@ -1,0 +1,168 @@
+.field-extension-wrapper {
+  width: 100%;
+}
+
+.field-extension {
+  width: 100% !important;
+  margin-top: 10px;
+  padding-left: 2px;
+
+  .field-wrapper {
+    padding: 10px 10px 5px;
+    width: 100%;
+
+    .no-asset {
+      color: #647696;
+      font-family: Inter, Serif, Sans-serif;
+      font-size: 14px;
+      height: 16px;
+      width: 200px;
+    }
+
+    .add-asset-btn {
+      margin: 30px 0 0 0;
+    }
+
+    .asset-box {
+      border: 1px solid #a9b6cb;
+      box-sizing: border-box;
+      border-radius: 10px;
+      padding-bottom: 5px;
+
+      .box-header {
+        border-bottom: 1px solid #edf1f7;
+        padding: 17px 15px;
+
+        span {
+          color: #475161;
+          font-size: 12px;
+          font-weight: bold;
+          font-family: Inter, Serif, Sans-serif;
+          letter-spacing: 0.01em;
+          margin-right: 13px;
+          vertical-align: middle;
+        }
+      }
+    }
+
+    .render-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      max-height: 350px;
+      overflow-y: scroll;
+      padding: 10px 0 !important;
+
+      & > div {
+        padding-left: 9px !important;
+      }
+
+      .AssetCard {
+        font-family: Inter, Serif, Sans-serif;
+        height: 180px;
+        width: 170px;
+
+        .AssetCard__asset.AssetCard__asset--image {
+          background-size: contain !important;
+        }
+
+        .AssetCard__shortinfo__name {
+          & .tippy-wrapper {
+            width: 150px;
+          }
+        }
+
+        .AssetCard__action__custom {
+          cursor: pointer !important;
+
+          &:first-of-type {
+            cursor: -webkit-grabbing;
+            cursor: grabbing !important;
+            cursor: -moz-grabbing;
+          }
+
+          &:hover {
+            & svg path {
+              fill: black !important;
+              stroke: none !important;
+            }
+          }
+
+          &:last-child:hover {
+            background: #ffeeeb !important;
+
+            & svg path {
+              fill: #d62400 !important;
+              stroke: none !important;
+            }
+          }
+        }
+
+        & .AssetCard__shortinfo__name > .tippy-wrapper > span {
+          color: #222222 !important;
+          font-weight: 500 !important;
+        }
+      }
+
+      .AssetCard.onhover-disabled:hover .AssetCard__action {
+        display: unset;
+      }
+    }
+  }
+}
+
+.selected-items,
+.selected-items:active,
+.AssetCard__asset,
+.AssetCard__asset:active,
+.AssetCard__action__custom,
+.AssetCard__action__custom:hover,
+.AssetCard__action__custom:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+}
+
+.AssetCard__action__custom:last-child:hover svg path {
+  fill: #d62400 !important;
+  stroke: none !important;
+}
+
+.custom-field-data {
+  display: flex;
+  height: 20px;
+  width: 30px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.custom-field-data--ids {
+  flex: 33.33%;
+}
+
+.deleteModalBody {
+  font-family: Inter, Serif, Sans-serif;
+  p {
+    color: #222;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  span {
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 750px) and (min-width: 510px) {
+  .render-items {
+    & > div {
+      width: 150px !important;
+    }
+
+    .AssetCard {
+      width: 140px !important;
+
+      & .AssetCard__shortinfo__name > .tippy-wrapper > span {
+        width: 120px !important;
+      }
+    }
+  }
+}
