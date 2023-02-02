@@ -122,6 +122,12 @@
   cursor: -moz-grabbing;
 }
 
+.selected-items,
+.selected-items:active {
+  height: 180px;
+  margin-bottom: 20px;
+}
+
 .AssetCard__action__custom:last-child:hover svg path {
   fill: #d62400 !important;
   stroke: none !important;

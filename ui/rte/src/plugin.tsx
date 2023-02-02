@@ -1,4 +1,3 @@
-/* eslint-disable */
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import ContentstackSDK from "@contentstack/app-sdk";
@@ -54,6 +53,7 @@ export default ContentstackSDK.init()
       onClickHandler({ extension: sdk, rte, savedSelection, config });
     });
 
+    // eslint-disable-next-line
     return {
       DAM,
     };

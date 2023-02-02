@@ -59,11 +59,20 @@ export const onClickHandler = async (props) => {
   if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window") {
     rteConfig?.handleSelectorWindow?.(config);
   } else {
+    const windowLocation = window.location.origin;
+    let queryLocation = "";
+    if (windowLocation === process.env.REACT_APP_UI_URL_NA) {
+      queryLocation = "NA";
+    } else if (windowLocation === process.env.REACT_APP_UI_URL_EU) {
+      queryLocation = "EU";
+    } else {
+      queryLocation = "AZURE";
+    }
     let url;
     if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url") {
       url = rteConfig?.getSelectorWindowUrl?.(config);
     } else {
-      url = `${process.env.REACT_APP_UI_URL}/#/selector-page`;
+      url = `${process.env.REACT_APP_UI_URL}/#/selector-page?location=${queryLocation}`;
     }
     utils.popupWindow({
       url,

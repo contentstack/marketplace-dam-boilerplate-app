@@ -69,19 +69,11 @@ const ImageElement = function ({
       for (let i = 0; i < DOMValLength; i++) {
         const divDOM = DOMVal[i];
         let descrip = divDOM?.getElementsByTagName("span")?.[0];
-        let p = divDOM?.getElementsByTagName("p")?.[0];
         if (
-          element?.attrs?.position == "left" &&
-          divDOM?.getAttribute("id") ==
-            `left${btoa(element?.attrs?.rte_display_url)}`
-        ) {
-          p?.setAttribute("style", "display: flex !important");
-        } else if (
           element?.attrs?.position == "right" &&
           divDOM?.getAttribute("id") ==
             `right${btoa(element?.attrs?.rte_display_url)}`
         ) {
-          p?.setAttribute("style", "border: 1px transparent");
           descrip?.setAttribute("style", "float: left");
         } else if (
           element?.attrs?.position == "right" &&
@@ -90,7 +82,6 @@ const ImageElement = function ({
         ) {
           let idRight = divDOM?.getElementsByTagName("p")?.[0]?.parentNode;
           idRight?.setAttribute("style", "overflow : hidden");
-          p?.setAttribute("style", "border: 1px transparent");
           descrip?.setAttribute("style", "float: left");
         } else if (
           element?.attrs?.position == "left" &&
@@ -103,7 +94,6 @@ const ImageElement = function ({
             "display: inline-block",
             "overflow : hidden"
           );
-          p?.setAttribute("style", "display: flex !important");
         }
       }
     }
