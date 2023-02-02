@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useRef, useEffect, useCallback } from "react";
 import { Tooltip, Icon, cbModal } from "@contentstack/venus-components";
 import PropTypes from "prop-types";

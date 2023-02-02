@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { v4 } from "uuid";
 import localeTexts from "./common/locale/en-us/index";
 import utils from "./common/utils/index";
