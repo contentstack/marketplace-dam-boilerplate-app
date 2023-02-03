@@ -60,12 +60,15 @@ export const onClickHandler = async (props) => {
   } else {
     const windowLocation = window.location.origin;
     let queryLocation = "";
-    if (windowLocation === process.env.REACT_APP_UI_URL_NA) {
-      queryLocation = "NA";
-    } else if (windowLocation === process.env.REACT_APP_UI_URL_EU) {
-      queryLocation = "EU";
-    } else {
-      queryLocation = "AZURE";
+    switch (windowLocation) {
+      case process.env.REACT_APP_UI_URL_NA:
+        queryLocation = "NA";
+        break;
+      case process.env.REACT_APP_UI_URL_EU:
+        queryLocation = "EU";
+        break;
+      default:
+        queryLocation = "AZURE";
     }
     let url;
     if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url") {
