@@ -66,7 +66,7 @@ const ImageElement = function ({
     const DOMValLength = DOMVal?.length;
     if (DOMValLength) {
       for (let i = 0; i < DOMValLength; i++) {
-        const divDOM = DOMVal[i];
+        const divDOM = DOMVal?.[i];
         let descrip = divDOM?.getElementsByTagName("span")?.[0];
         if (
           element?.attrs?.position == "right" &&
