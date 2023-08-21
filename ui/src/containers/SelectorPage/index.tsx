@@ -15,12 +15,15 @@ const SelectorPage: React.FC<any> = function ({
   selectedAssetIds,
   componentType,
 }) {
+  // config in selector page
+  const [config, setConfig] = useState<any>();
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
+  const [originUrl, setOriginUrl] = useState<string>("");
   const damContainer = useRef(null);
 
   // function to check null or missing values of config
@@ -51,7 +54,7 @@ const SelectorPage: React.FC<any> = function ({
           selectedAssets: assets,
           type: rootConfig?.damEnv?.DAM_APP_NAME,
         },
-        process.env.REACT_APP_UI_URL || "*"
+        originUrl
       );
       window.close();
     } else {
@@ -107,6 +110,7 @@ const SelectorPage: React.FC<any> = function ({
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
+        setConfig(data?.config);
         compactViewImplementation(data?.config, data?.selectedIds);
       }
     }
@@ -118,21 +122,33 @@ const SelectorPage: React.FC<any> = function ({
       Object.keys(customFieldConfig)?.length &&
       selectedAssetIds
     ) {
+      setConfig(customFieldConfig);
       compactViewImplementation(customFieldConfig, selectedAssetIds);
     } else {
       const { opener: windowOpener } = window;
       if (windowOpener) {
+        const queryString = window.location.href
+          ?.split("?")?.[1]
+          ?.split("=")?.[1];
+
+        let postMessageUrl: string;
+        switch (queryString) {
+          case "NA":
+            postMessageUrl = process.env.REACT_APP_UI_URL_NA || "";
+            break;
+          case "EU":
+            postMessageUrl = process.env.REACT_APP_UI_URL_EU || "";
+            break;
+          default:
+            postMessageUrl = process.env.REACT_APP_UI_URL_AZURE || "";
+        }
+
         window.addEventListener("message", handleMessage, false);
-        windowOpener.postMessage(
-          { message: "openedReady" },
-          process.env.REACT_APP_UI_URL || "*"
-        );
+        windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
         window.addEventListener("beforeunload", () => {
-          windowOpener.postMessage(
-            { message: "close" },
-            process.env.REACT_APP_UI_URL || "*"
-          );
+          windowOpener.postMessage({ message: "close" }, postMessageUrl);
         });
+        setOriginUrl(postMessageUrl);
       }
     }
   }, []);
@@ -193,7 +209,7 @@ const SelectorPage: React.FC<any> = function ({
             ) : (
               // If there is no script custom component will be added
               rootConfig?.customComponent?.(
-                customFieldConfig,
+                config,
                 setError,
                 successFn,
                 closeFn

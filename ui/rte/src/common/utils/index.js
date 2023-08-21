@@ -94,7 +94,7 @@ const getAlignmentStyle = (alignment, attrs, isInline) => {
   }
 
   if (isInline) {
-    alignmentStyle = { display: "inline-block" };
+    alignmentStyle = { display: "inline-block", marginRight: "8px" };
     if (alignment) {
       alignmentStyle.float = alignment;
     }
