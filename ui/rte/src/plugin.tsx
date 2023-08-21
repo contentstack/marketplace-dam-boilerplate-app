@@ -53,6 +53,7 @@ export default ContentstackSDK.init()
       onClickHandler({ extension: sdk, rte, savedSelection, config });
     });
 
+    // eslint-disable-next-line
     return {
       DAM,
     };
