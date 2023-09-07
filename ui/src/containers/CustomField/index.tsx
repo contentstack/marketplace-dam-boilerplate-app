@@ -9,7 +9,7 @@ import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { TypeAsset, TypeSDKData } from "../../common/types";
 import utils from "../../common/utils";
-import AssetCardContainer from "./AssetCardContainer";
+import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
 import SelectorPage from "../SelectorPage";
 import WarningMessage from "../../components/WarningMessage";
@@ -225,7 +225,7 @@ const CustomField: React.FC = function () {
             {!isError ? (
               <>
                 {renderAssets?.length ? (
-                  <AssetCardContainer
+                  <AssetContainer
                     assets={renderAssets}
                     removeAsset={removeAsset}
                     setRearrangedAssets={setRearrangedAssets}
