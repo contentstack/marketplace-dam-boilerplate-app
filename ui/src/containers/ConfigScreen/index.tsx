@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 /* ContentStack Modules */
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -7,6 +7,7 @@ import ContentstackAppSdk from "@contentstack/app-sdk";
 import "@contentstack/venus-components/build/main.css";
 /* Import our modules */
 import {
+  JsonComponent,
   RadioInputField,
   SelectInputField,
   TextInputField,
@@ -18,6 +19,30 @@ import { TypeAppSdkConfigState, TypeOption } from "../../common/types";
 import "./styles.scss";
 
 const ConfigScreen: React.FC = function () {
+  // custom whole json options from rootconfig
+  // eslint-disable-next-line
+  let { customJsonOptions, defaultFeilds } = rootConfig?.customWholeJson?.();
+  let customJsonConfigObj: any = {};
+  let jsonOptions: any[] = [];
+
+  // create actual options for select field
+  if (customJsonOptions?.length && defaultFeilds?.length) {
+    jsonOptions = utils.getOptions(customJsonOptions, defaultFeilds);
+    defaultFeilds = utils.getOptions(defaultFeilds);
+    customJsonConfigObj = {
+      is_custom_json: false,
+      dam_keys: defaultFeilds,
+    };
+  }
+
+  // local state for custom / whole json boolean value
+  const [isCustom, setIsCustom] = React.useState(false);
+  // local state for selected options of custom json dropdown
+  const [damKeys, setDamKeys] = React.useState<any[]>(defaultFeilds ?? []);
+  // local state for options of custom json
+  const [customOptions, setCustomOptions] = useState<any[]>(jsonOptions);
+  const [keyPathOptions, setKeyPathOptions] = useState<any[]>([]);
+
   // entire configuration object returned from configureConfigScreen
   const configInputFields = rootConfig?.configureConfigScreen?.();
   // config objs to be saved in configuration
@@ -47,6 +72,7 @@ const ConfigScreen: React.FC = function () {
             [value]: saveInConfig?.[value]?.defaultSelectedOption || "",
           };
         }, {}),
+        ...customJsonConfigObj,
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
       serverConfiguration: {
@@ -136,6 +162,14 @@ const ConfigScreen: React.FC = function () {
             setInstallationData: setInstallationDataOfSDK,
             appSdkInitialized: true,
           });
+          setIsCustom(
+            installationDataOfSdk?.configuration?.is_custom_json ?? false
+          );
+          setDamKeys(installationDataOfSdk?.configuration?.dam_keys ?? []);
+          const keyOptions =
+            installationDataFromSDK?.configuration?.keypath_options ?? [];
+          setKeyPathOptions(keyOptions);
+          setCustomOptions([...customOptions, ...keyOptions]);
 
           const radioValuesObj: any = {};
           const radioValuesKeys = [
@@ -232,10 +266,15 @@ const ConfigScreen: React.FC = function () {
   );
 
   // converting the config in proper format for updateConfig
-  const updateValueFunc = (configName: string, configValue: string) => {
+  const updateValueFunc = (
+    configName: string,
+    configValue: any,
+    inConfig?: boolean,
+    inServerConfig?: boolean
+  ) => {
     const value: any = {};
     value.target = { name: configName, value: configValue };
-    updateConfig(value);
+    updateConfig(value, inConfig, inServerConfig);
   };
 
   // updating the select option state
@@ -266,6 +305,39 @@ const ConfigScreen: React.FC = function () {
     const configObj: any = {};
     configObj.target = { name: fieldName, value: fieldValue };
     updateConfig(configObj, saveConfig, saveServerConfig);
+  };
+
+  const updateCustomJSON = (e: any) => {
+    const check = e?.target?.id !== "wholeJSON";
+    setIsCustom(check);
+    updateValueFunc("is_custom_json", check, true);
+  };
+
+  const updateTypeObj = (list: any[]) => {
+    const damKeysTemp: any[] = [];
+    list?.forEach((key: any) => damKeysTemp?.push(key?.value));
+    setDamKeys(list);
+    updateValueFunc("dam_keys", list, true);
+  };
+
+  const handleModalValue = (
+    modalValueArr: any[],
+    mode: string,
+    updatedValue: any[]
+  ) => {
+    const updatedOptions = [
+      ...keyPathOptions,
+      ...modalValueArr,
+      ...updatedValue,
+    ];
+    setKeyPathOptions(updatedOptions);
+    updateValueFunc("keypath_options", updatedOptions, true);
+    setCustomOptions([...customOptions, ...modalValueArr, ...updatedValue]);
+    if (mode === "createApply") {
+      const selectedKeys = [...damKeys, ...updatedValue];
+      setDamKeys(selectedKeys);
+      updateTypeObj(selectedKeys);
+    }
   };
 
   // return render jsx for the config object provided
@@ -334,6 +406,14 @@ const ConfigScreen: React.FC = function () {
             state?.installationData?.serverConfiguration,
             handleCustomConfigUpdate
           )}
+          <JsonComponent
+            handleModalValue={handleModalValue}
+            isCustom={isCustom}
+            updateCustomJSON={updateCustomJSON}
+            customOptions={customOptions}
+            updateTypeObj={updateTypeObj}
+            damKeys={damKeys}
+          />
         </div>
       </div>
     </div>

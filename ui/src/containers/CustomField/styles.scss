@@ -4,11 +4,10 @@
 
 .field-extension {
   width: 100% !important;
-  margin-top: 10px;
   padding-left: 2px;
 
   .field-wrapper {
-    padding: 10px 10px 5px;
+    padding: 0 10px;
     width: 100%;
 
     .no-asset {
@@ -48,7 +47,7 @@
     .render-items {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      max-height: 350px;
+      max-height: 400px;
       overflow-y: scroll;
       padding: 10px 0 !important;
 
@@ -60,10 +59,6 @@
         font-family: Inter, Serif, Sans-serif;
         height: 180px;
         width: 170px;
-
-        .AssetCard__asset.AssetCard__asset--image {
-          background-size: contain !important;
-        }
 
         .AssetCard__shortinfo__name {
           & .tippy-wrapper {
@@ -81,18 +76,16 @@
           }
 
           &:hover {
-            & svg path {
+            & svg path,
+            & svg circle {
               fill: black !important;
               stroke: none !important;
             }
           }
 
           &:last-child:hover {
-            background: #ffeeeb !important;
-
             & svg path {
-              fill: #d62400 !important;
-              stroke: none !important;
+              stroke: #edf1f7 !important;
             }
           }
         }
@@ -110,8 +103,13 @@
   }
 }
 
+.AssetCard__asset.AssetCard__asset--image,
+.AssetCard__asset.AssetCard__asset--image:active {
+  background-size: contain !important;
+  cursor: grabbing !important;
+}
+
 .selected-items,
-.selected-items:active,
 .AssetCard__asset,
 .AssetCard__asset:active,
 .AssetCard__action__custom,
@@ -169,6 +167,52 @@
       & .AssetCard__shortinfo__name > .tippy-wrapper > span {
         width: 120px !important;
       }
+    }
+  }
+}
+
+.noImage {
+  width: 80% !important;
+  height: 100% !important;
+  border: 1px solid #dde3ee !important;
+  border-radius: 3px;
+
+  .tippy-wrapper,
+  svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.icon-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & svg {
+    height: 80% !important;
+    width: 80% !important;
+  }
+}
+
+.AssetCard__asset.not--clickable,
+.AssetCard:not(.AssetFolder):hover:hover .AssetCard__asset.AssetCard__icon {
+  cursor: grabbing !important;
+}
+
+.remove-modal-icon {
+  & circle {
+    fill: #d62400 !important;
+  }
+}
+
+.Button--delete:hover {
+  & .remove-modal-icon {
+    & circle {
+      fill: white !important;
+    }
+    & path {
+      stroke: #d62400 !important;
     }
   }
 }

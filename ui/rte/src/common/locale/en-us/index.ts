@@ -2,7 +2,7 @@ import rteConfig from "../../../rte_config/index";
 
 const localeTexts = {
   SelectorPage: {
-    title: `${rteConfig?.damEnv?.DAM_APP_NAME} Extension`,
+    title: rteConfig?.damEnv?.DAM_APP_NAME,
   },
   RTE: {
     ToolTip: {
@@ -14,12 +14,17 @@ const localeTexts = {
       cancel: "Cancel",
       save: "Save",
     },
+    iconContent: {
+      remove: "Remove",
+      edit: "Edit",
+      preview: "Preview",
+    },
   },
   DeleteModal: {
-    header: "Delete",
-    body: "This will delete <b>&apos;$&apos;</b> permanently.",
+    header: "Remove Asset from Contentstack",
+    body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",
     cancelButton: "Cancel",
-    confirmButton: "Delete",
+    confirmButton: "Remove",
   },
   ModalTitle: {
     video: "Edit Video",
