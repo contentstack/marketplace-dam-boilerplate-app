@@ -120,9 +120,17 @@ const CustomField: React.FC = function () {
   // handle assets received from selectorpage component
   const handleAssets = useCallback(
     (assets: any[]) => {
-      setSelectedAssets(utils.uniqBy([...selectedAssets, ...assets], uniqueID));
+      if (state?.config?.is_custom_json) {
+        const keys = utils.extractKeys(state?.config?.dam_keys);
+        const data = utils?.getFilteredAssets(assets, keys);
+        setSelectedAssets(utils.uniqBy([...selectedAssets, ...data], uniqueID));
+      } else {
+        setSelectedAssets(
+          utils.uniqBy([...selectedAssets, ...assets], uniqueID)
+        );
+      }
     },
-    [selectedAssets]
+    [selectedAssets, state?.config]
   );
 
   // function to set error
@@ -230,6 +238,7 @@ const CustomField: React.FC = function () {
                 <Button
                   buttonType="control"
                   className="add-asset-btn"
+                  version="v2"
                   onClick={openDAMSelectorPage}
                   data-testid="add-btn"
                 >
