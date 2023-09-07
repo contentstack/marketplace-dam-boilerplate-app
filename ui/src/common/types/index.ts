@@ -38,6 +38,16 @@ export interface TypeSelectedItems {
   setRearrangedAssets: Function;
 }
 
+export interface TypeCardContainer {
+  assets: TypeAsset[];
+  removeAsset: Function;
+  sensors: any;
+  onDragEnd: (event: any) => void;
+  onDragCancel: () => void;
+  onDragStart: ({ active }: any) => void;
+  activeId: string | null;
+}
+
 export interface TypeSelectorContainer {
   containerRef: any;
   containerClass: string;
@@ -45,6 +55,12 @@ export interface TypeSelectorContainer {
 }
 
 export interface TypeAssetCard {
+  asset: TypeAsset;
+  removeAsset: Function;
+  id: string;
+}
+
+export interface TypeAssetList {
   asset: TypeAsset;
   removeAsset: Function;
   id: string;

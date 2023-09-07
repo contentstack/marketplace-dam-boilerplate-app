@@ -64,6 +64,13 @@ const localeTexts = {
       },
     },
     AssetNotAddedText: "No assets have been added",
+    header: {
+      asset: {
+        singular: "Asset",
+        plural: "Assets",
+      },
+      changeView: "Change View",
+    },
     listViewTable: {
       thumbnailCol: "Asset Image",
       assetNameCol: "Name",

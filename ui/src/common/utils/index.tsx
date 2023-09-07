@@ -2,7 +2,7 @@ import React from "react";
 import { cbModal, Icon, Notification } from "@contentstack/venus-components";
 import localeTexts from "../locale/en-us";
 import { TypePopupWindowDetails } from "../types";
-import DeleteModal from "../../containers/CustomField/DeleteModal";
+import DeleteModal from "../../components/DeleteModal";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -260,6 +260,28 @@ const toastMessage = ({ type, text }: any) => {
   });
 };
 
+const gridViewDropdown = [
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="Thumbnail" size="original" />
+        <div>{localeTexts?.CustomFields?.toolTip?.thumbnail}</div>
+      </span>
+    ),
+    value: "card",
+    default: true,
+  },
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="List" />
+        <div>{localeTexts?.CustomFields?.toolTip?.list}</div>
+      </span>
+    ),
+    value: "list",
+  },
+];
+
 const utils = {
   popupWindow,
   mergeObjects,
@@ -272,6 +294,7 @@ const utils = {
   extractKeys,
   getFilteredAssets,
   toastMessage,
+  gridViewDropdown,
 };
 
 export default utils;
