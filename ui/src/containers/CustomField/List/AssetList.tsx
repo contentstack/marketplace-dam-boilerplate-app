@@ -1,17 +1,12 @@
 import React, { useState } from "react";
-import {
-  ActionTooltip,
-  cbModal,
-  Icon,
-  Tooltip,
-} from "@contentstack/venus-components";
+import { ActionTooltip, Icon, Tooltip } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TypeAssetList } from "../../../common/types";
 import constants from "../../../common/constants";
-import DeleteModal from "../../../components/DeleteModal";
 import NoImage from "../../../components/NoImage";
 import localeTexts from "../../../common/locale/en-us";
+import utils from "../../../common/utils";
 
 const AssetList: React.FC<TypeAssetList> = function ({
   id,
@@ -19,7 +14,7 @@ const AssetList: React.FC<TypeAssetList> = function ({
   removeAsset,
 }) {
   const [imageError, setImageError] = useState<boolean>(false);
-  const { name, type, thumbnailUrl, previewUrl } = asset;
+  const { name, type, thumbnailUrl, previewUrl, platformUrl } = asset;
   const {
     attributes,
     listeners,
@@ -51,59 +46,6 @@ const AssetList: React.FC<TypeAssetList> = function ({
       </Tooltip>
     </div>
   );
-
-  const documentActionList = [
-    {
-      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
-      title: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      action: () => {},
-    },
-    {
-      label: <Icon icon="RemoveFilled" size="mini" />,
-      title: localeTexts.CustomFields.assetCard.hoverActions.remove,
-      action: () =>
-        cbModal({
-          // eslint-disable-next-line
-          component: (props: any) => (
-            <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
-          ),
-          modalProps: {
-            onClose: () => {},
-            onOpen: () => {},
-            size: "xsmall",
-          },
-        }),
-    },
-  ];
-
-  const onHoverActionList = [
-    {
-      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
-      title: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      action: () => {},
-    },
-    {
-      label: <Icon icon="View" size="tiny" />,
-      title: localeTexts.CustomFields.assetCard.hoverActions.preview,
-      action: () => window.open(previewUrl, "_blank"),
-    },
-    {
-      label: <Icon icon="RemoveFilled" size="mini" />,
-      title: localeTexts.CustomFields.assetCard.hoverActions.remove,
-      action: () =>
-        cbModal({
-          // eslint-disable-next-line
-          component: (props: any) => (
-            <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
-          ),
-          modalProps: {
-            onClose: () => {},
-            onOpen: () => {},
-            size: "xsmall",
-          },
-        }),
-    },
-  ];
 
   const handleImageError = () => {
     setImageError(true);
@@ -153,7 +95,16 @@ const AssetList: React.FC<TypeAssetList> = function ({
         ""
       ) : (
         <ActionTooltip
-          list={type === "raw" ? documentActionList : onHoverActionList}
+          list={
+            utils.getListHoverActions(
+              type,
+              removeAsset,
+              id,
+              name?.charAt(0)?.toUpperCase() + name?.slice(1),
+              platformUrl,
+              previewUrl
+            ) ?? []
+          }
         >
           <div role="cell" className="Table__body__column">
             {!imageError ? getIconElement() : noAssetElement}

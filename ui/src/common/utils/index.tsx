@@ -83,7 +83,7 @@ const getHoverActions = (
     (type?.toLowerCase() === "image" || type?.toLowerCase() === "video") &&
     previewUrl
   ) {
-    tootipActionArray.push({
+    tootipActionArray?.push({
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.preview,
       actionIcon: <Icon icon="View" size="tiny" />,
       actionOnClick: () => window.open(previewUrl, "_blank"),
@@ -91,7 +91,7 @@ const getHoverActions = (
   }
 
   if (platformUrl) {
-    tootipActionArray.push({
+    tootipActionArray?.push({
       actionTitle:
         localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
       actionIcon: <Icon icon="NewTab" size="mini" />,
@@ -99,10 +99,64 @@ const getHoverActions = (
     });
   }
 
-  tootipActionArray.push({
+  tootipActionArray?.push({
     actionIcon: <Icon icon="RemoveFilled" size="mini" />,
     actionTitle: localeTexts.CustomFields.assetCard.hoverActions.remove,
     actionOnClick: () =>
+      cbModal({
+        component: (props: any) => (
+          <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
+        ),
+        modalProps: {
+          size: "xsmall",
+        },
+      }),
+  });
+
+  return tootipActionArray;
+};
+
+const getListHoverActions = (
+  type: string,
+  removeAsset: Function,
+  id: string,
+  name: string,
+  platformUrl?: string,
+  previewUrl?: string
+) => {
+  const tootipActionArray = [
+    {
+      title: localeTexts.CustomFields.assetCard.hoverActions.drag,
+      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      action: () => {
+        /**/
+      },
+    },
+  ];
+
+  if (
+    (type?.toLowerCase() === "image" || type?.toLowerCase() === "video") &&
+    previewUrl
+  ) {
+    tootipActionArray?.push({
+      title: localeTexts.CustomFields.assetCard.hoverActions.preview,
+      label: <Icon icon="View" size="tiny" />,
+      action: () => window.open(previewUrl, "_blank"),
+    });
+  }
+
+  if (platformUrl) {
+    tootipActionArray?.push({
+      title: localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
+      label: <Icon icon="NewTab" size="mini" />,
+      action: () => window.open(platformUrl, "_blank"),
+    });
+  }
+
+  tootipActionArray?.push({
+    label: <Icon icon="RemoveFilled" size="mini" />,
+    title: localeTexts.CustomFields.assetCard.hoverActions.remove,
+    action: () =>
       cbModal({
         component: (props: any) => (
           <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
@@ -287,6 +341,7 @@ const utils = {
   mergeObjects,
   loadDAMScript,
   getHoverActions,
+  getListHoverActions,
   uniqBy,
   findAssetIndex,
   findAsset,
