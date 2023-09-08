@@ -149,6 +149,7 @@
 .selected-items:active {
   height: 180px;
   margin-bottom: 20px;
+  margin-right: 20px;
 }
 
 .AssetCard__action__custom:last-child:hover svg path {
@@ -309,6 +310,12 @@
 .Dropdown--primary > .Dropdown__menu--primary {
   left: -9.1875rem !important;
   z-index: 10 !important;
+}
+
+.Table__body__row {
+  .ActionTooltip {
+    cursor: grabbing !important;
+  }
 }
 
 .Table__body__row .ActionTooltip__actions .tippy-wrapper {
