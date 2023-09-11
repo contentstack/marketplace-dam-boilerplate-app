@@ -28,6 +28,7 @@ import {
 import localeTexts from "../../common/locale/en-us";
 import WarningMessage from "../../components/WarningMessage";
 import utils from "../../common/utils";
+import constants from "../../common/constants";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -346,7 +347,7 @@ export const JsonComponent = function ({
           {localeTexts.ConfigFields.entrySaveRadioButton.instruction}{" "}
           {localeTexts.ConfigFields.entrySaveRadioButton.referS}{" "}
           <a
-            href="https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/"
+            href={constants.limitationsDocUrl}
             target="_blank"
             rel="noreferrer"
           >
