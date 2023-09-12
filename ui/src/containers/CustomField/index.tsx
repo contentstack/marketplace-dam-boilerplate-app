@@ -2,7 +2,7 @@
 import React, { useCallback, useRef, useState } from "react";
 /* Import ContentStack modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
-import { Button, cbModal } from "@contentstack/venus-components";
+import { Button } from "@contentstack/venus-components";
 /* Import our CSS */
 import "./styles.scss";
 /* Import our modules */
@@ -11,7 +11,6 @@ import { TypeAsset, TypeSDKData } from "../../common/types";
 import utils from "../../common/utils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
-import SelectorPage from "../SelectorPage";
 import WarningMessage from "../../components/WarningMessage";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
@@ -117,22 +116,6 @@ const CustomField: React.FC = function () {
     }
   };
 
-  // handle assets received from selectorpage component
-  const handleAssets = useCallback(
-    (assets: any[]) => {
-      if (state?.config?.is_custom_json) {
-        const keys = utils.extractKeys(state?.config?.dam_keys);
-        const data = utils?.getFilteredAssets(assets, keys);
-        setSelectedAssets(utils.uniqBy([...selectedAssets, ...data], uniqueID));
-      } else {
-        setSelectedAssets(
-          utils.uniqBy([...selectedAssets, ...assets], uniqueID)
-        );
-      }
-    },
-    [selectedAssets, state?.config]
-  );
-
   // function to set error
   const setError = (
     isErrorPresent: boolean = false,
@@ -142,27 +125,53 @@ const CustomField: React.FC = function () {
     if (errorText) setWarningText(errorText);
   };
 
-  const damComponent = (props: any) => (
-    <SelectorPage
-      {...props}
-      customFieldConfig={getConfig()}
-      handleAssets={handleAssets}
-      selectedAssetIds={selectedAssetIds}
-      componentType="modal"
-    />
+  // function called on postmessage from selector page. used in "novalue" option
+  const saveData = useCallback(
+    (event: any) => {
+      const { data } = event;
+      if (data?.message === "openedReady") {
+        event?.source?.postMessage(
+          {
+            message: "init",
+            config: getConfig(),
+            type: rootConfig.damEnv.DAM_APP_NAME,
+            selectedIds: selectedAssetIds,
+          },
+          `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page`
+        );
+      } else if (
+        data?.message === "add" &&
+        data?.type === rootConfig.damEnv.DAM_APP_NAME &&
+        data?.selectedAssets?.length
+      ) {
+        const assets = data?.selectedAssets;
+        if (state?.config?.is_custom_json) {
+          const keys = utils.extractKeys(state?.config?.dam_keys);
+          const assetData = utils?.getFilteredAssets(assets, keys);
+          setSelectedAssets(
+            utils.uniqBy([...selectedAssets, ...assetData], uniqueID)
+          );
+        } else {
+          setSelectedAssets(
+            utils.uniqBy([...selectedAssets, ...assets], uniqueID)
+          );
+        }
+      }
+    },
+    [selectedAssets, state?.config]
   );
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        cbModal({
-          component: (props: any) => damComponent(props),
-          modalProps: {
-            size: "customSize",
-          },
-          testId: "cs-modal-storybook",
+        utils.popupWindow({
+          url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
+          title: localeTexts.SelectorPage.title,
+          w: 1500,
+          h: 800,
         });
+        window.addEventListener("message", saveData, false);
       } else {
         if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window") {
           rootConfig?.handleSelectorWindow?.(
@@ -189,7 +198,7 @@ const CustomField: React.FC = function () {
     state?.appSdkInitialized,
     state?.config,
     state?.contentTypeConfig,
-    damComponent,
+    saveData,
   ]);
 
   // function to remove the assets when "delete" action is triggered
