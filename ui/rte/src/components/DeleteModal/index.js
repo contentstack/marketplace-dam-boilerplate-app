@@ -36,10 +36,10 @@ const DeleteModal = function (props) {
               size: "mini",
               className: "remove-modal-icon",
             }}
-            onClick={useCallback(() => {
+            onClick={() => {
               remove();
               closeModal();
-            }, [remove, closeModal])}
+            }}
           >
             {localeTexts.DeleteModal.confirmButton}
           </Button>

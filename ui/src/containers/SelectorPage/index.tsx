@@ -1,20 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Icon } from "@contentstack/venus-components";
 import utils from "../../common/utils";
-import "./style.scss";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
 import WarningMessage from "../../components/WarningMessage";
+import "./style.scss";
 
 let isScriptLoaded: any = false;
+let url: string = "";
 
-const SelectorPage: React.FC<any> = function ({
-  closeModal,
-  customFieldConfig,
-  handleAssets,
-  selectedAssetIds,
-  componentType,
-}) {
+const SelectorPage: React.FC<any> = function () {
   // config in selector page
   const [config, setConfig] = useState<any>();
   // state of isError flag
@@ -23,7 +17,6 @@ const SelectorPage: React.FC<any> = function ({
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
-  const [originUrl, setOriginUrl] = useState<string>("");
   const damContainer = useRef(null);
 
   // function to check null or missing values of config
@@ -47,29 +40,18 @@ const SelectorPage: React.FC<any> = function ({
   };
 
   const successFn = (assets: any[]) => {
-    if (componentType !== "modal") {
-      window.opener.postMessage(
-        {
-          message: "add",
-          selectedAssets: assets,
-          type: rootConfig?.damEnv?.DAM_APP_NAME,
-        },
-        originUrl
-      );
-      window.close();
-    } else {
-      handleAssets(assets);
-      closeModal();
-    }
+    window.opener.postMessage(
+      {
+        message: "add",
+        selectedAssets: assets,
+        type: rootConfig?.damEnv?.DAM_APP_NAME,
+      },
+      url
+    );
+    window.close();
   };
 
-  const closeFn = () => {
-    if (componentType !== "modal") {
-      window.close();
-    } else {
-      closeModal();
-    }
-  };
+  const closeFn = () => window.close();
 
   // function to load dam script and mount component
   const compactViewImplementation = async (
@@ -117,47 +99,40 @@ const SelectorPage: React.FC<any> = function ({
   };
 
   useEffect(() => {
-    if (
-      customFieldConfig &&
-      Object.keys(customFieldConfig)?.length &&
-      selectedAssetIds
-    ) {
-      setConfig(customFieldConfig);
-      compactViewImplementation(customFieldConfig, selectedAssetIds);
-    } else {
-      const { opener: windowOpener } = window;
-      if (windowOpener) {
-        const queryString = window.location.href
-          ?.split("?")?.[1]
-          ?.split("=")?.[1];
+    const { opener: windowOpener } = window;
+    if (windowOpener) {
+      const queryString = window.location.href
+        ?.split("?")?.[1]
+        ?.split("=")?.[1];
 
-        let postMessageUrl: string;
-        switch (queryString) {
-          case "NA":
-            postMessageUrl = process.env.REACT_APP_UI_URL_NA || "";
-            break;
-          case "EU":
-            postMessageUrl = process.env.REACT_APP_UI_URL_EU || "";
-            break;
-          default:
-            postMessageUrl = process.env.REACT_APP_UI_URL_AZURE || "";
-        }
-
-        window.addEventListener("message", handleMessage, false);
-        windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
-        window.addEventListener("beforeunload", () => {
-          windowOpener.postMessage({ message: "close" }, postMessageUrl);
-        });
-        setOriginUrl(postMessageUrl);
+      let postMessageUrl: string;
+      switch (queryString) {
+        case "NA":
+          postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
+          break;
+        case "EU":
+          postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
+          break;
+        case "AZURE_NA":
+          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
+          break;
+        case "CUSTOM-FIELD":
+          postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
+          break;
+        default:
+          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
       }
+      url = postMessageUrl;
+      window.addEventListener("message", handleMessage, false);
+      windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
+      window.addEventListener("beforeunload", () => {
+        windowOpener.postMessage({ message: "close" }, postMessageUrl);
+      });
     }
   }, []);
 
   return (
-    <div
-      className={`selector-page-wrapper ${componentType}-page-wrapper`}
-      data-testid="selector-wrapper"
-    >
+    <div className="selector-page-wrapper" data-testid="selector-wrapper">
       <div
         className="selector-page-header flex FullPage_Modal_Header"
         data-testid="selector-header"
@@ -176,21 +151,9 @@ const SelectorPage: React.FC<any> = function ({
             {localeTexts.SelectorPage.title}
           </span>
         </div>
-
-        {componentType === "modal" && (
-          <Icon
-            icon="Cancel"
-            size="small"
-            hover
-            hoverType="secondary"
-            className="cancel-icon"
-            onClick={closeModal}
-            data-testid="selector-cancel-icon"
-          />
-        )}
       </div>
       <div
-        className={`selector_container mt-30 mr-20 ml-20 mb-20 ${componentType}_selector_container`}
+        className="selector_container mt-30 mr-20 ml-20 mb-20"
         id="selector_container"
         data-testid="selector-container"
         ref={damContainer}
