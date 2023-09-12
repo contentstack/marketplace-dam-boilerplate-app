@@ -1,7 +1,6 @@
 import React from "react";
 import { TypeAsset, TypeSelectorContainer } from "../common/types";
 import Logo from "../common/asset/logo.svg";
-import utils from "./utils";
 
 // ####### ENVIRONMENT VALUES #######
 const damEnv = {
@@ -70,6 +69,34 @@ const configureConfigScreen = () => {
   };
 };
 
+const customWholeJson = () => {
+  const customJsonOptions: string[] = [
+    "id",
+    "name",
+    "type",
+    "url",
+    "files",
+    "__typename",
+    "description",
+    "databaseId",
+    "createdAt",
+    "originalUrl",
+    "publishedAt",
+    "tags",
+    "updatedAt",
+    "metaproperties",
+    "textMetaproperties",
+    "derivatives",
+  ];
+
+  const defaultFeilds: string[] = ["id", "name", "type", "url", "files"];
+
+  return {
+    customJsonOptions,
+    defaultFeilds,
+  };
+};
+
 // ####### CUSTOM FIELD #######
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
@@ -88,23 +115,6 @@ const filterAssetData = (assets: any[]) => {
     };
   });
   return filterAssetArray;
-};
-
-const handleConfigtoSelectorPage = (
-  config: any,
-  contentTypeConfig: any,
-  currentLocale: string
-) => {
-  return utils.getSelectorConfig({
-    keyArr: damEnv?.CONFIG_FIELDS,
-    appConfig: config,
-    customConfig: contentTypeConfig,
-    currentLocale,
-    valueChecks: {
-      language: ["en_US", "nl_NL", "de_DE", "fr_FR", "es_ES"],
-      mode: ["SingleSelectFile", "MultiSelect"],
-    },
-  });
 };
 
 // ####### SELECTOR PAGE #######
@@ -146,9 +156,9 @@ const openComptactView = (
 const rootConfig: any = {
   damEnv,
   configureConfigScreen,
+  customWholeJson,
   filterAssetData,
   openComptactView,
-  handleConfigtoSelectorPage,
 };
 
 export default rootConfig;

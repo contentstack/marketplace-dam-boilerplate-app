@@ -26,29 +26,20 @@ const configureConfigScreen = () => {
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
 
   return {
-    configField1: {
+    textField: {
       type: "textInputFields",
-      labelText: "DAM URL",
-      helpText: "DAM domain URL",
-      placeholderText: "Enter Your DAM URL",
-      instructionText: "Your DAM domain URL",
+      labelText: "DAM Text Input",
+      helpText: "DAM Text Input Helptext",
+      placeholderText: "DAM Text Input Placeholder",
+      instructionText: "DAM Text Input Instruction Text",
       saveInConfig: false,
       saveInServerConfig: true,
     },
-    configField2: {
-      type: "textInputFields",
-      labelText: "DAM API KEY",
-      helpText: "DAM API KEY",
-      placeholderText: "Enter Your DAM API KEY",
-      instructionText: "Your DAM Api Key",
-      saveInConfig: true,
-      saveInServerConfig: false,
-    },
-    selectField1: {
+    selectField: {
       type: "selectInputFields",
-      labelText: "DAM Select Input Option 1",
-      helpText: "DAM Select Input Option 1",
-      placeholderText: "DAM Select Input Option 1",
+      labelText: "DAM Select Input",
+      helpText: "DAM Select Input Helptext",
+      placeholderText: "DAM Select Input Placeholder",
       instructionText: "DAM Select Input Instruction Text",
       options: [
         { label: "option 1", value: "option1" },
@@ -61,10 +52,10 @@ const configureConfigScreen = () => {
       saveInConfig: true,
       saveInServerConfig: false,
     },
-    radioInput1: {
+    radioField: {
       type: "radioInputFields",
-      labelText: "DAM Radio Input Option 1",
-      helpText: "DAM Radio Input Option 1",
+      labelText: "DAM Radio Input",
+      helpText: "DAM Radio Input Helptext",
       instructionText: "DAM Radio Input Instruction Text",
       options: [
         {
@@ -89,6 +80,28 @@ const customConfig = (
   handleCustomConfigUpdate: Function
 ) => {
   return <CustomComponent />;
+};
+
+const customWholeJson = () => {
+  const customJsonOptions: string[] = [
+    "option 1",
+    "option 2",
+    "option 3",
+    "option 4",
+    "option 5",
+    "option 6",
+    "option 7",
+    "option 8",
+    "option 9",
+    "option 10",
+  ];
+
+  const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
+
+  return {
+    customJsonOptions,
+    defaultFeilds,
+  };
 };
 
 // ####### CUSTOM FIELD #######
@@ -173,6 +186,7 @@ const rootConfig: any = {
   damEnv,
   configureConfigScreen,
   customConfig,
+  customWholeJson,
   filterAssetData,
   getSelectorWindowUrl,
   handleSelectorPageData,

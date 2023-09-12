@@ -16,7 +16,7 @@ const popupWindow = (windowDetails) => {
 };
 
 const handleImageError = (event) => {
-  event.target.src = placeholderImageSrc;
+  event.target.src = `data:image/svg+xml;base64,${btoa(placeholderImageSrc)}`;
 };
 
 const getIconType = (resource_type) => {
