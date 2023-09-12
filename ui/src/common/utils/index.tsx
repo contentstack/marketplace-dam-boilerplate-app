@@ -1,8 +1,8 @@
 import React from "react";
-import { cbModal, Icon } from "@contentstack/venus-components";
+import { cbModal, Icon, Notification } from "@contentstack/venus-components";
 import localeTexts from "../locale/en-us";
 import { TypePopupWindowDetails } from "../types";
-import DeleteModal from "../../containers/CustomField/DeleteModal";
+import DeleteModal from "../../components/DeleteModal";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -83,7 +83,7 @@ const getHoverActions = (
     (type?.toLowerCase() === "image" || type?.toLowerCase() === "video") &&
     previewUrl
   ) {
-    tootipActionArray.push({
+    tootipActionArray?.push({
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.preview,
       actionIcon: <Icon icon="View" size="tiny" />,
       actionOnClick: () => window.open(previewUrl, "_blank"),
@@ -91,7 +91,7 @@ const getHoverActions = (
   }
 
   if (platformUrl) {
-    tootipActionArray.push({
+    tootipActionArray?.push({
       actionTitle:
         localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
       actionIcon: <Icon icon="NewTab" size="mini" />,
@@ -99,19 +99,67 @@ const getHoverActions = (
     });
   }
 
-  tootipActionArray.push({
-    actionIcon: <Icon icon="Trash" size="mini" />,
+  tootipActionArray?.push({
+    actionIcon: <Icon icon="RemoveFilled" size="mini" />,
     actionTitle: localeTexts.CustomFields.assetCard.hoverActions.remove,
     actionOnClick: () =>
       cbModal({
         component: (props: any) => (
-          <DeleteModal
-            type="Asset"
-            remove={removeAsset}
-            id={id}
-            name={name}
-            {...props}
-          />
+          <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
+        ),
+        modalProps: {
+          size: "xsmall",
+        },
+      }),
+  });
+
+  return tootipActionArray;
+};
+
+const getListHoverActions = (
+  type: string,
+  removeAsset: Function,
+  id: string,
+  name: string,
+  platformUrl?: string,
+  previewUrl?: string
+) => {
+  const tootipActionArray = [
+    {
+      title: localeTexts.CustomFields.assetCard.hoverActions.drag,
+      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      action: () => {
+        /**/
+      },
+    },
+  ];
+
+  if (
+    (type?.toLowerCase() === "image" || type?.toLowerCase() === "video") &&
+    previewUrl
+  ) {
+    tootipActionArray?.push({
+      title: localeTexts.CustomFields.assetCard.hoverActions.preview,
+      label: <Icon icon="View" size="tiny" />,
+      action: () => window.open(previewUrl, "_blank"),
+    });
+  }
+
+  if (platformUrl) {
+    tootipActionArray?.push({
+      title: localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
+      label: <Icon icon="NewTab" size="mini" />,
+      action: () => window.open(platformUrl, "_blank"),
+    });
+  }
+
+  tootipActionArray?.push({
+    label: <Icon icon="RemoveFilled" size="mini" />,
+    title: localeTexts.CustomFields.assetCard.hoverActions.remove,
+    action: () =>
+      cbModal({
+        component: (props: any) => (
+          <DeleteModal remove={removeAsset} id={id} name={name} {...props} />
         ),
         modalProps: {
           size: "xsmall",
@@ -153,14 +201,155 @@ function findAsset(assets: any[], id: any) {
   return assets?.find((asset: any) => asset?.id === id) || {};
 }
 
+const getOptions = (arr: string[], defaultFeilds?: any[]) =>
+  arr?.map((option: string) => ({
+    label: option,
+    value: option,
+    isDisabled: defaultFeilds?.includes(option) ?? false,
+  }));
+
+const extractKeys = (arr: any[]) => arr?.map((key: any) => key?.value);
+
+const removeEmptyFromArray = (arr: any) =>
+  arr?.filter((item: any) => item !== undefined);
+
+const cleanUpArrays: any = (obj: any) => {
+  if (Array.isArray(obj)) {
+    return removeEmptyFromArray(obj?.map((item) => cleanUpArrays(item)));
+  }
+  if (typeof obj === "object" && obj !== null) {
+    const newObj: any = {};
+    Object.keys(obj)?.forEach((key) => {
+      newObj[key] = cleanUpArrays(obj?.[key]);
+    });
+    return newObj;
+  }
+  return obj;
+};
+
+const convertStringAndMergeToObject = (
+  inputString: string,
+  value: any,
+  existingObject: any
+) => {
+  const properties = inputString?.split(".");
+  let temp = existingObject;
+
+  for (let i = 0; i < properties?.length; i += 1) {
+    const property = properties?.[i];
+    const matchArrayIndex = property?.match(/(\w+)\[(\d+)\]/);
+    const isLastProperty = i === properties?.length - 1;
+
+    if (matchArrayIndex) {
+      const arrayName = matchArrayIndex?.[1];
+      const index = parseInt(matchArrayIndex?.[2], 10);
+      if (!temp?.[arrayName]) {
+        temp[arrayName] = [];
+      }
+      if (!temp?.[arrayName]?.[index]) {
+        temp[arrayName][index] = isLastProperty ? value : {};
+      }
+      temp = temp?.[arrayName]?.[index];
+    } else {
+      if (!temp?.[property]) {
+        temp[property] = isLastProperty ? value : {};
+      }
+      temp = temp[property];
+    }
+  }
+  return cleanUpArrays(existingObject);
+};
+
+const navigateObject = (obj: any, findkeys: string[]) => {
+  let currentObj = obj;
+  findkeys?.forEach((keyvalue: string) => {
+    const regex = /\[.*\]/;
+    if (regex?.test(keyvalue)) {
+      const newKey = keyvalue?.replace(/\]/g, "");
+      const subKeyArr = newKey?.split("[");
+      if (currentObj?.hasOwnProperty(subKeyArr?.[0])) {
+        currentObj = currentObj?.[subKeyArr?.[0]]?.[subKeyArr?.[1]];
+      }
+    } else if (currentObj?.hasOwnProperty(keyvalue)) {
+      currentObj = currentObj?.[keyvalue];
+    } else {
+      currentObj = undefined;
+    }
+  });
+  return currentObj;
+};
+
+const getFilteredAssets = (assets: any[], keyArray: string[]) =>
+  assets?.map((asset: any) => {
+    let returnObj: any = {};
+
+    keyArray?.forEach((key: string) => {
+      const result = navigateObject(asset, key?.split("."));
+      if (result) {
+        if (key?.includes(".") || key?.includes("[")) {
+          const response = convertStringAndMergeToObject(
+            key,
+            result,
+            returnObj
+          );
+          returnObj = response;
+        } else {
+          returnObj[key] = result;
+        }
+      }
+    });
+    return returnObj;
+  });
+
+const toastMessage = ({ type, text }: any) => {
+  Notification({
+    notificationContent: {
+      text,
+    },
+    notifyProps: {
+      hideProgressBar: true,
+      className: "modal_toast_message",
+    },
+    type,
+  });
+};
+
+const gridViewDropdown = [
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="Thumbnail" size="original" />
+        <div>{localeTexts?.CustomFields?.toolTip?.thumbnail}</div>
+      </span>
+    ),
+    value: "card",
+    default: true,
+  },
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="List" />
+        <div>{localeTexts?.CustomFields?.toolTip?.list}</div>
+      </span>
+    ),
+    value: "list",
+  },
+];
+
 const utils = {
   popupWindow,
   mergeObjects,
   loadDAMScript,
   getHoverActions,
+  getListHoverActions,
   uniqBy,
   findAssetIndex,
   findAsset,
+  getOptions,
+  extractKeys,
+  getFilteredAssets,
+  toastMessage,
+  gridViewDropdown,
 };
 
 export default utils;

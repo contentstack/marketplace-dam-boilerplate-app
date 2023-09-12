@@ -4,8 +4,12 @@ const constantStyles = {
   loaderColor: "#6C5CE7",
 };
 
+const limitationsDocUrl =
+  "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/";
+
 const constants = {
   constantStyles,
+  limitationsDocUrl,
 };
 
 export default constants;

@@ -7,8 +7,9 @@ import EmbedBtn from "../EmbedBtn";
 import ImageEditModal from "../ImageEditModal";
 import DeleteModal from "../DeleteModal";
 import utils from "../../common/utils";
-import "../styles.scss";
 import rteConfig from "../../rte_config/index";
+import localeTexts from "../../common/locale/en-us";
+import "../styles.scss";
 
 const ImageElement = function ({
   attributes,
@@ -18,20 +19,20 @@ const ImageElement = function ({
   rte,
   ...props
 }) {
+  const RTE_RESOURCE_TYPE = rteConfig?.getAssetType?.(element?.attrs) ?? "";
+  const RTE_DISPLAY_URL = rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
   const isSelected = rte?.selection?.isSelected();
   const isFocused = rte?.selection?.isFocused();
   const isHighlight = isFocused && isSelected;
   const alignment = attrs?.style?.textAlign;
-  const icon = utils.getIconType(element?.attrs?.rte_resource_type);
+  const icon = utils.getIconType(RTE_RESOURCE_TYPE);
   const isInline = !!(
     element?.attrs?.inline || element?.attrs?.["redactor-attributes"]?.inline
   );
   const imgRef = useRef(null);
   const parentRef = useRef(null);
   const displayType =
-    element?.attrs?.rte_resource_type?.toLowerCase() === "image"
-      ? "display"
-      : "download";
+    RTE_RESOURCE_TYPE?.toLowerCase() === "image" ? "display" : "download";
   const initialDimensions = utils.getInitialDimensions(element, displayType);
 
   useEffect(() => {
@@ -70,22 +71,19 @@ const ImageElement = function ({
         let descrip = divDOM?.getElementsByTagName("span")?.[0];
         if (
           element?.attrs?.position == "right" &&
-          divDOM?.getAttribute("id") ==
-            `right${btoa(element?.attrs?.rte_display_url)}`
+          divDOM?.getAttribute("id") == `right${btoa(RTE_DISPLAY_URL)}`
         ) {
           descrip?.setAttribute("style", "float: left");
         } else if (
           element?.attrs?.position == "right" &&
-          divDOM?.getAttribute("id") ==
-            `left${btoa(element?.attrs?.rte_display_url)}`
+          divDOM?.getAttribute("id") == `left${btoa(RTE_DISPLAY_URL)}`
         ) {
           let idRight = divDOM?.getElementsByTagName("p")?.[0]?.parentNode;
           idRight?.setAttribute("style", "overflow : hidden");
           descrip?.setAttribute("style", "float: left");
         } else if (
           element?.attrs?.position == "left" &&
-          divDOM?.getAttribute("id") ==
-            `right${btoa(element?.attrs?.rte_display_url)}`
+          divDOM?.getAttribute("id") == `right${btoa(RTE_DISPLAY_URL)}`
         ) {
           let idLeft = divDOM?.getElementsByTagName("p")?.[0]?.parentNode;
           idLeft?.setAttribute(
@@ -99,8 +97,8 @@ const ImageElement = function ({
   }, [element?.attrs?.position, rte?.getPath(element)]);
 
   const handleView = useCallback(() => {
-    window.open(element?.attrs?.rte_display_url, "_blank");
-  }, [element?.attrs?.rte_display_url]);
+    window.open(RTE_DISPLAY_URL, "_blank");
+  }, [RTE_DISPLAY_URL]);
 
   const handleEdit = useCallback(() => {
     cbModal({
@@ -124,16 +122,20 @@ const ImageElement = function ({
     cbModal({
       component: (props) =>
         DeleteModal({
-          type: "Asset",
           remove: useRemoveHook,
-          name: element?.attrs?.name,
+          name: element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM],
           ...props,
         }),
       modalProps: {
         size: "xsmall",
       },
     });
-  }, [rte?.removeNode, element, element?.attrs?.name, props]);
+  }, [
+    rte?.removeNode,
+    element,
+    element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM],
+    props,
+  ]);
 
   const alignmentStyle = utils.getAlignmentStyle(alignment, attrs, isInline);
 
@@ -148,14 +150,12 @@ const ImageElement = function ({
     : `embed-asset ${highlightclass} ${downloadTypeclass}`;
 
   const CustomComponent = () => {
-    const iconType = rteConfig?.getViewIconforTooltip?.(
-      element?.attrs?.rte_resource_type
-    );
+    const iconType = rteConfig?.getViewIconforTooltip?.(RTE_RESOURCE_TYPE);
     return (
       <div contentEditable={false} className="embed--btn-group">
         {iconType && ["Eye", "NewTab"]?.includes(iconType) && (
           <EmbedBtn
-            title="view"
+            title={localeTexts.RTE.iconContent.preview}
             content={utils.getToolTipIconContent(iconType)}
             onClick={handleView}
           >
@@ -163,12 +163,20 @@ const ImageElement = function ({
           </EmbedBtn>
         )}
 
-        <EmbedBtn title="edit" content="Edit" onClick={handleEdit}>
+        <EmbedBtn
+          title="edit"
+          content={localeTexts.RTE.iconContent.edit}
+          onClick={handleEdit}
+        >
           <Icon icon="Rename" />
         </EmbedBtn>
 
-        <EmbedBtn title="delete" content="Delete" onClick={handleDelete}>
-          <Icon icon="Delete" />
+        <EmbedBtn
+          title="remove"
+          content={localeTexts.RTE.iconContent.remove}
+          onClick={handleDelete}
+        >
+          <Icon icon="RemoveFilled" size="tiny" />
         </EmbedBtn>
       </div>
     );
@@ -238,13 +246,16 @@ const ImageElement = function ({
                 <div className={tooltipclass}>
                   {!icon && (
                     <img
-                      src={element?.attrs?.rte_display_url}
+                      src={RTE_DISPLAY_URL}
                       onError={utils.handleImageError}
                       style={{
                         width: "100%",
                         height: "auto",
                       }}
                       alt={element?.attrs?.["asset-alt"]}
+                      title={
+                        element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                      }
                     />
                   )}
                   {!isInline && (
@@ -257,7 +268,9 @@ const ImageElement = function ({
                       icon={icon}
                       size="large"
                       withTooltip
-                      tooltipContent={attrs?.name}
+                      tooltipContent={
+                        attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                      }
                       tooltipPosition="top"
                     />
                   )}
