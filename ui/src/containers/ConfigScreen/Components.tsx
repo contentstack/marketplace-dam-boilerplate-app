@@ -38,11 +38,18 @@ export const TextInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  isError = false,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
-        <FieldLabel required htmlFor={`${objKey}-id`} data-testid="text_label">
+        <FieldLabel
+          required
+          error
+          htmlFor={`${objKey}-id`}
+          requiredText={isError ? "This a is required field" : undefined}
+          data-testid="text_label"
+        >
           {" "}
           {/* Change the label caption as per your requirement */}
           {objValue?.labelText}
@@ -53,6 +60,7 @@ export const TextInputField = function ({
         {/* Change the help caption as per your requirement */}
         <TextInput
           id={`${objKey}-id`}
+          error={isError}
           required
           value={currentValue}
           placeholder={objValue?.placeholderText}
@@ -102,12 +110,15 @@ export const RadioInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  isError = false,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
+          error={isError}
+          requiredText={isError ? "This a is required field" : undefined}
           htmlFor={`${objKey}_options`}
           data-testid="radio_label"
         >
@@ -143,12 +154,15 @@ export const SelectInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  isError = false,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
+          error={isError}
+          requiredText={isError ? "This a is required field" : undefined}
           htmlFor={`${objKey}-id`}
           data-testid="select_label"
         >
@@ -164,6 +178,7 @@ export const SelectInputField = function ({
           value={currentValue}
           name={`${objKey}-id`}
           data-testid="select_input"
+          version="v2"
         />
         <InstructionText data-testid="select_instruction">
           {objValue?.instructionText}
@@ -370,6 +385,7 @@ export const JsonComponent = function ({
             isSearchable
             version="v2"
             hasAddOption
+            className="dam-keys-select"
             addOptionText={
               <>
                 <Icon icon="Plus" />
