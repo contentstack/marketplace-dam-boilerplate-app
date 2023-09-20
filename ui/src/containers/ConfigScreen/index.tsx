@@ -1,5 +1,6 @@
+/* eslint-disable */
 /* Import React modules */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 /* ContentStack Modules */
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -17,8 +18,10 @@ import utils from "../../common/utils";
 import { TypeAppSdkConfigState, TypeOption } from "../../common/types";
 /* Import our CSS */
 import "./styles.scss";
+import localeTexts from "../../common/locale/en-us";
 
 const ConfigScreen: React.FC = function () {
+  const appConfig = useRef<any>();
   // custom whole json options from rootconfig
   // eslint-disable-next-line
   let { customJsonOptions, defaultFeilds } = rootConfig?.customWholeJson?.();
@@ -148,6 +151,7 @@ const ConfigScreen: React.FC = function () {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
         const sdkConfigData = appSdk?.location?.AppConfigWidget?.installation;
+        appConfig.current = sdkConfigData;
         if (sdkConfigData) {
           const installationDataFromSDK =
             await sdkConfigData?.getInstallationData();
@@ -162,6 +166,7 @@ const ConfigScreen: React.FC = function () {
             setInstallationData: setInstallationDataOfSDK,
             appSdkInitialized: true,
           });
+          checkConfigFields(installationDataOfSdk?.configuration);
           setIsCustom(
             installationDataOfSdk?.configuration?.is_custom_json ?? false
           );
@@ -222,6 +227,32 @@ const ConfigScreen: React.FC = function () {
       });
   }, []);
 
+  const checkConfigFields = (configObj: any) => {
+    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
+    const missingValues: string[] = [];
+
+    Object.entries(configObj)?.forEach(([key, value]: any) => {
+      if (!skipKeys?.includes(key)) {
+        if (
+          !value ||
+          (Array.isArray(value) && !value?.length) ||
+          !Object.keys(value)?.length
+        ) {
+          missingValues?.push(key);
+        }
+      }
+    });
+
+    if (missingValues?.length) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.invalidCredentials,
+      });
+    } else {
+      appConfig?.current?.setValidity(true);
+    }
+    console.log("missingValues", missingValues);
+  };
+
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
    * */
@@ -247,7 +278,7 @@ const ConfigScreen: React.FC = function () {
       ) {
         updatedServerConfig[fieldName] = fieldValue;
       }
-
+      checkConfigFields(updatedConfig);
       if (state?.setInstallationData) {
         await state.setInstallationData({
           ...state.installationData,

@@ -15,7 +15,7 @@ export interface TypeAppSdkConfigState {
 
 export interface TypeSDKData {
   config: any;
-  contentTypeConfig: any;
+  contentTypeConfig?: any;
   location: any;
   appSdkInitialized: boolean;
 }
@@ -76,6 +76,7 @@ export interface TypeConfigComponent {
   objValue: any;
   currentValue: any;
   updateConfig: Function;
+  isError?: boolean;
 }
 
 export type Props = {
@@ -89,3 +90,8 @@ export interface TypeRadioOption {
   radioOption: TypeOption;
   updateRadioOptions: Function;
 }
+
+export type TypeWarningtext = {
+  error: boolean;
+  data: any;
+};
