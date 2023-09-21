@@ -51,6 +51,7 @@ const localeTexts = {
       },
     },
     invalidCredentials: "Invalid Configuration",
+    emptyValue: "Field Value Missing",
   },
   CustomFields: {
     button: {

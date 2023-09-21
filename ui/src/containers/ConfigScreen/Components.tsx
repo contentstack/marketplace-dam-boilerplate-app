@@ -38,16 +38,20 @@ export const TextInputField = function ({
   objValue,
   currentValue,
   updateConfig,
-  isError = false,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
-          error
+          error={errorState?.includes(objKey)}
           htmlFor={`${objKey}-id`}
-          requiredText={isError ? "This a is required field" : undefined}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
           data-testid="text_label"
         >
           {" "}
@@ -60,7 +64,6 @@ export const TextInputField = function ({
         {/* Change the help caption as per your requirement */}
         <TextInput
           id={`${objKey}-id`}
-          error={isError}
           required
           value={currentValue}
           placeholder={objValue?.placeholderText}
@@ -110,15 +113,19 @@ export const RadioInputField = function ({
   objValue,
   currentValue,
   updateConfig,
-  isError = false,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
-          error={isError}
-          requiredText={isError ? "This a is required field" : undefined}
+          error={errorState?.includes(objKey)}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
           htmlFor={`${objKey}_options`}
           data-testid="radio_label"
         >
@@ -154,15 +161,19 @@ export const SelectInputField = function ({
   objValue,
   currentValue,
   updateConfig,
-  isError = false,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
-          error={isError}
-          requiredText={isError ? "This a is required field" : undefined}
+          error={errorState?.includes(objKey)}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
           htmlFor={`${objKey}-id`}
           data-testid="select_label"
         >

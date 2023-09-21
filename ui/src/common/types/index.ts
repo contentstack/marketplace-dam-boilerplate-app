@@ -76,7 +76,7 @@ export interface TypeConfigComponent {
   objValue: any;
   currentValue: any;
   updateConfig: Function;
-  isError?: boolean;
+  errorState: string[];
 }
 
 export type Props = {
