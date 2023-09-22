@@ -38,11 +38,22 @@ export const TextInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
-        <FieldLabel required htmlFor={`${objKey}-id`} data-testid="text_label">
+        <FieldLabel
+          required
+          error={errorState?.includes(objKey)}
+          htmlFor={`${objKey}-id`}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
+          data-testid="text_label"
+        >
           {" "}
           {/* Change the label caption as per your requirement */}
           {objValue?.labelText}
@@ -102,12 +113,19 @@ export const RadioInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
+          error={errorState?.includes(objKey)}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
           htmlFor={`${objKey}_options`}
           data-testid="radio_label"
         >
@@ -143,12 +161,19 @@ export const SelectInputField = function ({
   objValue,
   currentValue,
   updateConfig,
+  errorState,
 }: TypeConfigComponent) {
   return (
     <>
       <Field>
         <FieldLabel
           required
+          error={errorState?.includes(objKey)}
+          requiredText={
+            errorState?.includes(objKey)
+              ? localeTexts.ConfigFields.emptyValue
+              : undefined
+          }
           htmlFor={`${objKey}-id`}
           data-testid="select_label"
         >
@@ -164,6 +189,7 @@ export const SelectInputField = function ({
           value={currentValue}
           name={`${objKey}-id`}
           data-testid="select_input"
+          version="v2"
         />
         <InstructionText data-testid="select_instruction">
           {objValue?.instructionText}
@@ -370,6 +396,7 @@ export const JsonComponent = function ({
             isSearchable
             version="v2"
             hasAddOption
+            className="dam-keys-select"
             addOptionText={
               <>
                 <Icon icon="Plus" />

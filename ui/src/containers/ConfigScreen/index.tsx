@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 /* ContentStack Modules */
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -17,8 +17,10 @@ import utils from "../../common/utils";
 import { TypeAppSdkConfigState, TypeOption } from "../../common/types";
 /* Import our CSS */
 import "./styles.scss";
+import localeTexts from "../../common/locale/en-us";
 
 const ConfigScreen: React.FC = function () {
+  const appConfig = useRef<any>();
   // custom whole json options from rootconfig
   // eslint-disable-next-line
   let { customJsonOptions, defaultFeilds } = rootConfig?.customWholeJson?.();
@@ -143,17 +145,20 @@ const ConfigScreen: React.FC = function () {
       return acc;
     }, {}),
   });
+  // state for error handling of empty field values
+  const [errorState, setErrorState] = useState<any>([]);
 
   React.useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
         const sdkConfigData = appSdk?.location?.AppConfigWidget?.installation;
+        appConfig.current = sdkConfigData;
         if (sdkConfigData) {
           const installationDataFromSDK =
             await sdkConfigData?.getInstallationData();
           const setInstallationDataOfSDK = sdkConfigData?.setInstallationData;
           const installationDataOfSdk = utils.mergeObjects(
-            state.installationData,
+            state?.installationData,
             installationDataFromSDK
           );
           setState({
@@ -162,6 +167,7 @@ const ConfigScreen: React.FC = function () {
             setInstallationData: setInstallationDataOfSDK,
             appSdkInitialized: true,
           });
+          checkConfigFields(installationDataOfSdk);
           setIsCustom(
             installationDataOfSdk?.configuration?.is_custom_json ?? false
           );
@@ -222,6 +228,35 @@ const ConfigScreen: React.FC = function () {
       });
   }, []);
 
+  // function to check if field values are empty and handles save button disable on empty field values
+  const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
+    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
+    const missingValues: string[] = [];
+
+    Object.entries({ ...configuration, ...serverConfiguration })?.forEach(
+      ([key, value]: any) => {
+        if (!skipKeys?.includes(key)) {
+          if (
+            !value ||
+            (Array.isArray(value) && !value?.length) ||
+            !Object.keys(value)?.length
+          ) {
+            missingValues?.push(key);
+          }
+        }
+      }
+    );
+
+    setErrorState(missingValues);
+    if (missingValues?.length) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.invalidCredentials,
+      });
+    } else {
+      appConfig?.current?.setValidity(true);
+    }
+  };
+
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
    * */
@@ -247,7 +282,10 @@ const ConfigScreen: React.FC = function () {
       ) {
         updatedServerConfig[fieldName] = fieldValue;
       }
-
+      checkConfigFields({
+        configuration: updatedConfig,
+        serverConfiguration: updatedServerConfig,
+      });
       if (state?.setInstallationData) {
         await state.setInstallationData({
           ...state.installationData,
@@ -356,10 +394,11 @@ const ConfigScreen: React.FC = function () {
                   objValue?.saveInConfig
                     ? (state?.installationData?.configuration?.[objKey])
                     : (objValue?.saveInServerConfig
-                    ? state?.installationData?.serverConfiguration?.[objKey]
-                    : "")
+                      ? state?.installationData?.serverConfiguration?.[objKey]
+                      : "")
                 }
                 updateConfig={updateConfig}
+                errorState={errorState}
               />
             </div>
           );
@@ -371,6 +410,7 @@ const ConfigScreen: React.FC = function () {
                 objValue={objValue}
                 currentValue={radioInputValues[objKey]}
                 updateConfig={updateRadioOptions}
+                errorState={errorState}
               />
             </div>
           );
@@ -382,6 +422,7 @@ const ConfigScreen: React.FC = function () {
                 objValue={objValue}
                 currentValue={selectInputValues[objKey]}
                 updateConfig={updateSelectConfig}
+                errorState={errorState}
               />
             </div>
           );

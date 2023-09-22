@@ -81,8 +81,12 @@
   }
 
   & .Select {
-    min-width: 200px !important;
+    min-width: 300px !important;
     max-width: unset !important;
+  }
+
+  & .dam-keys-select {
+    min-width: 200px !important;
   }
 
   .Select__menu {

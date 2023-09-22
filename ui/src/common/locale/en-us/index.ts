@@ -50,6 +50,8 @@ const localeTexts = {
         errorE: "already exists",
       },
     },
+    invalidCredentials: "Invalid Configuration",
+    emptyValue: "Field Value Missing",
   },
   CustomFields: {
     button: {

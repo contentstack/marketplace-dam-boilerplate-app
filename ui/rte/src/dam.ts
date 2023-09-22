@@ -64,8 +64,10 @@ export const onClickHandler = async (props) => {
       case process.env.REACT_APP_UI_URL_EU:
         queryLocation = "EU";
         break;
+      case process.env.REACT_APP_UI_URL_AZURE_NA:
+        queryLocation = "AZURE_NA";
       default:
-        queryLocation = "AZURE";
+        queryLocation = "AZURE_EU";
     }
     let url;
     if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url") {
