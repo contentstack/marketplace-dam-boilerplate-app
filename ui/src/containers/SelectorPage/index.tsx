@@ -171,7 +171,7 @@ const SelectorPage: React.FC<any> = function () {
               <></>
             ) : (
               // If there is no script custom component will be added
-              rootConfig?.customComponent?.(
+              rootConfig?.customSelectorComponent?.(
                 config,
                 setError,
                 successFn,

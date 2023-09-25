@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { TypeAsset, TypeSelectorContainer } from "../common/types";
 import Logo from "../common/asset/logo.svg";
