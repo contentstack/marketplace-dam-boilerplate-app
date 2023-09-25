@@ -73,7 +73,11 @@ export const TextInputField = function ({
           version="v2"
         />
         <InstructionText data-testid="text_instruction">
-          {objValue?.instructionText}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: objValue?.instructionText,
+            }}
+          />
         </InstructionText>
       </Field>
       <Line type="dashed" />
@@ -147,7 +151,11 @@ export const RadioInputField = function ({
           ))}
         </div>
         <InstructionText data-testid="radio_instruction">
-          {objValue?.instructionText}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: objValue?.instructionText,
+            }}
+          />
         </InstructionText>
       </Field>
       <Line type="dashed" />
@@ -192,7 +200,11 @@ export const SelectInputField = function ({
           version="v2"
         />
         <InstructionText data-testid="select_instruction">
-          {objValue?.instructionText}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: objValue?.instructionText,
+            }}
+          />
         </InstructionText>
       </Field>
       <Line type="dashed" />
