@@ -148,6 +148,35 @@ const ConfigScreen: React.FC = function () {
   // state for error handling of empty field values
   const [errorState, setErrorState] = useState<any>([]);
 
+  // function to check if field values are empty and handles save button disable on empty field values
+  const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
+    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
+    const missingValues: string[] = [];
+
+    Object.entries({ ...configuration, ...serverConfiguration })?.forEach(
+      ([key, value]: any) => {
+        if (!skipKeys?.includes(key)) {
+          if (
+            !value ||
+            (Array.isArray(value) && !value?.length) ||
+            !Object.keys(value)?.length
+          ) {
+            missingValues?.push(key);
+          }
+        }
+      }
+    );
+
+    setErrorState(missingValues);
+    if (missingValues?.length) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.invalidCredentials,
+      });
+    } else {
+      appConfig?.current?.setValidity(true);
+    }
+  };
+
   React.useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
@@ -227,35 +256,6 @@ const ConfigScreen: React.FC = function () {
         console.error("Something Went Wrong While Loading App SDK");
       });
   }, []);
-
-  // function to check if field values are empty and handles save button disable on empty field values
-  const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
-    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
-    const missingValues: string[] = [];
-
-    Object.entries({ ...configuration, ...serverConfiguration })?.forEach(
-      ([key, value]: any) => {
-        if (!skipKeys?.includes(key)) {
-          if (
-            !value ||
-            (Array.isArray(value) && !value?.length) ||
-            !Object.keys(value)?.length
-          ) {
-            missingValues?.push(key);
-          }
-        }
-      }
-    );
-
-    setErrorState(missingValues);
-    if (missingValues?.length) {
-      appConfig?.current?.setValidity(false, {
-        message: localeTexts.ConfigFields.invalidCredentials,
-      });
-    } else {
-      appConfig?.current?.setValidity(true);
-    }
-  };
 
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
@@ -442,7 +442,7 @@ const ConfigScreen: React.FC = function () {
       <div className="page-wrapper">
         <div className="config-wrapper" data-testid="config-wrapper">
           {renderConfig()}
-          {rootConfig?.customConfig?.(
+          {rootConfig?.customConfigComponent?.(
             state?.installationData?.configuration,
             state?.installationData?.serverConfiguration,
             handleCustomConfigUpdate

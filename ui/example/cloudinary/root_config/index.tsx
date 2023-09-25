@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { TypeAsset, TypeSelectorContainer } from "../common/types";
 import Logo from "../common/asset/logo.svg";
@@ -43,6 +44,36 @@ const configureConfigScreen = () => {
   };
 };
 
+const customWholeJson = () => {
+  const customJsonOptions: string[] = [
+    "public_id",
+    "resource_type",
+    "secure_url",
+    "type",
+    "format",
+    "version",
+    "url",
+    "width",
+    "height",
+    "bytes",
+    "duration",
+    "tags",
+    "metadata",
+    "created_at",
+    "access_mode",
+    "access_control",
+    "created_by",
+    "uploaded_by",
+  ];
+
+  const defaultFeilds: string[] = ["public_id", "resource_type", "secure_url"];
+
+  return {
+    customJsonOptions,
+    defaultFeilds,
+  };
+};
+
 // ####### CUSTOM FIELD #######
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
@@ -61,20 +92,6 @@ const filterAssetData = (assets: any[]) => {
     };
   });
   return filterAssetArray;
-};
-
-const handleConfigtoSelectorPage = (
-  config: any,
-  contentTypeConfig: any,
-  currentLocale: string
-) => {
-  return utils.getSelectorConfig({
-    keyArr: damEnv?.CONFIG_FIELDS,
-    appConfig: config,
-    customConfig: contentTypeConfig,
-    currentLocale,
-    pairs: damEnv?.CONFIG_FIELDS,
-  });
 };
 
 // ####### SELECTOR PAGE #######
@@ -116,9 +133,9 @@ const openComptactView = (
 const rootConfig: any = {
   damEnv,
   configureConfigScreen,
+  customWholeJson,
   filterAssetData,
   openComptactView,
-  handleConfigtoSelectorPage,
 };
 
 export default rootConfig;
