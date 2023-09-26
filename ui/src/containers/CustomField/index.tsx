@@ -2,7 +2,7 @@
 import React, { useCallback, useRef, useState } from "react";
 /* Import ContentStack modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
-import { Button } from "@contentstack/venus-components";
+import { Button, Notification, Tooltip } from "@contentstack/venus-components";
 /* Import our CSS */
 import "./styles.scss";
 /* Import our modules */
@@ -12,6 +12,7 @@ import utils from "../../common/utils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
 import WarningMessage from "../../components/WarningMessage";
+import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
@@ -45,10 +46,21 @@ const CustomField: React.FC = function () {
   );
   // state for current locale
   const [currentLocale, setCurrentLocale] = useState<string>("");
+  // state to manage disable of "add button"
+  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   // window variable for selector page
   let selectorPageWindow: any;
   // unique param in the asset object
   const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
+
+  // function to check and handle disable of "add assets" button
+  const handleBtnDisable = (data: any[], max_limit?: number) => {
+    const assetMaxLimit =
+      max_limit ?? state?.contentTypeConfig?.advanced?.max_limit;
+    if (data?.length < assetMaxLimit) {
+      setIsBtnDisable(false);
+    } else setIsBtnDisable(true);
+  };
 
   React.useEffect(() => {
     ContentstackAppSdk.init()
@@ -65,6 +77,8 @@ const CustomField: React.FC = function () {
         if (initialData?.length) {
           // set App's Custom Field Data
           setSelectedAssets(initialData);
+          // check for saved data length and handling button disable state
+          handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
         }
 
         setCurrentLocale(customFieldLocation?.entry?.locale);
@@ -104,15 +118,37 @@ const CustomField: React.FC = function () {
     return state?.config;
   };
 
+  const handleUniqueSelectedData = (dataArr: any[]) => {
+    if (dataArr?.length) {
+      const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
+      let finalAssets = utils.uniqBy([...selectedAssets, ...dataArr], uniqueID);
+
+      if (finalAssets?.length > assetLimit) {
+        finalAssets = finalAssets?.slice(0, assetLimit);
+        Notification({
+          displayContent: {
+            error: {
+              error_message:
+                localeTexts.CustomFields.assetLimit.notificationMsg,
+            },
+          },
+          notifyProps: {
+            hideProgressBar: true,
+          },
+          type: "error",
+        });
+      }
+
+      setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+      handleBtnDisable(finalAssets);
+    }
+  };
+
   // handle message event for selector window
   const handleMessage = (event: MessageEvent) => {
     if (selectorPageWindow) {
       const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
-      if (dataArr?.length) {
-        setSelectedAssets(
-          utils.uniqBy([...selectedAssets, ...dataArr], uniqueID)
-        ); // selectedAssets is array of assets selected in selectorpage
-      }
+      handleUniqueSelectedData(dataArr);
     }
   };
 
@@ -148,13 +184,9 @@ const CustomField: React.FC = function () {
         if (state?.config?.is_custom_json) {
           const keys = utils.extractKeys(state?.config?.dam_keys);
           const assetData = utils?.getFilteredAssets(assets, keys);
-          setSelectedAssets(
-            utils.uniqBy([...selectedAssets, ...assetData], uniqueID)
-          );
+          handleUniqueSelectedData(assetData);
         } else {
-          setSelectedAssets(
-            utils.uniqBy([...selectedAssets, ...assets], uniqueID)
-          );
+          handleUniqueSelectedData(assets);
         }
       }
     },
@@ -204,11 +236,13 @@ const CustomField: React.FC = function () {
   // function to remove the assets when "delete" action is triggered
   const removeAsset = useCallback(
     (removedId: string) => {
-      setSelectedAssets(
-        selectedAssets?.filter((asset) => asset?.[uniqueID] !== removedId)
+      const finalAssets = selectedAssets?.filter(
+        (asset) => asset?.[uniqueID] !== removedId
       );
+      setSelectedAssets(finalAssets);
+      handleBtnDisable(finalAssets);
     },
-    [selectedAssets]
+    [selectedAssets, handleBtnDisable]
   );
 
   // rearrange the order of assets
@@ -244,15 +278,23 @@ const CustomField: React.FC = function () {
                     {localeTexts.CustomFields.AssetNotAddedText}
                   </div>
                 )}
-                <Button
-                  buttonType="control"
-                  className="add-asset-btn"
-                  version="v2"
-                  onClick={openDAMSelectorPage}
-                  data-testid="add-btn"
+                <Tooltip
+                  content={localeTexts.CustomFields.assetLimit.btnTooltip}
+                  position="top"
+                  disabled={!isBtnDisable}
+                  style={constants.constantStyles.addBtnTooltip}
                 >
-                  {localeTexts.CustomFields.button.btnText}
-                </Button>
+                  <Button
+                    buttonType="control"
+                    className="add-asset-btn"
+                    version="v2"
+                    onClick={openDAMSelectorPage}
+                    data-testid="add-btn"
+                    disabled={isBtnDisable}
+                  >
+                    {localeTexts.CustomFields.button.btnText}
+                  </Button>
+                </Tooltip>
               </>
             ) : (
               <div data-testid="warning-component">
