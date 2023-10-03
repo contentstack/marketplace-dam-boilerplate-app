@@ -6,7 +6,9 @@ import { Navigate, HashRouter, Route, Routes } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
-import Loader from "../../components/Loader";
+import ConfigLoader from "../../components/Loaders/ConfigLoader";
+import CustomFieldLoader from "../../components/Loaders/CustomFieldLoader";
+import SelectorPageLoader from "../../components/Loaders/SelectorPage";
 /* Import our CSS */
 import "./styles.scss";
 
@@ -40,7 +42,7 @@ const App: React.FC = function () {
             <Route
               path="/config"
               element={
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<ConfigLoader />}>
                   <ConfigScreen />
                 </Suspense>
               }
@@ -48,7 +50,7 @@ const App: React.FC = function () {
             <Route
               path="/custom-field"
               element={
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<CustomFieldLoader />}>
                   <CustomField />
                 </Suspense>
               }
@@ -56,7 +58,7 @@ const App: React.FC = function () {
             <Route
               path="/selector-page"
               element={
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<SelectorPageLoader />}>
                   <SelectorPage />
                 </Suspense>
               }
