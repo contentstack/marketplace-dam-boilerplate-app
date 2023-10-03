@@ -6,13 +6,13 @@ import { Navigate, HashRouter, Route, Routes } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
+import Loader from "../../components/Loader";
 /* Import our CSS */
 import "./styles.scss";
 
 const ConfigScreen = React.lazy(() => import("../ConfigScreen"));
 const CustomField = React.lazy(() => import("../CustomField"));
 const SelectorPage = React.lazy(() => import("../SelectorPage"));
-const DefaultPage = React.lazy(() => import("../DefaultPage"));
 
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
@@ -40,7 +40,7 @@ const App: React.FC = function () {
             <Route
               path="/config"
               element={
-                <Suspense fallback={<DefaultPage />}>
+                <Suspense fallback={<Loader />}>
                   <ConfigScreen />
                 </Suspense>
               }
@@ -48,7 +48,7 @@ const App: React.FC = function () {
             <Route
               path="/custom-field"
               element={
-                <Suspense fallback={<DefaultPage />}>
+                <Suspense fallback={<Loader />}>
                   <CustomField />
                 </Suspense>
               }
@@ -56,7 +56,7 @@ const App: React.FC = function () {
             <Route
               path="/selector-page"
               element={
-                <Suspense fallback={<DefaultPage />}>
+                <Suspense fallback={<Loader />}>
                   <SelectorPage />
                 </Suspense>
               }
