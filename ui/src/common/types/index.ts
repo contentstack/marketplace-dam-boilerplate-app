@@ -74,9 +74,7 @@ export interface TypeOption {
 export interface TypeConfigComponent {
   objKey: string;
   objValue: any;
-  currentValue: any;
   updateConfig: Function;
-  errorState: string[];
 }
 
 export type Props = {
