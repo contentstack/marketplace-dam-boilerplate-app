@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useContext } from "react";
 /* Import other node modules */
 import {
   Field,
@@ -29,6 +29,7 @@ import localeTexts from "../../common/locale/en-us";
 import WarningMessage from "../../components/WarningMessage";
 import utils from "../../common/utils";
 import constants from "../../common/constants";
+import AppConfigContext from "../../common/contexts/AppConfigContext";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -36,10 +37,12 @@ import constants from "../../common/constants";
 export const TextInputField = function ({
   objKey,
   objValue,
-  currentValue,
   updateConfig,
-  errorState,
 }: TypeConfigComponent) {
+  const {
+    ErrorContext: { errorState },
+    StateContext: { state },
+  } = useContext(AppConfigContext);
   return (
     <>
       <Field>
@@ -65,7 +68,14 @@ export const TextInputField = function ({
         <TextInput
           id={`${objKey}-id`}
           required
-          value={currentValue}
+          value={
+            // eslint-disable-next-line
+            objValue?.saveInConfig
+              ? state?.installationData?.configuration?.[objKey]
+              : objValue?.saveInServerConfig
+              ? state?.installationData?.serverConfiguration?.[objKey]
+              : ""
+          }
           placeholder={objValue?.placeholderText}
           name={objKey}
           onChange={updateConfig}
@@ -115,10 +125,12 @@ export const RadioOption = function ({
 export const RadioInputField = function ({
   objKey,
   objValue,
-  currentValue,
   updateConfig,
-  errorState,
 }: TypeConfigComponent) {
+  const {
+    ErrorContext: { errorState },
+    RadioInputContext: { radioInputValues },
+  } = useContext(AppConfigContext);
   return (
     <>
       <Field>
@@ -145,7 +157,7 @@ export const RadioInputField = function ({
               fieldName={objKey}
               mode={option}
               index={index}
-              radioOption={currentValue}
+              radioOption={radioInputValues[objKey]}
               updateRadioOptions={updateConfig}
             />
           ))}
@@ -167,10 +179,12 @@ export const RadioInputField = function ({
 export const SelectInputField = function ({
   objKey,
   objValue,
-  currentValue,
   updateConfig,
-  errorState,
 }: TypeConfigComponent) {
+  const {
+    ErrorContext: { errorState },
+    SelectInputContext: { selectInputValues },
+  } = useContext(AppConfigContext);
   return (
     <>
       <Field>
@@ -194,7 +208,7 @@ export const SelectInputField = function ({
           onChange={(e: TypeOption) => updateConfig(e, objKey)}
           options={objValue?.options}
           placeholder={objValue?.placeholderText}
-          value={currentValue}
+          value={selectInputValues[objKey]}
           name={`${objKey}-id`}
           data-testid="select_input"
           version="v2"
@@ -235,11 +249,10 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
   return returnValue;
 };
 
-export const ModalComponent = function ({
-  props,
-  handleModalValue,
-  customOptions,
-}: any) {
+export const ModalComponent = function ({ props, handleModalValue }: any) {
+  const {
+    CustomOptionsContext: { customOptions },
+  } = useContext(AppConfigContext);
   const [modalValue, setModalValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<any[]>([]);
   const [options, setOptions] = useState<any>([...customOptions]);
@@ -342,12 +355,14 @@ export const ModalComponent = function ({
 
 export const JsonComponent = function ({
   handleModalValue,
-  isCustom,
   updateCustomJSON,
-  customOptions,
   updateTypeObj,
-  damKeys,
 }: any) {
+  const {
+    CustomOptionsContext: { customOptions },
+    CustomCheckContext: { isCustom },
+    DamKeysContext: { damKeys },
+  } = useContext(AppConfigContext);
   return (
     <>
       <Line type="dashed" />
@@ -422,7 +437,6 @@ export const JsonComponent = function ({
                   <ModalComponent
                     props={props}
                     handleModalValue={handleModalValue}
-                    customOptions={customOptions}
                   />
                 ),
                 testId: "cs-modal",
