@@ -96,6 +96,16 @@ const localeTexts = {
     cancelButton: "Cancel",
     confirmButton: "Remove",
   },
+  AppFailed: {
+    Message1: "The App was loaded outside Contentstack Dashboard.",
+    Message2:
+      "Please navigate to Your Stack in Contentstack where you just installed the Application ",
+    body: "For Assistance, please reach out to us at support@contentstack.com",
+    button: {
+      text: "Learn More",
+      url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-app-boilerplate/",
+    },
+  },
 };
 
 export default localeTexts;

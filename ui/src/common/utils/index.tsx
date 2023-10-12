@@ -1,8 +1,9 @@
 import React from "react";
 import { cbModal, Icon, Notification } from "@contentstack/venus-components";
 import localeTexts from "../locale/en-us";
-import { TypePopupWindowDetails } from "../types";
+import { TypeOption, TypePopupWindowDetails } from "../types";
 import DeleteModal from "../../components/DeleteModal";
+import rootConfig from "../../root_config";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -336,6 +337,101 @@ const gridViewDropdown = [
   },
 ];
 
+const configRootUtils = () => {
+  // custom whole json options from rootconfig
+  // eslint-disable-next-line
+  let { customJsonOptions, defaultFeilds } = rootConfig?.customWholeJson?.();
+  let customJsonConfigObj: any = {};
+  let jsonOptions: any[] = [];
+
+  // create actual options for select field
+  if (customJsonOptions?.length && defaultFeilds?.length) {
+    jsonOptions = getOptions(customJsonOptions, defaultFeilds);
+    defaultFeilds = getOptions(defaultFeilds);
+    customJsonConfigObj = {
+      is_custom_json: false,
+      dam_keys: defaultFeilds,
+    };
+  }
+
+  return {
+    jsonOptions,
+    defaultFeilds,
+    customJsonConfigObj,
+  };
+};
+
+const getSaveConfigOptions = (configInputFields: any) => {
+  // config objs to be saved in configuration
+  const saveInConfig: any = {};
+  // config objs to be saved in serverConfiguration
+  const saveInServerConfig: any = {};
+
+  Object.keys(configInputFields)?.forEach((field: string) => {
+    if (configInputFields[field]?.saveInConfig)
+      saveInConfig[field] = configInputFields[field];
+    if (configInputFields[field]?.saveInServerConfig)
+      saveInServerConfig[field] = configInputFields[field];
+  });
+
+  return {
+    saveInConfig,
+    saveInServerConfig,
+  };
+};
+
+const getDefaultInputValues = (configInputFields: any) => {
+  const { saveInConfig, saveInServerConfig } =
+    getSaveConfigOptions(configInputFields);
+
+  const radioValuesKeys = [
+    ...Object.keys(saveInConfig)?.filter(
+      (value) => saveInConfig?.[value]?.type === "radioInputFields"
+    ),
+    ...Object.keys(saveInServerConfig)?.filter(
+      (value) => saveInServerConfig?.[value]?.type === "radioInputFields"
+    ),
+  ];
+
+  const selectValuesKeys = [
+    ...Object.keys(saveInConfig)?.filter(
+      (value) => saveInConfig?.[value]?.type === "selectInputFields"
+    ),
+    ...Object.keys(saveInServerConfig)?.filter(
+      (value) => saveInServerConfig?.[value]?.type === "selectInputFields"
+    ),
+  ];
+
+  return {
+    radioValuesKeys,
+    selectValuesKeys,
+  };
+};
+
+const getIntialValueofComponents = ({
+  savedData,
+  radioValuesKeys,
+  selectValuesKeys,
+  configInputFields,
+}: any) => {
+  const radioValuesObj: any = {};
+  const selectValuesObj: any = {};
+  Object.keys(savedData)?.forEach((item: string) => {
+    if (radioValuesKeys?.includes(item)) {
+      radioValuesObj[item] = configInputFields?.[item]?.options?.filter(
+        (v: TypeOption) => v?.value === savedData?.[item]
+      )[0];
+    }
+    if (selectValuesKeys?.includes(item)) {
+      selectValuesObj[item] = configInputFields?.[item]?.options?.filter(
+        (v: TypeOption) => v?.value === savedData?.[item]
+      )[0];
+    }
+  });
+
+  return { radioValuesObj, selectValuesObj };
+};
+
 const utils = {
   popupWindow,
   mergeObjects,
@@ -350,6 +446,10 @@ const utils = {
   getFilteredAssets,
   toastMessage,
   gridViewDropdown,
+  configRootUtils,
+  getIntialValueofComponents,
+  getDefaultInputValues,
+  getSaveConfigOptions,
 };
 
 export default utils;

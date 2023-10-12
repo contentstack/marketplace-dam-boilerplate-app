@@ -30,6 +30,7 @@ import WarningMessage from "../../components/WarningMessage";
 import utils from "../../common/utils";
 import constants from "../../common/constants";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
+import ConfigStateContext from "../../common/contexts/ConfigStateContext";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -39,10 +40,7 @@ export const TextInputField = function ({
   objValue,
   updateConfig,
 }: TypeConfigComponent) {
-  const {
-    ErrorContext: { errorState },
-    StateContext: { state },
-  } = useContext(AppConfigContext);
+  const { installationData, errorState } = useContext(AppConfigContext);
   return (
     <>
       <Field>
@@ -71,9 +69,9 @@ export const TextInputField = function ({
           value={
             // eslint-disable-next-line
             objValue?.saveInConfig
-              ? state?.installationData?.configuration?.[objKey]
+              ? installationData?.configuration?.[objKey]
               : objValue?.saveInServerConfig
-              ? state?.installationData?.serverConfiguration?.[objKey]
+              ? installationData?.serverConfiguration?.[objKey]
               : ""
           }
           placeholder={objValue?.placeholderText}
@@ -125,12 +123,12 @@ export const RadioOption = function ({
 export const RadioInputField = function ({
   objKey,
   objValue,
-  updateConfig,
 }: TypeConfigComponent) {
   const {
-    ErrorContext: { errorState },
-    RadioInputContext: { radioInputValues },
-  } = useContext(AppConfigContext);
+    RadioInputContext: { radioInputValues, updateRadioOptions },
+  } = useContext(ConfigStateContext);
+  const { errorState } = useContext(AppConfigContext);
+
   return (
     <>
       <Field>
@@ -158,7 +156,7 @@ export const RadioInputField = function ({
               mode={option}
               index={index}
               radioOption={radioInputValues[objKey]}
-              updateRadioOptions={updateConfig}
+              updateRadioOptions={updateRadioOptions}
             />
           ))}
         </div>
@@ -179,12 +177,11 @@ export const RadioInputField = function ({
 export const SelectInputField = function ({
   objKey,
   objValue,
-  updateConfig,
 }: TypeConfigComponent) {
   const {
-    ErrorContext: { errorState },
-    SelectInputContext: { selectInputValues },
-  } = useContext(AppConfigContext);
+    SelectInputContext: { selectInputValues, updateSelectConfig },
+  } = useContext(ConfigStateContext);
+  const { errorState } = useContext(AppConfigContext);
   return (
     <>
       <Field>
@@ -205,7 +202,7 @@ export const SelectInputField = function ({
           <Help text={objValue?.helpText} data-testid="select_help" />
         )}
         <Select
-          onChange={(e: TypeOption) => updateConfig(e, objKey)}
+          onChange={(e: TypeOption) => updateSelectConfig(e, objKey)}
           options={objValue?.options}
           placeholder={objValue?.placeholderText}
           value={selectInputValues[objKey]}
@@ -252,7 +249,7 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
 export const ModalComponent = function ({ props, handleModalValue }: any) {
   const {
     CustomOptionsContext: { customOptions },
-  } = useContext(AppConfigContext);
+  } = useContext(ConfigStateContext);
   const [modalValue, setModalValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<any[]>([]);
   const [options, setOptions] = useState<any>([...customOptions]);
@@ -353,16 +350,13 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
   );
 };
 
-export const JsonComponent = function ({
-  handleModalValue,
-  updateCustomJSON,
-  updateTypeObj,
-}: any) {
+export const JsonComponent = function () {
   const {
     CustomOptionsContext: { customOptions },
     CustomCheckContext: { isCustom },
     DamKeysContext: { damKeys },
-  } = useContext(AppConfigContext);
+    JSONCompContext: { handleModalValue, updateCustomJSON, updateTypeObj },
+  } = useContext(ConfigStateContext);
   return (
     <>
       <Line type="dashed" />
