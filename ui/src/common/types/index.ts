@@ -1,5 +1,3 @@
-import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
-
 export interface TypePopupWindowDetails {
   url: string;
   title: string;
@@ -7,10 +5,13 @@ export interface TypePopupWindowDetails {
   h: number;
 }
 
+export type Props = {
+  [key: string]: any;
+};
+
 export interface TypeAppSdkConfigState {
-  installationData: IInstallationData;
-  setInstallationData: (event: any) => any;
-  appSdkInitialized: boolean;
+  configuration: Props;
+  serverConfiguration: Props;
 }
 
 export interface TypeSDKData {
@@ -74,12 +75,8 @@ export interface TypeOption {
 export interface TypeConfigComponent {
   objKey: string;
   objValue: any;
-  updateConfig: Function;
+  updateConfig?: Function;
 }
-
-export type Props = {
-  [key: string]: any;
-};
 
 export interface TypeRadioOption {
   fieldName: string;

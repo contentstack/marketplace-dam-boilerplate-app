@@ -12,6 +12,7 @@ import SelectorPageLoader from "../../components/Loaders/SelectorPage";
 /* Import our CSS */
 import "./styles.scss";
 import AppConfigProvider from "../../common/providers/AppConfigProvider";
+import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 
 const ConfigScreen = React.lazy(() => import("../ConfigScreen"));
 const CustomField = React.lazy(() => import("../CustomField"));
@@ -38,35 +39,37 @@ const App: React.FC = function () {
           /* Below list has all the possible UI paths\.
               Keep only the paths that are required for your app and
               remove the remaining paths and their source code also. */}
-          <Routes>
-            <Route path="/" element={<HomeRedirectHandler />} />
-            <Route
-              path="/config"
-              element={
-                <Suspense fallback={<ConfigLoader />}>
-                  <AppConfigProvider>
-                    <ConfigScreen />
-                  </AppConfigProvider>
-                </Suspense>
-              }
-            />
-            <Route
-              path="/custom-field"
-              element={
-                <Suspense fallback={<CustomFieldLoader />}>
-                  <CustomField />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/selector-page"
-              element={
-                <Suspense fallback={<SelectorPageLoader />}>
-                  <SelectorPage />
-                </Suspense>
-              }
-            />
-          </Routes>
+          <MarketplaceAppProvider>
+            <Routes>
+              <Route path="/" element={<HomeRedirectHandler />} />
+              <Route
+                path="/config"
+                element={
+                  <Suspense fallback={<ConfigLoader />}>
+                    <AppConfigProvider>
+                      <ConfigScreen />
+                    </AppConfigProvider>
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/custom-field"
+                element={
+                  <Suspense fallback={<CustomFieldLoader />}>
+                    <CustomField />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/selector-page"
+                element={
+                  <Suspense fallback={<SelectorPageLoader />}>
+                    <SelectorPage />
+                  </Suspense>
+                }
+              />
+            </Routes>
+          </MarketplaceAppProvider>
         </HashRouter>
       </ErrorBoundary>
     </div>

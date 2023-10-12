@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* Import React modules */
 import React, { useCallback, useContext } from "react";
 /* ContentStack Modules */
@@ -12,25 +11,19 @@ import {
   SelectInputField,
   TextInputField,
 } from "./Components";
+import AppConfigContext from "../../common/contexts/AppConfigContext";
+import ConfigStateProvider from "../../common/providers/ConfigStateProvider";
 import rootConfig from "../../root_config";
-import { TypeOption } from "../../common/types";
 /* Import our CSS */
 import "./styles.scss";
-import AppConfigContext from "../../common/contexts/AppConfigContext";
 
 const ConfigScreen: React.FC = function () {
   // context usage for global states thorughout the component
-  const {
-    StateContext: { state },
-    CustomOptionsContext: { customOptions, setCustomOptions },
-    CustomCheckContext: { setIsCustom },
-    DamKeysContext: { damKeys, setDamKeys },
-    KeyPathContext: { keyPathOptions, setKeyPathOptions },
-    RadioInputContext: { radioInputValues, setRadioInputValues },
-    SelectInputContext: { selectInputValues, setSelectInputValues },
-    CustomFieldsContext: { configInputFields },
-    checkConfigFields,
-  } = useContext(AppConfigContext);
+  const { installationData, setInstallationData, checkConfigFields } =
+    useContext(AppConfigContext);
+
+  // entire configuration object returned from configureConfigScreen
+  const configInputFields = rootConfig?.configureConfigScreen?.();
 
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
@@ -43,9 +36,8 @@ const ConfigScreen: React.FC = function () {
         fieldValue = fieldValue?.trim();
       }
 
-      const updatedConfig = state?.installationData?.configuration || {};
-      const updatedServerConfig =
-        state?.installationData?.serverConfiguration || {};
+      const updatedConfig = installationData?.configuration || {};
+      const updatedServerConfig = installationData?.serverConfiguration || {};
 
       if (inConfig || configInputFields?.[fieldName]?.saveInConfig) {
         updatedConfig[fieldName] = fieldValue;
@@ -61,20 +53,17 @@ const ConfigScreen: React.FC = function () {
         configuration: updatedConfig,
         serverConfiguration: updatedServerConfig,
       });
-      if (state?.setInstallationData) {
-        await state.setInstallationData({
-          ...state.installationData,
-          configuration: updatedConfig,
-          serverConfiguration: updatedServerConfig,
-        });
-      }
+      setInstallationData({
+        configuration: updatedConfig,
+        serverConfiguration: updatedServerConfig,
+      });
       return true;
     },
     [
-      state?.setInstallationData,
-      state?.installationData,
-      state?.installationData?.configuration,
-      state?.installationData?.serverConfiguration,
+      setInstallationData,
+      installationData,
+      installationData?.configuration,
+      installationData?.serverConfiguration,
     ]
   );
 
@@ -90,24 +79,6 @@ const ConfigScreen: React.FC = function () {
     updateConfig(value, inConfig, inServerConfig);
   };
 
-  // updating the select option state
-  const updateSelectConfig = useCallback(
-    (e: TypeOption, fieldName: string) => {
-      setSelectInputValues({ ...selectInputValues, [fieldName]: e });
-      updateValueFunc(fieldName, e?.value);
-    },
-    [selectInputValues]
-  );
-
-  // updating the radio option state
-  const updateRadioOptions = useCallback(
-    (fieldName: string, option: TypeOption) => {
-      setRadioInputValues({ ...radioInputValues, [fieldName]: option });
-      updateValueFunc(fieldName, option?.value);
-    },
-    [radioInputValues]
-  );
-
   // updating the custom config state
   const handleCustomConfigUpdate = (
     fieldName: string,
@@ -118,39 +89,6 @@ const ConfigScreen: React.FC = function () {
     const configObj: any = {};
     configObj.target = { name: fieldName, value: fieldValue };
     updateConfig(configObj, saveConfig, saveServerConfig);
-  };
-
-  const updateCustomJSON = (e: any) => {
-    const check = e?.target?.id !== "wholeJSON";
-    setIsCustom(check);
-    updateValueFunc("is_custom_json", check, true);
-  };
-
-  const updateTypeObj = (list: any[]) => {
-    const damKeysTemp: any[] = [];
-    list?.forEach((key: any) => damKeysTemp?.push(key?.value));
-    setDamKeys(list);
-    updateValueFunc("dam_keys", list, true);
-  };
-
-  const handleModalValue = (
-    modalValueArr: any[],
-    mode: string,
-    updatedValue: any[]
-  ) => {
-    const updatedOptions = [
-      ...keyPathOptions,
-      ...modalValueArr,
-      ...updatedValue,
-    ];
-    setKeyPathOptions(updatedOptions);
-    updateValueFunc("keypath_options", updatedOptions, true);
-    setCustomOptions([...customOptions, ...modalValueArr, ...updatedValue]);
-    if (mode === "createApply") {
-      const selectedKeys = [...damKeys, ...updatedValue];
-      setDamKeys(selectedKeys);
-      updateTypeObj(selectedKeys);
-    }
   };
 
   // return render jsx for the config object provided
@@ -170,21 +108,13 @@ const ConfigScreen: React.FC = function () {
         case "radioInputFields":
           return (
             <div key={`${objKey}_${index}`}>
-              <RadioInputField
-                objKey={objKey}
-                objValue={objValue}
-                updateConfig={updateRadioOptions}
-              />
+              <RadioInputField objKey={objKey} objValue={objValue} />
             </div>
           );
         case "selectInputFields":
           return (
             <div key={`${objKey}_${index}`}>
-              <SelectInputField
-                objKey={objKey}
-                objValue={objValue}
-                updateConfig={updateSelectConfig}
-              />
+              <SelectInputField objKey={objKey} objValue={objValue} />
             </div>
           );
         default:
@@ -201,19 +131,17 @@ const ConfigScreen: React.FC = function () {
   return (
     <div className="layout-container">
       <div className="page-wrapper">
-        <div className="config-wrapper" data-testid="config-wrapper">
-          {renderConfig()}
-          {rootConfig?.customConfigComponent?.(
-            state?.installationData?.configuration,
-            state?.installationData?.serverConfiguration,
-            handleCustomConfigUpdate
-          )}
-          <JsonComponent
-            handleModalValue={handleModalValue}
-            updateCustomJSON={updateCustomJSON}
-            updateTypeObj={updateTypeObj}
-          />
-        </div>
+        <ConfigStateProvider updateValueFunc={updateValueFunc}>
+          <div className="config-wrapper" data-testid="config-wrapper">
+            {renderConfig()}
+            {rootConfig?.customConfigComponent?.(
+              installationData?.configuration,
+              installationData?.serverConfiguration,
+              handleCustomConfigUpdate
+            )}
+            <JsonComponent />
+          </div>
+        </ConfigStateProvider>
       </div>
     </div>
   );
