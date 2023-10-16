@@ -6,8 +6,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 /* Import our modules */
 import { TypeAssetCard } from "../../../common/types";
-import utils from "../../../common/utils";
 import constants from "../../../common/constants";
+import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -69,7 +69,7 @@ const AssetCard: React.FC<TypeAssetCard> = function ({
           width={width || ""}
           height={height || ""}
           size={Number(size)}
-          actions={utils.getHoverActions(
+          actions={CustomFieldUtils.getHoverActions(
             type,
             removeAsset,
             id,

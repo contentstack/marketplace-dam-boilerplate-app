@@ -8,7 +8,7 @@ import "./styles.scss";
 /* Import our modules */
 import localeTexts from "../../common/locale/en-us";
 import { TypeAsset, TypeSDKData } from "../../common/types";
-import utils from "../../common/utils";
+import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
 import WarningMessage from "../../components/WarningMessage";
@@ -110,7 +110,7 @@ const CustomField: React.FC = function () {
       const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
       if (dataArr?.length) {
         setSelectedAssets(
-          utils.uniqBy([...selectedAssets, ...dataArr], uniqueID)
+          CustomFieldUtils.uniqBy([...selectedAssets, ...dataArr], uniqueID)
         ); // selectedAssets is array of assets selected in selectorpage
       }
     }
@@ -146,14 +146,14 @@ const CustomField: React.FC = function () {
       ) {
         const assets = data?.selectedAssets;
         if (state?.config?.is_custom_json) {
-          const keys = utils.extractKeys(state?.config?.dam_keys);
-          const assetData = utils?.getFilteredAssets(assets, keys);
+          const keys = CustomFieldUtils.extractKeys(state?.config?.dam_keys);
+          const assetData = CustomFieldUtils.getFilteredAssets(assets, keys);
           setSelectedAssets(
-            utils.uniqBy([...selectedAssets, ...assetData], uniqueID)
+            CustomFieldUtils.uniqBy([...selectedAssets, ...assetData], uniqueID)
           );
         } else {
           setSelectedAssets(
-            utils.uniqBy([...selectedAssets, ...assets], uniqueID)
+            CustomFieldUtils.uniqBy([...selectedAssets, ...assets], uniqueID)
           );
         }
       }
@@ -165,7 +165,7 @@ const CustomField: React.FC = function () {
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        utils.popupWindow({
+        CustomFieldUtils.popupWindow({
           url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
           title: localeTexts.SelectorPage.title,
           w: 1500,
@@ -184,7 +184,7 @@ const CustomField: React.FC = function () {
             state?.config,
             state?.contentTypeConfig
           );
-          selectorPageWindow = utils.popupWindow({
+          selectorPageWindow = CustomFieldUtils.popupWindow({
             url,
             title: `${localeTexts.SelectorPage.title}`,
             w: 1500, // You Change These According To Your App
