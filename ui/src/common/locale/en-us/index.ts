@@ -54,6 +54,12 @@ const localeTexts = {
     emptyValue: "Field Value Missing",
   },
   CustomFields: {
+    assetLimit: {
+      btnTooltip:
+        "You cannot choose assets as the maximum limit has been reached.",
+      notificationMsg:
+        "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
+    },
     button: {
       btnText: "Choose Asset(s)",
     },
