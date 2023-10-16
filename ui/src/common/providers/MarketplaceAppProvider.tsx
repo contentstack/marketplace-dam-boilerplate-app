@@ -17,7 +17,6 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         await appSDK?.location?.CustomField?.frame?.enableAutoResizing();
         const appSdkConfig = await appSDK?.getConfig();
         await setConfig(appSdkConfig);
-        setFailed(true);
       })
       .catch((error) => {
         console.error("Error: Contentstack Initialization", error);
