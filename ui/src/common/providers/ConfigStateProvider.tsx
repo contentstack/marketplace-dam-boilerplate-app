@@ -7,9 +7,9 @@ import React, {
 } from "react";
 import rootConfig from "../../root_config";
 import { TypeOption } from "../types";
-import utils from "../utils";
 import ConfigStateContext from "../contexts/ConfigStateContext";
 import AppConfigContext from "../contexts/AppConfigContext";
+import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 
 const ConfigStateProvider: React.FC<any> = function ({
   children,
@@ -23,8 +23,8 @@ const ConfigStateProvider: React.FC<any> = function ({
     saveInConfig,
     saveInServerConfig,
     checkConfigFields,
+    installationData,
   } = useContext(AppConfigContext);
-  const { installationData } = useContext(AppConfigContext);
 
   // local state for options of custom json
   const [customOptions, setCustomOptions] = useState<any[]>(jsonOptions);
@@ -141,7 +141,7 @@ const ConfigStateProvider: React.FC<any> = function ({
   useEffect(() => {
     // getting the default key names for radio and select input
     const { radioValuesKeys, selectValuesKeys } =
-      utils.getDefaultInputValues(configInputFields);
+      ConfigScreenUtils.getDefaultInputValues(configInputFields);
 
     checkConfigFields(installationData);
     setIsCustom(installationData?.configuration?.is_custom_json ?? false);
@@ -154,7 +154,7 @@ const ConfigStateProvider: React.FC<any> = function ({
       ...installationData?.serverConfiguration,
     };
     const { radioValuesObj, selectValuesObj } =
-      utils.getIntialValueofComponents({
+      ConfigScreenUtils.getIntialValueofComponents({
         savedData,
         radioValuesKeys,
         selectValuesKeys,
@@ -162,54 +162,54 @@ const ConfigStateProvider: React.FC<any> = function ({
       });
     setRadioInputValues(radioValuesObj);
     setSelectInputValues(selectValuesObj);
-  }, []);
-
-  const RadioInputContext = useMemo(
-    () => ({ radioInputValues, setRadioInputValues, updateRadioOptions }),
-    [radioInputValues, setRadioInputValues, updateRadioOptions]
-  );
-
-  const SelectInputContext = useMemo(
-    () => ({ selectInputValues, setSelectInputValues, updateSelectConfig }),
-    [selectInputValues, setSelectInputValues, updateSelectConfig]
-  );
-
-  const CustomOptionsContext = useMemo(
-    () => ({ customOptions, setCustomOptions }),
-    [customOptions, setCustomOptions]
-  );
-
-  const CustomCheckContext = useMemo(
-    () => ({ isCustom, setIsCustom }),
-    [isCustom, setIsCustom]
-  );
-
-  const DamKeysContext = useMemo(
-    () => ({ damKeys, setDamKeys }),
-    [damKeys, setDamKeys]
-  );
-
-  const JSONCompContext = useMemo(
-    () => ({ handleModalValue, updateCustomJSON, updateTypeObj }),
-    [handleModalValue, updateCustomJSON, updateTypeObj]
-  );
+  }, [installationData?.configuration, installationData?.serverConfiguration]);
 
   const contextValue = useMemo(
     () => ({
-      CustomOptionsContext,
-      CustomCheckContext,
-      DamKeysContext,
-      RadioInputContext,
-      SelectInputContext,
-      JSONCompContext,
+      CustomOptionsContext: {
+        customOptions,
+        setCustomOptions,
+      },
+      CustomCheckContext: {
+        isCustom,
+        setIsCustom,
+      },
+      DamKeysContext: {
+        damKeys,
+        setDamKeys,
+      },
+      RadioInputContext: {
+        radioInputValues,
+        setRadioInputValues,
+        updateRadioOptions,
+      },
+      SelectInputContext: {
+        selectInputValues,
+        setSelectInputValues,
+        updateSelectConfig,
+      },
+      JSONCompContext: {
+        handleModalValue,
+        updateCustomJSON,
+        updateTypeObj,
+      },
     }),
     [
-      CustomOptionsContext,
-      CustomCheckContext,
-      DamKeysContext,
-      RadioInputContext,
-      SelectInputContext,
-      JSONCompContext,
+      customOptions,
+      setCustomOptions,
+      isCustom,
+      setIsCustom,
+      damKeys,
+      setDamKeys,
+      radioInputValues,
+      setRadioInputValues,
+      updateRadioOptions,
+      selectInputValues,
+      setSelectInputValues,
+      updateSelectConfig,
+      handleModalValue,
+      updateCustomJSON,
+      updateTypeObj,
     ]
   );
 

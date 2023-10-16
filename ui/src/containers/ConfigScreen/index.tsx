@@ -13,11 +13,14 @@ import {
 } from "./Components";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateProvider from "../../common/providers/ConfigStateProvider";
+import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
+import AppFailed from "../../components/AppFailed";
 import rootConfig from "../../root_config";
 /* Import our CSS */
 import "./styles.scss";
 
 const ConfigScreen: React.FC = function () {
+  const { appFailed } = useContext(MarketplaceAppContext);
   // context usage for global states thorughout the component
   const { installationData, setInstallationData, checkConfigFields } =
     useContext(AppConfigContext);
@@ -131,17 +134,21 @@ const ConfigScreen: React.FC = function () {
   return (
     <div className="layout-container">
       <div className="page-wrapper">
-        <ConfigStateProvider updateValueFunc={updateValueFunc}>
-          <div className="config-wrapper" data-testid="config-wrapper">
-            {renderConfig()}
-            {rootConfig?.customConfigComponent?.(
-              installationData?.configuration,
-              installationData?.serverConfiguration,
-              handleCustomConfigUpdate
-            )}
-            <JsonComponent />
-          </div>
-        </ConfigStateProvider>
+        {appFailed ? (
+          <AppFailed />
+        ) : (
+          <ConfigStateProvider updateValueFunc={updateValueFunc}>
+            <div className="config-wrapper" data-testid="config-wrapper">
+              {renderConfig()}
+              {rootConfig?.customConfigComponent?.(
+                installationData?.configuration,
+                installationData?.serverConfiguration,
+                handleCustomConfigUpdate
+              )}
+              <JsonComponent />
+            </div>
+          </ConfigStateProvider>
+        )}
       </div>
     </div>
   );

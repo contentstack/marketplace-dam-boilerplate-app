@@ -27,10 +27,10 @@ import {
 } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import WarningMessage from "../../components/WarningMessage";
-import utils from "../../common/utils";
 import constants from "../../common/constants";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateContext from "../../common/contexts/ConfigStateContext";
+import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -266,7 +266,7 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
     if (updatedValue?.length) {
       setOptions([...options, ...updatedValue]);
       setSelectOptions([...selectOptions, ...updatedValue]);
-      utils.toastMessage(
+      ConfigScreenUtils.toastMessage(
         localeTexts.ConfigFields.customWholeJson.modal.successToast
       );
     }

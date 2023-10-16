@@ -5,20 +5,19 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { isEmpty } from "lodash";
 import AppConfigContext from "../contexts/AppConfigContext";
 import rootConfig from "../../root_config";
 import { TypeAppSdkConfigState } from "../types";
-import utils from "../utils";
 import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
+import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
   const { saveInConfig, saveInServerConfig } =
-    utils.getSaveConfigOptions(configInputFields);
+    ConfigScreenUtils.getSaveConfigOptions(configInputFields);
   const { jsonOptions, defaultFeilds, customJsonConfigObj } =
-    utils.configRootUtils();
+    ConfigScreenUtils.configRootUtils();
 
   // ref for managing the save button disable state
   const appConfig = useRef<any>();
@@ -57,53 +56,25 @@ const AppConfigProvider: React.FC = function ({ children }) {
       },
     });
 
-  useEffect(() => {
-    if (!isEmpty(installationData)) return;
-    const sdkConfigData = location?.installation;
-    appConfig.current = sdkConfigData;
-    sdkConfigData
-      ?.getInstallationData()
-      .then((data: TypeAppSdkConfigState) => {
-        setInstallation(data);
-      })
-      .catch((err: Error) => {
-        console.error(err);
-      });
-  }, [installationData, setInstallation]);
-
-  const setInstallationData = useCallback(
-    async (data: { [key: string]: any }) => {
-      console.info("In setInstallationData", data, location);
-      const newInstallationData: TypeAppSdkConfigState = {
-        ...installationData,
-        configuration: data?.configuration,
-        serverConfiguration: data?.serverConfiguration,
-      };
-      await location?.installation?.setInstallationData(newInstallationData);
-      setInstallation(newInstallationData);
-    },
-    [location, setInstallation]
-  );
-
   // function to check if field values are empty and handles save button disable on empty field values
   const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
     const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
     const missingValues: string[] = [];
 
-    Object.entries({ ...configuration, ...serverConfiguration })?.forEach(
-      ([key, value]: any) => {
-        if (!skipKeys?.includes(key)) {
-          if (
-            !value ||
-            (Array.isArray(value) && !value?.length) ||
-            !Object.keys(value)?.length
-          ) {
-            missingValues?.push(key);
-          }
+    Object.entries({
+      ...configuration,
+      ...serverConfiguration,
+    })?.forEach(([key, value]: any) => {
+      if (!skipKeys?.includes(key)) {
+        if (
+          !value ||
+          (Array.isArray(value) && !value?.length) ||
+          !Object.keys(value)?.length
+        ) {
+          missingValues?.push(key);
         }
       }
-    );
-
+    });
     setErrorState(missingValues);
     if (missingValues?.length) {
       appConfig?.current?.setValidity(false, {
@@ -113,6 +84,42 @@ const AppConfigProvider: React.FC = function ({ children }) {
       appConfig?.current?.setValidity(true);
     }
   };
+
+  useEffect(() => {
+    if (location) {
+      const sdkConfigData = location?.installation;
+      appConfig.current = sdkConfigData;
+
+      if (sdkConfigData) {
+        sdkConfigData
+          .getInstallationData()
+          .then((installationDataFromSDK: TypeAppSdkConfigState) => {
+            const installationDataOfSdk = ConfigScreenUtils.mergeObjects(
+              installationData,
+              installationDataFromSDK
+            );
+            setInstallation(installationDataOfSdk);
+            checkConfigFields(installationDataOfSdk);
+          })
+          .catch((err: Error) => {
+            console.error(err);
+          });
+      }
+    }
+  }, [location]);
+
+  const setInstallationData = useCallback(
+    async (data: { [key: string]: any }) => {
+      const newInstallationData: TypeAppSdkConfigState = {
+        ...installationData,
+        configuration: data?.configuration,
+        serverConfiguration: data?.serverConfiguration,
+      };
+      await setInstallation(newInstallationData);
+      await location?.installation?.setInstallationData(newInstallationData);
+    },
+    [location]
+  );
 
   const StateContext = useMemo(
     () => ({

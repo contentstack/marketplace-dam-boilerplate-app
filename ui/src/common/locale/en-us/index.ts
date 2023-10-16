@@ -97,9 +97,8 @@ const localeTexts = {
     confirmButton: "Remove",
   },
   AppFailed: {
-    Message1: "The App was loaded outside Contentstack Dashboard.",
-    Message2:
-      "Please navigate to Your Stack in Contentstack where you just installed the Application ",
+    Message1: "App Location Iniailization Failed.",
+    Message2: "Please reload the location and Try Again!",
     body: "For Assistance, please reach out to us at support@contentstack.com",
     button: {
       text: "Learn More",

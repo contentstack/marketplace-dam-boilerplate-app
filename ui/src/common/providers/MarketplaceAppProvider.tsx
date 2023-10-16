@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import { isNull } from "lodash";
 import { Props } from "../types";
-import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
 const MarketplaceAppProvider: React.FC = function ({ children }) {
@@ -14,13 +13,14 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
   useEffect(() => {
     ContentstackAppSDK.init()
       .then(async (appSDK: any) => {
-        setAppSdk(appSDK);
+        await setAppSdk(appSDK);
         await appSDK?.location?.CustomField?.frame?.enableAutoResizing();
         const appSdkConfig = await appSDK?.getConfig();
-        setConfig(appSdkConfig);
+        await setConfig(appSdkConfig);
+        setFailed(true);
       })
       .catch((error) => {
-        console.info("Error inside ", error);
+        console.error("Error: Contentstack Initialization", error);
         setFailed(true);
       });
   }, []);
@@ -31,13 +31,9 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
     return <div>Loading...</div>;
   }
 
-  if (failed) {
-    return <AppFailed />;
-  }
-
   const contextValue = useMemo(
-    () => ({ appSdk, appConfig }),
-    [appSdk, appConfig]
+    () => ({ appSdk, appConfig, appFailed: failed }),
+    [appSdk, appConfig, failed]
   );
 
   return (

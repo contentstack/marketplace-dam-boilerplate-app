@@ -6,7 +6,7 @@ import { TypeAssetList } from "../../../common/types";
 import constants from "../../../common/constants";
 import NoImage from "../../../components/NoImage";
 import localeTexts from "../../../common/locale/en-us";
-import utils from "../../../common/utils";
+import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
 
 const AssetList: React.FC<TypeAssetList> = function ({
   id,
@@ -96,7 +96,7 @@ const AssetList: React.FC<TypeAssetList> = function ({
       ) : (
         <ActionTooltip
           list={
-            utils.getListHoverActions(
+            CustomFieldUtils.getListHoverActions(
               type,
               removeAsset,
               id,

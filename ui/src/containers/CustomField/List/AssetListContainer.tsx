@@ -5,9 +5,9 @@ import { DndContext, closestCenter, DragOverlay } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 /* Import our modules */
 import { TypeAsset, TypeCardContainer } from "../../../common/types";
-import utils from "../../../common/utils";
 import AssetList from "./AssetList";
 import localeTexts from "../../../common/locale/en-us";
+import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -94,7 +94,7 @@ const AssetListContainer: React.FC<TypeCardContainer> = function ({
                   {activeId ? (
                     <AssetList
                       id={activeId}
-                      asset={utils.findAsset(assets, activeId)}
+                      asset={CustomFieldUtils.findAsset(assets, activeId)}
                       removeAsset={removeAsset}
                     />
                   ) : null}

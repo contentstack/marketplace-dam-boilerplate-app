@@ -6,10 +6,10 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { Dropdown, Tooltip, Icon } from "@contentstack/venus-components";
 /* Import our modules */
 import { TypeSelectedItems } from "../../common/types";
-import utils from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import AssetCardContainer from "./Card/AssetCardContainer";
 import AssetListContainer from "./List/AssetListContainer";
+import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -41,8 +41,8 @@ const AssetContainer: React.FC<TypeSelectedItems> = function ({
       const { active, over } = event;
       setActiveId(null);
       if (active?.id !== over?.id) {
-        const oldIndex = utils.findAssetIndex(assets, active?.id);
-        const newIndex = utils.findAssetIndex(assets, over?.id);
+        const oldIndex = CustomFieldUtils.findAssetIndex(assets, active?.id);
+        const newIndex = CustomFieldUtils.findAssetIndex(assets, over?.id);
 
         const updated = arrayMove(assets, oldIndex, newIndex);
         setRearrangedAssets(updated);
@@ -66,7 +66,7 @@ const AssetContainer: React.FC<TypeSelectedItems> = function ({
         </span>
         <div className="viewToggler">
           <Dropdown
-            list={utils.gridViewDropdown}
+            list={CustomFieldUtils.gridViewDropdown}
             dropDownType="primary"
             type="click"
             viewAs="label"
