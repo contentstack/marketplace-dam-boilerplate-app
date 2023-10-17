@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ActionTooltip, Icon, Tooltip } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -7,12 +7,11 @@ import constants from "../../../common/constants";
 import NoImage from "../../../components/NoImage";
 import localeTexts from "../../../common/locale/en-us";
 import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
+import CustomFieldContext from "../../../common/contexts/CustomFieldContext";
 
-const AssetList: React.FC<TypeAssetList> = function ({
-  id,
-  asset,
-  removeAsset,
-}) {
+const AssetList: React.FC<TypeAssetList> = function ({ id }) {
+  const { removeAsset, renderAssets: assets } = useContext(CustomFieldContext);
+  const asset = CustomFieldUtils.findAsset(assets, id);
   const [imageError, setImageError] = useState<boolean>(false);
   const { name, type, thumbnailUrl, previewUrl, platformUrl } = asset;
   const {
