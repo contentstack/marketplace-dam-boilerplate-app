@@ -1,24 +1,22 @@
 /* Import React modules */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 /* Import other node modules */
 import { PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Dropdown, Tooltip, Icon } from "@contentstack/venus-components";
 /* Import our modules */
-import { TypeSelectedItems } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import AssetCardContainer from "./Card/AssetCardContainer";
 import AssetListContainer from "./List/AssetListContainer";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
+import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 /* Import node module CSS */
 /* Import our CSS */
 
 // component contains the asset container structure which acts as a droppable space for DnD context
-const AssetContainer: React.FC<TypeSelectedItems> = function ({
-  assets,
-  removeAsset,
-  setRearrangedAssets,
-}) {
+const AssetContainer: React.FC = function () {
+  const { renderAssets: assets, setRearrangedAssets } =
+    useContext(CustomFieldContext);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<any>({ value: "card" });
   const sensors = useSensors(
@@ -43,7 +41,6 @@ const AssetContainer: React.FC<TypeSelectedItems> = function ({
       if (active?.id !== over?.id) {
         const oldIndex = CustomFieldUtils.findAssetIndex(assets, active?.id);
         const newIndex = CustomFieldUtils.findAssetIndex(assets, over?.id);
-
         const updated = arrayMove(assets, oldIndex, newIndex);
         setRearrangedAssets(updated);
       }
@@ -95,8 +92,6 @@ const AssetContainer: React.FC<TypeSelectedItems> = function ({
       </div>
       {view?.value === "card" ? (
         <AssetCardContainer
-          assets={assets}
-          removeAsset={removeAsset}
           sensors={sensors}
           onDragEnd={onDragEnd}
           onDragCancel={onDragCancel}
@@ -105,8 +100,6 @@ const AssetContainer: React.FC<TypeSelectedItems> = function ({
         />
       ) : (
         <AssetListContainer
-          assets={assets}
-          removeAsset={removeAsset}
           sensors={sensors}
           onDragEnd={onDragEnd}
           onDragCancel={onDragCancel}

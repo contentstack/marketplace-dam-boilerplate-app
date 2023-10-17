@@ -13,6 +13,7 @@ import SelectorPageLoader from "../../components/Loaders/SelectorPage";
 import "./styles.scss";
 import AppConfigProvider from "../../common/providers/AppConfigProvider";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
+import CustomFieldProvider from "../../common/providers/CustomFieldProvider";
 
 const ConfigScreen = React.lazy(() => import("../ConfigScreen"));
 const CustomField = React.lazy(() => import("../CustomField"));
@@ -56,7 +57,9 @@ const App: React.FC = function () {
                 path="/custom-field"
                 element={
                   <Suspense fallback={<CustomFieldLoader />}>
-                    <CustomField />
+                    <CustomFieldProvider>
+                      <CustomField />
+                    </CustomFieldProvider>
                   </Suspense>
                 }
               />

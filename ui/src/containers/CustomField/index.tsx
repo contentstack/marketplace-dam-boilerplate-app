@@ -1,92 +1,49 @@
 /* Import React modules */
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
-import ContentstackAppSdk from "@contentstack/app-sdk";
 import { Button } from "@contentstack/venus-components";
 /* Import our CSS */
 import "./styles.scss";
 /* Import our modules */
 import localeTexts from "../../common/locale/en-us";
-import { TypeAsset, TypeSDKData } from "../../common/types";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
 import WarningMessage from "../../components/WarningMessage";
+import AppFailed from "../../components/AppFailed";
+import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
+import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-declare global {
-  interface Window {
-    iframeRef: any;
-    postRobot: any;
-  }
-}
-
 const CustomField: React.FC = function () {
-  const ref = useRef(null);
-  // state for configuration
-  const [state, setState] = React.useState<TypeSDKData>({
-    config: {},
-    contentTypeConfig: {},
-    location: {},
-    appSdkInitialized: false,
-  });
+  const { appFailed } = useContext(MarketplaceAppContext);
+  const {
+    renderAssets,
+    setRenderAssets,
+    selectedAssets,
+    setSelectedAssets,
+    uniqueID,
+    state,
+    currentLocale,
+  } = useContext(CustomFieldContext);
+
   // state for checking if error is present
   const [isError, setIsError] = React.useState<boolean>(false);
-  // state for filtered asset data which is to be rendered
-  const [renderAssets, setRenderAssets] = React.useState<TypeAsset[]>([]);
-  // state for selected assets received from selector page
-  const [selectedAssets, setSelectedAssets] = React.useState<any[]>([]);
   // state for selected asset Ids received from selector page
   const [selectedAssetIds, setSelectedAssetsIds] = useState<string[]>([]);
   // state for warning message to be displayed on error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
-  // state for current locale
-  const [currentLocale, setCurrentLocale] = useState<string>("");
   // window variable for selector page
   let selectorPageWindow: any;
-  // unique param in the asset object
-  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
-
-  React.useEffect(() => {
-    ContentstackAppSdk.init()
-      .then(async (appSdk: any) => {
-        const config = await appSdk?.getConfig();
-        const customFieldLocation = appSdk?.location?.CustomField;
-
-        window.iframeRef = ref?.current;
-        window.postRobot = appSdk?.postRobot;
-
-        const contenttypeConfig = appSdk?.location?.CustomField?.fieldConfig;
-
-        const initialData = customFieldLocation?.field?.getData();
-        if (initialData?.length) {
-          // set App's Custom Field Data
-          setSelectedAssets(initialData);
-        }
-
-        setCurrentLocale(customFieldLocation?.entry?.locale);
-
-        appSdk?.location?.CustomField?.frame?.enableAutoResizing();
-        setState({
-          config,
-          contentTypeConfig: contenttypeConfig,
-          location: appSdk?.location,
-          appSdkInitialized: true,
-        });
-      })
-      .catch((error) => {
-        console.error("appSdk initialization error", error);
-      });
-  }, []);
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
     setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
     setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
-    state?.location?.CustomField?.field?.setData(selectedAssets);
+    state?.location?.field?.setData(selectedAssets);
   }, [
     selectedAssets, // Your Custom Field State Data
   ]);
@@ -193,52 +150,26 @@ const CustomField: React.FC = function () {
         }
         window.addEventListener("message", handleMessage, false);
       }
-    } else selectorPageWindow.focus();
+    } else selectorPageWindow?.focus();
   }, [
+    state,
     state?.appSdkInitialized,
     state?.config,
     state?.contentTypeConfig,
     saveData,
   ]);
 
-  // function to remove the assets when "delete" action is triggered
-  const removeAsset = useCallback(
-    (removedId: string) => {
-      setSelectedAssets(
-        selectedAssets?.filter((asset) => asset?.[uniqueID] !== removedId)
-      );
-    },
-    [selectedAssets]
-  );
-
-  // rearrange the order of assets
-  const setRearrangedAssets = useCallback(
-    (assets: any[]) => {
-      setSelectedAssets(
-        assets?.map(
-          (asset: any) =>
-            selectedAssets?.filter(
-              (item: any) => item?.[uniqueID] === asset?.id
-            )?.[0]
-        )
-      );
-    },
-    [selectedAssets]
-  );
-
   return (
-    <div className="field-extension-wrapper" ref={ref}>
+    <div className="field-extension-wrapper">
       <div className="field-extension">
-        {state.appSdkInitialized && (
+        {appFailed ? (
+          <AppFailed />
+        ) : (
           <div className="field-wrapper" data-testid="field-wrapper">
             {!isError ? (
               <>
                 {renderAssets?.length ? (
-                  <AssetContainer
-                    assets={renderAssets}
-                    removeAsset={removeAsset}
-                    setRearrangedAssets={setRearrangedAssets}
-                  />
+                  <AssetContainer />
                 ) : (
                   <div className="no-asset" data-testid="noAsset-div">
                     {localeTexts.CustomFields.AssetNotAddedText}

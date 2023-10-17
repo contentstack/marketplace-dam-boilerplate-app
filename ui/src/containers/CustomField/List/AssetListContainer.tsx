@@ -1,5 +1,5 @@
 /* Import React modules */
-import React from "react";
+import React, { useContext } from "react";
 /* Import other node modules */
 import { DndContext, closestCenter, DragOverlay } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
@@ -7,20 +7,19 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { TypeAsset, TypeCardContainer } from "../../../common/types";
 import AssetList from "./AssetList";
 import localeTexts from "../../../common/locale/en-us";
-import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
+import CustomFieldContext from "../../../common/contexts/CustomFieldContext";
 /* Import node module CSS */
 /* Import our CSS */
 
 // component contains the asset container structure which acts as a droppable space for DnD context
 const AssetListContainer: React.FC<TypeCardContainer> = function ({
-  assets,
-  removeAsset,
   onDragEnd,
   onDragCancel,
   onDragStart,
   activeId,
   sensors,
 }) {
+  const { renderAssets: assets } = useContext(CustomFieldContext);
   return (
     <div
       role="table"
@@ -82,22 +81,11 @@ const AssetListContainer: React.FC<TypeCardContainer> = function ({
               >
                 <SortableContext items={assets}>
                   {assets?.map((asset: TypeAsset) => (
-                    <AssetList
-                      key={`assetCard-${asset?.id}`}
-                      id={asset?.id}
-                      asset={asset}
-                      removeAsset={removeAsset}
-                    />
+                    <AssetList key={`assetCard-${asset?.id}`} id={asset?.id} />
                   ))}
                 </SortableContext>
                 <DragOverlay>
-                  {activeId ? (
-                    <AssetList
-                      id={activeId}
-                      asset={CustomFieldUtils.findAsset(assets, activeId)}
-                      removeAsset={removeAsset}
-                    />
-                  ) : null}
+                  {activeId ? <AssetList id={activeId} /> : null}
                 </DragOverlay>
               </DndContext>
             </div>

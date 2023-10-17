@@ -33,15 +33,7 @@ export interface TypeAsset {
   platformUrl?: string; // if you don't want "open in DAM" platform option don't provide this parameter
 }
 
-export interface TypeSelectedItems {
-  assets: TypeAsset[];
-  removeAsset: Function;
-  setRearrangedAssets: Function;
-}
-
 export interface TypeCardContainer {
-  assets: TypeAsset[];
-  removeAsset: Function;
   sensors: any;
   onDragEnd: (event: any) => void;
   onDragCancel: () => void;
@@ -56,14 +48,10 @@ export interface TypeSelectorContainer {
 }
 
 export interface TypeAssetCard {
-  asset: TypeAsset;
-  removeAsset: Function;
   id: string;
 }
 
 export interface TypeAssetList {
-  asset: TypeAsset;
-  removeAsset: Function;
   id: string;
 }
 
