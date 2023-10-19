@@ -2,6 +2,7 @@ import rootConfigScreen from "./ConfigScreen";
 import DamEnvVariables from "./DamEnv";
 import rootCustomField from "./CustomField";
 import rootSelectorPage from "./SelectorPage";
+import { TypeRootConfig } from "../common/types";
 
 // <------------ ENVIRONMENT VALUES ------------>
 
@@ -33,7 +34,7 @@ const openComptactView = rootSelectorPage?.openComptactView;
 
 const customSelectorComponent = rootSelectorPage?.customSelectorComponent;
 
-const rootConfig: any = {
+const rootConfig: TypeRootConfig = {
   damEnv,
   configureConfigScreen,
   customConfigComponent,

@@ -39,7 +39,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   const { location } = useAppLocation();
 
   const handleInitialLoad = async () => {
-    if (location && !isEmpty(appConfig)) {
+    if (location) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       const initialData = location?.field?.getData();
@@ -50,7 +50,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
       await setState({
-        config: appConfig,
+        config: isEmpty(appConfig) ? {} : appConfig,
         contentTypeConfig: contenttypeConfig,
         location,
         appSdkInitialized: true,

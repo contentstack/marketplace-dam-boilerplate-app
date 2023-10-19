@@ -1,6 +1,7 @@
 import Logo from "../../common/asset/logo.svg";
+import { TypeRootDamEnv } from "../../common/types";
 
-const DamEnvVariables = {
+const DamEnvVariables: TypeRootDamEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "DAM",
   CONFIG_FIELDS: [],

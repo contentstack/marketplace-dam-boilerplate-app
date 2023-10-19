@@ -3,7 +3,7 @@
 /* NOTE: Remove Functions which are not used */
 
 import React from "react";
-import { TypeSelectorContainer } from "../../common/types";
+import { TypeRootSelector, TypeSelectorContainer } from "../../common/types";
 import CustomComponent from "../CustomComponent";
 
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
@@ -34,7 +34,7 @@ const customSelectorComponent = (
   closeFn: Function
 ) => <CustomComponent />;
 
-const rootSelectorPage = {
+const rootSelectorPage: TypeRootSelector = {
   openComptactView,
   customSelectorComponent,
 };
