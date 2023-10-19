@@ -21,6 +21,7 @@ const configureConfigScreen = () =>
       helpText: "DAM Text Input Helptext",
       placeholderText: "DAM Text Input Placeholder",
       instructionText: "DAM Text Input Instruction Text",
+      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: false,
       saveInServerConfig: true,
     },

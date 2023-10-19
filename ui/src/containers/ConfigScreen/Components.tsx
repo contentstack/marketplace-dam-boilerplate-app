@@ -77,6 +77,8 @@ export const TextInputField = function ({
           placeholder={objValue?.placeholderText}
           name={objKey}
           onChange={updateConfig}
+          type={objValue?.inputFieldType}
+          canShowPassword
           data-testid="text_input"
           version="v2"
         />
