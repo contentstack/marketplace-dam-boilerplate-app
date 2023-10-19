@@ -8,7 +8,8 @@ const ASSET_VIDEO_TYPE = "Video";
 const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
-// ####### ENVIRONMENT VALUES #######
+// <------------ ENVIRONMENT VALUES ------------>
+
 const damEnv = {
   DAM_APP_NAME: "Bynder",
   ASSET_NAME_PARAM: "name",
@@ -29,7 +30,8 @@ const damEnv = {
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
 };
 
-// ####### JSON RTE #######
+// <------------ JSON RTE FUNCTIONS ------------>
+
 const getDisplayUrl = (asset: any) => {
   switch (asset.__typename) {
     case ASSET_IMAGE_TYPE:

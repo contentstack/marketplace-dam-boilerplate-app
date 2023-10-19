@@ -3,7 +3,8 @@ import React from "react";
 import { TypeAsset, TypeSelectorContainer } from "../common/types";
 import Logo from "../common/asset/logo.svg";
 
-// ####### ENVIRONMENT VALUES #######
+// <------------ ENVIRONMENT VALUES ------------>
+
 const damEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Bynder",
@@ -14,6 +15,8 @@ const damEnv = {
   SELECTOR_PAGE_LOGO: Logo,
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
 };
+
+// <--------- CONFIG SCREEN FUNCTIONS ---------->
 
 const configureConfigScreen = () => {
   /* IMPORTANT: 
@@ -98,7 +101,8 @@ const customWholeJson = () => {
   };
 };
 
-// ####### CUSTOM FIELD #######
+// <---------- CUSTOM FIELD FUNCTIONS ---------->
+
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
     // Enter your code for filteration of assets to the specified format
@@ -118,7 +122,8 @@ const filterAssetData = (assets: any[]) => {
   return filterAssetArray;
 };
 
-// ####### SELECTOR PAGE #######
+// <---------- SELECTOR PAGE FUNCTIONS ---------->
+
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
   interface Window {

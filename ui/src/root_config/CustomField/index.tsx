@@ -3,7 +3,7 @@
 
 /* NOTE: Remove Functions which are not used */
 
-import { TypeAsset } from "../../common/types";
+import { TypeAsset, TypeRootCustomField } from "../../common/types";
 import DamEnvVariables from "../DamEnv";
 import utils from "../utils";
 
@@ -54,7 +54,7 @@ const handleSelectorWindow = (
   /* code logic to open the DAM selector page */
 };
 
-const rootCustomField = {
+const rootCustomField: TypeRootCustomField = {
   filterAssetData,
   getSelectorWindowUrl,
   handleConfigtoSelectorPage,

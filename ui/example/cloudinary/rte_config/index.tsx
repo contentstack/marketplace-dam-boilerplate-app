@@ -3,7 +3,8 @@ import React from "react";
 /* Variables for getViewIconforTooltip function */
 const PREVIEW_ICON = "Eye";
 
-// ####### ENVIRONMENT VALUES #######
+// <------------ ENVIRONMENT VALUES ------------>
+
 const damEnv = {
   DAM_APP_NAME: "Cloudinary",
   ASSET_NAME_PARAM: "public_id",
@@ -24,7 +25,8 @@ const damEnv = {
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
 };
 
-// ####### JSON RTE #######
+// <------------ JSON RTE FUNCTIONS ------------>
+
 const getDisplayUrl = (asset: any) => {
   return asset?.secure_url;
 };

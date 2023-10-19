@@ -4,6 +4,7 @@
 
 import React from "react";
 import CustomComponent from "../CustomComponent";
+import { TypeRootConfigSreen } from "../../common/types";
 
 const configureConfigScreen = () =>
   /* IMPORTANT: 
@@ -89,7 +90,7 @@ const customWholeJson = () => {
   };
 };
 
-const rootConfigScreen = {
+const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
   customConfigComponent,
   customWholeJson,
