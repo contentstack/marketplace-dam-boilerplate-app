@@ -54,12 +54,3 @@ const getViewIconforTooltip = (type: string) => {
   if (type === "image" || type === "video") return PREVIEW_ICON;
   return NEWTAB_ICON;
 };
-
-const rteConfig: any = {
-  damEnv,
-  getDisplayUrl,
-  getAssetType,
-  getViewIconforTooltip,
-};
-
-export default rteConfig;

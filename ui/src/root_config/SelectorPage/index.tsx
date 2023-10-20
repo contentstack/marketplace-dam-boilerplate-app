@@ -3,7 +3,11 @@
 /* NOTE: Remove Functions which are not used */
 
 import React from "react";
-import { TypeRootSelector, TypeSelectorContainer } from "../../common/types";
+import {
+  TypeErrorFn,
+  TypeRootSelector,
+  TypeSelectorContainer,
+} from "../../common/types";
 import CustomComponent from "../CustomComponent";
 
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
@@ -16,10 +20,10 @@ declare global {
 const openComptactView = (
   config: any,
   selectedIds: string[],
-  onSuccess: Function,
-  onCancel: Function,
+  onSuccess: (assets: any[]) => void,
+  onCancel: () => void,
   { containerRef, containerClass, containerId }: TypeSelectorContainer,
-  setError: Function
+  setError: (errObj: TypeErrorFn) => void
 ) => {
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
@@ -29,9 +33,9 @@ const openComptactView = (
 // If there is no script then provide a custom component here
 const customSelectorComponent = (
   config: any,
-  setError: Function,
-  successFn: Function,
-  closeFn: Function
+  setError: (errObj: TypeErrorFn) => void,
+  successFn: (assets: any[]) => void,
+  closeFn: () => void
 ) => <CustomComponent />;
 
 const rootSelectorPage: TypeRootSelector = {

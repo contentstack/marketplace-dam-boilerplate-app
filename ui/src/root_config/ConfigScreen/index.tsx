@@ -4,7 +4,10 @@
 
 import React from "react";
 import CustomComponent from "../CustomComponent";
-import { TypeRootConfigSreen } from "../../common/types";
+import {
+  TypeCustomConfigUpdateParams,
+  TypeRootConfigSreen,
+} from "../../common/types";
 
 const configureConfigScreen = () =>
   /* IMPORTANT: 
@@ -66,7 +69,9 @@ const configureConfigScreen = () =>
 const customConfigComponent = (
   config: any,
   serverConfig: any,
-  handleCustomConfigUpdate: Function
+  handleCustomConfigUpdate: (
+    updateConfigObj: TypeCustomConfigUpdateParams
+  ) => void
 ) => <CustomComponent />;
 
 const customWholeJson = () => {

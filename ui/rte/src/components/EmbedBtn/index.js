@@ -1,7 +1,7 @@
 import React from "react";
 import { Tooltip } from "@contentstack/venus-components";
 
-const EmbedBtn = function ({ content, onClick, children, title }: any) {
+const EmbedBtn = function ({ content, onClick, children, title }) {
   return (
     <Tooltip position="bottom" content={content}>
       <button
