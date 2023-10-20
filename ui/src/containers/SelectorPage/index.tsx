@@ -4,6 +4,7 @@ import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
 import WarningMessage from "../../components/WarningMessage";
 import "./style.scss";
+import { TypeErrorFn } from "../../common/types";
 
 let isScriptLoaded: any = false;
 let url: string = "";
@@ -31,11 +32,11 @@ const SelectorPage: React.FC<any> = function () {
   };
 
   // function to set error
-  const setError = (
-    isError: boolean = false,
-    errorText: string = localeTexts.Warnings.incorrectConfig
-  ) => {
-    setIsErrorPresent(isError);
+  const setError = ({
+    isErr = false,
+    errorText = localeTexts.Warnings.incorrectConfig,
+  }: TypeErrorFn) => {
+    setIsErrorPresent(isErr);
     if (errorText) setWarningText(errorText);
   };
 

@@ -18,6 +18,7 @@ import AppFailed from "../../components/AppFailed";
 import rootConfig from "../../root_config";
 /* Import our CSS */
 import "./styles.scss";
+import { TypeCustomConfigUpdateParams } from "../../common/types";
 
 const ConfigScreen: React.FC = function () {
   const { appFailed } = useContext(MarketplaceAppContext);
@@ -83,12 +84,12 @@ const ConfigScreen: React.FC = function () {
   };
 
   // updating the custom config state
-  const handleCustomConfigUpdate = (
-    fieldName: string,
-    fieldValue: string,
-    saveConfig: boolean,
-    saveServerConfig: boolean
-  ) => {
+  const handleCustomConfigUpdate = ({
+    fieldName,
+    fieldValue,
+    saveConfig,
+    saveServerConfig,
+  }: TypeCustomConfigUpdateParams) => {
     const configObj: any = {};
     configObj.target = { name: fieldName, value: fieldValue };
     updateConfig(configObj, saveConfig, saveServerConfig);

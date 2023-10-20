@@ -3,7 +3,11 @@
 
 /* NOTE: Remove Functions which are not used */
 
-import { TypeAsset, TypeRootCustomField } from "../../common/types";
+import {
+  TypeAsset,
+  TypeErrorFn,
+  TypeRootCustomField,
+} from "../../common/types";
 import DamEnvVariables from "../DamEnv";
 import utils from "../utils";
 
@@ -49,7 +53,7 @@ const handleSelectorPageData = (event: any) => {
 const handleSelectorWindow = (
   config: any,
   contentTypeConfig: any,
-  setError: Function
+  setError: (errObj: TypeErrorFn) => void
 ) => {
   /* code logic to open the DAM selector page */
 };

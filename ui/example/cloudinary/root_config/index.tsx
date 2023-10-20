@@ -1,12 +1,16 @@
 /* eslint-disable */
 import React from "react";
-import { TypeAsset, TypeSelectorContainer } from "../common/types";
+import {
+  TypeAsset,
+  TypeSelectorContainer,
+  TypeErrorFn,
+  TypeRootDamEnv,
+} from "../common/types";
 import Logo from "../common/asset/logo.svg";
-import utils from "./utils";
 
 // <------------ ENVIRONMENT VALUES ------------>
 
-const damEnv = {
+const DamEnvVariables: TypeRootDamEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Cloudinary",
   CONFIG_FIELDS: ["cloudName", "apiKey"],
@@ -18,7 +22,7 @@ const damEnv = {
 
 // <--------- CONFIG SCREEN FUNCTIONS ---------->
 
-const configureConfigScreen = () => {
+const configureConfigScreen = () =>
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -27,7 +31,7 @@ const configureConfigScreen = () => {
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
 
-  return {
+  ({
     cloudName: {
       type: "textInputFields",
       labelText: "Cloud Name",
@@ -44,8 +48,7 @@ const configureConfigScreen = () => {
       saveInConfig: true,
       saveInServerConfig: false,
     },
-  };
-};
+  });
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -112,10 +115,10 @@ declare let cloudinary: any; // declare your variable for DAM compact view here
 const openComptactView = (
   config: any,
   selectedIds: string[],
-  onSuccess: Function,
-  onCancel: Function,
+  onSuccess: (assets: any[]) => void,
+  onCancel: () => void,
   { containerRef, containerClass, containerId }: TypeSelectorContainer,
-  setError: Function
+  setError: (errObj: TypeErrorFn) => void
 ) => {
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
@@ -134,13 +137,3 @@ const openComptactView = (
     }
   );
 };
-
-const rootConfig: any = {
-  damEnv,
-  configureConfigScreen,
-  customWholeJson,
-  filterAssetData,
-  openComptactView,
-};
-
-export default rootConfig;

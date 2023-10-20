@@ -109,7 +109,7 @@ export interface TypeRootSelector {
 }
 
 export interface TypeRootConfig {
-  damEnv: any;
+  damEnv: TypeRootDamEnv;
   configureConfigScreen?: Function;
   customConfigComponent?: Function;
   customWholeJson?: Function;
@@ -120,4 +120,16 @@ export interface TypeRootConfig {
   openComptactView?: Function;
   customSelectorComponent?: Function;
   handleConfigtoSelectorPage?: Function;
+}
+
+export interface TypeCustomConfigUpdateParams {
+  fieldName: string;
+  fieldValue: string;
+  saveConfig: boolean;
+  saveServerConfig: boolean;
+}
+
+export interface TypeErrorFn {
+  isErr: boolean;
+  errorText: string;
 }

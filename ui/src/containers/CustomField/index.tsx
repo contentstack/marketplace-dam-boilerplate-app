@@ -13,6 +13,7 @@ import WarningMessage from "../../components/WarningMessage";
 import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
+import { TypeErrorFn } from "../../common/types";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
@@ -74,11 +75,11 @@ const CustomField: React.FC = function () {
   };
 
   // function to set error
-  const setError = (
-    isErrorPresent: boolean = false,
-    errorText: string = localeTexts.Warnings.incorrectConfig
-  ) => {
-    setIsError(isErrorPresent);
+  const setError = ({
+    isErr = false,
+    errorText = localeTexts.Warnings.incorrectConfig,
+  }: TypeErrorFn) => {
+    setIsError(isErr);
     if (errorText) setWarningText(errorText);
   };
 
