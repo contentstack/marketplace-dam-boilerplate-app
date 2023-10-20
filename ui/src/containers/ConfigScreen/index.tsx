@@ -27,7 +27,7 @@ const ConfigScreen: React.FC = function () {
     useContext(AppConfigContext);
 
   // entire configuration object returned from configureConfigScreen
-  const configInputFields = rootConfig?.configureConfigScreen?.();
+  const configInputFields: any = rootConfig?.configureConfigScreen?.();
 
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
