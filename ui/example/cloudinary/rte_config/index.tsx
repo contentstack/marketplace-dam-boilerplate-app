@@ -5,7 +5,7 @@ const PREVIEW_ICON = "Eye";
 
 // <------------ ENVIRONMENT VALUES ------------>
 
-const damEnv = {
+const DamEnvVariables = {
   DAM_APP_NAME: "Cloudinary",
   ASSET_NAME_PARAM: "public_id",
   RTE_DAM_ICON: (
