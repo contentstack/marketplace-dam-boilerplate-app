@@ -10,7 +10,7 @@ const NEWTAB_ICON = "NewTab";
 
 // <------------ ENVIRONMENT VALUES ------------>
 
-const damEnv = {
+const DamEnvVariables = {
   DAM_APP_NAME: "Bynder",
   ASSET_NAME_PARAM: "name",
   RTE_DAM_ICON: (
