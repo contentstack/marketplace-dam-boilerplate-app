@@ -43,7 +43,7 @@ const ConfigStateProvider: React.FC<any> = function ({
           [value]: saveInConfig?.[value]?.options?.filter(
             (option: any) =>
               option?.value === saveInConfig?.[value]?.defaultSelectedOption
-          )[0],
+          )?.[0],
         };
       return acc;
     }, {}),
@@ -55,7 +55,7 @@ const ConfigStateProvider: React.FC<any> = function ({
             (option: any) =>
               option?.value ===
               saveInServerConfig?.[value]?.defaultSelectedOption
-          )[0],
+          )?.[0],
         };
       return acc;
     }, {}),
@@ -69,7 +69,7 @@ const ConfigStateProvider: React.FC<any> = function ({
           [value]: saveInConfig?.[value]?.options?.filter(
             (option: any) =>
               option?.value === saveInConfig?.[value]?.defaultSelectedOption
-          )[0],
+          )?.[0],
         };
       return acc;
     }, {}),
@@ -81,7 +81,7 @@ const ConfigStateProvider: React.FC<any> = function ({
             (option: any) =>
               option?.value ===
               saveInServerConfig?.[value]?.defaultSelectedOption
-          )[0],
+          )?.[0],
         };
       return acc;
     }, {}),
