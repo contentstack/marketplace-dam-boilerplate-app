@@ -68,9 +68,9 @@ const getSaveConfigOptions = (configInputFields: any) => {
   const saveInServerConfig: any = {};
 
   Object.keys(configInputFields)?.forEach((field: string) => {
-    if (configInputFields[field]?.saveInConfig)
+    if (configInputFields?.[field]?.saveInConfig)
       saveInConfig[field] = configInputFields[field];
-    if (configInputFields[field]?.saveInServerConfig)
+    if (configInputFields?.[field]?.saveInServerConfig)
       saveInServerConfig[field] = configInputFields[field];
   });
 
