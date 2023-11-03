@@ -8,11 +8,11 @@
 
 <br />
 
-> To configure App Configuration and Custom Field Locations refer [`Configure App Configuration and Custom Field`][app-config-custom-filed] section and to configure JSON RTE refer [`Configure JSON RTE`][json-rte] section.
+> To configure App Configuration and Custom Field Locations refer [`Configure App Configuration and Custom Field`][app-config-custom-field] section and to configure JSON RTE refer [`Configure JSON RTE`][json-rte] section.
 
 <br />
 
-[app-config-custom-filed]: #configure-app-configuration-and-custom-field
+[app-config-custom-field]: #configure-app-configuration-and-custom-field
 
 ## Configure App Configuration and Custom Field
 
@@ -178,9 +178,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 1. ### Config Screen Functions
 
-[configureconfigscreen]: #configureconfigscreen
+[configureconfigscreen]: #configureconfigscreen-function
 
--   `configureConfigScreen` Function
+-   #### `configureConfigScreen` Function
 
     The function is used to configure the ConfigScreen. Use this function to add TextInput Field, Select Field or Radio Options Field to ConfigScreen.
 
@@ -223,9 +223,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[customconfigcomponent]: #customconfigcomponent
+[customconfigcomponent]: #customconfigcomponent-function
 
--   `customConfigComponent` Function
+-   #### `customConfigComponent` Function
 
     The function is used to add extra custom configurations to ConfigScreen. Use this function to add custom fields other than TextInput Field, Select Field or Radio Options Field.
 
@@ -254,9 +254,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[customwholejson]: #customwholejson
+[customwholejson]: #customwholejson-function
 
--   `customWholeJson` Function
+-   #### `customWholeJson` Function
 
     The function is used to configure the Custom/Whole Fields functionality present in ConfigScreen.
 
@@ -276,9 +276,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 2. ### Custom Field Functions
 
-[filterassetdata]: #filterassetdata
+[filterassetdata]: #filterassetdata-function
 
--   `filterAssetData` Function
+-   #### `filterAssetData` Function
 
     The function is used to filter required asset properties and form a assetObject which is used for internal asset management.
 
@@ -302,9 +302,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[handleconfigtoselectorpage]: #handleconfigtoselectorpage
+[handleconfigtoselectorpage]: #handleconfigtoselectorpage-function
 
--   `handleConfigtoSelectorPage` Function
+-   #### `handleConfigtoSelectorPage` Function
 
     The function manages multiple config present (i.e Config from ConfigScreen, Config from Custom Field Advanced Option) and allows configuration selection that needs to be sent to a selector page.
 
@@ -324,9 +324,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[getselectorwindowurl]: #getselectorwindowurl
+[getselectorwindowurl]: #getselectorwindowurl-function
 
--   `getSelectorWindowUrl` Function
+-   #### `getSelectorWindowUrl` Function
 
     The function is used to get the available third-party DAM window url to open it in a pop-up window.
 
@@ -345,9 +345,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[handleselectorpagedata]: #handleselectorpagedata
+[handleselectorpagedata]: #handleselectorpagedata-function
 
--   `handleSelectorPageData` Function
+-   #### `handleSelectorPageData` Function
 
     The function manages data received from the selector page, extracting it from a message event parameter for use in the application.
 
@@ -378,9 +378,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[handleselectorwindow]: #handleselectorwindow
+[handleselectorwindow]: #handleselectorwindow-function
 
--   `handleSelectorWindow` Function
+-   #### `handleSelectorWindow` Function
 
     The function is triggered on the "add asset" button click and responsible for opening the third-party DAM window. The function should contain the code logic to open the DAM window.
 
@@ -403,9 +403,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 3. ### Selector Page Functions
 
-[opencomptactview]: #opencmptactview
+[opencomptactview]: #opencomptactview-function
 
--   `openComptactView` Function
+-   #### `openComptactView` Function
 
     The function is used in a DAM Script URL Flow to execute functions from a script source and display a component by attaching it to a specified DOM element reference.
 
@@ -436,9 +436,9 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[customselectorcomponent]: #customselectorcomponent
+[customselectorcomponent]: #customselectorcomponent-function
 
--   `customSelectorComponent` Function
+-   #### `customSelectorComponent` Function
 
     The function is used in Custom DAM Selector Component Flow where the entire selector page is developed by the user using APIs or SDKs to fetch the asset data.
 
