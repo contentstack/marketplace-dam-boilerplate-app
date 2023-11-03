@@ -8,11 +8,15 @@
 
 <br />
 
-> To configure App Configuration and Custom Field Locations refer `Configure App Configuration and Custom Field` section and to configure JSON RTE refer `Configure JSON RTE` section.
+> To configure App Configuration and Custom Field Locations refer [`Configure App Configuration and Custom Field`][app-config-custom-filed] section and to configure JSON RTE refer [`Configure JSON RTE`][json-rte] section.
+
+<br />
+
+[app-config-custom-filed]: #configure-app-configuration-and-custom-field
 
 ## Configure App Configuration and Custom Field
 
-In order to configure the App Configuration and Custom Field Locations, you need to make changes to `<APP_DIRECTORY>/ui/src/root_config` directory.
+In order to configure the App Configuration and Custom Field Locations, you need to make changes to [`<APP_DIRECTORY>/ui/src/root_config`](./ui/src/root_config/index.tsx) directory.
 
 All configurations will be done in this directory. You need to define and specify how the UI elements of your app will be handled here.
 
@@ -20,15 +24,17 @@ All configurations will be done in this directory. You need to define and specif
 
 ---
 
-| Key                    | Type             | Possible Values            | Description                                                                                                                                |
-| ---------------------- | ---------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| DAM_APP_NAME\*         | string           | --                         | Name of the third-party DAM.                                                                                                               |
-| ASSET_UNIQUE_ID\*      | string           | "id"                       | Unique parameter name of the asset object.                                                                                                 |
-| SELECTOR_PAGE_LOGO\*   | svg code of Logo | --                         | svg code of logo which is to be added to Selector Page.                                                                                    |
-| CONFIG_FIELDS          | array of strings | --                         | Array of config field parameter names. Used for null config checks in the selector page and shows error message if any values are missing. |
-| IS_DAM_SCRIPT\*        | boolean          | --                         | Determines if Distribution script url is present or not. If `false`, it uses the `Custom DAM Selector Component` flow.                     |
-| DAM_SCRIPT_URL         | string           | --                         | Distribution Script URL provided by the third-party DAM.                                                                                   |
-| DIRECT_SELECTOR_PAGE\* | string           | "novalue", "url", "window" | Determine the flow of Selector Page. Further details can be found in the subsequent flow descriptions.                                     |
+| Key                    | Type             | Possible Values            | Description                                                                                                                                             |
+| ---------------------- | ---------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DAM_APP_NAME\*         | string           | --                         | Name of the third-party DAM.                                                                                                                            |
+| ASSET_UNIQUE_ID\*      | string           | "id"                       | Unique parameter name of the asset object.                                                                                                              |
+| SELECTOR_PAGE_LOGO\*   | svg code of Logo | --                         | svg code of logo which is to be added to Selector Page.                                                                                                 |
+| CONFIG_FIELDS          | array of strings | --                         | Array of config field parameter names. Used for null config checks in the selector page and shows error message if any values are missing.              |
+| IS_DAM_SCRIPT\*        | boolean          | --                         | Determines if Distribution script url is present or not. If `false`, it uses the [`Custom DAM Selector Component`][custom-dam-selector-component] flow. |
+| DAM_SCRIPT_URL         | string           | --                         | Distribution Script URL provided by the third-party DAM.                                                                                                |
+| DIRECT_SELECTOR_PAGE\* | string           | "novalue", "url", "window" | Determine the flow of Selector Page. Further details can be found in the subsequent flow descriptions.                                                  |
+
+[app-configuration]: #app-configuration
 
 ### App Configuration
 
@@ -36,11 +42,15 @@ All configurations will be done in this directory. You need to define and specif
 
 Navigate to the root_config file (ui/src/root_config/index.tsx). In this file, you need to modify the following functions for ConfigScreen based on your requirements.
 
--   `configureConfigScreen` Function
+-   [`configureConfigScreen`][configureconfigscreen] Function
 
--   `customConfigComponent` Function
+-   [`customConfigComponent`][customconfigcomponent] Function
 
--   `customWholeJson` Function`*`
+-   [`customWholeJson`][customwholejson] Function`*`
+
+<br />
+
+[availability-of-dam-script-url]: #availability-of-dam-script-url
 
 ## Availability of DAM Script URL
 
@@ -59,13 +69,17 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 -   ### Custom Field
 
-    -   `filterAssetData` Function`*`
+    -   [`filterAssetData`][filterassetdata] Function`*`
 
-    -   `handleConfigtoSelectorPage` Function
+    -   [`handleConfigtoSelectorPage`][handleconfigtoselectorpage] Function
 
 -   ### Selector Page
 
-    -   `openComptactView` Function`*`
+    -   [`openComptactView`][opencomptactview] Function`*`
+
+<br />
+
+[availability-of-dam-window-url]: #availability-of-dam-window-url
 
 ## Availability of DAM Window URL
 
@@ -84,17 +98,21 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 -   ### Custom Field
 
-    -   `filterAssetData` Function`*`
+    -   [`filterAssetData`][filterassetdata] Function`*`
 
-    -   `handleConfigtoSelectorPage` Function
+    -   [`handleConfigtoSelectorPage`][handleconfigtoselectorpage] Function
 
-    -   `getSelectorWindowUrl` Function`*`
+    -   [`getSelectorWindowUrl`][getselectorwindowurl] Function`*`
 
-    -   `handleSelectorPageData` Function`*`
+    -   [`handleSelectorPageData`][handleselectorpagedata] Function`*`
 
 -   ### Selector Page
 
     No Functions are required to be configured here.
+
+<br />
+
+[availability-of-dam-window-component]: #availability-of-dam-window-component
 
 ## Availability of DAM Window Component
 
@@ -113,17 +131,21 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 -   ### Custom Field
 
-    -   `filterAssetData` Function`*`
+    -   [`filterAssetData`][filterassetdata] Function`*`
 
-    -   `handleConfigtoSelectorPage` Function
+    -   [`handleConfigtoSelectorPage`][handleconfigtoselectorpage] Function
 
-    -   `handleSelectorPageData` Function`*`
+    -   [`handleSelectorPageData`][handleselectorpagedata] Function`*`
 
-    -   `handleSelectorWindow` Function`*`
+    -   [`handleSelectorWindow`][handleselectorwindow] Function`*`
 
 -   ### Selector Page
 
     No Functions are required to be configured here.
+
+<br />
+
+[custom-dam-selector-component]: #custom-dam-selector-component
 
 ## Custom DAM Selector Component
 
@@ -140,17 +162,23 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 -   ### Custom Field
 
-    -   `filterAssetData` Function`*`
+    -   [`filterAssetData`][filterassetdata] Function`*`
 
-    -   `handleConfigtoSelectorPage` Function
+    -   [`handleConfigtoSelectorPage`][handleconfigtoselectorpage] Function
 
 -   ### Selector Page
 
-    -   `customSelectorComponent` Function`*`
+    -   [`customSelectorComponent`][customselectorcomponent] Function`*`
+
+<br />
+
+[functions-in-root-config]: #functions-in-root-config
 
 ## Functions In Root Config
 
 1. ### Config Screen Functions
+
+[configureconfigscreen]: #configureconfigscreen
 
 -   `configureConfigScreen` Function
 
@@ -195,6 +223,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[customconfigcomponent]: #customconfigcomponent
+
 -   `customConfigComponent` Function
 
     The function is used to add extra custom configurations to ConfigScreen. Use this function to add custom fields other than TextInput Field, Select Field or Radio Options Field.
@@ -224,6 +254,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[customwholejson]: #customwholejson
+
 -   `customWholeJson` Function
 
     The function is used to configure the Custom/Whole Fields functionality present in ConfigScreen.
@@ -243,6 +275,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 <br />
 
 2. ### Custom Field Functions
+
+[filterassetdata]: #filterassetdata
 
 -   `filterAssetData` Function
 
@@ -268,6 +302,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[handleconfigtoselectorpage]: #handleconfigtoselectorpage
+
 -   `handleConfigtoSelectorPage` Function
 
     The function manages multiple config present (i.e Config from ConfigScreen, Config from Custom Field Advanced Option) and allows configuration selection that needs to be sent to a selector page.
@@ -288,6 +324,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[getselectorwindowurl]: #getselectorwindowurl
+
 -   `getSelectorWindowUrl` Function
 
     The function is used to get the available third-party DAM window url to open it in a pop-up window.
@@ -306,6 +344,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
     ```
 
 <br />
+
+[handleselectorpagedata]: #handleselectorpagedata
 
 -   `handleSelectorPageData` Function
 
@@ -338,6 +378,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[handleselectorwindow]: #handleselectorwindow
+
 -   `handleSelectorWindow` Function
 
     The function is triggered on the "add asset" button click and responsible for opening the third-party DAM window. The function should contain the code logic to open the DAM window.
@@ -360,6 +402,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 <br />
 
 3. ### Selector Page Functions
+
+[opencomptactview]: #opencmptactview
 
 -   `openComptactView` Function
 
@@ -392,6 +436,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[customselectorcomponent]: #customselectorcomponent
+
 -   `customSelectorComponent` Function
 
     The function is used in Custom DAM Selector Component Flow where the entire selector page is developed by the user using APIs or SDKs to fetch the asset data.
@@ -420,8 +466,8 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[json-rte]: #configure-json-rte
+
 ## Configure JSON RTE
 
 The backend implementation for this app will be present in the /api folder at the root level.
-
-# add links to functions
