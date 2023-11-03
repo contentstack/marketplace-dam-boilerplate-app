@@ -351,8 +351,6 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
     The function manages data received from the selector page, extracting it from a message event parameter for use in the application.
 
-    The function is used to get the available third-party DAM window url to open it in a pop-up window.
-
     Function Parameters:
 
     | Name  | Type   | Description                           |
@@ -470,4 +468,236 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 ## Configure JSON RTE
 
-The backend implementation for this app will be present in the /api folder at the root level.
+In order to configure the JSON RTE plugin for your thir-party DAM, you need to make changes to [`<APP_DIRECTORY>/ui/rte/src/rte_config`](./ui/rte/src/rte_config/index.tsx) directory.
+
+All configurations will be done in this directory. You need to define and specify how the JSON RTE elements of your app will be handled here.
+
+### JSON RTE Environment Variables
+
+---
+
+| Key                    | Type                  | Possible Values            | Description                                                                                            |
+| ---------------------- | --------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| DAM_APP_NAME\*         | string                | --                         | Name of the third-party DAM.                                                                           |
+| ASSET_NAME_PARAM\*     | string                | --                         | Asset Name Parameter Label.                                                                            |
+| RTE_DAM_ICON\*         | svg code of Logo icon | --                         | svg code of logo which is to be added to JSON RTE actions panel.                                       |
+| DIRECT_SELECTOR_PAGE\* | string                | "novalue", "url", "window" | Determine the flow of Selector Page. Further details can be found in the subsequent flow descriptions. |
+
+[json-rte-availability-of-dam-script-url]: #json-rte-availability-of-dam-script-urll
+
+## JSON RTE: Availability of DAM Script URL
+
+DAM Script URL Flow is to be used when the third-party DAM application has a Script Url present which can be embeded in the \<script> tag of html page.
+
+Example: `<script src="https://dam.com/dam.js"></script>`
+
+`damEnv` Values for this flow:
+
+```
+DIRECT_SELECTOR_PAGE: "novalue"
+```
+
+Implement the below mentioned functions to configure JSON RTE in the DAM Script URL Flow.
+
+-   [`getDisplayUrl`][getDisplayUrlJsonRteFunction] Function`*`
+
+-   [`getAssetType`][getAssetTypeJsonRteFunction] Function`*`
+
+-   [`getViewIconforTooltip`][getViewIconforTooltipJsonRteFunction] Function`*`
+
+<br />
+
+[json-rte-availability-of-dam-window-url]: #json-rte-availability-of-dam-window-url
+
+## JSON RTE: Availability of DAM Window URL
+
+DAM Window URL Flow is to be used when the third-party DAM application has a Window Url present which can be opened directly in browser.
+
+Example: `https://dam.com/`
+
+`damEnv` Values for this flow:
+
+```
+DIRECT_SELECTOR_PAGE: "url"
+```
+
+Implement the below mentioned functions to configure JSON RTE in the DAM Window URL Flow.
+
+-   [`getDisplayUrl`][getDisplayUrlJsonRteFunction] Function`*`
+
+-   [`getAssetType`][getAssetTypeJsonRteFunction] Function`*`
+
+-   [`getViewIconforTooltip`][getViewIconforTooltipJsonRteFunction] Function`*`
+
+-   [`getSelectorWindowUrl`][getSelectorWindowUrlJsonRteFunction] Function`*`
+
+-   [`handleSelectorPageData`][handleSelectorPageDataJsonRteFunction] Function`*`
+
+<br />
+
+[json-rte-availability-of-dam-window-component]: #json-rte-availability-of-dam-window-component
+
+## JSON RTE: Availability of DAM Window Component
+
+DAM Window Component Flow is to be used when the third-party DAM application has a Window Component/Frame present which can be triggered to open on click of a button.
+
+Example: `<button onClick={openDAMComp()}>Open DAM</button>`
+
+`damEnv` Values for this flow:
+
+```
+DIRECT_SELECTOR_PAGE: "window"
+```
+
+Implement the below mentioned functions to configure JSON RTE in the DAM Window Component Flow.
+
+-   [`getDisplayUrl`][getDisplayUrlJsonRteFunction] Function`*`
+
+-   [`getAssetType`][getAssetTypeJsonRteFunction] Function`*`
+
+-   [`getViewIconforTooltip`][getViewIconforTooltipJsonRteFunction] Function`*`
+
+-   [`handleSelectorWindow`][handleSelectorWindowJsonRteFunction] Function`*`
+
+-   [`handleSelectorPageData`][handleSelectorPageDataJsonRteFunction] Function`*`
+
+<br />
+
+[json-rte-custom-dam-selector-component]: #json-rte-custom-dam-selector-component
+
+## JSON RTE: Custom DAM Selector Component
+
+Custom DAM Selector Component Flow is to be used when the third-party DAM application has API or SDK support for accessing their assets.
+
+`damEnv` Values for this flow:
+
+```
+DIRECT_SELECTOR_PAGE: "novalue"
+```
+
+Implement the below mentioned functions to configure JSON RTE in the Custom DAM Selector Component Flow.
+
+-   [`getDisplayUrl`][getDisplayUrlJsonRteFunction] Function`*`
+
+-   [`getAssetType`][getAssetTypeJsonRteFunction] Function`*`
+
+-   [`getViewIconforTooltip`][getViewIconforTooltipJsonRteFunction] Function`*`
+
+<br />
+
+[functions-in-rte-config]: #functions-in-rte-config
+
+## Functions In RTE Config
+
+[getDisplayUrlJsonRteFunction]: #getdisplayurl-json-rte-function
+
+-   #### `getDisplayUrl` JSON RTE Function
+
+    The function is used to get the asset url to be used as thumbnail of image and for preview action of asset.
+
+    Function Parameters:
+
+    | Name  | Type   | Description  |
+    | ----- | ------ | ------------ |
+    | asset | Object | Asset Object |
+
+    Return Value:
+
+    ```
+    The Function returns a url of type=string
+    ```
+
+[getAssetTypeJsonRteFunction]: #getassettype-json-rte-function
+
+-   #### `getAssetType` JSON RTE Function
+
+    The function is used to get the asset type of the asset being loaded in JSON RTE. The possible return values are `Document | Image | Pdf | Archive | Video | Audio`
+
+    Function Parameters:
+
+    | Name  | Type   | Description  |
+    | ----- | ------ | ------------ |
+    | asset | Object | Asset Object |
+
+    Return Value:
+
+    ```
+    The Function returns asset type of asset.
+    ```
+
+[getViewIconforTooltipJsonRteFunction]: #getviewiconfortooltip-json-rte-function
+
+-   #### `getViewIconforTooltip` JSON RTE Function
+
+    The function is used to get the icon to be added in the tooltip actions of the asset being rendered in JSON RTE. The possible return values are `Eye | NewTab`
+
+    Function Parameters:
+
+    | Name | Type   | Description                            |
+    | ---- | ------ | -------------------------------------- |
+    | type | string | type of asset being loaded in JSON RTE |
+
+    Return Value:
+
+    ```
+    The Function returns "Eye" or "NewTab"
+    ```
+
+[getSelectorWindowUrlJsonRteFunction]: #getselectorwindowurl-json-rte-function
+
+-   #### `getSelectorWindowUrl` JSON RTE Function
+
+    The function is used to get the available third-party DAM window url to open it in a pop-up window.
+
+    Function Parameters:
+
+    | Name   | Type   | Description                              |
+    | ------ | ------ | ---------------------------------------- |
+    | config | Object | config object received from ConfigScreen |
+
+    Return Value:
+
+    ```
+    The Function returns a url of type=string which will be opened in the selector page
+    ```
+
+[handleSelectorPageDataJsonRteFunction]: #handleselectorpagedata-json-rte-function
+
+-   #### `handleSelectorPageData` JSON RTE Function
+
+    The function manages data received from the selector page, extracting it from a message event parameter for use in the application.
+
+    Function Parameters:
+
+    | Name  | Type   | Description                        |
+    | ----- | ------ | ---------------------------------- |
+    | event | Object | message event received on JSON RTE |
+
+    Return Value:
+
+    The Function returns an array of asset objects that are selected.
+
+    ```
+    [
+        {
+            assetId: "1",
+            assetName: "Sample Asset 1"
+        },
+        {
+            assetId: "2",
+            assetName: "Sample Asset 2"
+        }
+    ]
+    ```
+
+[handleSelectorWindowJsonRteFunction]: #handleselectorwindow-json-rte-function
+
+-   #### `handleSelectorWindow` JSON RTE Function
+
+    The function is triggered on the "Choose assets from DAM" button click and responsible for opening the third-party DAM window. The function should contain the code logic to open the DAM window.
+
+    Function Parameters:
+
+    | Name   | Type   | Description                              |
+    | ------ | ------ | ---------------------------------------- |
+    | config | Object | config object received from ConfigScreen |

@@ -1,6 +1,6 @@
 /* Import React modules */
 import React, { Suspense } from "react";
-import { Navigate, HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 /* Import other node modules */
 /* Import our modules */
 import ErrorBoundary from "../../components/ErrorBoundary";
@@ -19,16 +19,6 @@ const ConfigScreen = React.lazy(() => import("../ConfigScreen"));
 const CustomField = React.lazy(() => import("../CustomField"));
 const SelectorPage = React.lazy(() => import("../SelectorPage"));
 
-/** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
-    as react Router does not identifies pathname if the app is rendered in an iframe.
-*/
-const HomeRedirectHandler = function () {
-  if (window?.location?.pathname !== "/") {
-    return <Navigate to={{ pathname: window.location.pathname }} />;
-  }
-  return null;
-};
-
 const App: React.FC = function () {
   return (
     <div className="app">
@@ -42,7 +32,6 @@ const App: React.FC = function () {
               remove the remaining paths and their source code also. */}
           <MarketplaceAppProvider>
             <Routes>
-              <Route path="/" element={<HomeRedirectHandler />} />
               <Route
                 path="/config"
                 element={
