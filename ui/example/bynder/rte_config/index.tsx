@@ -8,8 +8,9 @@ const ASSET_VIDEO_TYPE = "Video";
 const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
-// ####### ENVIRONMENT VALUES #######
-const damEnv = {
+// <------------ ENVIRONMENT VALUES ------------>
+
+const DamEnvVariables = {
   DAM_APP_NAME: "Bynder",
   ASSET_NAME_PARAM: "name",
   RTE_DAM_ICON: (
@@ -29,7 +30,8 @@ const damEnv = {
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
 };
 
-// ####### JSON RTE #######
+// <------------ JSON RTE FUNCTIONS ------------>
+
 const getDisplayUrl = (asset: any) => {
   switch (asset.__typename) {
     case ASSET_IMAGE_TYPE:
@@ -52,12 +54,3 @@ const getViewIconforTooltip = (type: string) => {
   if (type === "image" || type === "video") return PREVIEW_ICON;
   return NEWTAB_ICON;
 };
-
-const rteConfig: any = {
-  damEnv,
-  getDisplayUrl,
-  getAssetType,
-  getViewIconforTooltip,
-};
-
-export default rteConfig;

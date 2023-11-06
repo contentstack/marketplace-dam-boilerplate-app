@@ -1,10 +1,16 @@
 /* eslint-disable */
 import React from "react";
-import { TypeAsset, TypeSelectorContainer } from "../common/types";
+import {
+  TypeAsset,
+  TypeSelectorContainer,
+  TypeErrorFn,
+  TypeRootDamEnv,
+} from "../common/types";
 import Logo from "../common/asset/logo.svg";
 
-// ####### ENVIRONMENT VALUES #######
-const damEnv = {
+// <------------ ENVIRONMENT VALUES ------------>
+
+const DamEnvVariables: TypeRootDamEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Bynder",
   CONFIG_FIELDS: ["org_url", "language", "mode"],
@@ -15,7 +21,9 @@ const damEnv = {
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
 };
 
-const configureConfigScreen = () => {
+// <--------- CONFIG SCREEN FUNCTIONS ---------->
+
+const configureConfigScreen = () =>
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -24,7 +32,7 @@ const configureConfigScreen = () => {
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
 
-  return {
+  ({
     org_url: {
       type: "textInputFields",
       labelText: "Bynder Organization URL",
@@ -67,8 +75,7 @@ const configureConfigScreen = () => {
       saveInConfig: true,
       saveInServerConfig: false,
     },
-  };
-};
+  });
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -98,7 +105,8 @@ const customWholeJson = () => {
   };
 };
 
-// ####### CUSTOM FIELD #######
+// <---------- CUSTOM FIELD FUNCTIONS ---------->
+
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
     // Enter your code for filteration of assets to the specified format
@@ -118,7 +126,8 @@ const filterAssetData = (assets: any[]) => {
   return filterAssetArray;
 };
 
-// ####### SELECTOR PAGE #######
+// <---------- SELECTOR PAGE FUNCTIONS ---------->
+
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
   interface Window {
@@ -129,10 +138,10 @@ declare global {
 const openComptactView = (
   config: any,
   selectedIds: string[],
-  onSuccess: Function,
-  onCancel: Function,
+  onSuccess: (assets: any[]) => void,
+  onCancel: () => void,
   { containerRef, containerClass, containerId }: TypeSelectorContainer,
-  setError: Function
+  setError: (errObj: TypeErrorFn) => void
 ) => {
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
@@ -153,13 +162,3 @@ const openComptactView = (
     container: containerRef.current,
   });
 };
-
-const rootConfig: any = {
-  damEnv,
-  configureConfigScreen,
-  customWholeJson,
-  filterAssetData,
-  openComptactView,
-};
-
-export default rootConfig;

@@ -1,10 +1,5 @@
-/* Import React modules */
 import React from "react";
-/* Import other node modules */
-/* Import our modules */
-/* Import node module CSS */
-/* Import our CSS */
-import "./styles.scss";
+import "../styles.scss";
 
 interface TypeCustomComponent {}
 
