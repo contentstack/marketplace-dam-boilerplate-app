@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import utils from "../../common/utils";
+import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
 import WarningMessage from "../../components/WarningMessage";
 import "./style.scss";
+import { TypeErrorFn } from "../../common/types";
 
 let isScriptLoaded: any = false;
 let url: string = "";
@@ -31,11 +32,11 @@ const SelectorPage: React.FC<any> = function () {
   };
 
   // function to set error
-  const setError = (
-    isError: boolean = false,
-    errorText: string = localeTexts.Warnings.incorrectConfig
-  ) => {
-    setIsErrorPresent(isError);
+  const setError = ({
+    isErr = false,
+    errorText = localeTexts.Warnings.incorrectConfig,
+  }: TypeErrorFn) => {
+    setIsErrorPresent(isErr);
     if (errorText) setWarningText(errorText);
   };
 
@@ -59,7 +60,7 @@ const SelectorPage: React.FC<any> = function () {
     selectedIds: string[]
   ) => {
     if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
-      isScriptLoaded = await utils.loadDAMScript(
+      isScriptLoaded = await SelectorPageUtils.loadDAMScript(
         rootConfig?.damEnv?.DAM_SCRIPT_URL as string
       );
       if (isScriptLoaded === true) {

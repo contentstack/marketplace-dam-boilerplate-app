@@ -10,6 +10,10 @@
     padding: 0 10px;
     width: 100%;
 
+    .add-asset-btn {
+      margin: 20px 0 0 !important;
+    }
+
     .no-asset {
       color: #647696;
       font-family: Inter, Serif, Sans-serif;
@@ -160,8 +164,7 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
-
-.custom-field-data--ids {
+add-asset-bu .custom-field-data--ids {
   flex: 33.33%;
 }
 

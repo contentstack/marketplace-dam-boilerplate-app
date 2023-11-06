@@ -102,6 +102,15 @@ const localeTexts = {
     cancelButton: "Cancel",
     confirmButton: "Remove",
   },
+  AppFailed: {
+    Message1: "App Location Iniailization Failed.",
+    Message2: "Please reload the location and Try Again!",
+    body: "For Assistance, please reach out to us at support@contentstack.com",
+    button: {
+      text: "Learn More",
+      url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-app-boilerplate/",
+    },
+  },
 };
 
 export default localeTexts;

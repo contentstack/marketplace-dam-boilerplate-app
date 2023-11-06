@@ -1,8 +1,8 @@
 import React from "react";
-import { cbModal, Icon, Notification } from "@contentstack/venus-components";
-import localeTexts from "../locale/en-us";
-import { TypePopupWindowDetails } from "../types";
+import { Icon, cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
+import { TypePopupWindowDetails } from "../types";
+import localeTexts from "../locale/en-us";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -18,47 +18,6 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
       `top=${top}, left=${left}`
   );
 };
-
-// function to merge 2 objects
-const mergeObjects = (target: any, source: any) => {
-  // Iterate through `source` properties and if an `Object` then
-  // set property to merge of `target` and `source` properties
-  Object.keys(source)?.forEach((key) => {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], mergeObjects(target[key], source[key]));
-    }
-  });
-
-  // Join `target` and modified `source`
-  Object.assign(target || {}, source);
-  return target;
-};
-
-// function to load script
-const loadDAMScript = (url: string) =>
-  new Promise((resolve) => {
-    const DAMScript: any = document.createElement("script");
-    const bodyTag = document.getElementsByTagName("body")?.[0];
-    DAMScript.src = url;
-    DAMScript.id = "DAMScript";
-    DAMScript.type = "text/javascript";
-    if (DAMScript?.readyState) {
-      DAMScript.onreadystatechange = function () {
-        if (
-          DAMScript.readyState === "loaded" ||
-          DAMScript.readyState === "complete"
-        ) {
-          DAMScript.onreadystatechange = null;
-          resolve(true);
-        }
-      };
-    } else {
-      DAMScript.onload = function () {
-        resolve(true);
-      };
-    }
-    bodyTag.appendChild(DAMScript);
-  });
 
 // get hover action tooltip for asset card
 const getHoverActions = (
@@ -201,13 +160,6 @@ function findAsset(assets: any[], id: any) {
   return assets?.find((asset: any) => asset?.id === id) || {};
 }
 
-const getOptions = (arr: string[], defaultFeilds?: any[]) =>
-  arr?.map((option: string) => ({
-    label: option,
-    value: option,
-    isDisabled: defaultFeilds?.includes(option) ?? false,
-  }));
-
 const extractKeys = (arr: any[]) => arr?.map((key: any) => key?.value);
 
 const removeEmptyFromArray = (arr: any) =>
@@ -301,19 +253,6 @@ const getFilteredAssets = (assets: any[], keyArray: string[]) =>
     return returnObj;
   });
 
-const toastMessage = ({ type, text }: any) => {
-  Notification({
-    notificationContent: {
-      text,
-    },
-    notifyProps: {
-      hideProgressBar: true,
-      className: "modal_toast_message",
-    },
-    type,
-  });
-};
-
 const gridViewDropdown = [
   {
     label: (
@@ -336,20 +275,16 @@ const gridViewDropdown = [
   },
 ];
 
-const utils = {
+const CustomFieldUtils = {
   popupWindow,
-  mergeObjects,
-  loadDAMScript,
   getHoverActions,
   getListHoverActions,
   uniqBy,
   findAssetIndex,
   findAsset,
-  getOptions,
   extractKeys,
   getFilteredAssets,
-  toastMessage,
   gridViewDropdown,
 };
 
-export default utils;
+export default CustomFieldUtils;

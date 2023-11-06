@@ -1,22 +1,21 @@
 /* Import React modules */
-import React from "react";
+import React, { useContext } from "react";
 /* Import other node modules */
 import { AssetCardVertical } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 /* Import our modules */
 import { TypeAssetCard } from "../../../common/types";
-import utils from "../../../common/utils";
 import constants from "../../../common/constants";
+import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
+import CustomFieldContext from "../../../common/contexts/CustomFieldContext";
 /* Import node module CSS */
 /* Import our CSS */
 
 // asset card component which is a dragable component
-const AssetCard: React.FC<TypeAssetCard> = function ({
-  id,
-  asset,
-  removeAsset,
-}) {
+const AssetCard: React.FC<TypeAssetCard> = function ({ id }) {
+  const { renderAssets: assets, removeAsset } = useContext(CustomFieldContext);
+  const asset = CustomFieldUtils.findAsset(assets, id);
   const {
     name,
     type,
@@ -69,7 +68,7 @@ const AssetCard: React.FC<TypeAssetCard> = function ({
           width={width || ""}
           height={height || ""}
           size={Number(size)}
-          actions={utils.getHoverActions(
+          actions={CustomFieldUtils.getHoverActions(
             type,
             removeAsset,
             id,
