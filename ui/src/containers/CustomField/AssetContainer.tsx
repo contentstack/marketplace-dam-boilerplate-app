@@ -17,8 +17,8 @@ import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 const AssetContainer: React.FC = function () {
   const { renderAssets: assets, setRearrangedAssets } =
     useContext(CustomFieldContext);
+  const [view, setView] = React.useState<any>({ value: "card" });
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [view, setView] = useState<any>({ value: "card" });
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 0.1 } })
   );
