@@ -234,16 +234,16 @@ npm run start
 ```
 The webpack server will start at port 1268.
 
-## Contexts
+## Providers (Use of React's Contexts)
 
-- `<MarketplaceAppContext>`: The MarketplaceAppProvider initializes the Contentstack App SDK and shares its instance and configuration across components using the useContext hook, eliminating the need for prop drilling.
+- `<MarketplaceAppProvider>`: The MarketplaceAppProvider uses `MarketplaceAppContext` and initializes the Contentstack App SDK and shares its instance and configuration across components using the useContext hook, eliminating the need for prop drilling.
 
-- `<AppConfigContext>`: 
-The AppConfigProvider generates dynamic state values based on the rootConfig's configuration and manages installation data, providing centralized state accessible via the useContext hook for child components.
+- `<AppConfigProvider>`: 
+The AppConfigProvider uses `AppConfigContext` and generates dynamic state values based on the rootConfig's configuration and manages installation data, providing centralized state accessible via the useContext hook for child components.
 
-- `<ConfigStateContext>`: The ConfigStateProvider handles local state management for ConfigScreen UI Location, accessed by sub-components.
+- `<ConfigStateProvider>`: The ConfigStateProvider uses `ConfigStateContext` and handles local state management for ConfigScreen UI Location, accessed by sub-components.
 
-- `<CustomFieldContext>`: The CustomFieldProvider consolidates the management of state and rendering data, distributing it to multiple child components. It is responsible for both retrieving and updating this data.
+- `<CustomFieldProvider>`: The CustomFieldProvider uses `CustomFieldContext` and consolidates the management of state and rendering data, distributing it to multiple child components. It is responsible for both retrieving and updating this data.
 
 ## Hooks
 
@@ -362,4 +362,4 @@ For reference purpose, Examples of DAM Apps like `Bynder` and `Cloudinary` are a
 
 ## Reference to documentation
 
-* [Marketplace DAM App Boilerplate]()
+* [Marketplace DAM App Boilerplate](https://www.contentstack.com/docs/developers/developer-hub/marketplace-dam-app-boilerplate)
