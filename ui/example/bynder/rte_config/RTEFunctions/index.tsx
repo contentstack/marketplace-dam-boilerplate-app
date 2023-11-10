@@ -7,11 +7,11 @@ const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
 const getDisplayUrl = (asset: any) => {
-  switch (asset.__typename) {
+  switch (asset?.__typename) {
     case ASSET_IMAGE_TYPE:
       return asset?.files?.webImage?.url;
     case ASSET_VIDEO_TYPE:
-      return asset?.previewUrls[0];
+      return asset?.previewUrls?.[0];
     default:
       return asset?.url;
   }
