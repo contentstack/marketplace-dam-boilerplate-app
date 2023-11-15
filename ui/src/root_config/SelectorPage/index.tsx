@@ -35,7 +35,8 @@ const customSelectorComponent = (
   config: any,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
-  closeFn: () => void
+  closeFn: () => void,
+  selectedAssetIds: string[]
 ) => <CustomComponent />;
 
 const rootSelectorPage: TypeRootSelector = {
