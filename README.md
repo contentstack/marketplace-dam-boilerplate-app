@@ -77,7 +77,6 @@ marketplace-dam-boilerplate-app
     │           ├── index.tsx
     │           └── RTEFunctions
     │               └── index.tsx
-    ├── gulpFile.js
     ├── jest.config.js
     ├── jest.CSStub.js
     ├── jest.setup.js
