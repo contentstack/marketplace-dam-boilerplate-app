@@ -20,7 +20,6 @@ const customSelectorComponent = (
     assetIds?.forEach((assetId: string) => {
       ids[parseInt(assetId, 10)] = true;
     });
-    console.info("ids", ids);
     return ids;
   };
 

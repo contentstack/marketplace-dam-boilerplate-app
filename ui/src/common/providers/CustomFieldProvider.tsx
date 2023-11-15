@@ -33,10 +33,21 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   const [selectedAssets, setSelectedAssets] = useState<any[]>([]);
   // state for current locale
   const [currentLocale, setCurrentLocale] = useState<string>("");
+  // state to manage disable of "add button"
+  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   // unique param in the asset object
   const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
 
   const { location } = useAppLocation();
+
+  // function to check and handle disable of "add assets" button
+  const handleBtnDisable = (data: any[], max_limit?: number) => {
+    const assetMaxLimit =
+      max_limit ?? state?.contentTypeConfig?.advanced?.max_limit;
+    if (data?.length < assetMaxLimit) {
+      setIsBtnDisable(false);
+    } else setIsBtnDisable(true);
+  };
 
   const handleInitialLoad = async () => {
     if (location) {
@@ -46,6 +57,8 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       if (initialData?.length) {
         // set App's Custom Field Data
         setSelectedAssets(initialData);
+        // check for saved data length and handling button disable state
+        handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
       }
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
@@ -65,11 +78,13 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   // function to remove the assets when "delete" action is triggered
   const removeAsset = useCallback(
     (removedId: string) => {
-      setSelectedAssets(
-        selectedAssets?.filter((asset) => asset?.[uniqueID] !== removedId)
+      const finalAssets = selectedAssets?.filter(
+        (asset) => asset?.[uniqueID] !== removedId
       );
+      setSelectedAssets(finalAssets);
+      handleBtnDisable(finalAssets);
     },
-    [selectedAssets]
+    [selectedAssets, handleBtnDisable]
   );
 
   // rearrange the order of assets
@@ -98,6 +113,8 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       setRearrangedAssets,
       state,
       currentLocale,
+      handleBtnDisable,
+      isBtnDisable,
     }),
     [
       renderAssets,
@@ -109,6 +126,8 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       setRearrangedAssets,
       state,
       currentLocale,
+      handleBtnDisable,
+      isBtnDisable,
     ]
   );
 
