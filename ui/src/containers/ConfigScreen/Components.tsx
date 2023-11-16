@@ -157,7 +157,7 @@ export const RadioInputField = function ({
               fieldName={objKey}
               mode={option}
               index={index}
-              radioOption={radioInputValues[objKey]}
+              radioOption={radioInputValues?.[objKey]}
               updateRadioOptions={updateRadioOptions}
             />
           ))}
@@ -207,7 +207,7 @@ export const SelectInputField = function ({
           onChange={(e: TypeOption) => updateSelectConfig(e, objKey)}
           options={objValue?.options}
           placeholder={objValue?.placeholderText}
-          value={selectInputValues[objKey]}
+          value={selectInputValues?.[objKey]}
           name={`${objKey}-id`}
           data-testid="select_input"
           version="v2"
@@ -229,7 +229,7 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
   let returnValue: any[] = [];
   modalValue = modalValue?.trim();
   const matchValue = customOptions?.find((i: any) => i?.value === modalValue);
-  if (matchValue === undefined) {
+  if (!matchValue) {
     returnValue = [{ label: modalValue, value: modalValue }];
   } else {
     Notification({
