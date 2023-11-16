@@ -108,7 +108,7 @@ const localeTexts = {
     body: "For Assistance, please reach out to us at support@contentstack.com",
     button: {
       text: "Learn More",
-      url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-app-boilerplate/",
+      url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-dam-app-boilerplate",
     },
   },
 };

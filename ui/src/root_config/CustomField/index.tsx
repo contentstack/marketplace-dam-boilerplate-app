@@ -55,7 +55,7 @@ const handleSelectorWindow = (
   contentTypeConfig: any,
   setError: (errObj: TypeErrorFn) => void
 ) => {
-  /* code logic to open the DAM selector page */
+  /* code logic to open the DAM selector window */
 };
 
 const rootCustomField: TypeRootCustomField = {
