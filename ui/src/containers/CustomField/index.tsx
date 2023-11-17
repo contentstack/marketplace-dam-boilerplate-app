@@ -1,96 +1,91 @@
 /* Import React modules */
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
-import ContentstackAppSdk from "@contentstack/app-sdk";
-import { Button, cbModal } from "@contentstack/venus-components";
+import { Button, Notification, Tooltip } from "@contentstack/venus-components";
 /* Import our CSS */
 import "./styles.scss";
 /* Import our modules */
 import localeTexts from "../../common/locale/en-us";
-import { TypeAsset, TypeSDKData } from "../../common/types";
-import utils from "../../common/utils";
-import AssetCardContainer from "./AssetCardContainer";
+import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
+import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
-import SelectorPage from "../SelectorPage";
 import WarningMessage from "../../components/WarningMessage";
+import AppFailed from "../../components/AppFailed";
+import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
+import CustomFieldContext from "../../common/contexts/CustomFieldContext";
+import { TypeErrorFn } from "../../common/types";
+import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-declare global {
-  interface Window {
-    iframeRef: any;
-    postRobot: any;
-  }
-}
-
 const CustomField: React.FC = function () {
-  const ref = useRef(null);
-  // state for configuration
-  const [state, setState] = React.useState<TypeSDKData>({
-    config: {},
-    contentTypeConfig: {},
-    location: {},
-    appSdkInitialized: false,
-  });
+  const { appFailed } = useContext(MarketplaceAppContext);
+  const {
+    renderAssets,
+    setRenderAssets,
+    selectedAssets,
+    setSelectedAssets,
+    uniqueID,
+    state,
+    currentLocale,
+    handleBtnDisable,
+    isBtnDisable,
+  } = useContext(CustomFieldContext);
+
   // state for checking if error is present
   const [isError, setIsError] = React.useState<boolean>(false);
-  // state for filtered asset data which is to be rendered
-  const [renderAssets, setRenderAssets] = React.useState<TypeAsset[]>([]);
-  // state for selected assets received from selector page
-  const [selectedAssets, setSelectedAssets] = React.useState<any[]>([]);
   // state for selected asset Ids received from selector page
   const [selectedAssetIds, setSelectedAssetsIds] = useState<string[]>([]);
   // state for warning message to be displayed on error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
-  // state for current locale
-  const [currentLocale, setCurrentLocale] = useState<string>("");
   // window variable for selector page
   let selectorPageWindow: any;
-  // unique param in the asset object
-  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
-
-  React.useEffect(() => {
-    ContentstackAppSdk.init()
-      .then(async (appSdk: any) => {
-        const config = await appSdk?.getConfig();
-        const customFieldLocation = appSdk?.location?.CustomField;
-
-        window.iframeRef = ref?.current;
-        window.postRobot = appSdk?.postRobot;
-
-        const contenttypeConfig = appSdk?.location?.CustomField?.fieldConfig;
-
-        const initialData = customFieldLocation?.field?.getData();
-        if (initialData?.length) {
-          // set App's Custom Field Data
-          setSelectedAssets(initialData);
-        }
-
-        setCurrentLocale(customFieldLocation?.entry?.locale);
-
-        appSdk?.location?.CustomField?.frame?.enableAutoResizing();
-        setState({
-          config,
-          contentTypeConfig: contenttypeConfig,
-          location: appSdk?.location,
-          appSdkInitialized: true,
-        });
-      })
-      .catch((error) => {
-        console.error("appSdk initialization error", error);
-      });
-  }, []);
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
-    setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-    setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
-    state?.location?.CustomField?.field?.setData(selectedAssets);
+    if (selectedAssets) {
+      setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
+      setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
+      state?.location?.field?.setData(selectedAssets);
+    }
   }, [
     selectedAssets, // Your Custom Field State Data
   ]);
+
+  const handleUniqueSelectedData = (dataArr: any[]) => {
+    if (dataArr?.length) {
+      const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
+      let finalAssets = CustomFieldUtils.uniqBy(
+        [...selectedAssets, ...dataArr],
+        uniqueID
+      );
+
+      if (finalAssets?.length > assetLimit) {
+        finalAssets = finalAssets?.slice(0, assetLimit);
+        Notification({
+          displayContent: {
+            error: {
+              error_message:
+                localeTexts.CustomFields.assetLimit.notificationMsg,
+            },
+          },
+          notifyProps: {
+            hideProgressBar: true,
+          },
+          type: "error",
+        });
+      }
+      if (finalAssets?.length) {
+        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+        handleBtnDisable(
+          finalAssets,
+          state?.contentTypeConfig?.advanced?.max_limit
+        );
+      }
+    }
+  };
 
   // returns final config values from app_config and custom_field_config
   const getConfig = () => {
@@ -109,52 +104,62 @@ const CustomField: React.FC = function () {
   const handleMessage = (event: MessageEvent) => {
     if (selectorPageWindow) {
       const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
-      if (dataArr?.length) {
-        setSelectedAssets(
-          utils.uniqBy([...selectedAssets, ...dataArr], uniqueID)
-        ); // selectedAssets is array of assets selected in selectorpage
-      }
+      handleUniqueSelectedData(dataArr);
     }
   };
 
-  // handle assets received from selectorpage component
-  const handleAssets = useCallback(
-    (assets: any[]) => {
-      setSelectedAssets(utils.uniqBy([...selectedAssets, ...assets], uniqueID));
-    },
-    [selectedAssets]
-  );
-
   // function to set error
-  const setError = (
-    isErrorPresent: boolean = false,
-    errorText: string = localeTexts.Warnings.incorrectConfig
-  ) => {
-    setIsError(isErrorPresent);
+  const setError = ({
+    isErr = false,
+    errorText = localeTexts.Warnings.incorrectConfig,
+  }: TypeErrorFn) => {
+    setIsError(isErr);
     if (errorText) setWarningText(errorText);
   };
 
-  const damComponent = (props: any) => (
-    <SelectorPage
-      {...props}
-      customFieldConfig={getConfig()}
-      handleAssets={handleAssets}
-      selectedAssetIds={selectedAssetIds}
-      componentType="modal"
-    />
+  // function called on postmessage from selector page. used in "novalue" option
+  const saveData = useCallback(
+    (event: any) => {
+      const { data } = event;
+      if (data?.message === "openedReady") {
+        event?.source?.postMessage(
+          {
+            message: "init",
+            config: getConfig(),
+            type: rootConfig.damEnv.DAM_APP_NAME,
+            selectedIds: selectedAssetIds,
+          },
+          `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page`
+        );
+      } else if (
+        data?.message === "add" &&
+        data?.type === rootConfig.damEnv.DAM_APP_NAME &&
+        data?.selectedAssets?.length
+      ) {
+        const assets = data?.selectedAssets;
+        if (state?.config?.is_custom_json) {
+          const keys = CustomFieldUtils.extractKeys(state?.config?.dam_keys);
+          const assetData = CustomFieldUtils.getFilteredAssets(assets, keys);
+          handleUniqueSelectedData(assetData);
+        } else {
+          handleUniqueSelectedData(assets);
+        }
+      }
+    },
+    [selectedAssets, state?.config]
   );
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        cbModal({
-          component: (props: any) => damComponent(props),
-          modalProps: {
-            size: "customSize",
-          },
-          testId: "cs-modal-storybook",
+        CustomFieldUtils.popupWindow({
+          url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
+          title: localeTexts.SelectorPage.title,
+          w: 1500,
+          h: 800,
         });
+        window.addEventListener("message", saveData, false);
       } else {
         if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window") {
           rootConfig?.handleSelectorWindow?.(
@@ -167,7 +172,7 @@ const CustomField: React.FC = function () {
             state?.config,
             state?.contentTypeConfig
           );
-          selectorPageWindow = utils.popupWindow({
+          selectorPageWindow = CustomFieldUtils.popupWindow({
             url,
             title: `${localeTexts.SelectorPage.title}`,
             w: 1500, // You Change These According To Your App
@@ -176,65 +181,48 @@ const CustomField: React.FC = function () {
         }
         window.addEventListener("message", handleMessage, false);
       }
-    } else selectorPageWindow.focus();
+    } else selectorPageWindow?.focus();
   }, [
+    state,
     state?.appSdkInitialized,
     state?.config,
     state?.contentTypeConfig,
-    damComponent,
+    saveData,
   ]);
 
-  // function to remove the assets when "delete" action is triggered
-  const removeAsset = useCallback(
-    (removedId: string) => {
-      setSelectedAssets(
-        selectedAssets?.filter((asset) => asset?.[uniqueID] !== removedId)
-      );
-    },
-    [selectedAssets]
-  );
-
-  // rearrange the order of assets
-  const setRearrangedAssets = useCallback(
-    (assets: any[]) => {
-      setSelectedAssets(
-        assets?.map(
-          (asset: any) =>
-            selectedAssets?.filter(
-              (item: any) => item?.[uniqueID] === asset?.id
-            )?.[0]
-        )
-      );
-    },
-    [selectedAssets]
-  );
-
   return (
-    <div className="field-extension-wrapper" ref={ref}>
+    <div className="field-extension-wrapper">
       <div className="field-extension">
-        {state.appSdkInitialized && (
+        {appFailed ? (
+          <AppFailed />
+        ) : (
           <div className="field-wrapper" data-testid="field-wrapper">
             {!isError ? (
               <>
                 {renderAssets?.length ? (
-                  <AssetCardContainer
-                    assets={renderAssets}
-                    removeAsset={removeAsset}
-                    setRearrangedAssets={setRearrangedAssets}
-                  />
+                  <AssetContainer />
                 ) : (
                   <div className="no-asset" data-testid="noAsset-div">
                     {localeTexts.CustomFields.AssetNotAddedText}
                   </div>
                 )}
-                <Button
-                  buttonType="control"
-                  className="add-asset-btn"
-                  onClick={openDAMSelectorPage}
-                  data-testid="add-btn"
+                <Tooltip
+                  content={localeTexts.CustomFields.assetLimit.btnTooltip}
+                  position="top"
+                  disabled={!isBtnDisable}
+                  style={constants.constantStyles.addBtnTooltip}
                 >
-                  {localeTexts.CustomFields.button.btnText}
-                </Button>
+                  <Button
+                    buttonType="control"
+                    className="add-asset-btn"
+                    version="v2"
+                    onClick={openDAMSelectorPage}
+                    data-testid="add-btn"
+                    disabled={isBtnDisable}
+                  >
+                    {localeTexts.CustomFields.button.btnText}
+                  </Button>
+                </Tooltip>
               </>
             ) : (
               <div data-testid="warning-component">

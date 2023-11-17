@@ -11,7 +11,7 @@ const WarningMessage: React.FC<Props> = function ({ content }) {
       className="component"
       icon={infoIcon}
       content={content?.split("\n")?.map((i: string) => (
-        <p key={`key-${i}`}>{i}</p>
+        <div key={`key-${i}`} dangerouslySetInnerHTML={{ __html: i }} />
       ))}
       type="attention"
     />

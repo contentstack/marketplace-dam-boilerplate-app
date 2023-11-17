@@ -30,11 +30,8 @@ const saveData = (event: any) => {
       dataArr = data?.selectedAssets;
     }
     dataArr?.forEach((asset: any) => {
-      asset.rte_resource_type = rteConfig?.getAssetType?.(asset);
-      asset.rte_display_url = rteConfig?.getDisplayUrl?.(asset);
       asset.height = null;
       asset.width = null;
-      asset.name = asset[rteConfig?.damEnv?.ASSET_NAME_PARAM];
 
       const element = {
         type: rteConfig?.damEnv?.DAM_APP_NAME,
@@ -67,8 +64,10 @@ export const onClickHandler = async (props) => {
       case process.env.REACT_APP_UI_URL_EU:
         queryLocation = "EU";
         break;
+      case process.env.REACT_APP_UI_URL_AZURE_NA:
+        queryLocation = "AZURE_NA";
       default:
-        queryLocation = "AZURE";
+        queryLocation = "AZURE_EU";
     }
     let url;
     if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url") {
