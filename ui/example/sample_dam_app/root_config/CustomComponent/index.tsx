@@ -38,7 +38,7 @@ const CustomComponent: React.FC<TypeCustomComponent> = function ({
     setItemStatus(utils.getItemStatusMap(15, "loading"));
     if (searchText) {
       const searchData = assetData?.filter((asset: any) =>
-        asset?.assetName?.toLowerCase().includes(searchText?.toLowerCase())
+        asset?.assetName?.toLowerCase()?.includes(searchText?.toLowerCase())
       );
       setItemStatus(utils.getItemStatusMap(searchData?.length, "loaded"));
       setTableData(searchData);

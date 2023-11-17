@@ -29,7 +29,7 @@ const getFilteredConfigObj = (
 ) => {
   const returnObj: any = {};
   mapArr?.forEach((key: string) => {
-    if (key in checkObj && checkObj[key] !== "") {
+    if (key in checkObj && checkObj?.[key] !== "") {
       if (
         valueChecks &&
         key in valueChecks &&
@@ -91,7 +91,7 @@ const getSelectorConfig = (props: TypeSelectorConfig) => {
   if (!Object.keys(customConfig)?.length) return appConfig;
   // if customConfig
   let returnConfig = { ...appConfig };
-  if (!pairs || !pairs?.length) {
+  if (!pairs?.length) {
     returnConfig = {
       ...returnConfig,
       ...getFilteredConfigObj(keyArr, customConfig, valueChecks),
