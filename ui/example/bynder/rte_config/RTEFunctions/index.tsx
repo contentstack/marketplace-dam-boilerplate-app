@@ -11,7 +11,7 @@ const getDisplayUrl = (asset: any) => {
     case ASSET_IMAGE_TYPE:
       return asset?.files?.webImage?.url;
     case ASSET_VIDEO_TYPE:
-      return asset?.previewUrls[0];
+      return asset?.previewUrls?.[0];
     default:
       return asset?.url;
   }
@@ -24,7 +24,7 @@ const getAssetType = (asset: any) => {
 
 const getViewIconforTooltip = (type: string) => {
   /* possible return values ==> Eye and NewTab */
-  type = type.toLowerCase();
+  type = type?.toLowerCase();
   if (type === "image" || type === "video") return PREVIEW_ICON;
   return NEWTAB_ICON;
 };
