@@ -1,154 +1,154 @@
-import bobatea from "../../Images/bobatea.jpeg";
-import burger from "../../Images/burger.jpeg";
-import coffee from "../../Images/coffee.jpeg";
-import cupcake from "../../Images/cupcake.jpeg";
-import friedeggs from "../../Images/friedeggs.jpeg";
-import fries from "../../Images/fries.jpeg";
-import icecream from "../../Images/icecream.jpeg";
-import orangejuice from "../../Images/orangejuice.jpeg";
-import pancake from "../../Images/pancake.jpeg";
-import pizza from "../../Images/pizza.jpeg";
-import spaghetti from "../../Images/spaghetti.jpeg";
-import sushi from "../../Images/sushi.jpeg";
-import taco from "../../Images/taco.jpeg";
-import waffle from "../../Images/waffle.jpeg";
-import wrap from "../../Images/wrap.jpeg";
+import eiffelTower from "../../Images/EiffelTower_Paris.jpeg";
+import algarDeBenagil from "../../Images/AlgarDeBenagil_Portugal.jpeg";
+import bari from "../../Images/Bari_Italy.jpeg";
+import christTheRedeemer from "../../Images/ChristTheRedeemer_Brazil.jpg";
+import colosseum from "../../Images/Colosseum_Rome.jpeg";
+import elephantRock from "../../Images/ElephantRock_SaudiArabia.jpeg";
+import fortCanning from "../../Images/FortCanningPark_Singapore.jpeg";
+import goldenBridge from "../../Images/GoldenBridge_Vietnam.jpeg";
+import hotSprings from "../../Images/HotSprings_Mexico.jpeg";
+import kohTao from "../../Images/KohTao_Thailand.jpg";
+import lakeComo from "../../Images/LakeComo_Italy.jpg";
+import lasVegas from "../../Images/Las_Vegas.jpeg";
+import medhufaru from "../../Images/Medhufaru_Maldives.jpeg";
+import santorini from "../../Images/Santorini_Greece.jpeg";
+import tajMahal from "../../Images/TajMahal_India.jpeg";
 
 const assetData = [
   {
     _id: 1,
-    assetName: "Boba Tea",
+    assetName: "Colosseum, Rome",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: bobatea,
+    assetUrl: colosseum,
   },
   {
     _id: 2,
-    assetName: "Burger",
+    assetName: "Eiffel Tower, Paris",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: burger,
+    assetUrl: eiffelTower,
   },
   {
     _id: 3,
-    assetName: "Coffee",
+    assetName: "Medhufaru, Maldives",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: coffee,
+    assetUrl: medhufaru,
   },
   {
     _id: 4,
-    assetName: "Cupcake",
+    assetName: "Lake Como, Italy",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: cupcake,
+    assetUrl: lakeComo,
   },
   {
     _id: 5,
-    assetName: "Fried Eggs",
+    assetName: "Bari, Italy",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: friedeggs,
+    assetUrl: bari,
   },
   {
     _id: 6,
-    assetName: "Fries",
+    assetName: "Santorini, Greece",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: fries,
+    assetUrl: santorini,
   },
   {
     _id: 7,
-    assetName: "Ice-Cream",
+    assetName: "Hot Springs, Mexico",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: icecream,
+    assetUrl: hotSprings,
   },
   {
     _id: 8,
-    assetName: "Orange Juice",
+    assetName: "Christ The Redeemer, Brazil",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: orangejuice,
+    assetUrl: christTheRedeemer,
   },
   {
     _id: 9,
-    assetName: "Pancake",
+    assetName: "Las Vegas",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: pancake,
+    assetUrl: lasVegas,
   },
   {
     _id: 10,
-    assetName: "Pizza",
+    assetName: "Fort Canning Park, Singapore",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: pizza,
+    assetUrl: fortCanning,
   },
   {
     _id: 11,
-    assetName: "Spaghetti",
+    assetName: "Golden Bridge, Vietnam",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: spaghetti,
+    assetUrl: goldenBridge,
   },
   {
     _id: 12,
-    assetName: "Sushi",
+    assetName: "Elephant Rock, Saudi Arabia",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: sushi,
+    assetUrl: elephantRock,
   },
   {
     _id: 13,
-    assetName: "Taco",
+    assetName: "KOH TAO, Thailand",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: taco,
+    assetUrl: kohTao,
   },
   {
     _id: 14,
-    assetName: "Waffle",
+    assetName: "Algar de Benagil, Portugal",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: waffle,
+    assetUrl: algarDeBenagil,
   },
   {
     _id: 15,
-    assetName: "Wrap",
+    assetName: "Taj Mahal, India",
     dimensions: {
       width: 100,
       height: 100,
     },
-    assetUrl: wrap,
+    assetUrl: tajMahal,
   },
 ];
 
