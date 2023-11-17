@@ -442,12 +442,13 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
     Function Parameters:
 
-    | Name      | Type                          | Description                                                                      |
-    | --------- | ----------------------------- | -------------------------------------------------------------------------------- |
-    | config    | Object                        | Config object received from CustomField                                          |
-    | setError  | (errObj: TypeErrorFn) => void | Function to set an error message in selector page                                |
-    | successFn | (assets: any[]) => void       | Function to send your data to custom field. It accepts an array of asset objects |
-    | closeFn   | () => void                    | Function to close the Selector Page                                              |
+    | Name             | Type                          | Description                                                                      |
+    | ---------------- | ----------------------------- | -------------------------------------------------------------------------------- |
+    | config           | Object                        | Config object received from CustomField                                          |
+    | setError         | (errObj: TypeErrorFn) => void | Function to set an error message in selector page                                |
+    | successFn        | (assets: any[]) => void       | Function to send your data to custom field. It accepts an array of asset objects |
+    | closeFn          | () => void                    | Function to close the Selector Page                                              |
+    | selectedAssetIds | Array of strings              | Selected asset ids from CustomField                                              |
 
     ```
     Note: interface TypeErrorFn {
