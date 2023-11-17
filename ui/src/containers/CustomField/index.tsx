@@ -1,7 +1,7 @@
 /* Import React modules */
 import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
-import { Button } from "@contentstack/venus-components";
+import { Button, Notification, Tooltip } from "@contentstack/venus-components";
 /* Import our CSS */
 import "./styles.scss";
 /* Import our modules */
@@ -14,6 +14,7 @@ import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types";
+import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
@@ -27,6 +28,8 @@ const CustomField: React.FC = function () {
     uniqueID,
     state,
     currentLocale,
+    handleBtnDisable,
+    isBtnDisable,
   } = useContext(CustomFieldContext);
 
   // state for checking if error is present
@@ -42,12 +45,47 @@ const CustomField: React.FC = function () {
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
-    setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-    setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
-    state?.location?.field?.setData(selectedAssets);
+    if (selectedAssets) {
+      setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
+      setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
+      state?.location?.field?.setData(selectedAssets);
+    }
   }, [
     selectedAssets, // Your Custom Field State Data
   ]);
+
+  const handleUniqueSelectedData = (dataArr: any[]) => {
+    if (dataArr?.length) {
+      const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
+      let finalAssets = CustomFieldUtils.uniqBy(
+        [...selectedAssets, ...dataArr],
+        uniqueID
+      );
+
+      if (finalAssets?.length > assetLimit) {
+        finalAssets = finalAssets?.slice(0, assetLimit);
+        Notification({
+          displayContent: {
+            error: {
+              error_message:
+                localeTexts.CustomFields.assetLimit.notificationMsg,
+            },
+          },
+          notifyProps: {
+            hideProgressBar: true,
+          },
+          type: "error",
+        });
+      }
+      if (finalAssets?.length) {
+        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+        handleBtnDisable(
+          finalAssets,
+          state?.contentTypeConfig?.advanced?.max_limit
+        );
+      }
+    }
+  };
 
   // returns final config values from app_config and custom_field_config
   const getConfig = () => {
@@ -66,11 +104,7 @@ const CustomField: React.FC = function () {
   const handleMessage = (event: MessageEvent) => {
     if (selectorPageWindow) {
       const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
-      if (dataArr?.length) {
-        setSelectedAssets(
-          CustomFieldUtils.uniqBy([...selectedAssets, ...dataArr], uniqueID)
-        ); // selectedAssets is array of assets selected in selectorpage
-      }
+      handleUniqueSelectedData(dataArr);
     }
   };
 
@@ -106,13 +140,9 @@ const CustomField: React.FC = function () {
         if (state?.config?.is_custom_json) {
           const keys = CustomFieldUtils.extractKeys(state?.config?.dam_keys);
           const assetData = CustomFieldUtils.getFilteredAssets(assets, keys);
-          setSelectedAssets(
-            CustomFieldUtils.uniqBy([...selectedAssets, ...assetData], uniqueID)
-          );
+          handleUniqueSelectedData(assetData);
         } else {
-          setSelectedAssets(
-            CustomFieldUtils.uniqBy([...selectedAssets, ...assets], uniqueID)
-          );
+          handleUniqueSelectedData(assets);
         }
       }
     },
@@ -176,15 +206,23 @@ const CustomField: React.FC = function () {
                     {localeTexts.CustomFields.AssetNotAddedText}
                   </div>
                 )}
-                <Button
-                  buttonType="control"
-                  className="add-asset-btn"
-                  version="v2"
-                  onClick={openDAMSelectorPage}
-                  data-testid="add-btn"
+                <Tooltip
+                  content={localeTexts.CustomFields.assetLimit.btnTooltip}
+                  position="top"
+                  disabled={!isBtnDisable}
+                  style={constants.constantStyles.addBtnTooltip}
                 >
-                  {localeTexts.CustomFields.button.btnText}
-                </Button>
+                  <Button
+                    buttonType="control"
+                    className="add-asset-btn"
+                    version="v2"
+                    onClick={openDAMSelectorPage}
+                    data-testid="add-btn"
+                    disabled={isBtnDisable}
+                  >
+                    {localeTexts.CustomFields.button.btnText}
+                  </Button>
+                </Tooltip>
               </>
             ) : (
               <div data-testid="warning-component">

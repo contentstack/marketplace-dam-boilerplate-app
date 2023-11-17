@@ -18,6 +18,7 @@ const SelectorPage: React.FC<any> = function () {
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
+  const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
   const damContainer = useRef(null);
 
   // function to check null or missing values of config
@@ -95,6 +96,7 @@ const SelectorPage: React.FC<any> = function () {
       ) {
         setConfig(data?.config);
         compactViewImplementation(data?.config, data?.selectedIds);
+        setSelectedAssetIds(data?.selectedIds);
       }
     }
   };
@@ -176,7 +178,8 @@ const SelectorPage: React.FC<any> = function () {
                 config,
                 setError,
                 successFn,
-                closeFn
+                closeFn,
+                selectedAssetIds
               )
             )}
           </>

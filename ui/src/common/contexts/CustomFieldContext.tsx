@@ -10,6 +10,8 @@ interface TypeCustomFieldContext {
   setRearrangedAssets: Function;
   state: any;
   currentLocale: string;
+  handleBtnDisable: Function;
+  isBtnDisable: boolean;
 }
 
 const CustomFieldContext = createContext<TypeCustomFieldContext>({
@@ -22,6 +24,8 @@ const CustomFieldContext = createContext<TypeCustomFieldContext>({
   setRearrangedAssets: () => {},
   state: {},
   currentLocale: "",
+  handleBtnDisable: () => {},
+  isBtnDisable: false,
 });
 
 export default CustomFieldContext;
