@@ -135,6 +135,7 @@ const getIntialValueofComponents = ({
 const ConfigScreenUtils = {
   mergeObjects,
   toastMessage,
+  getOptions,
   configRootUtils,
   getIntialValueofComponents,
   getDefaultInputValues,

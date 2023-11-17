@@ -281,8 +281,11 @@ const CustomFieldUtils = {
   getListHoverActions,
   uniqBy,
   findAssetIndex,
+  removeEmptyFromArray,
+  convertStringAndMergeToObject,
   findAsset,
   extractKeys,
+  navigateObject,
   getFilteredAssets,
   gridViewDropdown,
 };

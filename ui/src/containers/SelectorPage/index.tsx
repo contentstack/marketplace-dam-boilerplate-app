@@ -10,10 +10,10 @@ let isScriptLoaded: any = false;
 let url: string = "";
 
 const SelectorPage: React.FC<any> = function () {
-  // config in selector page
-  const [config, setConfig] = useState<any>();
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
+  // config in selector page
+  const [config, setConfig] = useState<any>();
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig

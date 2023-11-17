@@ -24,7 +24,7 @@ const getAssetType = (asset: any) => {
 
 const getViewIconforTooltip = (type: string) => {
   /* possible return values ==> Eye and NewTab */
-  type = type.toLowerCase();
+  type = type?.toLowerCase();
   if (type === "image" || type === "video") return PREVIEW_ICON;
   return NEWTAB_ICON;
 };

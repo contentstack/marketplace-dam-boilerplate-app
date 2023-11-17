@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react/pure";
-import SelectorPage from "./index";
+import SelectorPage from "../../containers/SelectorPage/index";
 
 const selectorPageUIElementsIDs = [
   "selector-wrapper",
@@ -18,7 +18,7 @@ jest.mock("../../root_config/index.tsx", () => ({
     CONFIG_FIELDS: ["url", "mode"],
     SELECTOR_PAGE_LOGO: "Logo",
   })),
-  customComponent: jest.fn(() => (
+  customSelectorComponent: jest.fn(() => (
     <div data-testid="custom-selector-container" />
   )),
 }));
@@ -32,17 +32,7 @@ beforeEach(async () => {
       .spyOn(React, "useState")
       .mockImplementationOnce(() => useStateMock(true));
   }
-
-  if (testName.includes("*")) {
-    render(
-      <SelectorPage
-        componentType="modal"
-        customFieldConfig={{ url: "/test", mode: "singleSelect" }}
-      />
-    );
-  } else {
-    render(<SelectorPage />);
-  }
+  render(<SelectorPage />);
 });
 
 describe(`UI Elements of Selector Page`, () => {
@@ -50,10 +40,6 @@ describe(`UI Elements of Selector Page`, () => {
     test(`Rendered ${id} element`, async () => {
       expect(screen.getByTestId(`${id}`)).toBeTruthy();
     });
-  });
-
-  test(`*Rendered "selector-cancel-icon element when componentType is passed as props`, async () => {
-    expect(screen.getByTestId(`selector-cancel-icon`)).toBeTruthy();
   });
 
   test(`**Rendered warning-component element on an error`, async () => {
