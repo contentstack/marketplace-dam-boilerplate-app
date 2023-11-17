@@ -1,6 +1,10 @@
 .config-wrapper {
   margin: 0;
 
+  & .TextInput__input {
+    width: 97% !important;
+  }
+
   & .Field {
     padding: 30px 20px;
     margin: 0;
@@ -33,7 +37,8 @@
   }
 
   .Radio-wrapper {
-    padding: 20px 10px 0;
+    padding: 0 10px;
+    margin-bottom: 0;
 
     & .Radio {
       margin-right: 20px;
@@ -49,6 +54,7 @@
     margin-left: 0;
   }
 
+  // This needs to change according to change in default values, need to handle this dynamically
   .Select__value-container > div:nth-child(-n + 4) {
     pointer-events: none;
     cursor: alias;
@@ -72,5 +78,47 @@
         border-color: rgba(118, 118, 118, 0.3);
       }
     }
+  }
+
+  & .Select {
+    min-width: 300px !important;
+    max-width: unset !important;
+  }
+
+  & .dam-keys-select {
+    min-width: 200px !important;
+  }
+
+  .Select__menu {
+    max-width: unset;
+    min-width: 150px !important;
+    & .Select__menu-list {
+      max-height: 250px !important;
+    }
+  }
+
+  & .Select__add-option {
+    cursor: pointer;
+    color: #475161 !important;
+    font-size: 14px;
+
+    svg {
+      margin: 0 15px;
+    }
+  }
+}
+
+.note-p {
+  display: inline-block !important;
+  margin: 5px 5px 0 0;
+}
+
+.modal_toast_message {
+  bottom: 60px !important;
+}
+
+.json-field {
+  & .Radio-wrapper {
+    margin: 20px 0;
   }
 }

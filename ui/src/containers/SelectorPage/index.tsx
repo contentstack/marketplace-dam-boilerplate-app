@@ -1,29 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Icon } from "@contentstack/venus-components";
-import utils from "../../common/utils";
-import "./style.scss";
+import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
 import WarningMessage from "../../components/WarningMessage";
+import "./style.scss";
+import { TypeErrorFn } from "../../common/types";
 
 let isScriptLoaded: any = false;
+let url: string = "";
 
-const SelectorPage: React.FC<any> = function ({
-  closeModal,
-  customFieldConfig,
-  handleAssets,
-  selectedAssetIds,
-  componentType,
-}) {
-  // config in selector page
-  const [config, setConfig] = useState<any>();
+const SelectorPage: React.FC<any> = function () {
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
+  // config in selector page
+  const [config, setConfig] = useState<any>();
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
-  const [originUrl, setOriginUrl] = useState<string>("");
+  const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
   const damContainer = useRef(null);
 
   // function to check null or missing values of config
@@ -38,38 +33,27 @@ const SelectorPage: React.FC<any> = function ({
   };
 
   // function to set error
-  const setError = (
-    isError: boolean = false,
-    errorText: string = localeTexts.Warnings.incorrectConfig
-  ) => {
-    setIsErrorPresent(isError);
+  const setError = ({
+    isErr = false,
+    errorText = localeTexts.Warnings.incorrectConfig,
+  }: TypeErrorFn) => {
+    setIsErrorPresent(isErr);
     if (errorText) setWarningText(errorText);
   };
 
   const successFn = (assets: any[]) => {
-    if (componentType !== "modal") {
-      window.opener.postMessage(
-        {
-          message: "add",
-          selectedAssets: assets,
-          type: rootConfig?.damEnv?.DAM_APP_NAME,
-        },
-        originUrl
-      );
-      window.close();
-    } else {
-      handleAssets(assets);
-      closeModal();
-    }
+    window.opener.postMessage(
+      {
+        message: "add",
+        selectedAssets: assets,
+        type: rootConfig?.damEnv?.DAM_APP_NAME,
+      },
+      url
+    );
+    window.close();
   };
 
-  const closeFn = () => {
-    if (componentType !== "modal") {
-      window.close();
-    } else {
-      closeModal();
-    }
-  };
+  const closeFn = () => window.close();
 
   // function to load dam script and mount component
   const compactViewImplementation = async (
@@ -77,7 +61,7 @@ const SelectorPage: React.FC<any> = function ({
     selectedIds: string[]
   ) => {
     if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
-      isScriptLoaded = await utils.loadDAMScript(
+      isScriptLoaded = await SelectorPageUtils.loadDAMScript(
         rootConfig?.damEnv?.DAM_SCRIPT_URL as string
       );
       if (isScriptLoaded === true) {
@@ -112,52 +96,46 @@ const SelectorPage: React.FC<any> = function ({
       ) {
         setConfig(data?.config);
         compactViewImplementation(data?.config, data?.selectedIds);
+        setSelectedAssetIds(data?.selectedIds);
       }
     }
   };
 
   useEffect(() => {
-    if (
-      customFieldConfig &&
-      Object.keys(customFieldConfig)?.length &&
-      selectedAssetIds
-    ) {
-      setConfig(customFieldConfig);
-      compactViewImplementation(customFieldConfig, selectedAssetIds);
-    } else {
-      const { opener: windowOpener } = window;
-      if (windowOpener) {
-        const queryString = window.location.href
-          ?.split("?")?.[1]
-          ?.split("=")?.[1];
+    const { opener: windowOpener } = window;
+    if (windowOpener) {
+      const queryString = window.location.href
+        ?.split("?")?.[1]
+        ?.split("=")?.[1];
 
-        let postMessageUrl: string;
-        switch (queryString) {
-          case "NA":
-            postMessageUrl = process.env.REACT_APP_UI_URL_NA || "";
-            break;
-          case "EU":
-            postMessageUrl = process.env.REACT_APP_UI_URL_EU || "";
-            break;
-          default:
-            postMessageUrl = process.env.REACT_APP_UI_URL_AZURE || "";
-        }
-
-        window.addEventListener("message", handleMessage, false);
-        windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
-        window.addEventListener("beforeunload", () => {
-          windowOpener.postMessage({ message: "close" }, postMessageUrl);
-        });
-        setOriginUrl(postMessageUrl);
+      let postMessageUrl: string;
+      switch (queryString) {
+        case "NA":
+          postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
+          break;
+        case "EU":
+          postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
+          break;
+        case "AZURE_NA":
+          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
+          break;
+        case "CUSTOM-FIELD":
+          postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
+          break;
+        default:
+          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
       }
+      url = postMessageUrl;
+      window.addEventListener("message", handleMessage, false);
+      windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
+      window.addEventListener("beforeunload", () => {
+        windowOpener.postMessage({ message: "close" }, postMessageUrl);
+      });
     }
   }, []);
 
   return (
-    <div
-      className={`selector-page-wrapper ${componentType}-page-wrapper`}
-      data-testid="selector-wrapper"
-    >
+    <div className="selector-page-wrapper" data-testid="selector-wrapper">
       <div
         className="selector-page-header flex FullPage_Modal_Header"
         data-testid="selector-header"
@@ -176,21 +154,9 @@ const SelectorPage: React.FC<any> = function ({
             {localeTexts.SelectorPage.title}
           </span>
         </div>
-
-        {componentType === "modal" && (
-          <Icon
-            icon="Cancel"
-            size="small"
-            hover
-            hoverType="secondary"
-            className="cancel-icon"
-            onClick={closeModal}
-            data-testid="selector-cancel-icon"
-          />
-        )}
       </div>
       <div
-        className={`selector_container mt-30 mr-20 ml-20 mb-20 ${componentType}_selector_container`}
+        className="selector_container mt-30 mr-20 ml-20 mb-20"
         id="selector_container"
         data-testid="selector-container"
         ref={damContainer}
@@ -208,11 +174,12 @@ const SelectorPage: React.FC<any> = function ({
               <></>
             ) : (
               // If there is no script custom component will be added
-              rootConfig?.customComponent?.(
+              rootConfig?.customSelectorComponent?.(
                 config,
                 setError,
                 successFn,
-                closeFn
+                closeFn,
+                selectedAssetIds
               )
             )}
           </>

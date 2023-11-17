@@ -4,12 +4,19 @@ const localeTexts = {
   ConfigFields: {
     entrySaveRadioButton: {
       label: "Save In Entry",
-      help: `You can select how you want to save data you get from ${rootConfig.damEnv.DAM_APP_NAME}.`,
-      placeholder: "Enter the structure of data you want to save in the entry",
+      help: `You can select how you want to save the data you get from ${rootConfig.damEnv.DAM_APP_NAME}.`,
+      placeholder:
+        "Enter the structure of the data you want to save in the entry",
       instruction:
-        "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, less number of products can be selected.",
-      wholeJson: "Whole JSON",
-      customJson: "Custom JSON",
+        "If the 'All Fields' option is selected, you might be able to add limited assets in the custom field depending on the size of the data. If you select the 'Custom Fields' option, you can select the structure of the data you want to save in the entry. ",
+      referS: "(Refer to the",
+      custom: "Custom Fields Limitations",
+      referE:
+        " documentation, for more details). To increase this limit, please contact support.",
+      notetext:
+        "<b>Note:</b> When you change the settings from All Fields to Custom Fields, and vice versa, the existing assets follow the old configuration settings, whereas new assets added to the entry will store the data according to the updated configuration settings.",
+      wholeJson: "All Fields",
+      customJson: "Custom Fields",
     },
     keysField: {
       label: `${rootConfig.damEnv.DAM_APP_NAME} Keys`,
@@ -17,8 +24,42 @@ const localeTexts = {
       placeholder: "Select keys",
       instruction: "Select the keys you want to save",
     },
+    customWholeJson: {
+      modal: {
+        header: "Add Key Path",
+        label: "Key Path",
+        placeholder: "Enter Key Path",
+        instructionS:
+          'Use the dot format to enter nested objects, for eg: "file.url".',
+        instructionE:
+          "Label already created/added in the dropdown will not be created.",
+        note: "Note: ",
+        btn: {
+          cancel: "Cancel",
+          create: "Create",
+          apply: "Create and Apply",
+        },
+        addOption: "New Key Field",
+        successToast: {
+          type: "success",
+          text: "Successfully added key path to options",
+        },
+      },
+      notification: {
+        errorS: "The option",
+        errorE: "already exists",
+      },
+    },
+    invalidCredentials: "Invalid Configuration",
+    emptyValue: "Field Value Missing",
   },
   CustomFields: {
+    assetLimit: {
+      btnTooltip:
+        "You cannot choose assets as the maximum limit has been reached.",
+      notificationMsg:
+        "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
+    },
     button: {
       btnText: "Choose Asset(s)",
     },
@@ -26,23 +67,49 @@ const localeTexts = {
       hoverActions: {
         preview: "Preview",
         platformRedirect: `Open In ${rootConfig?.damEnv?.DAM_APP_NAME}`,
-        remove: "Delete",
-        drag: "Drag",
+        remove: "Remove",
+        drag: "Reorder",
       },
     },
     AssetNotAddedText: "No assets have been added",
+    header: {
+      asset: {
+        singular: "Asset",
+        plural: "Assets",
+      },
+      changeView: "Change View",
+    },
+    listViewTable: {
+      thumbnailCol: "Asset Image",
+      assetNameCol: "Name",
+      type: "Type",
+    },
+    toolTip: {
+      thumbnail: "Thumbnail",
+      list: "List",
+      content: "Asset Image Not Available",
+    },
   },
   SelectorPage: {
-    title: `${rootConfig?.damEnv?.DAM_APP_NAME} Extension`,
+    title: rootConfig?.damEnv?.DAM_APP_NAME,
   },
   Warnings: {
     incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
   },
   DeleteModal: {
-    header: "Delete",
-    body: "This will delete <b>&apos;$&apos;</b> permanently.",
+    header: "Remove Asset from Contentstack",
+    body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",
     cancelButton: "Cancel",
-    confirmButton: "Delete",
+    confirmButton: "Remove",
+  },
+  AppFailed: {
+    Message1: "App Location Iniailization Failed.",
+    Message2: "Please reload the location and Try Again!",
+    body: "For Assistance, please reach out to us at support@contentstack.com",
+    button: {
+      text: "Learn More",
+      url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-dam-app-boilerplate",
+    },
   },
 };
 

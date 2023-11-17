@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import ContentstackSDK from "@contentstack/app-sdk";
-import DAMIcon from "./components/DAMImages/DAMIcon";
-import ImageElement from "./components/DAMImages/ImageElement";
+import DAMIcon from "./components/DAMIcon";
+import ImageElement from "./components/ImageElement";
 import { onClickHandler } from "./dam";
 import rteConfig from "./rte_config";
 import localeTexts from "./common/locale/en-us/index";

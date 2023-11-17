@@ -10,11 +10,11 @@ import React from "react";
 import localeTexts from "../../common/locale/en-us";
 
 const DeleteModal = function (props) {
-  const { type, remove, name: itemName, closeModal } = props;
+  const { remove, name: itemName, closeModal } = props;
   return (
     <>
       <ModalHeader
-        title={`${localeTexts.DeleteModal.header} ${type}`}
+        title={localeTexts.DeleteModal.header}
         closeModal={closeModal}
       />
       <ModalBody className="deleteModalBody">
@@ -31,11 +31,15 @@ const DeleteModal = function (props) {
           </Button>
           <Button
             buttonType="delete"
-            icon="TrashMini"
-            onClick={useCallback(() => {
+            icon="RemoveFilled"
+            iconProps={{
+              size: "mini",
+              className: "remove-modal-icon",
+            }}
+            onClick={() => {
               remove();
               closeModal();
-            }, [remove, closeModal])}
+            }}
           >
             {localeTexts.DeleteModal.confirmButton}
           </Button>
