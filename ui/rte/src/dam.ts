@@ -66,6 +66,7 @@ export const onClickHandler = async (props) => {
         break;
       case process.env.REACT_APP_UI_URL_AZURE_NA:
         queryLocation = "AZURE_NA";
+        break;
       default:
         queryLocation = "AZURE_EU";
     }

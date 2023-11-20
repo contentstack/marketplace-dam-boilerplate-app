@@ -87,22 +87,20 @@ const ImageEditModal = function (props) {
           at: rte?.getPath(element),
         });
       }
+    } else if (rte?._adv?.editor?.isInline(element)) {
+      rte?._adv?.Transforms?.removeNodes(rte?._adv?.editor, {
+        at: path,
+      });
+      let blockPath = [path[0], path[1] + 1];
+      rte?._adv?.Transforms?.insertNodes(rte?._adv?.editor, newNode, {
+        at: blockPath,
+      });
     } else {
-      if (rte?._adv?.editor?.isInline(element)) {
-        rte?._adv?.Transforms?.removeNodes(rte?._adv?.editor, {
-          at: path,
-        });
-        let blockPath = [path[0], path[1] + 1];
-        rte?._adv?.Transforms?.insertNodes(rte?._adv?.editor, newNode, {
-          at: blockPath,
-        });
-      } else {
-        rte?._adv?.Transforms?.setNodes(
-          rte?._adv?.editor,
-          { attrs: state },
-          { at: rte?.getPath(element) }
-        );
-      }
+      rte?._adv?.Transforms?.setNodes(
+        rte?._adv?.editor,
+        { attrs: state },
+        { at: rte?.getPath(element) }
+      );
     }
   }, [
     path,
@@ -297,7 +295,7 @@ const ImageEditModal = function (props) {
             </Field>
             <Field>
               <Checkbox
-                checked={state?.["redactor-attributes"]?.target || false}
+                checked={state?.["redactor-attributes"]?.target ?? false}
                 name="target"
                 label={constantValues.constants.newTab.label}
                 onChange={updateData}
@@ -313,8 +311,6 @@ const ImageEditModal = function (props) {
                 onChange={updateData}
                 disabled={
                   state?.position === "center" || state?.position === "none"
-                    ? true
-                    : false
                 }
               />
             </Field>
@@ -343,4 +339,5 @@ ImageEditModal.propTypes = {
   rte: PropTypes.object,
   icon: PropTypes.string,
   closeModal: PropTypes.func,
+  path: PropTypes.array,
 };
