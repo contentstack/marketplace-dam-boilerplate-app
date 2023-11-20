@@ -60,7 +60,7 @@ const handleLocaleConfig = (data: TypeLocaleConfigData) => {
   } = data;
   let returnValue = { ...returnConfig };
   // prettier-ignore
-  if (('locale' in customConfig) && (currentLocale in customConfig?.locale)) {
+  if (('locale' in customConfig) && (currentLocale in (customConfig?.locale ?? {}))) {
 		const localeConfigObj = customConfig?.locale?.[currentLocale];
 		if (
 			typeof localeConfigObj === 'object' &&
@@ -362,7 +362,7 @@ const tableColumns = [
     id: "ID",
     accessor: (obj: any) =>
       // eslint-disable-next-line
-      `${obj?._id}` ?? "--",
+      obj?._id?.toString() ?? "",
     default: true,
     disableSortBy: true,
     columnWidthMultiplier: 1,

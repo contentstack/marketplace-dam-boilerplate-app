@@ -42,8 +42,19 @@ const getFilteredConfigObj = (
   return returnObj;
 };
 
+const compareFn = (a: string, b: string): number => {
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+};
+
 const checkArrEqual = (arr1: string[], arr2: string[]) =>
-  [...arr1]?.sort()?.join(",") === [...arr2]?.sort()?.join(",");
+  [...arr1]?.sort(compareFn)?.join(",") ===
+  [...arr2]?.sort(compareFn)?.join(",");
 
 const handleLocaleConfig = (data: TypeLocaleConfigData) => {
   const {
@@ -56,7 +67,7 @@ const handleLocaleConfig = (data: TypeLocaleConfigData) => {
   } = data;
   let returnValue = { ...returnConfig };
   // prettier-ignore
-  if (('locale' in customConfig) && (currentLocale in customConfig?.locale)) {
+  if (('locale' in customConfig) && (currentLocale in (customConfig?.locale ?? {}))) {
 		const localeConfigObj = customConfig?.locale?.[currentLocale];
 		if (
 			typeof localeConfigObj === 'object' &&
