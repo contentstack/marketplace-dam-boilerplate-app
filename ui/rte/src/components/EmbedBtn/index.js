@@ -1,22 +1,31 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Tooltip } from "@contentstack/venus-components";
 
-const EmbedBtn = function (props) {
+const EmbedBtn = function ({ content, title, onClick, children }) {
   return (
-    <Tooltip position="bottom" content={props?.content}>
+    <Tooltip position="bottom" content={content}>
       <button
-        id={props?.title}
+        id={title}
         type="button"
         onClick={(e) => {
           e?.preventDefault();
           e?.stopPropagation();
-          props?.onClick(e);
+          onClick(e);
         }}
       >
-        {props?.children}
+        {children}
       </button>
     </Tooltip>
   );
+};
+
+// eslint-disable-next-line
+EmbedBtn.propTypes = {
+  content: PropTypes.string,
+  onClick: PropTypes.func,
+  title: PropTypes.string,
+  children: PropTypes.any,
 };
 
 export default EmbedBtn;

@@ -311,8 +311,6 @@ const ImageEditModal = function (props) {
                 onChange={updateData}
                 disabled={
                   state?.position === "center" || state?.position === "none"
-                    ? true
-                    : false
                 }
               />
             </Field>

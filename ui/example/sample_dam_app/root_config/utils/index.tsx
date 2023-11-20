@@ -60,7 +60,7 @@ const handleLocaleConfig = (data: TypeLocaleConfigData) => {
   } = data;
   let returnValue = { ...returnConfig };
   // prettier-ignore
-  if (('locale' in customConfig) && (currentLocale in customConfig?.locale)) {
+  if (('locale' in customConfig) && (currentLocale in (customConfig?.locale ?? {}))) {
 		const localeConfigObj = customConfig?.locale?.[currentLocale];
 		if (
 			typeof localeConfigObj === 'object' &&

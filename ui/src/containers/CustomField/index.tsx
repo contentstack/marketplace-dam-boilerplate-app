@@ -35,7 +35,7 @@ const CustomField: React.FC = function () {
   // state for checking if error is present
   const [isError, setIsError] = React.useState<boolean>(false);
   // state for selected asset Ids received from selector page
-  const [selectedAssetIds, setSelectedAssetsIds] = useState<string[]>([]);
+  const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
   // state for warning message to be displayed on error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
@@ -47,7 +47,7 @@ const CustomField: React.FC = function () {
   React.useEffect(() => {
     if (selectedAssets) {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-      setSelectedAssetsIds(selectedAssets?.map((item) => item?.[uniqueID]));
+      setSelectedAssetIds(selectedAssets?.map((item) => item?.[uniqueID]));
       state?.location?.field?.setData(selectedAssets);
     }
   }, [
