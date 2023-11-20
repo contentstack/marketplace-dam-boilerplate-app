@@ -40,7 +40,8 @@ const getOptions = (arr: string[], defaultFeilds?: any[]) =>
 const configRootUtils = () => {
   // custom whole json options from rootconfig
   // eslint-disable-next-line
-  let { customJsonOptions, defaultFeilds } = rootConfig?.customWholeJson?.();
+  let { customJsonOptions, defaultFeilds } =
+    rootConfig?.customWholeJson?.() ?? {};
   let customJsonConfigObj: any = {};
   let jsonOptions: any[] = [];
 
@@ -85,21 +86,21 @@ const getDefaultInputValues = (configInputFields: any) => {
     getSaveConfigOptions(configInputFields);
 
   const radioValuesKeys = [
-    ...Object.keys(saveInConfig)?.filter(
+    ...(Object.keys(saveInConfig)?.filter(
       (value) => saveInConfig?.[value]?.type === "radioInputFields"
-    ),
-    ...Object.keys(saveInServerConfig)?.filter(
+    ) ?? []),
+    ...(Object.keys(saveInServerConfig)?.filter(
       (value) => saveInServerConfig?.[value]?.type === "radioInputFields"
-    ),
+    ) ?? []),
   ];
 
   const selectValuesKeys = [
-    ...Object.keys(saveInConfig)?.filter(
+    ...(Object.keys(saveInConfig)?.filter(
       (value) => saveInConfig?.[value]?.type === "selectInputFields"
-    ),
-    ...Object.keys(saveInServerConfig)?.filter(
+    ) ?? []),
+    ...(Object.keys(saveInServerConfig)?.filter(
       (value) => saveInServerConfig?.[value]?.type === "selectInputFields"
-    ),
+    ) ?? []),
   ];
 
   return {
