@@ -139,16 +139,14 @@ beforeEach(() => {
       },
       currentLocale: "",
     };
+  } else if (testName.includes("*")) {
+    jest
+      .spyOn(React, "useState")
+      .mockImplementationOnce(() => useStateMock(false));
   } else {
-    if (testName.includes("*")) {
-      jest
-        .spyOn(React, "useState")
-        .mockImplementationOnce(() => useStateMock(false));
-    } else {
-      jest
-        .spyOn(React, "useState")
-        .mockImplementationOnce(() => useStateMock(true));
-    }
+    jest
+      .spyOn(React, "useState")
+      .mockImplementationOnce(() => useStateMock(true));
   }
 
   if (testName.includes("AppFailed")) {
@@ -219,7 +217,7 @@ describe(`*UI Elements of CustomField without Assets`, () => {
         message: "message",
         data: [...postMessageData],
       },
-      process.env.REACT_APP_UI_URL_NA || ""
+      process.env.REACT_APP_UI_URL_NA ?? ""
     );
     expect(window.postMessage).toHaveBeenCalled();
   });

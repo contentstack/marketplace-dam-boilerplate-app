@@ -50,10 +50,3 @@ const DeleteModal = function (props) {
 };
 
 export default DeleteModal;
-
-DeleteModal.propTypes = {
-  type: PropTypes.string,
-  remove: PropTypes.func,
-  name: PropTypes.string,
-  closeModal: PropTypes.func,
-};

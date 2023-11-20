@@ -1,14 +1,9 @@
 import { useContext, useMemo } from "react";
 import { get, isEmpty, keys } from "lodash";
-import {
-  MarketplaceAppContext,
-  MarketplaceAppContextType,
-} from "../contexts/MarketplaceAppContext";
+import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
 const useAppLocation = () => {
-  const { appSdk } = useContext(
-    MarketplaceAppContext
-  ) as MarketplaceAppContextType;
+  const { appSdk } = useContext(MarketplaceAppContext);
   const locations = useMemo(() => keys(appSdk?.location), [appSdk]);
 
   const { locationName, location } = useMemo(() => {
