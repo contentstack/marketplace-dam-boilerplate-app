@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -6,11 +7,9 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@contentstack/venus-components";
-import React from "react";
 import localeTexts from "../../common/locale/en-us";
 
-const DeleteModal = function (props) {
-  const { remove, name: itemName, closeModal } = props;
+const DeleteModal = function ({ remove, name: itemName, closeModal }) {
   return (
     <>
       <ModalHeader
@@ -50,3 +49,11 @@ const DeleteModal = function (props) {
 };
 
 export default DeleteModal;
+
+// eslint-disable-next-line
+DeleteModal.propTypes = {
+  type: PropTypes.string,
+  remove: PropTypes.func,
+  name: PropTypes.string,
+  closeModal: PropTypes.func,
+};

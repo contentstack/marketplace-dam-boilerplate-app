@@ -24,12 +24,6 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
       });
   }, []);
 
-  // wait until the SDK is initialized. This will ensure the values are set
-  // correctly for appSdk.
-  if (!failed && isNull(appSdk)) {
-    return <div>Loading...</div>;
-  }
-
   const contextValue = useMemo(
     () => ({ appSdk, appConfig, appFailed: failed }),
     [appSdk, appConfig, failed]
@@ -37,7 +31,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
 
   return (
     <MarketplaceAppContext.Provider value={contextValue}>
-      {children}
+      {!failed && isNull(appSdk) ? <div>Loading...</div> : children}
     </MarketplaceAppContext.Provider>
   );
 };
