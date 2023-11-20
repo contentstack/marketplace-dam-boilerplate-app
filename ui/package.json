@@ -25,7 +25,7 @@
     "test": "jest",
     "eject": "react-scripts eject",
     "prettify": "prettier --write .",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './buid/'",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/'",
     "precommit": "npm run prettify && npm run lint:fix",
     "build": "npm run precommit && export CI=false && react-scripts build"
   },
