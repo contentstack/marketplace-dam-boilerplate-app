@@ -1,19 +1,19 @@
 import React from "react";
 import { Tooltip } from "@contentstack/venus-components";
 
-const EmbedBtn = function ({ content, onClick, children, title }) {
+const EmbedBtn = function (props) {
   return (
-    <Tooltip position="bottom" content={content}>
+    <Tooltip position="bottom" content={props?.content}>
       <button
-        id={title}
+        id={props?.title}
         type="button"
         onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onClick(e);
+          e?.preventDefault();
+          e?.stopPropagation();
+          props?.onClick(e);
         }}
       >
-        {children}
+        {props?.children}
       </button>
     </Tooltip>
   );

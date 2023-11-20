@@ -362,7 +362,7 @@ const tableColumns = [
     id: "ID",
     accessor: (obj: any) =>
       // eslint-disable-next-line
-      `${obj?._id}` ?? "--",
+      obj?._id?.toString() ?? "",
     default: true,
     disableSortBy: true,
     columnWidthMultiplier: 1,

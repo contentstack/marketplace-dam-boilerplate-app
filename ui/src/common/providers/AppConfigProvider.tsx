@@ -27,8 +27,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
   // state for error handling of empty field values
   const [errorState, setErrorState] = useState<any>([]);
   // state for configuration
-  const [installationData, setInstallation] =
-    React.useState<TypeAppSdkConfigState>({
+  const [installation, setInstallation] = React.useState<TypeAppSdkConfigState>(
+    {
       configuration: {
         /* Add all your config fields here */
         /* The key defined here should match with the name attribute
@@ -54,7 +54,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
           };
         }, {}),
       },
-    });
+    }
+  );
 
   // function to check if field values are empty and handles save button disable on empty field values
   const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
@@ -95,7 +96,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
           .getInstallationData()
           .then((installationDataFromSDK: TypeAppSdkConfigState) => {
             const installationDataOfSdk = ConfigScreenUtils.mergeObjects(
-              installationData,
+              installation,
               installationDataFromSDK
             );
             setInstallation(installationDataOfSdk);
@@ -111,7 +112,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const setInstallationData = useCallback(
     async (data: { [key: string]: any }) => {
       const newInstallationData: TypeAppSdkConfigState = {
-        ...installationData,
+        ...installation,
         configuration: data?.configuration,
         serverConfiguration: data?.serverConfiguration,
       };
@@ -124,7 +125,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const StateContext = useMemo(
     () => ({
       errorState,
-      installationData,
+      installationData: installation,
       setInstallationData,
       appConfig,
       jsonOptions,
@@ -135,7 +136,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
     }),
     [
       errorState,
-      installationData,
+      installation,
       setInstallationData,
       appConfig,
       jsonOptions,
