@@ -36,7 +36,7 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@contentstack/app-sdk": "^2.0.0",
-    "@contentstack/venus-components": "^2.1.0",
+    "@contentstack/venus-components": "^2.2.0",
     "@emotion/core": "^10.0.22",
     "@emotion/css": "^11.9.0",
     "babel-loader": "^9.1.2",
