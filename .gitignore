@@ -30,3 +30,4 @@ api/.env
 ui/.env
 ui/.npmrc
 coverage/
+.talismanrc
