@@ -35,7 +35,7 @@ const ConfigScreen: React.FC = function () {
   const updateConfig = useCallback(
     async (e: any, inConfig?: boolean, inServerConfig?: boolean) => {
       // eslint-disable-next-line prefer-const
-      let { name: fieldName, value: fieldValue } = e?.target;
+      let { name: fieldName, value: fieldValue } = e?.target ?? {};
       if (typeof fieldValue === "string") {
         fieldValue = fieldValue?.trim();
       }

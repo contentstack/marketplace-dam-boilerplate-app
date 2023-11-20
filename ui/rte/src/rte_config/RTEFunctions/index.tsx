@@ -12,7 +12,9 @@ const ASSET_AUDIO_TYPE = "Audio";
 const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
-const getDisplayUrl = (asset: any) => {};
+const getDisplayUrl = (asset: any) => {
+  /* returns the display url of the asset. Return Type = "String" */
+};
 
 const getAssetType = (asset: any) => {
   /* possible return values ==> Document, Image, Pdf, Archive, Video, Audio */

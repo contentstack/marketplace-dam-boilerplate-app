@@ -7,7 +7,7 @@ import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<any>({});
-  const [appConfig, setConfig] = useState<Props>({});
+  const [appConfig, setAppConfig] = useState<Props>({});
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
@@ -16,19 +16,13 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         await setAppSdk(appSDK);
         await appSDK?.location?.CustomField?.frame?.enableAutoResizing();
         const appSdkConfig = await appSDK?.getConfig();
-        await setConfig(appSdkConfig);
+        await setAppConfig(appSdkConfig);
       })
       .catch((error) => {
         console.error("Error: Contentstack Initialization", error);
         setFailed(true);
       });
   }, []);
-
-  // wait until the SDK is initialized. This will ensure the values are set
-  // correctly for appSdk.
-  if (!failed && isNull(appSdk)) {
-    return <div>Loading...</div>;
-  }
 
   const contextValue = useMemo(
     () => ({ appSdk, appConfig, appFailed: failed }),
@@ -37,7 +31,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
 
   return (
     <MarketplaceAppContext.Provider value={contextValue}>
-      {children}
+      {!failed && isNull(appSdk) ? <div>Loading...</div> : children}
     </MarketplaceAppContext.Provider>
   );
 };
