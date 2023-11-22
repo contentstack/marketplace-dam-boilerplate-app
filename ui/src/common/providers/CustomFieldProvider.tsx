@@ -44,9 +44,11 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   const handleBtnDisable = (data: any[], max_limit?: number) => {
     const assetMaxLimit =
       max_limit ?? state?.contentTypeConfig?.advanced?.max_limit;
-    if (data?.length < assetMaxLimit) {
-      setIsBtnDisable(false);
-    } else setIsBtnDisable(true);
+    if (assetMaxLimit && !Number.isNaN(assetMaxLimit)) {
+      if (data?.length < assetMaxLimit) {
+        setIsBtnDisable(false);
+      } else setIsBtnDisable(true);
+    } else setIsBtnDisable(false);
   };
 
   const handleInitialLoad = async () => {
