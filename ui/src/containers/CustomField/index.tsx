@@ -62,7 +62,7 @@ const CustomField: React.FC = function () {
         uniqueID
       );
 
-      if (finalAssets?.length > assetLimit) {
+      if (assetLimit && finalAssets?.length > assetLimit) {
         finalAssets = finalAssets?.slice(0, assetLimit);
         Notification({
           displayContent: {
