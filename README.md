@@ -280,38 +280,46 @@ marketplace-dam-boilerplate-app
 
 -   In the terminal go to APP_DIRECTORY and install the necessary packages :
 
-```
-cd <APP_DIRECTORY>
-npm i
-```
+    ```
+    cd <APP_DIRECTORY>
+    npm i
+    ```
 
 -   To install the necessary packages for ui , navigate to the ui folder
-
-```
-cd <APP_DIRECTORY>/ui
-npm i
-```
+    
+    ```
+    cd <APP_DIRECTORY>/ui
+    npm i
+    ```
 
 -   After you install the packages, run the following command in the ui folder to get started:
 
-```
-npm run start
-```
+    - For Linux / MacOS
+      
+      ```
+      npm run start
+      ```
+
+    - For Windows
+      
+      ```
+      npm run winStart
+      ```
 
 The UI server will start at port 4000.
 
 -   To install the necessary packages for rte , navigate to the rte folder
 
-```
-cd <APP_DIRECTORY>/ui/rte
-npm i
-```
+    ```
+    cd <APP_DIRECTORY>/ui/rte
+    npm i
+    ```
 
 -   After you install the packages, run the following command in the rte folder to start the webpack server.
 
-```
-npm run start
-```
+    ```
+    npm run start
+    ```
 
 The webpack server will start at port 1268.
 
@@ -425,17 +433,17 @@ If you don’t want to use build script, then use below command
 
 -   To create build for ui, navigate to ui
 
-```
-cd <APP_DIRECTORY>/ui
-npm run build
-```
+    ```
+    cd <APP_DIRECTORY>/ui
+    npm run build
+    ```
 
 -   To create build for rte, navigate to rte
 
-```
-cd <APP_DIRECTORY>/ui/rte
-npm run build
-```
+    ```
+    cd <APP_DIRECTORY>/ui/rte
+    npm run build
+    ```
 
 You need to upload all the files from the build folder on AWS S3 or any static file hosting service of your preference.
 

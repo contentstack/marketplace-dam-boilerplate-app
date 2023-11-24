@@ -182,7 +182,7 @@ const ImageElement = function ({
     );
   };
 
-  const onResizeStop = useCallback(() => {
+  const onResizeStop = () => {
     const { attrs: elementAttrs } = element;
     const width = imgRef?.current?.offsetWidth;
     const height = imgRef?.current?.offsetHeight;
@@ -202,13 +202,7 @@ const ImageElement = function ({
       },
       { at: imagePath }
     );
-  }, [
-    element,
-    imgRef?.current?.offsetWidth,
-    imgRef?.current?.offsetHeight,
-    rte?.getPath,
-    rte?.updateNode,
-  ]);
+  };
 
   return (
     <div style={{ ...alignmentStyle, ...attrs?.style }}>

@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "export PORT=4000 && react-scripts start",
+    "winStart": "set PORT=4000 && react-scripts start",
     "test": "jest",
     "eject": "react-scripts eject",
     "prettify": "prettier --write .",

@@ -36,7 +36,7 @@ const saveData = (event: any) => {
       const element = {
         type: rteConfig?.damEnv?.DAM_APP_NAME,
         attrs: asset,
-        uid: v4().split("-").join(""),
+        uid: v4()?.split("-")?.join(""),
         children: [{ text: "" }],
       };
 
