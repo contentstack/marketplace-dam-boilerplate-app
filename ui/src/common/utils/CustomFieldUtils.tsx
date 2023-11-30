@@ -185,7 +185,7 @@ const convertStringAndMergeToObject = (
   existingObject: any
 ) => {
   const properties = inputString?.split(".");
-  let temp = existingObject;
+  let temp: any = existingObject;
 
   for (let i = 0; i < properties?.length; i += 1) {
     const property = properties?.[i];
@@ -206,7 +206,7 @@ const convertStringAndMergeToObject = (
       if (!temp?.[property]) {
         temp[property] = isLastProperty ? value : {};
       }
-      temp = temp[property];
+      temp = temp?.[property] ?? {};
     }
   }
   return cleanUpArrays(existingObject);
