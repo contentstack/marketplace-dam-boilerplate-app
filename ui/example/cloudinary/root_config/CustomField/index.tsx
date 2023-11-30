@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable arrow-body-style */
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import { TypeAsset, TypeRootCustomField } from "../../common/types";
 
 const filterAssetData = (assets: any[]) => {

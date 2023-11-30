@@ -102,7 +102,10 @@ const CustomField: React.FC = function () {
 
   // handle message event for selector window
   const handleMessage = (event: MessageEvent) => {
-    if (selectorPageWindow) {
+    if (
+      selectorPageWindow &&
+      event?.origin === process.env.REACT_APP_CUSTOM_FIELD_URL
+    ) {
       const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
       handleUniqueSelectedData(dataArr);
     }
