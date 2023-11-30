@@ -17,7 +17,7 @@ const saveData = (event: any) => {
         config,
         type: rteConfig?.damEnv?.DAM_APP_NAME,
       },
-      "*"
+      process.env.REACT_APP_UI_URL ?? ""
     );
   } else {
     let dataArr;
