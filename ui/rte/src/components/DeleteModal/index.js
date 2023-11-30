@@ -19,7 +19,7 @@ const DeleteModal = function ({ remove, name: itemName, closeModal }) {
       <ModalBody className="deleteModalBody">
         <p
           dangerouslySetInnerHTML={{
-            __html: `${localeTexts.DeleteModal.body.replace("$", itemName)}`,
+            __html: `${localeTexts.DeleteModal.body.replace(/\$/g, itemName)}`,
           }}
         />
       </ModalBody>
