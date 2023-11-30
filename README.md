@@ -5,7 +5,7 @@ This boilerplate provides a template to customize your own marketplace DAM app.
 ## Prerequisite
 
 -   [Contentstack Account](https://app.contentstack.com/#!/login)
--   `Nodejs` - v14.18.2 & `NPM` - 8.1.4
+-   `Nodejs` - v18.12.0 & `NPM` - 8.19.2
 
 ## Structure of the Marketplace DAM App Boilerplate
 
