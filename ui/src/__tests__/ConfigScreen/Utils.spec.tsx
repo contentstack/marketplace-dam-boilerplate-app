@@ -1,5 +1,5 @@
-import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 import { Notification } from "@contentstack/venus-components";
+import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 
 jest.mock("@contentstack/venus-components", () => ({
   Notification: jest.fn(),
