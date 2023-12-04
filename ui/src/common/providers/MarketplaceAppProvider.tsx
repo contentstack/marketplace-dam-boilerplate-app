@@ -19,7 +19,9 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         await setAppConfig(appSdkConfig);
       })
       .catch((error) => {
-        console.error("Error: Contentstack Initialization", error);
+        const currentLocation = window?.location?.href;
+        if (!currentLocation?.includes("selector-page"))
+          console.error("Error: Contentstack Initialization", error);
         setFailed(true);
       });
   }, []);
