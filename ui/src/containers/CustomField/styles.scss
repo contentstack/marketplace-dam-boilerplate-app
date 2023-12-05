@@ -1,0 +1,328 @@
+.field-extension-wrapper {
+  width: 100%;
+}
+
+.field-extension {
+  width: 100% !important;
+  padding-left: 2px;
+
+  .field-wrapper {
+    padding: 0 10px;
+    width: 100%;
+
+    .no-asset {
+      color: #647696;
+      font-family: Inter, Serif, Sans-serif;
+      font-size: 14px;
+      height: 16px;
+      width: 200px;
+    }
+
+    .asset-box {
+      border: 1px solid #a9b6cb;
+      box-sizing: border-box;
+      border-radius: 10px;
+      padding-bottom: 0;
+
+      .box-header {
+        border-bottom: 1px solid #edf1f7;
+        padding: 17px 15px;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+          color: #475161;
+          font-size: 12px;
+          font-weight: bold;
+          font-family: Inter, Serif, Sans-serif;
+          letter-spacing: 0.01em;
+          margin-right: 13px;
+          vertical-align: middle;
+        }
+      }
+    }
+
+    & .Table {
+      min-height: 280px !important;
+      max-height: 400px !important;
+      overflow-y: hidden;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+
+      & .table-relative {
+        position: relative !important;
+
+        & .table-overflow {
+          overflow: visible;
+          height: 0;
+        }
+      }
+
+      & .Table__body {
+        max-height: 355px;
+        overflow: auto;
+        width: 100%;
+      }
+    }
+
+    .render-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 10px 0 !important;
+
+      & > div {
+        padding-left: 9px !important;
+      }
+
+      .AssetCard {
+        font-family: Inter, Serif, Sans-serif;
+        height: 180px;
+        width: 170px;
+
+        .AssetCard__shortinfo__name {
+          & .tippy-wrapper {
+            width: 150px;
+          }
+        }
+
+        .AssetCard__action__custom {
+          cursor: pointer !important;
+
+          &:first-of-type {
+            cursor: -webkit-grabbing;
+            cursor: grabbing !important;
+            cursor: -moz-grabbing;
+          }
+
+          &:hover {
+            & svg path,
+            & svg circle {
+              fill: black !important;
+              stroke: none !important;
+            }
+          }
+
+          &:last-child:hover {
+            & svg path {
+              stroke: #edf1f7 !important;
+            }
+          }
+        }
+
+        & .AssetCard__shortinfo__name > .tippy-wrapper > span {
+          color: #222222 !important;
+          font-weight: 500 !important;
+        }
+      }
+
+      .AssetCard.onhover-disabled:hover .AssetCard__action {
+        display: unset;
+      }
+    }
+  }
+}
+
+.AssetCard__asset.AssetCard__asset--image,
+.AssetCard__asset.AssetCard__asset--image:active {
+  background-size: contain !important;
+  cursor: grabbing !important;
+}
+
+.selected-items,
+.AssetCard__asset,
+.AssetCard__asset:active,
+.AssetCard__action__custom,
+.AssetCard__action__custom:hover,
+.AssetCard__action__custom:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+}
+
+.selected-items,
+.selected-items:active {
+  height: 180px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+.AssetCard__action__custom:last-child:hover svg path {
+  fill: #d62400 !important;
+  stroke: none !important;
+}
+
+.custom-field-data {
+  display: flex;
+  height: 20px;
+  width: 30px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.custom-field-data--ids {
+  flex: 33.33%;
+}
+
+.deleteModalBody {
+  font-family: Inter, Serif, Sans-serif;
+  p {
+    color: #222;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  span {
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 750px) and (min-width: 510px) {
+  .render-items {
+    & > div {
+      width: 150px !important;
+    }
+
+    .AssetCard {
+      width: 140px !important;
+
+      & .AssetCard__shortinfo__name > .tippy-wrapper > span {
+        width: 120px !important;
+      }
+    }
+  }
+}
+
+.noImage {
+  width: 80% !important;
+  height: 100% !important;
+  border: 1px solid #dde3ee !important;
+  border-radius: 3px;
+
+  .tippy-wrapper,
+  svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.icon-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & svg {
+    height: 80% !important;
+    width: 80% !important;
+  }
+}
+
+.AssetCard__asset.not--clickable,
+.AssetCard:not(.AssetFolder):hover:hover .AssetCard__asset.AssetCard__icon {
+  cursor: grabbing !important;
+}
+
+.remove-modal-icon {
+  & circle {
+    fill: #d62400 !important;
+  }
+}
+
+.Button--delete:hover {
+  & .remove-modal-icon {
+    & circle {
+      fill: white !important;
+    }
+    & path {
+      stroke: #d62400 !important;
+    }
+  }
+}
+
+.Table__head__column {
+  text-align: left;
+}
+
+.ActionTooltip__actions .tippy-wrapper:first-child li .wrappper-svg {
+  cursor: grabbing !important;
+}
+
+.Table__head__row .Table__head__column:first-child {
+  width: 150px;
+  font-size: 12px;
+}
+.Table__body__row .Table__body__column:first-child {
+  width: 150px;
+}
+.Table .Table__body__column,
+.Table .Table__head__column {
+  font-size: 12px;
+}
+.Table .Table__body__column:last-of-type,
+.Table .Table__head__column:last-of-type {
+  width: 150px;
+}
+.Table .Table__head__column:nth-child(2),
+.Table .Table__body__column:nth-child(2) {
+  width: 23rem;
+}
+.Table .Table__body__column:nth-child(2) {
+  overflow: hidden;
+
+  & p {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.Table__body__column .rowVideo,
+.Table__body__column .rowImage {
+  width: 80% !important;
+  height: 100%;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border: 1px solid #dde3ee;
+  border-radius: 3px;
+
+  img,
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+.select-view {
+  display: flex;
+  svg {
+    margin-right: 10px;
+  }
+}
+
+.Dropdown--primary > .Dropdown__menu--primary {
+  left: -9.1875rem !important;
+  z-index: 10 !important;
+}
+
+.Table__body__row {
+  .ActionTooltip {
+    cursor: grabbing !important;
+  }
+}
+
+.Table__body__row .ActionTooltip__actions .tippy-wrapper {
+  &:hover {
+    & svg circle {
+      fill: black !important;
+      stroke: none !important;
+    }
+  }
+  &:last-child:hover {
+    & svg path {
+      stroke: #edf1f7 !important;
+    }
+  }
+}
