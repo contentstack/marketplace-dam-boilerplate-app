@@ -1,0 +1,75 @@
+{
+  "name": "marketplace-dam-app-ui",
+  "version": "1.0.0",
+  "dependencies": {
+    "@contentstack/app-sdk": "^2.0.0",
+    "@contentstack/venus-components": "^2.2.0",
+    "@dnd-kit/core": "^6.0.5",
+    "@dnd-kit/sortable": "^7.0.1",
+    "@dnd-kit/utilities": "^3.2.0",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
+    "axios": "^1.6.0",
+    "lodash": "^4.17.21",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.0.2",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.43.4",
+    "typescript": "^4.5.2",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "export PORT=4000 && react-scripts start",
+    "winStart": "set PORT=4000 && react-scripts start",
+    "test": "jest",
+    "eject": "react-scripts eject",
+    "prettify": "prettier --write .",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/' --ignore-pattern './example/' --ignore-pattern './coverage/'",
+    "precommit": "npm run prettify && npm run lint:fix",
+    "build": "npm run precommit && export CI=false && react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-react-jsx": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/jest-dom": "^5.16.0",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "26.0.14",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "babel-jest": "^26.6.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.0",
+    "eslint-config-airbnb-typescript": "^16.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "jest": "26.6.0",
+    "jest-fetch-mock": "^3.0.3",
+    "prettier": "^2.5.1",
+    "ts-jest": "^26.5.6"
+  }
+}

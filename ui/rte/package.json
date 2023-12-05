@@ -1,0 +1,60 @@
+{
+  "name": "marketplace-dam-rte-app",
+  "version": "1.0.0",
+  "description": "RTE Plugin for the DAM App",
+  "entry": "plugin",
+  "output": "dam.js",
+  "main": "../build/dist/plugin.system.js",
+  "typings": "../build/dist/types/plugin.d.ts",
+  "files": [
+    "../build/dist"
+  ],
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack serve --config webpack.dev.js",
+    "dev": "webpack --config webpack.dev.js"
+  },
+  "devDependencies": {
+    "@types/node": "^10.17.5",
+    "@types/react": "^16.9.11",
+    "css-loader": "^6.5.1",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.2.1",
+    "svg-url-loader": "^7.1.1",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "tslint-config-standard": "^8.0.1",
+    "typedoc": "^0.22.11",
+    "typescript": "^4.5.2",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.3"
+  },
+  "dependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@contentstack/app-sdk": "^2.0.0",
+    "@contentstack/venus-components": "^2.2.0",
+    "@emotion/core": "^10.0.22",
+    "@emotion/css": "^11.9.0",
+    "babel-loader": "^9.1.2",
+    "dotenv": "^16.0.1",
+    "lodash.clonedeep": "^4.5.0",
+    "prop-types": "^15.8.1",
+    "re-resizable": "^6.9.9",
+    "react": "^16.11.0",
+    "react-dom": "^16.13.1",
+    "uuid": "^8.3.2",
+    "webpack": "^5.65.0",
+    "webpack-merge": "^5.8.0"
+  },
+  "keywords": [
+    "rte",
+    "plugin",
+    "boilerplate"
+  ],
+  "author": "Contentstack",
+  "license": "MIT"
+}
