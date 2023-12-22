@@ -68,6 +68,7 @@
     .render-items {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      min-height: 16.2rem;
       max-height: 400px;
       overflow-y: auto;
       padding: 10px 0 !important;
@@ -115,6 +116,17 @@
           color: #222222 !important;
           font-weight: 500 !important;
         }
+
+        &:not(.AssetFolder):hover
+          .AssetCard__asset.AssetCard__asset--image
+          ~ .AssetCard__shortinfo {
+          bottom: -3.5rem;
+          left: 1px;
+        }
+
+        &:not(.AssetFolder):hover:before {
+          height: 16rem !important;
+        }
       }
 
       .AssetCard.onhover-disabled:hover .AssetCard__action {
@@ -146,6 +158,13 @@
   height: 180px;
   margin-bottom: 20px;
   margin-right: 20px;
+
+  & .middle-truncate-start {
+    width: 125px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .AssetCard__action__custom:last-child:hover svg path {
@@ -247,11 +266,12 @@
 }
 
 .Table__head__row .Table__head__column:first-child {
-  width: 150px;
   font-size: 12px;
+  width: 20%;
 }
 .Table__body__row .Table__body__column:first-child {
   width: 150px;
+  width: 20%;
 }
 .Table .Table__body__column,
 .Table .Table__head__column {
@@ -259,11 +279,11 @@
 }
 .Table .Table__body__column:last-of-type,
 .Table .Table__head__column:last-of-type {
-  width: 150px;
+  width: 20%;
 }
 .Table .Table__head__column:nth-child(2),
 .Table .Table__body__column:nth-child(2) {
-  width: 23rem;
+  width: 60%;
 }
 .Table .Table__body__column:nth-child(2) {
   overflow: hidden;
@@ -278,7 +298,7 @@
 
 .Table__body__column .rowVideo,
 .Table__body__column .rowImage {
-  width: 80% !important;
+  width: 90% !important;
   height: 100%;
   align-self: center;
   display: flex;

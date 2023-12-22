@@ -51,15 +51,15 @@ const configureConfigScreen = () =>
       instructionText: "DAM Radio Input Instruction Text",
       options: [
         {
-          label: "Single Select",
-          value: "SingleSelect",
+          label: "Option 1",
+          value: "Option 1",
         },
         {
-          label: "Multi Select",
-          value: "MultiSelect",
+          label: "Option 2",
+          value: "Option 2",
         },
       ],
-      defaultSelectedOption: "MultiSelect",
+      defaultSelectedOption: "Option 1",
       saveInConfig: true,
       saveInServerConfig: false,
     },

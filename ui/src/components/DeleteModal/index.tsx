@@ -48,8 +48,10 @@ const DeleteModal: React.FC<Props> = function ({
             size="small"
             version="v2"
             onClick={useCallback(() => {
-              remove(id);
               props.closeModal();
+              setTimeout(() => {
+                remove(id);
+              }, 300);
             }, [id, props])}
           >
             {localeTexts.DeleteModal.confirmButton}
