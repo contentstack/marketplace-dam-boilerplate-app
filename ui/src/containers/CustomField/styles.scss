@@ -82,12 +82,6 @@
         height: 180px;
         width: 170px;
 
-        .AssetCard__shortinfo__name {
-          & .tippy-wrapper {
-            width: 150px;
-          }
-        }
-
         .AssetCard__action__custom {
           cursor: pointer !important;
 
