@@ -80,7 +80,7 @@ const localeTexts = {
       changeView: "Change View",
     },
     listViewTable: {
-      thumbnailCol: "Asset Image",
+      thumbnailCol: "Image",
       assetNameCol: "Name",
       type: "Type",
     },
