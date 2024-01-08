@@ -217,7 +217,7 @@ describe(`*UI Elements of CustomField without Assets`, () => {
         message: "message",
         data: [...postMessageData],
       },
-      process.env.REACT_APP_UI_URL_NA ?? ""
+      "https://rte-extension.contentstack.com"
     );
     expect(window.postMessage).toHaveBeenCalled();
   });
