@@ -257,7 +257,7 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
   const [options, setOptions] = useState<any>([...customOptions]);
 
   const handleChange = async (e: any) => {
-    setModalValue(e?.target?.value);
+    setModalValue(e?.target?.value?.trim());
   };
 
   const handleValueCreate = async (action: string) => {
