@@ -258,22 +258,11 @@ marketplace-dam-boilerplate-app
 
 -   `.env` files are required in both ui and ui/rte. Rename `.env.example` files to `.env` and add the following values.
 
--   UI ENVIRONMENT VARIABLES (<APP_DIRECTORY>/ui/.env)
+-   UI (<APP_DIRECTORY>/ui/.env) and JSON RTE (<APP_DIRECTORY>/ui/rte/.env) ENVIRONMENT VARIABLES 
 
     ```
-    REACT_APP_UI_URL_NA = https://rte-extension.contentstack.com
-    REACT_APP_UI_URL_EU = https://eu-rte-extension.contentstack.com
-    REACT_APP_UI_URL_AZURE_NA = https://azure-na-rte-extension.contentstack.com
-    REACT_APP_UI_URL_AZURE_EU = https://azure-eu-rte-extension.contentstack.com
     REACT_APP_CUSTOM_FIELD_URL = http://localhost:4000
-    ```
-
--   RTE ENVIRONMENT VARIABLES (<APP_DIRECTORY>/ui/rte/.env)
-    ```
-    REACT_APP_UI_URL_NA = https://rte-extension.contentstack.com
-    REACT_APP_UI_URL_EU = https://eu-rte-extension.contentstack.com
-    REACT_APP_UI_URL_AZURE_NA = https://azure-na-rte-extension.contentstack.com
-    REACT_APP_UI_URL = http://localhost:4000
+    REACT_APP_REGION_MAPPING = '{"NA": {"JSON_RTE_URL": "https://rte-extension.contentstack.com"},"EU": {"JSON_RTE_URL": "https://eu-rte-extension.contentstack.com"},"AZURE_NA": {"JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com"},"AZURE_EU": {"JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com"}}'
     ```
 
 ## Install Dependencies

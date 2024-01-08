@@ -17,7 +17,7 @@ const saveData = (event: any) => {
         config,
         type: rteConfig?.damEnv?.DAM_APP_NAME,
       },
-      process.env.REACT_APP_UI_URL ?? ""
+      process.env.REACT_APP_CUSTOM_FIELD_URL ?? ""
     );
   } else {
     let dataArr;
@@ -57,24 +57,26 @@ export const onClickHandler = async (props) => {
   } else {
     const windowLocation = window.location.origin;
     let queryLocation = "";
-    switch (windowLocation) {
-      case process.env.REACT_APP_UI_URL_NA:
-        queryLocation = "NA";
+    const regionMapping = JSON.parse(
+      process.env.REACT_APP_REGION_MAPPING ?? ""
+    );
+    const newMapping = {};
+    Object.keys(regionMapping)?.forEach(
+      (key) => (newMapping[key] = regionMapping?.[key]?.JSON_RTE_URL)
+    );
+
+    for (const [key, value] of Object.entries(newMapping)) {
+      if (value === windowLocation) {
+        queryLocation = key;
         break;
-      case process.env.REACT_APP_UI_URL_EU:
-        queryLocation = "EU";
-        break;
-      case process.env.REACT_APP_UI_URL_AZURE_NA:
-        queryLocation = "AZURE_NA";
-        break;
-      default:
-        queryLocation = "AZURE_EU";
+      }
     }
+
     let url;
     if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url") {
       url = rteConfig?.getSelectorWindowUrl?.(config);
     } else {
-      url = `${process.env.REACT_APP_UI_URL}/#/selector-page?location=${queryLocation}`;
+      url = `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=${queryLocation}`;
     }
     utils.popupWindow({
       url,

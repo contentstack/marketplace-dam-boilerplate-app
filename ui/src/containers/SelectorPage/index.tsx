@@ -107,24 +107,18 @@ const SelectorPage: React.FC<any> = function () {
       const queryString = window.location.href
         ?.split("?")?.[1]
         ?.split("=")?.[1];
+      let postMessageUrl: string = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
+      const regionMapping = JSON.parse(
+        process.env.REACT_APP_REGION_MAPPING ?? ""
+      );
+      const foundRegion = Object.keys(regionMapping)?.find(
+        (region) => queryString === region
+      );
 
-      let postMessageUrl: string;
-      switch (queryString) {
-        case "NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
-          break;
-        case "EU":
-          postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
-          break;
-        case "AZURE_NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
-          break;
-        case "CUSTOM-FIELD":
-          postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
-          break;
-        default:
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
+      if (foundRegion) {
+        postMessageUrl = regionMapping?.[foundRegion]?.JSON_RTE_URL;
       }
+
       url = postMessageUrl;
       window.addEventListener("message", handleMessage, false);
       windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
