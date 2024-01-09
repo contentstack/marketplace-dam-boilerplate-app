@@ -60,6 +60,12 @@ const localeTexts = {
       notificationMsg:
         "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
     },
+    assetValidation: {
+      errorGeneralStart: "Error: Some Assets",
+      errorSpecificStart: "Error:",
+      errorStatement:
+        "cannot be added as it does not match the asset constraints provided.",
+    },
     button: {
       btnText: "Choose Asset(s)",
     },

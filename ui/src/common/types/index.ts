@@ -87,6 +87,13 @@ export interface TypeRootDamEnv {
   DAM_SCRIPT_URL?: string;
   SELECTOR_PAGE_LOGO?: any;
   DIRECT_SELECTOR_PAGE: string;
+  ADVANCED_ASSET_PARAMS: {
+    ASSET_NAME: string;
+    SIZE_NAME: string;
+    SIZE_UNIT: string;
+    HEIGHT_NAME: string;
+    WIDTH_NAME: string;
+  };
 }
 
 export interface TypeRootConfigSreen {
