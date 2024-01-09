@@ -136,24 +136,67 @@ const CustomField: React.FC = function () {
         data?.type === rootConfig.damEnv.DAM_APP_NAME &&
         data?.selectedAssets?.length
       ) {
-        const assets = data?.selectedAssets;
+        const finalAssets = CustomFieldUtils.advancedFilters(
+          data?.selectedAssets,
+          state?.contentTypeConfig?.advanced
+        );
+
         if (state?.config?.is_custom_json) {
           const keys = CustomFieldUtils.extractKeys(state?.config?.dam_keys);
-          const assetData = CustomFieldUtils.getFilteredAssets(assets, keys);
+          const assetData = CustomFieldUtils.getFilteredAssets(
+            finalAssets?.acceptedAssets,
+            keys
+          );
           handleUniqueSelectedData(assetData);
         } else {
-          handleUniqueSelectedData(assets);
+          handleUniqueSelectedData(finalAssets?.acceptedAssets);
         }
+
+        if (finalAssets?.rejectedAssets?.length) {
+          let message = `${localeTexts.CustomFields.assetValidation.errorGeneralStart} ${localeTexts.CustomFields.assetValidation.errorStatement}`;
+
+          if (rootConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME) {
+            const rejectedAssetNames = finalAssets?.rejectedAssets?.map(
+              (asset: any) => {
+                const assetFlatStructure = CustomFieldUtils.flatten(asset);
+                return assetFlatStructure?.[
+                  rootConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME
+                ];
+              }
+            );
+            message = `${
+              localeTexts.CustomFields.assetValidation.errorSpecificStart
+            } ${rejectedAssetNames?.map((item) => `"${item}"`)?.join(", ")} ${
+              localeTexts.CustomFields.assetValidation.errorStatement
+            }`;
+          }
+
+          Notification({
+            displayContent: {
+              error: {
+                error_message: message,
+              },
+            },
+            notifyProps: {
+              hideProgressBar: true,
+              closeButton: true,
+            },
+            type: "error",
+          });
+        }
+      } else if (data?.message === "close") {
+        window.removeEventListener("message", saveData, false);
+        selectorPageWindow = undefined;
       }
     },
-    [selectedAssets, state?.config]
+    [state?.config]
   );
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-    if (state?.appSdkInitialized) {
+    if (state?.appSdkInitialized && !selectorPageWindow) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        CustomFieldUtils.popupWindow({
+        selectorPageWindow = CustomFieldUtils.popupWindow({
           url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
           title: localeTexts.SelectorPage.title,
           w: 1500,
