@@ -255,9 +255,16 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
   const [modalValue, setModalValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<any[]>([]);
   const [options, setOptions] = useState<any>([...customOptions]);
+  const [isEmptySpace, setIsEmptySpace] = useState<boolean>(false);
 
   const handleChange = async (e: any) => {
-    setModalValue(e?.target?.value?.trim());
+    const value = e?.target?.value?.trim();
+    if (/\s/.test(value) || value === "") {
+      setIsEmptySpace(true);
+    } else {
+      setIsEmptySpace(false);
+      setModalValue(value);
+    }
   };
 
   const handleValueCreate = async (action: string) => {
@@ -331,7 +338,7 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
             onClick={() => handleValueCreate("create")}
             buttonType="secondary"
             size="small"
-            disabled={!modalValue?.length}
+            disabled={!modalValue?.length || isEmptySpace}
             version="v2"
           >
             <Icon icon="CheckedPurple" />
@@ -340,7 +347,7 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
           <Button
             version="v2"
             size="small"
-            disabled={!modalValue?.length}
+            disabled={!modalValue?.length || isEmptySpace}
             onClick={() => handleValueCreate("createApply")}
           >
             <Icon icon="CheckedWhite" />
