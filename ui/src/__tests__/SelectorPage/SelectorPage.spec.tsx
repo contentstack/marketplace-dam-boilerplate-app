@@ -27,7 +27,7 @@ beforeEach(async () => {
   const setStateMock = React.useState;
   const useStateMock: any = (useState: any) => [useState, setStateMock];
   const testName = expect.getState().currentTestName;
-  if (testName.includes("**")) {
+  if (testName?.includes("**")) {
     jest
       .spyOn(React, "useState")
       .mockImplementationOnce(() => useStateMock(true));
