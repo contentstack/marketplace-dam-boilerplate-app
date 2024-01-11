@@ -119,10 +119,13 @@ module.exports = {
   // runner: 'jest-runner',
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  setupFiles: ["./jest.setup.js"],
+  setupFiles: ["<rootDir>/jest.setup.js"],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
+  setupFilesAfterEnv: [
+    "@testing-library/jest-dom/extend-expect",
+    "<rootDir>/jest.setup.js",
+  ],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
