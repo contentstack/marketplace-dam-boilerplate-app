@@ -205,7 +205,10 @@ const ImageElement = function ({
   };
 
   return (
-    <div style={{ ...alignmentStyle, ...attrs?.style }}>
+    <div
+      style={{ ...alignmentStyle, ...attrs?.style }}
+      className="embed-asset-container"
+    >
       <Tooltip
         zIndex={909}
         className="p-0"
@@ -220,7 +223,7 @@ const ImageElement = function ({
           data-type="asset"
           contentEditable={false}
         >
-          <div ref={parentRef} contentEditable={false}>
+          <div ref={parentRef} contentEditable={false} className="noLineHeight">
             <Resizable
               lockAspectRatio
               onResizeStop={onResizeStop}
