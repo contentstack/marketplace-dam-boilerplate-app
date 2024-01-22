@@ -40,6 +40,17 @@
   }
 }
 
+.embed-asset-container {
+  & .tippy-wrapper {
+    margin-bottom: 6px !important;
+  }
+}
+
+.noLineHeight,
+.tippy-wrapper {
+  line-height: 0;
+}
+
 .scrte-image-resizer-feedback-right,
 .scrte-image-resizer-feedback-left {
   position: absolute;
