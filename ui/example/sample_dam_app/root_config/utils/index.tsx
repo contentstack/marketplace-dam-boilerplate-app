@@ -46,8 +46,19 @@ const getFilteredConfigObj = (
   return returnObj;
 };
 
+const compareFn = (a: string, b: string): number => {
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+};
+
 const checkArrEqual = (arr1: string[], arr2: string[]) =>
-  [...arr1]?.sort()?.join(",") === [...arr2]?.sort()?.join(",");
+  [...arr1]?.sort(compareFn)?.join(",") ===
+  [...arr2]?.sort(compareFn)?.join(",");
 
 const handleLocaleConfig = (data: TypeLocaleConfigData) => {
   const {

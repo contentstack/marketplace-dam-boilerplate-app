@@ -310,19 +310,25 @@ const convertToBytes = (value: number, unit: string) => {
 const advancedFilters = (assets: any[], contentTypeConfig: any) => {
   const {
     SIZE_NAME: SIZE,
-    SIZE_UNIT,
+    SIZE_UNIT = "BYTES",
     HEIGHT_NAME: HEIGHT,
     WIDTH_NAME: WIDTH,
-  } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS;
+  } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
   const { size, height, width } = contentTypeConfig;
   const acceptedAssets: any[] = [];
   const rejectedAssets: any[] = [];
-  const checkValues = new Map([
+
+  let checkValues = new Map([
     [SIZE, size],
     [HEIGHT, height],
     [WIDTH, width],
   ]);
-  const checks = [SIZE, HEIGHT, WIDTH];
+  const checks: string[] = [];
+  [SIZE, HEIGHT, WIDTH]?.forEach((key) => {
+    if (key) {
+      checks?.push(key);
+    }
+  });
 
   assets?.forEach((asset: any) => {
     const assetFlatStructure = flatten(asset);
