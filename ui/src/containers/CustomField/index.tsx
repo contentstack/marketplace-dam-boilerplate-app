@@ -160,7 +160,7 @@ const CustomField: React.FC = function () {
               (asset: any) => {
                 const assetFlatStructure = CustomFieldUtils.flatten(asset);
                 return assetFlatStructure?.[
-                  rootConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME
+                  rootConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME ?? ""
                 ];
               }
             );
