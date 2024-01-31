@@ -21,7 +21,10 @@ const saveData = (event: any) => {
     );
   } else {
     let dataArr;
-    if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE !== "novalue") {
+    if (
+      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE !== "novalue" ||
+      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE !== "authWindow"
+    ) {
       dataArr = rteConfig?.handleSelectorPageData?.(event);
     } else if (
       data?.message === "add" &&
@@ -45,6 +48,15 @@ const saveData = (event: any) => {
       });
     });
   }
+};
+
+const openSelector = (url) => {
+  utils.popupWindow({
+    url,
+    title: localeTexts.SelectorPage.title,
+    w: 1500,
+    h: 800,
+  });
 };
 
 export const onClickHandler = async (props) => {
@@ -78,12 +90,20 @@ export const onClickHandler = async (props) => {
     } else {
       url = `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=${queryLocation}`;
     }
-    utils.popupWindow({
-      url,
-      title: localeTexts.SelectorPage.title,
-      w: 1500,
-      h: 800,
-    });
+
+    if (rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
+      new Promise((resolve, reject) => {
+        rteConfig?.handleAuthWindow?.(config, resolve, reject);
+      })
+        .then(() => {
+          openSelector(url);
+        })
+        .catch((error) => {
+          console.error("Error: Authentication Failed in Auth Window", error);
+        });
+    } else {
+      openSelector(url);
+    }
   }
 
   window.addEventListener("message", saveData, false);

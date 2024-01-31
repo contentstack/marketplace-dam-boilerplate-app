@@ -28,6 +28,8 @@ const handleSelectorPageData = rootCustomField?.handleSelectorPageData;
 
 const handleSelectorWindow = rootCustomField?.handleSelectorWindow;
 
+const handleAuthWindow = rootCustomField?.handleAuthWindow;
+
 // <---------- SELECTOR PAGE FUNCTIONS ---------->
 
 const openComptactView = rootSelectorPage?.openComptactView;
@@ -40,12 +42,13 @@ const rootConfig: TypeRootConfig = {
   customConfigComponent,
   customWholeJson,
   filterAssetData,
+  handleConfigtoSelectorPage,
   getSelectorWindowUrl,
   handleSelectorPageData,
+  handleAuthWindow,
   handleSelectorWindow,
   openComptactView,
   customSelectorComponent,
-  handleConfigtoSelectorPage,
 };
 
 export default rootConfig;

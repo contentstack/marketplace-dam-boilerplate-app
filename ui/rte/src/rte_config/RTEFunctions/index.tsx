@@ -36,6 +36,11 @@ const handleSelectorWindow = (config: any) => {
   /* code logic to open the DAM selector page */
 };
 
+const handleAuthWindow = (config: any, resolve: Function, reject: Function) => {
+  /* code logic to open the DAM auth window */
+  resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
+};
+
 const rteFunctions: any = {
   getDisplayUrl,
   getAssetType,
@@ -43,6 +48,7 @@ const rteFunctions: any = {
   getSelectorWindowUrl,
   handleSelectorPageData,
   handleSelectorWindow,
+  handleAuthWindow,
 };
 
 export default rteFunctions;
