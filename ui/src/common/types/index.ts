@@ -108,6 +108,7 @@ export interface TypeRootCustomField {
   handleConfigtoSelectorPage?: Function;
   handleSelectorPageData?: Function;
   handleSelectorWindow?: Function;
+  handleAuthWindow?: Function;
 }
 
 export interface TypeRootSelector {
@@ -127,6 +128,7 @@ export interface TypeRootConfig {
   openComptactView?: Function;
   customSelectorComponent?: Function;
   handleConfigtoSelectorPage?: Function;
+  handleAuthWindow?: Function;
 }
 
 export interface TypeCustomConfigUpdateParams {

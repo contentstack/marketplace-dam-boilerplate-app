@@ -8,7 +8,7 @@ const DamEnvVariables: TypeRootDamEnv = {
   CONFIG_FIELDS: [],
   IS_DAM_SCRIPT: true,
   DAM_SCRIPT_URL: "",
-  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
+  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", "authWindow", default => "novalue"
   ADVANCED_ASSET_PARAMS: {
     ASSET_NAME: "name", // add property name for NAME. If present in nested structure, add nested structure reference.
     SIZE_NAME: "size", // add property name for SIZE. If present in nested structure, add nested structure reference.

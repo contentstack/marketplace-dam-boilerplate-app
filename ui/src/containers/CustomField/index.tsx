@@ -117,7 +117,7 @@ const CustomField: React.FC = function () {
     if (errorText) setWarningText(errorText);
   };
 
-  // function called on postmessage from selector page. used in "novalue" option
+  // function called on postmessage from selector page. used in "novalue" and "authWindow" option
   const saveData = useCallback(
     (event: any) => {
       const { data } = event;
@@ -192,17 +192,38 @@ const CustomField: React.FC = function () {
     [state?.config]
   );
 
+  const handleSelectorOpen = () => {
+    CustomFieldUtils.popupWindow({
+      url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
+      title: localeTexts.SelectorPage.title,
+      w: 1500,
+      h: 800,
+    });
+    window.addEventListener("message", saveData, false);
+  };
+
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized && !selectorPageWindow) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        selectorPageWindow = CustomFieldUtils.popupWindow({
-          url: `${process.env.REACT_APP_CUSTOM_FIELD_URL}/#/selector-page?location=CUSTOM-FIELD`,
-          title: localeTexts.SelectorPage.title,
-          w: 1500,
-          h: 800,
-        });
-        window.addEventListener("message", saveData, false);
+        handleSelectorOpen();
+      } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
+        new Promise((resolve, reject) => {
+          rootConfig?.handleAuthWindow?.(
+            {
+              config: state?.config,
+              contentTypeConfig: state?.contentTypeConfig,
+            },
+            resolve,
+            reject
+          );
+        })
+          .then(() => {
+            handleSelectorOpen();
+          })
+          .catch((error) => {
+            console.error("Error: Authentication Failed in Auth Window", error);
+          });
       } else {
         if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window") {
           rootConfig?.handleSelectorWindow?.(
