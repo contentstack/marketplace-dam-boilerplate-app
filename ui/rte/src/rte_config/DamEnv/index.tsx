@@ -17,7 +17,7 @@ const DamEnvVariables = {
       />
     </svg>
   ),
-  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
+  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", "authWindow", default => "novalue"
 };
 
 export default DamEnvVariables;

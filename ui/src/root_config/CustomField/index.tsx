@@ -58,12 +58,25 @@ const handleSelectorWindow = (
   /* code logic to open the DAM selector window */
 };
 
+const handleAuthWindow = (
+  configObj: {
+    config: any;
+    contentTypeConfig: any;
+  },
+  resolve: Function,
+  reject: Function
+) => {
+  /* code logic to open the DAM auth window */
+  resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
+};
+
 const rootCustomField: TypeRootCustomField = {
   filterAssetData,
   getSelectorWindowUrl,
   handleConfigtoSelectorPage,
   handleSelectorPageData,
   handleSelectorWindow,
+  handleAuthWindow,
 };
 
 export default rootCustomField;

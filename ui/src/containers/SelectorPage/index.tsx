@@ -111,14 +111,12 @@ const SelectorPage: React.FC<any> = function () {
       const regionMapping = JSON.parse(
         process.env.REACT_APP_REGION_MAPPING ?? ""
       );
-      const foundRegion = Object.keys(regionMapping)?.find(
+      const appRegion = Object.keys(regionMapping)?.find(
         (region) => queryString === region
       );
-
-      if (foundRegion) {
-        postMessageUrl = regionMapping?.[foundRegion]?.JSON_RTE_URL;
+      if (appRegion) {
+        postMessageUrl = regionMapping?.[appRegion]?.JSON_RTE_URL;
       }
-
       url = postMessageUrl;
       window.addEventListener("message", handleMessage, false);
       windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
