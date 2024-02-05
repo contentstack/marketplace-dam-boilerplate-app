@@ -8,7 +8,7 @@ const filterAssetData = (assets: any[]) => {
     const { id, name, type, url, files } = asset;
     return {
       id,
-      type,
+      type, // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
       name,
       width: files?.webImage?.width,
       height: files?.webImage?.height,
