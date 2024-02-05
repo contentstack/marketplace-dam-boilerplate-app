@@ -22,8 +22,8 @@ const saveData = (event: any) => {
   } else {
     let dataArr;
     if (
-      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE !== "novalue" ||
-      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE !== "authWindow"
+      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window" ||
+      rteConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "url"
     ) {
       dataArr = rteConfig?.handleSelectorPageData?.(event);
     } else if (

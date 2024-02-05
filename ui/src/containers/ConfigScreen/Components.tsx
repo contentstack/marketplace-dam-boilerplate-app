@@ -15,7 +15,6 @@ import {
   ModalFooter,
   ButtonGroup,
   Button,
-  cbModal,
   Icon,
   Notification,
 } from "@contentstack/venus-components";
@@ -248,7 +247,7 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
   return returnValue;
 };
 
-export const ModalComponent = function ({ props, handleModalValue }: any) {
+export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
   const {
     CustomOptionsContext: { customOptions },
   } = useContext(ConfigStateContext);
@@ -283,79 +282,83 @@ export const ModalComponent = function ({ props, handleModalValue }: any) {
       setModalValue("");
     } else {
       handleModalValue(selectOptions, action, updatedValue);
-      props?.closeModal();
+      closeModal();
     }
   };
 
   return (
-    <>
-      <ModalHeader
-        title={localeTexts.ConfigFields.customWholeJson.modal.header}
-        closeModal={() => {
-          handleModalValue(selectOptions, "create", []);
-          props?.closeModal();
-        }}
-      />
-      <ModalBody className="modalBodyCustomClass">
-        <FieldLabel required htmlFor="label">
-          {localeTexts.ConfigFields.customWholeJson.modal.label}
-        </FieldLabel>
-        <TextInput
-          required
-          autoFocus
-          value={modalValue}
-          placeholder={
-            localeTexts.ConfigFields.customWholeJson.modal.placeholder
-          }
-          name="label"
-          autoComplete="off"
-          onChange={handleChange}
-          version="v2"
-        />
-        <InstructionText>
-          {localeTexts.ConfigFields.customWholeJson.modal.instructionS}
-          <br />
-          <p className="note-p">
-            {localeTexts.ConfigFields.customWholeJson.modal.note}
-          </p>
-          {localeTexts.ConfigFields.customWholeJson.modal.instructionE}
-        </InstructionText>
-      </ModalBody>
-      <ModalFooter>
-        <ButtonGroup>
-          <Button
-            buttonType="light"
-            version="v2"
-            size="small"
-            onClick={() => {
+    <div className="ReactModalPortal">
+      <div className="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__overlay-default flex-v-center">
+        <div className="ReactModal__Content ReactModal__Content--after-open  ReactModal__Content--medium ">
+          <ModalHeader
+            title={localeTexts.ConfigFields.customWholeJson.modal.header}
+            closeModal={() => {
               handleModalValue(selectOptions, "create", []);
-              props?.closeModal();
+              closeModal();
             }}
-          >
-            {localeTexts.ConfigFields.customWholeJson.modal.btn.cancel}
-          </Button>
-          <Button
-            onClick={() => handleValueCreate("create")}
-            buttonType="secondary"
-            size="small"
-            disabled={!modalValue?.length || isEmptySpace}
-            version="v2"
-          >
-            <Icon icon="CheckedPurple" />
-            {localeTexts.ConfigFields.customWholeJson.modal.btn.create}
-          </Button>
-          <Button
-            version="v2"
-            size="small"
-            disabled={!modalValue?.length || isEmptySpace}
-            onClick={() => handleValueCreate("createApply")}
-          >
-            <Icon icon="CheckedWhite" />
-            {localeTexts.ConfigFields.customWholeJson.modal.btn.apply}
-          </Button>
-        </ButtonGroup>
-      </ModalFooter>
-    </>
+          />
+          <ModalBody className="modalBodyCustomClass">
+            <FieldLabel required htmlFor="label">
+              {localeTexts.ConfigFields.customWholeJson.modal.label}
+            </FieldLabel>
+            <TextInput
+              required
+              autoFocus
+              value={modalValue}
+              placeholder={
+                localeTexts.ConfigFields.customWholeJson.modal.placeholder
+              }
+              name="label"
+              autoComplete="off"
+              onChange={handleChange}
+              version="v2"
+            />
+            <InstructionText>
+              {localeTexts.ConfigFields.customWholeJson.modal.instructionS}
+              <br />
+              <p className="note-p">
+                {localeTexts.ConfigFields.customWholeJson.modal.note}
+              </p>
+              {localeTexts.ConfigFields.customWholeJson.modal.instructionE}
+            </InstructionText>
+          </ModalBody>
+          <ModalFooter>
+            <ButtonGroup>
+              <Button
+                buttonType="light"
+                version="v2"
+                size="small"
+                onClick={() => {
+                  handleModalValue(selectOptions, "create", []);
+                  closeModal();
+                }}
+              >
+                {localeTexts.ConfigFields.customWholeJson.modal.btn.cancel}
+              </Button>
+              <Button
+                onClick={() => handleValueCreate("create")}
+                buttonType="secondary"
+                size="small"
+                disabled={!modalValue?.length || isEmptySpace}
+                version="v2"
+              >
+                <Icon icon="CheckedPurple" />
+                {localeTexts.ConfigFields.customWholeJson.modal.btn.create}
+              </Button>
+              <Button
+                version="v2"
+                size="small"
+                disabled={!modalValue?.length || isEmptySpace}
+                onClick={() => handleValueCreate("createApply")}
+              >
+                <Icon icon="CheckedWhite" />
+                {localeTexts.ConfigFields.customWholeJson.modal.btn.apply}
+              </Button>
+            </ButtonGroup>
+          </ModalFooter>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -366,6 +369,8 @@ export const JsonComponent = function () {
     DamKeysContext: { damKeys },
     JSONCompContext: { handleModalValue, updateCustomJSON, updateTypeObj },
   } = useContext(ConfigStateContext);
+  const [isModalOpen, setModalOpen] = useState(false);
+
   return (
     <>
       <Line type="dashed" />
@@ -433,19 +438,14 @@ export const JsonComponent = function () {
                 {localeTexts.ConfigFields.customWholeJson.modal.addOption}
               </>
             }
-            addOption={() =>
-              cbModal({
-                // eslint-disable-next-line
-                component: (props: any) => (
-                  <ModalComponent
-                    props={props}
-                    handleModalValue={handleModalValue}
-                  />
-                ),
-                testId: "cs-modal",
-              })
-            }
+            addOption={() => setModalOpen(true)}
           />
+          {isModalOpen && (
+            <ModalComponent
+              closeModal={() => setModalOpen(false)}
+              handleModalValue={handleModalValue}
+            />
+          )}
         </Field>
       )}
     </>

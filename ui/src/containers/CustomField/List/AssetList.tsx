@@ -1,11 +1,9 @@
 import React, { useContext, useState } from "react";
-import { ActionTooltip, Icon, Tooltip } from "@contentstack/venus-components";
+import { ActionTooltip } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TypeAssetList } from "../../../common/types";
 import constants from "../../../common/constants";
-import NoImage from "../../../components/NoImage";
-import localeTexts from "../../../common/locale/en-us";
 import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
 import CustomFieldContext from "../../../common/contexts/CustomFieldContext";
 
@@ -32,54 +30,8 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
       : "inherit",
   };
 
-  const noAssetElement = (
-    <div className="noImage">
-      <Tooltip
-        content={localeTexts?.CustomFields?.toolTip?.content}
-        position="top"
-        showArrow={false}
-        variantType="light"
-        type="secondary"
-      >
-        <NoImage />
-      </Tooltip>
-    </div>
-  );
-
   const handleImageError = () => {
     setImageError(true);
-  };
-
-  const getIconElement = () => {
-    let returnEl;
-    switch (type?.toLowerCase()) {
-      case "image":
-        returnEl = thumbnailUrl ? (
-          <div className="rowImage">
-            <img src={thumbnailUrl} alt="Asset" onError={handleImageError} />
-          </div>
-        ) : (
-          noAssetElement
-        );
-        break;
-      case "video":
-        returnEl = (
-          <div className="noImage icon-element">
-            <Icon icon="MP4" size="small" />
-          </div>
-        );
-        break;
-      case "raw":
-        returnEl = (
-          <div className="noImage icon-element">
-            <Icon icon="DOC2" />
-          </div>
-        );
-        break;
-      default:
-        returnEl = noAssetElement;
-    }
-    return returnEl;
   };
 
   return (
@@ -106,7 +58,13 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
           }
         >
           <div role="cell" className="Table__body__column">
-            {!imageError ? getIconElement() : noAssetElement}
+            {!imageError
+              ? CustomFieldUtils.getIconElement({
+                  type,
+                  thumbnailUrl,
+                  handleImageError,
+                })
+              : CustomFieldUtils.noAssetElement}
           </div>
           <div role="cell" className="Table__body__column">
             <p>{name?.charAt(0)?.toUpperCase() + name?.slice(1)}</p>
