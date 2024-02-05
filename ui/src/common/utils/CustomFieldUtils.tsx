@@ -1,9 +1,10 @@
 import React from "react";
-import { Icon, cbModal } from "@contentstack/venus-components";
+import { Icon, Tooltip, cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us";
 import rootConfig from "../../root_config";
+import NoImage from "../../components/NoImage";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -365,6 +366,113 @@ const advancedFilters = (assets: any[], contentTypeConfig: any) => {
     else rejectedAssets?.push(asset);
   });
   return { acceptedAssets, rejectedAssets };
+const noAssetElement = (
+  <div className="noImage">
+    <Tooltip
+      content={localeTexts?.CustomFields?.toolTip?.content}
+      position="top"
+      showArrow={false}
+      variantType="light"
+      type="secondary"
+    >
+      <NoImage />
+    </Tooltip>
+  </div>
+);
+
+const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
+  let returnEl;
+  switch (type?.toLowerCase()) {
+    case "image":
+      returnEl = thumbnailUrl ? (
+        <div className="rowImage">
+          <img src={thumbnailUrl} alt="Asset" onError={handleImageError} />
+        </div>
+      ) : (
+        noAssetElement
+      );
+      break;
+    case "code":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="DOC2" />
+        </div>
+      );
+      break;
+    case "pdf":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="PDF2" />
+        </div>
+      );
+      break;
+    case "excel":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="XLS" />
+        </div>
+      );
+      break;
+    case "presentation":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="PPT" />
+        </div>
+      );
+      break;
+    case "document":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="DOC2" />
+        </div>
+      );
+      break;
+    case "json":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="JSON" />
+        </div>
+      );
+      break;
+    case "text/plain":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="DOC2" />
+        </div>
+      );
+      break;
+    case "zip":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="ZIP" />
+        </div>
+      );
+      break;
+    case "video":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="MP4" size="small" />
+        </div>
+      );
+      break;
+    case "audio":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="MP3" />
+        </div>
+      );
+      break;
+    case "image/tiff":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="Document" />
+        </div>
+      );
+      break;
+    default:
+      returnEl = noAssetElement;
+  }
+  return returnEl;
 };
 
 const CustomFieldUtils = {
@@ -382,6 +490,8 @@ const CustomFieldUtils = {
   gridViewDropdown,
   flatten,
   advancedFilters,
+  noAssetElement,
+  getIconElement,
 };
 
 export default CustomFieldUtils;
