@@ -11,7 +11,7 @@ const filterAssetData = (assets: any[]) => {
       asset;
     return {
       id: public_id,
-      type: resource_type,
+      type: resource_type, // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
       name: public_id,
       width,
       height,

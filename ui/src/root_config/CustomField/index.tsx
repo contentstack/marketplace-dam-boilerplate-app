@@ -16,7 +16,7 @@ const filterAssetData = (assets: any[]) => {
     // Enter your code for filteration of assets to the specified format
     ({
       id: "",
-      type: "",
+      type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
       name: "",
       width: "",
       height: "",

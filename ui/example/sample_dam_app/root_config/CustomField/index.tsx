@@ -11,7 +11,7 @@ const filterAssetData = (assets: any[]) => {
     ({
       // eslint-disable-next-line
       id: asset?._id,
-      type: "image",
+      type: "image", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
       name: asset?.assetName,
       width: asset?.dimension?.width,
       height: asset?.dimension?.height,
