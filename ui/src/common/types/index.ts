@@ -64,6 +64,7 @@ export interface TypeConfigComponent {
   objKey: string;
   objValue: any;
   updateConfig?: Function;
+  acckey?: string;
 }
 
 export interface TypeRadioOption {
@@ -82,7 +83,8 @@ export type TypeWarningtext = {
 export interface TypeRootDamEnv {
   IS_DAM_SCRIPT?: boolean;
   DAM_APP_NAME: string;
-  CONFIG_FIELDS: string[];
+  SELECTOR_CONFIG_CHECK_FIELDS: string[];
+  REQUIRED_CONFIG_FIELDS: string[];
   ASSET_UNIQUE_ID: string;
   DAM_SCRIPT_URL?: string;
   SELECTOR_PAGE_LOGO?: any;
@@ -141,4 +143,10 @@ export interface TypeCustomConfigUpdateParams {
 export interface TypeErrorFn {
   isErr: boolean;
   errorText: string;
+}
+
+export interface AddMultiConfigurationModalProps {
+  handleMultiConfig: (config: any) => void;
+  multiConfigData: any;
+  closeModal: any;
 }

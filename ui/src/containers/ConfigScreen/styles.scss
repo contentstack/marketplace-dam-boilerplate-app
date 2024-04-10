@@ -6,7 +6,7 @@
   }
 
   & .Field {
-    padding: 30px 20px;
+    padding: 30px;
     margin: 0;
   }
 
@@ -128,4 +128,114 @@
 #tippy-4,
 #tippy-5 {
   padding-bottom: 5px;
+}
+
+.multiConfig--warn {
+  color: #ff0000;
+}
+
+.multi-config-accordian-wrapper {
+  margin: 30px;
+
+  & .multi-config-label-wrapper {
+    padding: 5px 0;
+    width: 500px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  & .multi-config-default-label {
+    border: 1px solid #a9b6cb;
+    border-radius: 8px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #647696;
+    margin-left: 1rem;
+    padding: 0.1875rem 0.25rem;
+  }
+
+  & .Dropdown__menu--primary {
+    z-index: 5;
+    left: -30px;
+    top: 38px;
+    border-radius: 4px;
+
+    & .Dropdown__menu__list {
+      & .Dropdown__menu__list__item {
+        padding: 10px !important;
+      }
+    }
+  }
+
+  & .Accordion.Accordion-v2 .Accordion-v2__heading {
+    margin: 0 -1rem;
+
+    & .middle-truncate-start {
+      font-family: Inter;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 135%;
+      letter-spacing: -0.003px;
+      color: #222222;
+    }
+  }
+
+  & .Accordion.Accordion-v2 .Accordion__open .Accordion__data {
+    padding: 0 !important;
+    margin: 0;
+
+    & .multi-config-wrapper__sublabel {
+      font-family: Inter;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 185%;
+      color: #475161;
+      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+  }
+
+  & .multi-config-wrapper__configblock {
+    margin: 16px 0;
+  }
+
+  & .Field {
+    padding: 24px 24px 0 24px !important;
+
+    & .Checkbox {
+      margin: 10px !important;
+    }
+  }
+
+  & .multi-config-default-checkbox {
+    padding: 30px 24px 24px !important;
+
+    & .Checkbox__label {
+      font-family: Inter;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: 0.16px;
+      color: #212121;
+    }
+  }
+
+  & .multi-config-accordian {
+    & .Accordion__heading {
+      margin: 0 !important;
+    }
+  }
+
+  & .multi-config-dropdown-action-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & svg {
+      margin-right: 8px;
+    }
+  }
 }

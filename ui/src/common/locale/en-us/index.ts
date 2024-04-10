@@ -2,6 +2,37 @@ import rootConfig from "../../../root_config";
 
 const localeTexts = {
   ConfigFields: {
+    AccordianConfig: {
+      mainName: "Configuration",
+      multiConfigLabel: `Configure your ${rootConfig?.damEnv?.DAM_APP_NAME} credentials`,
+      accActions: {
+        default: "Set as Default",
+        delete: "Delete Configuration",
+      },
+      defaultLabel: "Default",
+      checkboxText: "Set as Default",
+      btnText: "New Configuration",
+    },
+    accModal: {
+      header: "Add Configuration",
+      textLabel: "Configuration Name",
+      textPlaceholder: "Enter Configuration Name",
+      duplicateError:
+        "Configuration label name already exists. Please use a different name and try again.",
+      nameLengthError:
+        "Configuration Name Length should be between 5 to 50 characters.",
+      legacyNameError: `"legacy_config" is a reserved configuration name. Please use a
+      different name.`,
+      cancelBtn: "Cancel",
+      addBtn: "Add",
+    },
+    DeleteModal: {
+      header: "Confirm Deletion",
+      body: "Are you sure you want to delete <b>&apos;$&apos;</b> configuration? If yes, type the name of the configuration and press Delete.",
+      textPlaceholder: "Enter configuration name for confirmation",
+      cancelButton: "Cancel",
+      confirmButton: "Delete",
+    },
     entrySaveRadioButton: {
       label: "Save In Entry",
       help: `You can select how you want to save the data you get from ${rootConfig.damEnv.DAM_APP_NAME}.`,
@@ -46,11 +77,10 @@ const localeTexts = {
         },
       },
       notification: {
-        errorS: "The option",
-        errorE: "already exists",
+        error: `The option "$var" already exists`,
       },
     },
-    invalidCredentials: "Invalid Configuration",
+    missingCredentials: "Missing Required Fields",
     emptyValue: "Field Value Missing",
   },
   CustomFields: {
@@ -61,10 +91,8 @@ const localeTexts = {
         "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
     },
     assetValidation: {
-      errorGeneralStart: "Error: Some Assets",
-      errorSpecificStart: "Error:",
       errorStatement:
-        "cannot be added as it does not match the asset constraints provided.",
+        "Error: $var cannot be added as it does not match the asset constraints provided.",
     },
     button: {
       btnText: "Choose Asset(s)",
@@ -77,7 +105,6 @@ const localeTexts = {
         drag: "Reorder",
       },
     },
-    AssetNotAddedText: "No assets have been added",
     header: {
       asset: {
         singular: "Asset",
@@ -95,18 +122,19 @@ const localeTexts = {
       list: "List",
       content: "Asset Image Not Available",
     },
+    DeleteModal: {
+      header: "Remove Asset from Contentstack",
+      body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",
+      cancelButton: "Cancel",
+      confirmButton: "Remove",
+    },
+    AssetNotAddedText: "No assets have been added",
   },
   SelectorPage: {
     title: rootConfig?.damEnv?.DAM_APP_NAME,
   },
   Warnings: {
     incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
-  },
-  DeleteModal: {
-    header: "Remove Asset from Contentstack",
-    body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",
-    cancelButton: "Cancel",
-    confirmButton: "Remove",
   },
   AppFailed: {
     Message1: "App Location Iniailization Failed.",

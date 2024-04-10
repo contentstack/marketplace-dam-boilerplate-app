@@ -319,7 +319,7 @@ const advancedFilters = (assets: any[], contentTypeConfig: any) => {
   const acceptedAssets: any[] = [];
   const rejectedAssets: any[] = [];
 
-  let checkValues = new Map([
+  const checkValues = new Map([
     [SIZE, size],
     [HEIGHT, height],
     [WIDTH, width],
@@ -366,6 +366,8 @@ const advancedFilters = (assets: any[], contentTypeConfig: any) => {
     else rejectedAssets?.push(asset);
   });
   return { acceptedAssets, rejectedAssets };
+};
+
 const noAssetElement = (
   <div className="noImage">
     <Tooltip

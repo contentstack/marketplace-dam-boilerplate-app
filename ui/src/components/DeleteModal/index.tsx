@@ -1,10 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Button,
   ButtonGroup,
   ModalBody,
   ModalFooter,
   ModalHeader,
+  TextInput,
 } from "@contentstack/venus-components";
 import localeTexts from "../../common/locale/en-us";
 import { Props } from "../../common/types";
@@ -13,19 +14,56 @@ const DeleteModal: React.FC<Props> = function ({
   remove,
   id,
   name: itemName,
+  configLocation,
   ...props
 }) {
+  const [deleteConfirmationName, setDeleteConfirmationName] = useState("");
+  const [deleteBtnDisable, setDeleteBtnDisable] = useState(true);
+
+  const handleDeleteInput = (e: any) => {
+    const inputValue = e?.target?.value?.trim();
+    if (inputValue === itemName) {
+      setDeleteConfirmationName(inputValue);
+      setDeleteBtnDisable(false);
+    } else {
+      setDeleteBtnDisable(true);
+    }
+  };
+
   return (
     <>
       <ModalHeader
-        title={localeTexts.DeleteModal.header}
+        title={
+          configLocation
+            ? localeTexts.ConfigFields.DeleteModal.header
+            : localeTexts.CustomFields.DeleteModal.header
+        }
         closeModal={props.closeModal}
       />
       <ModalBody className="deleteModalBody">
         <p
           dangerouslySetInnerHTML={{
-            __html: `${localeTexts.DeleteModal.body.replace(/\$/g, itemName)}`,
+            __html: `${
+              configLocation
+                ? localeTexts.ConfigFields.DeleteModal.body.replace(
+                    /\$/g,
+                    itemName
+                  )
+                : localeTexts.CustomFields.DeleteModal.body.replace(
+                    /\$/g,
+                    itemName
+                  )
+            }`,
           }}
+        />
+        <br />
+        <TextInput
+          required
+          placeholder={localeTexts.ConfigFields.DeleteModal.textPlaceholder}
+          name="deleteConfirmationName"
+          value={deleteConfirmationName}
+          onChange={handleDeleteInput}
+          version="v2"
         />
       </ModalBody>
       <ModalFooter>
@@ -36,17 +74,18 @@ const DeleteModal: React.FC<Props> = function ({
             version="v2"
             onClick={props.closeModal}
           >
-            {localeTexts.DeleteModal.cancelButton}
+            {localeTexts.CustomFields.DeleteModal.cancelButton}
           </Button>
           <Button
             buttonType="delete"
-            icon="RemoveFilled"
+            icon={configLocation ? "Delete" : "RemoveFilled"}
             iconProps={{
               size: "mini",
               className: "remove-modal-icon",
             }}
             size="small"
             version="v2"
+            disabled={configLocation ? deleteBtnDisable : false}
             onClick={useCallback(() => {
               props.closeModal();
               setTimeout(() => {
@@ -54,7 +93,9 @@ const DeleteModal: React.FC<Props> = function ({
               }, 300);
             }, [id, props])}
           >
-            {localeTexts.DeleteModal.confirmButton}
+            {configLocation
+              ? localeTexts.ConfigFields.DeleteModal.confirmButton
+              : localeTexts.CustomFields.DeleteModal.confirmButton}
           </Button>
         </ButtonGroup>
       </ModalFooter>
