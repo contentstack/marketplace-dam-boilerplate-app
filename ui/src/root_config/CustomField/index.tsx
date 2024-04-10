@@ -35,7 +35,7 @@ const handleConfigtoSelectorPage = (
   currentLocale: string
 ) =>
   utils.getSelectorConfig({
-    keyArr: DamEnvVariables?.CONFIG_FIELDS,
+    keyArr: DamEnvVariables?.SELECTOR_CONFIG_CHECK_FIELDS,
     appConfig: config,
     customConfig: contentTypeConfig,
     currentLocale,

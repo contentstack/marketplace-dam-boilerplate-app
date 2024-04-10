@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
 interface TypeAppConfigContext {
-  errorState: any;
   installationData: any;
   setInstallationData: Function;
   appConfig: any;
@@ -13,7 +12,6 @@ interface TypeAppConfigContext {
 }
 
 const AppConfigContext = createContext<TypeAppConfigContext>({
-  errorState: [],
   installationData: {},
   setInstallationData: () => {},
   appConfig: {},

@@ -4,7 +4,7 @@ import { TypeRootDamEnv } from "../../common/types";
 const DamEnvVariables: TypeRootDamEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Cloudinary",
-  CONFIG_FIELDS: ["cloudName", "apiKey"],
+  SELECTOR_CONFIG_CHECK_FIELDS: ["cloudName", "apiKey"],
   ASSET_UNIQUE_ID: "public_id",
   DAM_SCRIPT_URL: "https://media-library.cloudinary.com/global/all.js",
   SELECTOR_PAGE_LOGO: Logo,

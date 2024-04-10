@@ -153,7 +153,10 @@ const CustomField: React.FC = function () {
         }
 
         if (finalAssets?.rejectedAssets?.length) {
-          let message = `${localeTexts.CustomFields.assetValidation.errorGeneralStart} ${localeTexts.CustomFields.assetValidation.errorStatement}`;
+          let message = `${localeTexts.CustomFields.assetValidation.errorStatement.replace(
+            "$var",
+            "Some Assets"
+          )}`;
 
           if (rootConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME) {
             const rejectedAssetNames = finalAssets?.rejectedAssets?.map(
@@ -164,11 +167,10 @@ const CustomField: React.FC = function () {
                 ];
               }
             );
-            message = `${
-              localeTexts.CustomFields.assetValidation.errorSpecificStart
-            } ${rejectedAssetNames?.map((item) => `"${item}"`)?.join(", ")} ${
-              localeTexts.CustomFields.assetValidation.errorStatement
-            }`;
+            message = `${localeTexts.CustomFields.assetValidation.errorStatement.replace(
+              "$var",
+              rejectedAssetNames?.map((item) => `"${item}"`)?.join(", ")
+            )}`;
           }
 
           Notification({
