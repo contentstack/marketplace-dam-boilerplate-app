@@ -150,33 +150,41 @@ const ImageElement = function ({
     : `embed-asset ${highlightclass} ${downloadTypeclass}`;
 
   const CustomComponent = () => {
-    const iconType = rteConfig?.getViewIconforTooltip?.(RTE_RESOURCE_TYPE);
+    const { openInDam, preview } =
+      rteConfig?.getViewIconforTooltip?.(RTE_RESOURCE_TYPE);
     return (
       <div contentEditable={false} className="embed--btn-group">
-        {iconType && ["Eye", "NewTab"]?.includes(iconType) && (
+        {preview && (
           <EmbedBtn
             title={localeTexts.RTE.iconContent.preview}
-            content={utils.getToolTipIconContent(iconType)}
+            content={utils.getToolTipIconContent(preview)}
             onClick={handleView}
           >
-            <Icon icon={iconType} />
+            <Icon icon={preview} size="tiny" version="v2" />
           </EmbedBtn>
         )}
-
+        {openInDam && (
+          <EmbedBtn
+            title={localeTexts.RTE.iconContent.openInDAM}
+            content={utils.getToolTipIconContent(openInDam)}
+            onClick={handleView}
+          >
+            <Icon icon={openInDam} size="tiny" version="v2" />
+          </EmbedBtn>
+        )}
         <EmbedBtn
           title="edit"
           content={localeTexts.RTE.iconContent.edit}
           onClick={handleEdit}
         >
-          <Icon icon="Rename" />
+          <Icon icon="ImageSettings" size="tiny" version="v2" />
         </EmbedBtn>
-
         <EmbedBtn
           title="remove"
           content={localeTexts.RTE.iconContent.remove}
           onClick={handleDelete}
         >
-          <Icon icon="RemoveFilled" size="tiny" />
+          <Icon icon="DontSave" size="tiny" version="v2" />
         </EmbedBtn>
       </div>
     );
