@@ -70,6 +70,11 @@ const handleAuthWindow = (
   resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
 };
 
+const modifyAssetsToSave = (assets: any[]) => {
+  /* code logic to modify the assets to save in Custom Field */
+  return assets;
+};
+
 const rootCustomField: TypeRootCustomField = {
   filterAssetData,
   getSelectorWindowUrl,
@@ -77,6 +82,7 @@ const rootCustomField: TypeRootCustomField = {
   handleSelectorPageData,
   handleSelectorWindow,
   handleAuthWindow,
+  modifyAssetsToSave,
 };
 
 export default rootCustomField;
