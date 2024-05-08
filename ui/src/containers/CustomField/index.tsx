@@ -51,7 +51,11 @@ const CustomField: React.FC = function () {
         (selectedAssets as any[])?.map((item: any) => item?.[uniqueID])
       );
       const assetsToSave =
-        rootConfig?.modifyAssetsToSave?.(selectedAssets) ?? selectedAssets;
+        rootConfig?.modifyAssetsToSave?.(
+          state?.config,
+          state?.contentTypeConfig,
+          selectedAssets
+        ) ?? selectedAssets;
       state?.location?.field?.setData(assetsToSave);
     }
   }, [
