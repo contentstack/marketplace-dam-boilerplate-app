@@ -3,7 +3,7 @@ import { createContext } from "react";
 interface TypeCustomFieldContext {
   renderAssets: any[];
   setRenderAssets: Function;
-  selectedAssets: any[];
+  selectedAssets: any;
   setSelectedAssets: Function;
   removeAsset: Function;
   uniqueID: string;
@@ -17,7 +17,7 @@ interface TypeCustomFieldContext {
 const CustomFieldContext = createContext<TypeCustomFieldContext>({
   renderAssets: [],
   setRenderAssets: () => {},
-  selectedAssets: [],
+  selectedAssets: {},
   setSelectedAssets: () => {},
   removeAsset: () => {},
   uniqueID: "",
