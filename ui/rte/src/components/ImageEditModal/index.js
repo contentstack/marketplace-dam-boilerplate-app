@@ -9,7 +9,6 @@ import {
   Field,
   FieldLabel,
   TextInput,
-  Checkbox,
   Select,
   Icon,
   ToggleSwitch,
@@ -272,7 +271,7 @@ const ImageEditModal = function (props) {
                 onChange={updateData}
                 options={dropdownList}
                 version="v2"
-                width="313px"
+                width="100%"
               />
             </Field>
             <Field>
