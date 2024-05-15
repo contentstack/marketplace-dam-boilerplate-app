@@ -23,7 +23,8 @@ const SelectorPage: React.FC<any> = function () {
 
   // function to check null or missing values of config
   const checkConfigValues = (configParams: any) => {
-    const configFieldsLength = rootConfig?.damEnv?.SELECTOR_PAGE_CONFIG_FIELDS?.length;
+    const configFieldsLength =
+      rootConfig?.damEnv?.SELECTOR_PAGE_CONFIG_FIELDS?.length;
     for (let i = 0; i < configFieldsLength; i += 1) {
       if (!configParams[rootConfig?.damEnv?.SELECTOR_PAGE_CONFIG_FIELDS?.[i]]) {
         return true;
@@ -61,10 +62,12 @@ const SelectorPage: React.FC<any> = function () {
     selectedIds: string[]
   ) => {
     if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
+      console.info("first if-----")
       isScriptLoaded = await SelectorPageUtils.loadDAMScript(
         rootConfig?.damEnv?.DAM_SCRIPT_URL as string
       );
       if (isScriptLoaded === true) {
+        console.info("second if--------", configParams)
         // condition's for checking config variable's
         if (checkConfigValues(configParams)) {
           setIsErrorPresent(true);
@@ -95,6 +98,8 @@ const SelectorPage: React.FC<any> = function () {
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
         setConfig(data?.config);
+        console.info("data.config--->>>", data?.config)
+        console.info("data.selected ids---->>>", data.selectedIds);
         compactViewImplementation(data?.config, data?.selectedIds);
         setSelectedAssetIds(data?.selectedIds);
       }

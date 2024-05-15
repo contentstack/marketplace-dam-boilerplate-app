@@ -49,7 +49,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
     <div className="ReactModalPortal">
       <div className="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__overlay-default flex-v-center">
         <div className="ReactModal__Content ReactModal__Content--after-open  ReactModal__Content--medium ">
-          <ModalHeader  
+          <ModalHeader
             title={localeTexts.ConfigFields.accModal.header}
             closeModal={closeModal}
             closeIconTestId="cs-default-header-close"
@@ -88,9 +88,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
               <Button
                 onClick={onSaveConfiguration}
                 disabled={
-                  !enteredConfigName ||
-                  hasDuplicateName ||
-                  nameLengthError
+                  !enteredConfigName || hasDuplicateName || nameLengthError
                 }
               >
                 {localeTexts.ConfigFields.accModal.addBtn}
@@ -104,4 +102,4 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
 };
 
 export default MultiConfigModal;
-export{};
+export {};

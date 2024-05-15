@@ -5,7 +5,7 @@ const DamEnvVariables: TypeRootDamEnv = {
   IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Bynder",
   SELECTOR_PAGE_CONFIG_FIELDS: [],
-  REQUIRED_CONFIG_FIELDS :["org_url", "language", "mode"],
+  REQUIRED_CONFIG_FIELDS: ["org_url", "language", "mode"],
   ASSET_UNIQUE_ID: "id",
   DAM_SCRIPT_URL:
     "https://ucv.bynder.com/5.0.5/modules/compactview/bynder-compactview-3-latest.js",

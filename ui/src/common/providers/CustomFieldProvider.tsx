@@ -56,7 +56,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       console.info("value of location----", location);
-      console.info("value of contenttypeconfig---", contenttypeConfig,);
+      console.info("value of contenttypeconfig---", contenttypeConfig);
       const initialData = location?.field?.getData();
       if (initialData?.length) {
         // set App's Custom Field Data

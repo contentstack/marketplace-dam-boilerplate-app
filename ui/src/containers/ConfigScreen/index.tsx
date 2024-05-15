@@ -40,7 +40,7 @@ const ConfigScreen: React.FC = function () {
     useContext(AppConfigContext);
   // entire configuration object returned from configureConfigScreen
   const configInputFields: any = rootConfig?.configureConfigScreen?.();
-  console.info("configInputFields------", configInputFields)
+  console.info("configInputFields------", configInputFields);
   // state for rendering multi-config name modal
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   // default multiconfig key
@@ -144,7 +144,7 @@ const ConfigScreen: React.FC = function () {
   );
 
   const handleMultiConfig = (newConfigName: string) => {
-    console.info("handle multi configggg------")
+    console.info("handle multi configggg------");
     const { accConfigFields, accServerFields } = getFilteredMultiConfigFields();
 
     const configFieldObj: any = {};
@@ -152,48 +152,51 @@ const ConfigScreen: React.FC = function () {
 
     // Populate configFieldObj and serverConfigFieldObj
     Object.entries(accConfigFields).forEach(([key, value]: any) => {
-        if (value.type !== "textInputFields") {
-            configFieldObj[key] = value.defaultSelectedOption ?? "";
-        }
+      if (value.type !== "textInputFields") {
+        configFieldObj[key] = value.defaultSelectedOption ?? "";
+      }
     });
 
     Object.entries(accServerFields).forEach(([key, value]: any) => {
-        if (value.type !== "textInputFields") {
-            serverConfigFieldObj[key] = value.defaultSelectedOption ?? "";
-        }
+      if (value.type !== "textInputFields") {
+        serverConfigFieldObj[key] = value.defaultSelectedOption ?? "";
+      }
     });
 
     // Update configInstallationObj
     let configInstallationObj = {
-        ...installationData?.configuration,
-        multi_config_keys: {
-            ...(installationData?.configuration?.multi_config_keys ?? {}),
-            [newConfigName]: configFieldObj,
-        },
+      ...installationData?.configuration,
+      multi_config_keys: {
+        ...(installationData?.configuration?.multi_config_keys ?? {}),
+        [newConfigName]: configFieldObj,
+      },
     };
 
     // Check if there are no existing multi config keys
-    if (Object.keys(installationData?.configuration?.multi_config_keys ?? {}).length === 0) {
-        configInstallationObj = {
-            ...configInstallationObj,
-            default_multi_config_key: newConfigName,
-        };
-        setDefaultKey(newConfigName);
+    if (
+      Object.keys(installationData?.configuration?.multi_config_keys ?? {})
+        .length === 0
+    ) {
+      configInstallationObj = {
+        ...configInstallationObj,
+        default_multi_config_key: newConfigName,
+      };
+      setDefaultKey(newConfigName);
     }
 
     // Update installationData
     setInstallationData({
-        ...installationData,
-        configuration: { ...configInstallationObj },
-        serverConfiguration: {
-            ...installationData?.serverConfiguration,
-            multi_config_keys: {
-                ...(installationData?.serverConfiguration?.multi_config_keys ?? {}),
-                [newConfigName]: serverConfigFieldObj,
-            },
+      ...installationData,
+      configuration: { ...configInstallationObj },
+      serverConfiguration: {
+        ...installationData?.serverConfiguration,
+        multi_config_keys: {
+          ...(installationData?.serverConfiguration?.multi_config_keys ?? {}),
+          [newConfigName]: serverConfigFieldObj,
         },
+      },
     });
-};
+  };
 
   // converting the config in proper format for updateConfig
   const updateValueFunc = (
@@ -220,9 +223,9 @@ const ConfigScreen: React.FC = function () {
   };
 
   const handleDefaultConfigFn = (e: any, acckey: string) => {
-    console.info("inside handleDefaultconfigfn----")
+    console.info("inside handleDefaultconfigfn----");
     if (e?.target?.checked) {
-      console.info("checkbox--", acckey, defaultKey)
+      console.info("checkbox--", acckey, defaultKey);
       setDefaultKey(acckey);
       setInstallationData({
         ...installationData,
@@ -280,7 +283,7 @@ const ConfigScreen: React.FC = function () {
       }
     );
 
-  const confirmDeleteAction  = (configKey: string) => {
+  const confirmDeleteAction = (configKey: string) => {
     const multiConfigData =
       installationData?.configuration?.multi_config_keys ?? {};
     const serverMultiConfigData =
@@ -371,8 +374,8 @@ const ConfigScreen: React.FC = function () {
                         </div>
                       ),
                       action: (e: any) => {
-                       setDefaultKey(acckey);
-                        handleDefaultConfigFn(e, acckey)
+                        setDefaultKey(acckey);
+                        handleDefaultConfigFn(e, acckey);
                       },
                     },
                     {
@@ -418,8 +421,14 @@ const ConfigScreen: React.FC = function () {
   );
 
   const renderAccFields = (accordianFields: any) => {
-    console.info("accordian rendering one-----", installationData.configuration);
-    console.info("accordian rendering two-----", installationData.serverConfiguration)
+    console.info(
+      "accordian rendering one-----",
+      installationData.configuration
+    );
+    console.info(
+      "accordian rendering two-----",
+      installationData.serverConfiguration
+    );
     const accordianKeys = Object.keys(
       installationData?.configuration?.multi_config_keys ??
         installationData?.serverConfiguration?.multi_config_keys ??
@@ -435,7 +444,7 @@ const ConfigScreen: React.FC = function () {
           accordionDataCount={accordianKeys?.length}
         >
           <p className="multi-config-wrapper__sublabel">
-           {localeTexts.ConfigFields.AccordianConfig.multiConfigLabel}
+            {localeTexts.ConfigFields.AccordianConfig.multiConfigLabel}
           </p>
           {accordianKeys?.map((acckey: any) =>
             accordianblocks(acckey, accordianFields)
@@ -467,7 +476,7 @@ const ConfigScreen: React.FC = function () {
   };
 
   const renderConfigScreen = () => {
-    console.info("renderConfigScreen-------")
+    console.info("renderConfigScreen-------");
     const renderValue: any = [];
     const accordianFields: any = {};
     const nonAccordianFields: any = {};

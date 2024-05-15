@@ -28,6 +28,7 @@ const openComptactView = (
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
   use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]  */
+  console.info("config values for opern compact view---", config.language, config.org_url);
   window.BynderCompactView?.open({
     language: config?.language,
     mode: config?.mode,
@@ -57,10 +58,10 @@ const customSelectorComponent = (
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) =>(
-   // eslint-disable-next-line
+) => (
+  // eslint-disable-next-line
   <></>
-)
+);
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,

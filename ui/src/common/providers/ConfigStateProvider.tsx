@@ -163,7 +163,7 @@ const ConfigStateProvider: React.FC<any> = function ({
       return output;
     }, {});
 
-   useEffect(() => {
+  useEffect(() => {
     // getting the default key names for radio and select input
     const { radioValuesKeys, selectValuesKeys } =
       ConfigScreenUtils.getDefaultInputValues(configInputFields);
@@ -208,7 +208,6 @@ const ConfigStateProvider: React.FC<any> = function ({
     setRadioInputValues(radioValuesObj);
     setSelectInputValues(selectValuesObj);
   }, [installationData?.configuration, installationData?.serverConfiguration]);
-
 
   const contextValue = useMemo(
     () => ({

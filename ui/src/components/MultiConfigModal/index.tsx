@@ -1,12 +1,25 @@
 import React from "react";
-import { ModalHeader, ModalBody, ModalFooter, ButtonGroup, Button } from "@contentstack/venus-components";
+import {
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ButtonGroup,
+  Button,
+} from "@contentstack/venus-components";
 
-const ModalComponent = (props: { closeModal: () => any; }) => (
-  <>
-    <ModalHeader title="Modal header" closeModal={props.closeModal} closeIconTestId="cs-default-header-close" />
+function ModalComponent(props: { closeModal: () => any }) {
+  return <>
+    <ModalHeader
+      title="Modal header"
+      closeModal={props.closeModal}
+      closeIconTestId="cs-default-header-close"
+    />
     <ModalBody className="modalBodyCustomClass">
       <h3>Hello from modal</h3> <br />
-      <p>The Modal component is a dialog box/popup window that is displayed on top of the current page</p>
+      <p>
+        The Modal component is a dialog box/popup window that is displayed on
+        top of the current page
+      </p>
     </ModalBody>
     <ModalFooter>
       <ButtonGroup>
@@ -17,6 +30,6 @@ const ModalComponent = (props: { closeModal: () => any; }) => (
       </ButtonGroup>
     </ModalFooter>
   </>
-);
+}
 
 export default ModalComponent;

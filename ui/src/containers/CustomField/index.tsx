@@ -163,7 +163,7 @@ const CustomField: React.FC = function () {
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized && !selectorPageWindow) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
-        console.info("inside Open DAM selector page- no value")
+        console.info("inside Open DAM selector page- no value");
         handleSelectorOpen();
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
         new Promise((resolve, reject) => {

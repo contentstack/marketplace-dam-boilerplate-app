@@ -277,8 +277,8 @@ const gridViewDropdown = [
   },
 ];
 
-const flatten=(data: any)=> {
-  const result: { [key: string]: any } = {}; 
+const flatten = (data: any) => {
+  const result: { [key: string]: any } = {};
 
   function recurse(cur: any, prop: string) {
     if (Object(cur) !== cur) {
@@ -286,7 +286,8 @@ const flatten=(data: any)=> {
       return;
     }
     if (Array.isArray(cur)) {
-      if (!cur || cur.length === 0) { // Check if 'cur' is null, undefined, or an empty array
+      if (!cur || cur.length === 0) {
+        // Check if 'cur' is null, undefined, or an empty array
         result[prop] = [];
         return;
       }
@@ -294,12 +295,12 @@ const flatten=(data: any)=> {
       for (let i = 0; i < cur.length; i += 1) {
         recurse(cur[i], `${prop}[${i}]`);
       }
-      
     } else {
       let isEmpty = true;
       const keys = Object.keys(cur); // Get the keys of 'cur' object
 
-      keys.forEach(p => { // Iterate over keys using forEach
+      keys.forEach((p) => {
+        // Iterate over keys using forEach
         if (Object.prototype.hasOwnProperty.call(cur, p)) {
           isEmpty = false;
           recurse(cur[p], prop ? `${prop}.${p}` : p);
@@ -311,7 +312,7 @@ const flatten=(data: any)=> {
   }
   recurse(data, "");
   return result;
-}
+};
 
 const convertToBytes = (value: number, unit: string) => {
   const units = ["BYTES", "KB", "MB", "GB", "TB"];
@@ -327,7 +328,10 @@ const advancedFilters = (assets: any[], contentTypeConfig: any) => {
     WIDTH_NAME: WIDTH,
   } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
   const { size, height, width } = contentTypeConfig;
-  console.info("root config advanced filters----", rootConfig.damEnv.ADVANCED_ASSET_PARAMS)
+  console.info(
+    "root config advanced filters----",
+    rootConfig.damEnv.ADVANCED_ASSET_PARAMS
+  );
   console.info("size, height, width----", contentTypeConfig);
   const acceptedAssets: any[] = [];
   const rejectedAssets: any[] = [];
