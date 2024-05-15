@@ -161,8 +161,9 @@ const CustomField: React.FC = function () {
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-    if (state?.appSdkInitialized) {
+    if (state?.appSdkInitialized && !selectorPageWindow) {
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
+        console.info("inside Open DAM selector page- no value")
         handleSelectorOpen();
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
         new Promise((resolve, reject) => {

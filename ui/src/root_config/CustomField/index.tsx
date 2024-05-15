@@ -12,20 +12,94 @@ import DamEnvVariables from "../DamEnv";
 import utils from "../utils";
 
 const filterAssetData = (assets: any[]) => {
-  const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
+  const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
+    // console.info("eachhhh asset info in filerAsset ----", asset);
     // Enter your code for filteration of assets to the specified format
-    ({
-      id: "",
-      type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
-      name: "",
-      width: "",
-      height: "",
+    const {
+      id,
+      name,
+      url,
+      files,
+      previewUrls,
+      additionalInfo,
+      databaseId,
+      assetTracker,
+    } = asset;
+    let type = "";
+    let trackerStatus;
+    const fileExtension = asset.extensions[0];
+    if (
+      [
+        "jpeg",
+        "jpg",
+        "png",
+        "gif",
+        "bmp",
+        "apng",
+        "avif",
+        "jfif",
+        "pjpeg",
+        "pjp",
+        "svg",
+        "webp",
+        "ico",
+        "cur",
+        "tif",
+        "tiff",
+      ].includes(fileExtension)
+    ) {
+      type = "Image";
+    } else if (
+      [
+        "mp4",
+        "mov",
+        "wmv",
+        "avi",
+        "avchd",
+        "flv",
+        "f4v",
+        "swf",
+        "ogg",
+      ].includes(fileExtension)
+    ) {
+      type = "Video";
+    } else if (["pdf"].includes(fileExtension)) {
+      type = "Pdf";
+    } else if (["mp3", "ogg", "wav"].includes(fileExtension)) {
+      type = "Audio";
+    } else if (["zip", "rar", "tar", "7z"].includes(fileExtension)) {
+      type = "Zip";
+    } else {
+      type = "Document";
+    }
+
+    let previewUrlValue: any;
+    switch (type.toLowerCase()) {
+      case "image":
+        previewUrlValue = files?.webImage?.url || "";
+        break;
+      case "video":
+        previewUrlValue = previewUrls?.[0] || "";
+        break;
+      default:
+        break;
+    }
+
+    return {
+      id,
+      databaseId,
+      type,
+      trackerStatus: assetTracker,
+      name,
+      width: files?.webImage?.width,
+      height: files?.webImage?.height,
       size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: "",
-      previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
-      platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
-    })
-  );
+      thumbnailUrl:
+        additionalInfo?.selectedFile?.url ?? files?.webImage?.url ?? "",
+      previewUrl: additionalInfo?.selectedFile?.url ?? previewUrlValue, // add this parameter if you want "Preview" in tooltip action items
+      platformUrl: url || "", // add this parameter if you want "Open In DAM" in tooltip action items
+    };
+  });
   return filterAssetArray;
 };
 
@@ -35,7 +109,7 @@ const handleConfigtoSelectorPage = (
   currentLocale: string
 ) =>
   utils.getSelectorConfig({
-    keyArr: DamEnvVariables?.CONFIG_FIELDS,
+    keyArr: DamEnvVariables?.SELECTOR_PAGE_CONFIG_FIELDS,
     appConfig: config,
     customConfig: contentTypeConfig,
     currentLocale,

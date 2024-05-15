@@ -3,6 +3,7 @@ import { Icon, Tooltip, cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us";
+import rootConfig from "../../root_config";
 import NoImage from "../../components/NoImage";
 
 // function to open a popup window
@@ -276,6 +277,110 @@ const gridViewDropdown = [
   },
 ];
 
+const flatten=(data: any)=> {
+  const result: { [key: string]: any } = {}; 
+
+  function recurse(cur: any, prop: string) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+      return;
+    }
+    if (Array.isArray(cur)) {
+      if (!cur || cur.length === 0) { // Check if 'cur' is null, undefined, or an empty array
+        result[prop] = [];
+        return;
+      }
+
+      for (let i = 0; i < cur.length; i += 1) {
+        recurse(cur[i], `${prop}[${i}]`);
+      }
+      
+    } else {
+      let isEmpty = true;
+      const keys = Object.keys(cur); // Get the keys of 'cur' object
+
+      keys.forEach(p => { // Iterate over keys using forEach
+        if (Object.prototype.hasOwnProperty.call(cur, p)) {
+          isEmpty = false;
+          recurse(cur[p], prop ? `${prop}.${p}` : p);
+        }
+      });
+
+      if (isEmpty && prop) result[prop] = {};
+    }
+  }
+  recurse(data, "");
+  return result;
+}
+
+const convertToBytes = (value: number, unit: string) => {
+  const units = ["BYTES", "KB", "MB", "GB", "TB"];
+  const index = units?.findIndex((u) => u === unit);
+  return value * 1024 ** (index ?? 0);
+};
+
+const advancedFilters = (assets: any[], contentTypeConfig: any) => {
+  const {
+    SIZE_NAME: SIZE,
+    SIZE_UNIT = "BYTES",
+    HEIGHT_NAME: HEIGHT,
+    WIDTH_NAME: WIDTH,
+  } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
+  const { size, height, width } = contentTypeConfig;
+  console.info("root config advanced filters----", rootConfig.damEnv.ADVANCED_ASSET_PARAMS)
+  console.info("size, height, width----", contentTypeConfig);
+  const acceptedAssets: any[] = [];
+  const rejectedAssets: any[] = [];
+
+  const checkValues = new Map([
+    [SIZE, size],
+    [HEIGHT, height],
+    [WIDTH, width],
+  ]);
+  const checks: string[] = [];
+  [SIZE, HEIGHT, WIDTH]?.forEach((key) => {
+    if (key) {
+      checks?.push(key);
+    }
+  });
+
+  assets?.forEach((asset: any) => {
+    const assetFlatStructure = flatten(asset);
+    let itemCount = 0;
+    let validationCount = 0;
+
+    checks?.forEach((key) => {
+      const propValue = checkValues?.get(key);
+      if (propValue) {
+        itemCount += 1;
+        const value = convertToBytes(assetFlatStructure?.[key], SIZE_UNIT);
+        if (
+          (propValue?.max &&
+            propValue?.min &&
+            !propValue?.exact &&
+            value <= propValue?.max &&
+            value >= propValue?.min) ||
+          (propValue?.max &&
+            !propValue?.min &&
+            !propValue?.exact &&
+            value <= propValue?.max) ||
+          (propValue?.min &&
+            !propValue?.max &&
+            !propValue?.exact &&
+            value >= propValue?.min) ||
+          (propValue?.exact && value === propValue?.exact)
+        ) {
+          validationCount += 1;
+        }
+      }
+    });
+
+    if (itemCount === validationCount) acceptedAssets?.push(asset);
+    else rejectedAssets?.push(asset);
+  });
+  return { acceptedAssets, rejectedAssets };
+};
+
 const noAssetElement = (
   <div className="noImage">
     <Tooltip
@@ -398,6 +503,8 @@ const CustomFieldUtils = {
   navigateObject,
   getFilteredAssets,
   gridViewDropdown,
+  flatten,
+  advancedFilters,
   noAssetElement,
   getIconElement,
 };

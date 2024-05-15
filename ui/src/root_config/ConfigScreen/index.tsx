@@ -18,51 +18,54 @@ const configureConfigScreen = () =>
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
   ({
-    textField: {
+    org_url: {
       type: "textInputFields",
-      labelText: "DAM Text Input",
-      helpText: "DAM Text Input Helptext",
-      placeholderText: "DAM Text Input Placeholder",
-      instructionText: "DAM Text Input Instruction Text",
-      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
-      saveInConfig: false,
-      saveInServerConfig: true,
+      labelText: "Bynder Organization URL",
+      helpText: "Enter Your Bynder Organization URL",
+      placeholderText: "Enter Your Bynder Organization URL",
+      instructionText: "Enter Your Bynder Organization URL",
+      inputFieldType: "url", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+      saveInConfig: true,
+      saveInServerConfig: false,
+      isAccordianConfig: true,
     },
-    selectField: {
+    language: {
       type: "selectInputFields",
-      labelText: "DAM Select Input",
-      helpText: "DAM Select Input Helptext",
-      placeholderText: "DAM Select Input Placeholder",
-      instructionText: "DAM Select Input Instruction Text",
+      labelText: "Language",
+      helpText: "Select a Language for Bynder GUI",
+      placeholderText: "Language",
+      // instructionText: "Language",
       options: [
-        { label: "option 1", value: "option1" },
-        { label: "option 2", value: "option2" },
-        { label: "option 3", value: "option3" },
-        { label: "option 4", value: "option4" },
-        { label: "option 5", value: "option5" },
+        { label: "English", value: "en_US" },
+        { label: "Dutch", value: "nl_NL" },
+        { label: "German", value: "de_DE" },
+        { label: "French", value: "fr_FR" },
+        { label: "Spanish", value: "es_ES" },
       ],
-      defaultSelectedOption: "option5",
+      defaultSelectedOption: "en_US",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
-    radioField: {
+    mode: {
       type: "radioInputFields",
-      labelText: "DAM Radio Input",
-      helpText: "DAM Radio Input Helptext",
-      instructionText: "DAM Radio Input Instruction Text",
+      labelText: "Mode",
+      helpText: "Select a Bynder Mode for Bynder GUI",
+      instructionText: "Select a Bynder Mode for Bynder GUI",
       options: [
         {
-          label: "Option 1",
-          value: "Option 1",
+          label: "Multi Select",
+          value: "MultiSelect",
         },
         {
-          label: "Option 2",
-          value: "Option 2",
+          label: "Single Select File",
+          value: "SingleSelectFile",
         },
       ],
-      defaultSelectedOption: "Option 1",
+      defaultSelectedOption: "MultiSelect",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
   });
 
@@ -98,7 +101,6 @@ const customWholeJson = () => {
 
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
-  customConfigComponent,
   customWholeJson,
 };
 

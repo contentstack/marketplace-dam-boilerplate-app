@@ -23,9 +23,9 @@ const SelectorPage: React.FC<any> = function () {
 
   // function to check null or missing values of config
   const checkConfigValues = (configParams: any) => {
-    const configFieldsLength = rootConfig?.damEnv?.CONFIG_FIELDS?.length;
+    const configFieldsLength = rootConfig?.damEnv?.SELECTOR_PAGE_CONFIG_FIELDS?.length;
     for (let i = 0; i < configFieldsLength; i += 1) {
-      if (!configParams[rootConfig?.damEnv?.CONFIG_FIELDS?.[i]]) {
+      if (!configParams[rootConfig?.damEnv?.SELECTOR_PAGE_CONFIG_FIELDS?.[i]]) {
         return true;
       }
     }
