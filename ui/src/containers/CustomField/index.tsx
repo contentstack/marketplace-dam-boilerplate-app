@@ -45,10 +45,18 @@ const CustomField: React.FC = function () {
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
-    if (selectedAssets) {
+    if (Array.isArray(selectedAssets)) {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-      setSelectedAssetIds(selectedAssets?.map((item) => item?.[uniqueID]));
-      state?.location?.field?.setData(selectedAssets);
+      setSelectedAssetIds(
+        (selectedAssets as any[])?.map((item: any) => item?.[uniqueID])
+      );
+      const assetsToSave =
+        rootConfig?.modifyAssetsToSave?.(
+          state?.config,
+          state?.contentTypeConfig,
+          selectedAssets
+        ) ?? selectedAssets;
+      state?.location?.field?.setData(assetsToSave);
     }
   }, [
     selectedAssets, // Your Custom Field State Data
@@ -58,7 +66,7 @@ const CustomField: React.FC = function () {
     if (dataArr?.length) {
       const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
       let finalAssets = CustomFieldUtils.uniqBy(
-        [...selectedAssets, ...dataArr],
+        [...(Array.isArray(selectedAssets) ? selectedAssets : []), ...dataArr],
         uniqueID
       );
 
@@ -275,7 +283,7 @@ const CustomField: React.FC = function () {
                 <Tooltip
                   content={localeTexts.CustomFields.assetLimit.btnTooltip}
                   position="top"
-                  disabled={!isBtnDisable}
+                  disabled={!(renderAssets?.length && isBtnDisable)}
                   style={constants.constantStyles.addBtnTooltip}
                 >
                   <Button
@@ -284,7 +292,7 @@ const CustomField: React.FC = function () {
                     version="v2"
                     onClick={openDAMSelectorPage}
                     data-testid="add-btn"
-                    disabled={isBtnDisable}
+                    disabled={renderAssets?.length && isBtnDisable}
                   >
                     {localeTexts.CustomFields.button.btnText}
                   </Button>

@@ -30,7 +30,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   // state for filtered asset data which is to be rendered
   const [renderAssets, setRenderAssets] = useState<TypeAsset[]>([]);
   // state for selected assets received from selector page
-  const [selectedAssets, setSelectedAssets] = useState<any[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<any>([]);
   // state for current locale
   const [currentLocale, setCurrentLocale] = useState<string>("");
   // state to manage disable of "add button"
@@ -56,12 +56,10 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       const initialData = location?.field?.getData();
-      if (initialData?.length) {
-        // set App's Custom Field Data
-        setSelectedAssets(initialData);
-        // check for saved data length and handling button disable state
-        handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
-      }
+      // set App's Custom Field Data
+      setSelectedAssets(initialData);
+      // check for saved data length and handling button disable state
+      handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
       await setState({
@@ -80,11 +78,13 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   // function to remove the assets when "delete" action is triggered
   const removeAsset = useCallback(
     (removedId: string) => {
-      const finalAssets = selectedAssets?.filter(
-        (asset) => asset?.[uniqueID] !== removedId
-      );
-      setSelectedAssets(finalAssets);
-      handleBtnDisable(finalAssets);
+      if (Array.isArray(selectedAssets)) {
+        const finalAssets = selectedAssets?.filter(
+          (asset) => asset?.[uniqueID] !== removedId
+        );
+        setSelectedAssets(finalAssets);
+        handleBtnDisable(finalAssets);
+      }
     },
     [selectedAssets, handleBtnDisable]
   );
