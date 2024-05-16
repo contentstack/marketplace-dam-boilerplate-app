@@ -238,7 +238,7 @@ const CustomField: React.FC = function () {
                 <Tooltip
                   content={localeTexts.CustomFields.assetLimit.btnTooltip}
                   position="top"
-                  disabled={!isBtnDisable}
+                  disabled={!(renderAssets?.length && isBtnDisable)}
                   style={constants.constantStyles.addBtnTooltip}
                 >
                   <Button
@@ -247,7 +247,7 @@ const CustomField: React.FC = function () {
                     version="v2"
                     onClick={openDAMSelectorPage}
                     data-testid="add-btn"
-                    disabled={isBtnDisable}
+                    disabled={renderAssets?.length && isBtnDisable}
                   >
                     {localeTexts.CustomFields.button.btnText}
                   </Button>
