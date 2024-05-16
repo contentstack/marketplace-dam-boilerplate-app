@@ -136,6 +136,12 @@ const localeTexts = {
   Warnings: {
     incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
   },
+  DeleteModal: {
+    header: "Remove Asset from Contentstack Entry",
+    body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack Entry?",
+    cancelButton: "Cancel",
+    confirmButton: "Remove",
+  },
   AppFailed: {
     Message1: "App Location Iniailization Failed.",
     Message2: "Please reload the location and Try Again!",

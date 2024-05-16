@@ -30,6 +30,8 @@ const handleSelectorWindow = rootCustomField?.handleSelectorWindow;
 
 const handleAuthWindow = rootCustomField?.handleAuthWindow;
 
+const modifyAssetsToSave = rootCustomField?.modifyAssetsToSave;
+
 // <---------- SELECTOR PAGE FUNCTIONS ---------->
 
 const openComptactView = rootSelectorPage?.openComptactView;
@@ -46,6 +48,7 @@ const rootConfig: TypeRootConfig = {
   getSelectorWindowUrl,
   handleSelectorPageData,
   handleAuthWindow,
+  modifyAssetsToSave,
   handleSelectorWindow,
   openComptactView,
   customSelectorComponent,

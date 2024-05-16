@@ -9,9 +9,9 @@ import {
   Field,
   FieldLabel,
   TextInput,
-  Checkbox,
   Select,
   Icon,
+  ToggleSwitch,
 } from "@contentstack/venus-components";
 import cloneDeep from "lodash.clonedeep";
 import { v4 } from "uuid";
@@ -247,7 +247,7 @@ const ImageEditModal = function (props) {
               <Icon className="modal-icon" icon={icon} />
             )}
           </div>
-          <div>
+          <div className="edit-modal-properties">
             <Field>
               <FieldLabel htmlFor="alt">
                 {constantValues.constants.altText.label}
@@ -257,6 +257,7 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.altText.placeholder}
                 name="alt"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
             <Field>
@@ -269,6 +270,8 @@ const ImageEditModal = function (props) {
                 }}
                 onChange={updateData}
                 options={dropdownList}
+                version="v2"
+                width="100%"
               />
             </Field>
             <Field>
@@ -280,6 +283,7 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.caption.placeholder}
                 name="caption"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
             <Field>
@@ -291,29 +295,28 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.embedLink.placeholder}
                 name="anchorLink"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
-            <Field>
-              <Checkbox
+            <div className="rte-prop-toggle-wrap">
+              <ToggleSwitch
                 checked={state?.["redactor-attributes"]?.target ?? false}
                 name="target"
                 label={constantValues.constants.newTab.label}
                 onChange={updateData}
-                className="modal-checkbox"
               />
-            </Field>
-            <Field>
-              <Checkbox
+            </div>
+            <div className="rte-prop-toggle-wrap">
+              <ToggleSwitch
                 checked={state?.inline}
                 name="inline"
-                className="modal-checkbox"
                 label={constantValues.constants.inlineImage.label}
                 onChange={updateData}
                 disabled={
                   state?.position === "center" || state?.position === "none"
                 }
               />
-            </Field>
+            </div>
           </div>
         </div>
       </ModalBody>
