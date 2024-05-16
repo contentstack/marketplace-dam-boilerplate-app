@@ -32,7 +32,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const [initialStateLoaded, setInitialStateLoaded] = useState(false);
 
   // function to check if field values are empty and handles save button disable on empty field values
-  const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
+  const checkConfigFields = async ({
+    configuration,
+    serverConfiguration,
+  }: any) => {
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
 
@@ -50,7 +53,14 @@ const AppConfigProvider: React.FC = function ({ children }) {
         }
       }
     });
-    if (missingValues?.length) {
+
+    const isConfigValid =
+      (await rootConfig?.checkConfigValidity?.(
+        configuration,
+        serverConfiguration
+      )) ?? true;
+
+    if (missingValues?.length && isConfigValid) {
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.missingCredentials,
       });

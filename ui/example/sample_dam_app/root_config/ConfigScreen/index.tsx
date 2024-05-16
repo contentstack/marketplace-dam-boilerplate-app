@@ -26,6 +26,7 @@ const configureConfigScreen = () =>
       inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: false,
       saveInServerConfig: true,
+      isAccordianConfig: true,
     },
     selectField: {
       type: "selectInputFields",
@@ -43,6 +44,7 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "option5",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
     radioField: {
       type: "radioInputFields",
@@ -62,6 +64,7 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "Option 1",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
   });
 

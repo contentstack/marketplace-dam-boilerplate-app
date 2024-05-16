@@ -16,16 +16,20 @@ const configureConfigScreen = () =>
       labelText: "Cloud Name",
       placeholderText: "Enter Cloud Name",
       instructionText: `Enter your Cloudinary account's Cloud Name`,
+      inputFieldType: "text",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
     apiKey: {
       type: "textInputFields",
       labelText: "API Key",
       placeholderText: "Enter API Key",
       instructionText: `Enter your Cloudinary account's API Key`,
+      inputFieldType: "password",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
   });
 
