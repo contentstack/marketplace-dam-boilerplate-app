@@ -2,8 +2,6 @@
 import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
 import { Button, Notification, Tooltip } from "@contentstack/venus-components";
-/* Import our CSS */
-import "./styles.scss";
 /* Import our modules */
 import localeTexts from "../../common/locale/en-us";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
@@ -15,6 +13,8 @@ import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppConte
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types";
 import constants from "../../common/constants";
+/* Import our CSS */
+import "./styles.scss";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 

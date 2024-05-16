@@ -101,6 +101,7 @@ export interface TypeRootDamEnv {
 export interface TypeRootConfigSreen {
   configureConfigScreen?: Function;
   customConfigComponent?: Function;
+  checkConfigValidity?: Function;
   customWholeJson?: Function;
 }
 
@@ -123,6 +124,7 @@ export interface TypeRootConfig {
   damEnv: TypeRootDamEnv;
   configureConfigScreen?: Function;
   customConfigComponent?: Function;
+  checkConfigValidity?: Function;
   customWholeJson?: Function;
   filterAssetData?: Function;
   getSelectorWindowUrl?: Function;

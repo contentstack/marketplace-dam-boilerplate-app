@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable arrow-body-style */
 
 /* NOTE: Remove Functions which are not used */
 
@@ -77,6 +78,11 @@ const customConfigComponent = (
   ) => void
 ) => <CustomComponent />;
 
+const checkConfigValidity = async (config: any, serverConfig: any) => {
+  // return value of the function is boolean. Return "true" to disable the button and "false" to enable to button.
+  return false;
+};
+
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
     "option 1",
@@ -102,6 +108,7 @@ const customWholeJson = () => {
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
   customConfigComponent,
+  checkConfigValidity,
   customWholeJson,
 };
 

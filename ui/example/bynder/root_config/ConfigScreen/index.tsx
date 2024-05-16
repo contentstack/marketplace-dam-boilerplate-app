@@ -16,8 +16,10 @@ const configureConfigScreen = () =>
       labelText: "Bynder Organization URL",
       helpText: "Enter Your Bynder Organization URL",
       placeholderText: "Enter Bynder Organization URL",
+      inputFieldType: "url",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
     language: {
       type: "selectInputFields",
@@ -34,6 +36,7 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "en_US",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
     mode: {
       type: "radioInputFields",
@@ -52,6 +55,7 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "MultiSelect",
       saveInConfig: true,
       saveInServerConfig: false,
+      isAccordianConfig: true,
     },
   });
 

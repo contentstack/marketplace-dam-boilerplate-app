@@ -5,10 +5,11 @@ const DamEnvVariables: TypeRootDamEnv = {
   DAM_APP_NAME: "DAM Sample App",
   ASSET_UNIQUE_ID: "_id",
   SELECTOR_PAGE_LOGO: Logo,
-  SELECTOR_CONFIG_CHECK_FIELDS: [],
   IS_DAM_SCRIPT: false,
   DAM_SCRIPT_URL: "",
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
+  REQUIRED_CONFIG_FIELDS: [],
+  SELECTOR_CONFIG_CHECK_FIELDS: [],
   ADVANCED_ASSET_PARAMS: {
     ASSET_NAME: "assetName", // add property name for NAME. If present in nested structure, add nested structure reference.
     SIZE_NAME: "dimensions.size", // add property name for SIZE. If present in nested structure, add nested structure reference.

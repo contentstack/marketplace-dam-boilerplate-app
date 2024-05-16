@@ -2,13 +2,14 @@ import Logo from "../../common/asset/logo.svg";
 import { TypeRootDamEnv } from "../../common/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
-  IS_DAM_SCRIPT: true,
   DAM_APP_NAME: "Cloudinary",
-  SELECTOR_CONFIG_CHECK_FIELDS: ["cloudName", "apiKey"],
   ASSET_UNIQUE_ID: "public_id",
-  DAM_SCRIPT_URL: "https://media-library.cloudinary.com/global/all.js",
   SELECTOR_PAGE_LOGO: Logo,
+  IS_DAM_SCRIPT: true,
+  DAM_SCRIPT_URL: "https://media-library.cloudinary.com/global/all.js",
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue"
+  REQUIRED_CONFIG_FIELDS: ["cloudName", "apiKey"],
+  SELECTOR_CONFIG_CHECK_FIELDS: ["cloudName", "apiKey"],
   ADVANCED_ASSET_PARAMS: {
     ASSET_NAME: "public_id", // add property name for NAME. If present in nested structure, add nested structure reference.
     SIZE_NAME: "bytes", // add property name for SIZE. If present in nested structure, add nested structure reference.
