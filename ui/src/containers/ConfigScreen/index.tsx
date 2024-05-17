@@ -345,8 +345,7 @@ const ConfigScreen: React.FC = function () {
             {acckey}
             {defaultKey === acckey && (
               <span className="multi-config-default-label">
-                {/* [{localeTexts.ConfigFields.AccordianConfig.defaultLabel}] */}
-                Default config
+                [{localeTexts.ConfigFields.AccordianConfig.defaultLabel}]
               </span>
             )}
           </div>

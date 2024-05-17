@@ -69,13 +69,19 @@ const SelectorPage: React.FC<any> = function () {
       if (isScriptLoaded === true) {
         console.info("second if--------", configParams)
         // condition's for checking config variable's
-        if (checkConfigValues(configParams)) {
+        if (checkConfigValues(configParams)) {  
           setIsErrorPresent(true);
           return;
         }
         setIsErrorPresent(false);
+        console.info("inside Compact View implementation---", configParams);
+        const defaultKey = configParams.default_multi_config_key;
+         const allKeys = configParams.multi_config_keys;
+
+        const  selectedConfig = allKeys[defaultKey];
+        console.info("config for selector page----", selectedConfig);
         rootConfig?.openComptactView?.(
-          configParams,
+          selectedConfig,
           selectedIds,
           successFn,
           closeFn,
@@ -92,14 +98,21 @@ const SelectorPage: React.FC<any> = function () {
 
   const handleMessage = (event: MessageEvent) => {
     const { data } = event;
+    console.info("handle message", data)
     if (data?.config) {
       if (
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
         setConfig(data?.config);
-        console.info("data.config--->>>", data?.config)
-        console.info("data.selected ids---->>>", data.selectedIds);
+        // console.info("data.config--->>>", data?.config)
+        // console.info("data.selected ids---->>>", data.selectedIds);
+        const defaultKey = data?.config?.default_multi_config_key;
+        console.info("default key -----", defaultKey);
+        const allKeys = data?.config?.multi_config_keys;
+        console.info("all key -----", allKeys);
+       // const  selectedConfig = allKeys[defaultKey];
+       // console.info("config for selector page----", selectedConfig);
         compactViewImplementation(data?.config, data?.selectedIds);
         setSelectedAssetIds(data?.selectedIds);
       }
