@@ -43,6 +43,42 @@ const CustomField: React.FC = function () {
   // window variable for selector page
   let selectorPageWindow: any;
 
+  const getCurrentConfigLabel = () => {
+    const { config_label: configLabel, locale } = state?.contentTypeConfig;
+    let finalConfigLabel =
+      configLabel?.[0] ?? state?.config?.default_multi_config_key;
+    if (locale?.[currentLocale]?.config_label?.length) {
+      finalConfigLabel = locale?.[currentLocale]?.config_label?.[0];
+    }
+    return finalConfigLabel;
+  };
+
+  const getConfig = () => {
+    const { config, contentTypeConfig } = state;
+    // eslint-disable-next-line
+    const { multi_config_keys, default_multi_config_key } = config;
+    const finalConfigLabel = getCurrentConfigLabel();
+    const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
+
+    const finalConfig = default_multi_config_key
+      ? {
+          ...config,
+          selected_config: {
+            ...multiConfig,
+          },
+        }
+      : { ...config };
+    delete finalConfig.default_multi_config_key;
+    delete finalConfig.multi_config_keys;
+
+    const finalContentTypeConfig = { ...contentTypeConfig };
+    delete finalContentTypeConfig.advanced;
+    delete finalContentTypeConfig.config_label;
+    delete finalContentTypeConfig.locale;
+
+    return { config: finalConfig, contentTypeConfig, finalContentTypeConfig };
+  };
+
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
     if (Array.isArray(selectedAssets)) {
@@ -50,10 +86,11 @@ const CustomField: React.FC = function () {
       setSelectedAssetIds(
         (selectedAssets as any[])?.map((item: any) => item?.[uniqueID])
       );
+      const finalConfig = getConfig();
       const assetsToSave =
         rootConfig?.modifyAssetsToSave?.(
-          state?.config,
-          state?.contentTypeConfig,
+          finalConfig?.config,
+          finalConfig?.contentTypeConfig,
           selectedAssets
         ) ?? selectedAssets;
       state?.location?.field?.setData(assetsToSave);
@@ -69,7 +106,6 @@ const CustomField: React.FC = function () {
         [...(Array.isArray(selectedAssets) ? selectedAssets : []), ...dataArr],
         uniqueID
       );
-
       if (assetLimit && finalAssets?.length > assetLimit) {
         finalAssets = finalAssets?.slice(0, assetLimit);
         Notification({
@@ -86,7 +122,15 @@ const CustomField: React.FC = function () {
         });
       }
       if (finalAssets?.length) {
-        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+        const configLabel = getCurrentConfigLabel();
+        setSelectedAssets(
+          finalAssets?.map((asset: any) => ({
+            ...asset,
+            cs_metadata: {
+              config_label: configLabel,
+            },
+          }))
+        ); // selectedAssets is array of assets selected in selectorpage
         handleBtnDisable(
           finalAssets,
           state?.contentTypeConfig?.advanced?.max_limit
@@ -96,16 +140,17 @@ const CustomField: React.FC = function () {
   };
 
   // returns final config values from app_config and custom_field_config
-  const getConfig = () => {
+  const getSelectorConfig = () => {
+    const finalConfig = getConfig();
     const configObj =
       rootConfig?.handleConfigtoSelectorPage?.(
-        state?.config,
-        state?.contentTypeConfig,
+        finalConfig?.config,
+        finalConfig?.contentTypeConfig,
         currentLocale
-      ) || {};
+      ) ?? {};
 
     if (Object.keys(configObj)?.length) return configObj;
-    return state?.config;
+    return finalConfig;
   };
 
   // handle message event for selector window
@@ -133,7 +178,7 @@ const CustomField: React.FC = function () {
         event?.source?.postMessage(
           {
             message: "init",
-            config: getConfig(),
+            config: getSelectorConfig(),
             type: rootConfig.damEnv.DAM_APP_NAME,
             selectedIds: selectedAssetIds,
           },
@@ -199,7 +244,7 @@ const CustomField: React.FC = function () {
         selectorPageWindow = undefined;
       }
     },
-    [state?.config]
+    [state?.config, handleUniqueSelectedData]
   );
 
   const handleSelectorOpen = () => {
@@ -215,14 +260,15 @@ const CustomField: React.FC = function () {
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
     if (state?.appSdkInitialized && !selectorPageWindow) {
+      const finalConfig = getConfig();
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
         handleSelectorOpen();
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
         new Promise((resolve, reject) => {
           rootConfig?.handleAuthWindow?.(
             {
-              config: state?.config,
-              contentTypeConfig: state?.contentTypeConfig,
+              config: finalConfig?.config,
+              contentTypeConfig: finalConfig?.contentTypeConfig,
             },
             resolve,
             reject
@@ -237,14 +283,14 @@ const CustomField: React.FC = function () {
       } else {
         if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "window") {
           rootConfig?.handleSelectorWindow?.(
-            state?.config,
-            state?.contentTypeConfig,
+            finalConfig?.config,
+            finalConfig?.contentTypeConfig,
             setError
           );
         } else {
           const url = rootConfig?.getSelectorWindowUrl?.(
-            state?.config,
-            state?.contentTypeConfig
+            finalConfig?.config,
+            finalConfig?.contentTypeConfig
           );
           selectorPageWindow = CustomFieldUtils.popupWindow({
             url,
@@ -262,6 +308,7 @@ const CustomField: React.FC = function () {
     state?.config,
     state?.contentTypeConfig,
     saveData,
+    getConfig,
   ]);
 
   return (
