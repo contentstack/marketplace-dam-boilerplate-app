@@ -385,6 +385,31 @@ const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
   return returnEl;
 };
 
+const flatten = (data: any) => {
+  const result: any = {};
+  function recurse(cur: any, prop: string) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+    } else if (Array.isArray(cur)) {
+      let l;
+      // eslint-disable-next-line
+      for (let i = 0, l = cur?.length; i < l; i++)
+        recurse(cur?.[i], `${prop}[${i}]`);
+      if (l === 0) result[prop] = [];
+    } else {
+      let isEmpty = true;
+      // eslint-disable-next-line
+      for (const p in cur) {
+        isEmpty = false;
+        recurse(cur?.[p], prop ? `${prop}.${p}` : p);
+      }
+      if (isEmpty && prop) result[prop] = {};
+    }
+  }
+  recurse(data, "");
+  return result;
+};
+
 const CustomFieldUtils = {
   popupWindow,
   getHoverActions,
@@ -400,6 +425,7 @@ const CustomFieldUtils = {
   gridViewDropdown,
   noAssetElement,
   getIconElement,
+  flatten,
 };
 
 export default CustomFieldUtils;

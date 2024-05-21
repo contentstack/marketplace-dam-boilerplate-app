@@ -52,6 +52,7 @@ const localeTexts = {
     },
     invalidCredentials: "Invalid Configuration",
     emptyValue: "Field Value Missing",
+    missingCredentials: "Missing Required Fields",
   },
   CustomFields: {
     assetLimit: {

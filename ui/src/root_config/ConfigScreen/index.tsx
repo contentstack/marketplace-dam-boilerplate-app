@@ -66,6 +66,12 @@ const configureConfigScreen = () =>
     },
   });
 
+// eslint-disable-next-line
+const checkConfigValidity = async (config: any, serverConfig: any) => {
+  // return value of the function is boolean. Return "true" to disable the button and "false" to enable to button.
+  return false;
+};
+
 const customConfigComponent = (
   config: any,
   serverConfig: any,
@@ -98,6 +104,7 @@ const customWholeJson = () => {
 
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
+  checkConfigValidity,
   customConfigComponent,
   customWholeJson,
 };

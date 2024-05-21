@@ -30,6 +30,7 @@ import constants from "../../common/constants";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateContext from "../../common/contexts/ConfigStateContext";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import rootConfig from "../../root_config";
 /* Import node module CSS */
 /* Import our CSS */
 
@@ -39,19 +40,13 @@ export const TextInputField = function ({
   objValue,
   updateConfig,
 }: TypeConfigComponent) {
-  const { installationData, errorState } = useContext(AppConfigContext);
+  const { installationData } = useContext(AppConfigContext);
   return (
     <>
       <Field>
         <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
+          required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}-id`}
-          requiredText={
-            errorState?.includes(objKey)
-              ? localeTexts.ConfigFields.emptyValue
-              : undefined
-          }
           data-testid="text_label"
         >
           {" "}
@@ -128,19 +123,12 @@ export const RadioInputField = function ({
   const {
     RadioInputContext: { radioInputValues, updateRadioOptions },
   } = useContext(ConfigStateContext);
-  const { errorState } = useContext(AppConfigContext);
 
   return (
     <>
       <Field>
         <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
-          requiredText={
-            errorState?.includes(objKey)
-              ? localeTexts.ConfigFields.emptyValue
-              : undefined
-          }
+          required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}_options`}
           data-testid="radio_label"
         >
@@ -182,18 +170,11 @@ export const SelectInputField = function ({
   const {
     SelectInputContext: { selectInputValues, updateSelectConfig },
   } = useContext(ConfigStateContext);
-  const { errorState } = useContext(AppConfigContext);
   return (
     <>
       <Field>
         <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
-          requiredText={
-            errorState?.includes(objKey)
-              ? localeTexts.ConfigFields.emptyValue
-              : undefined
-          }
+          required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}-id`}
           data-testid="select_label"
         >
