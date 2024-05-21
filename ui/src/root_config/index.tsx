@@ -12,6 +12,8 @@ const damEnv = DamEnvVariables;
 
 const configureConfigScreen = rootConfigScreen?.configureConfigScreen;
 
+const checkConfigValidity = rootConfigScreen?.checkConfigValidity;
+
 const customConfigComponent = rootConfigScreen?.customConfigComponent;
 
 const customWholeJson = rootConfigScreen?.customWholeJson;
@@ -41,6 +43,7 @@ const customSelectorComponent = rootSelectorPage?.customSelectorComponent;
 const rootConfig: TypeRootConfig = {
   damEnv,
   configureConfigScreen,
+  checkConfigValidity,
   customConfigComponent,
   customWholeJson,
   filterAssetData,
