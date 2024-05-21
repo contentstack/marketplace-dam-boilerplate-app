@@ -48,6 +48,7 @@ export const TextInputField = function ({
           required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}-id`}
           data-testid="text_label"
+          version="v2"
         >
           {" "}
           {/* Change the label caption as per your requirement */}
@@ -131,6 +132,7 @@ export const RadioInputField = function ({
           required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}_options`}
           data-testid="radio_label"
+          version="v2"
         >
           {objValue?.labelText}
         </FieldLabel>
@@ -177,6 +179,7 @@ export const SelectInputField = function ({
           required={rootConfig.damEnv.REQUIRED_CONFIG_FIELDS?.includes(objKey)}
           htmlFor={`${objKey}-id`}
           data-testid="select_label"
+          version="v2"
         >
           {objValue?.labelText}
         </FieldLabel>
@@ -279,7 +282,7 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
             }}
           />
           <ModalBody className="modalBodyCustomClass">
-            <FieldLabel required htmlFor="label">
+            <FieldLabel required htmlFor="label" version="v2">
               {localeTexts.ConfigFields.customWholeJson.modal.label}
             </FieldLabel>
             <TextInput
@@ -356,7 +359,7 @@ export const JsonComponent = function () {
     <>
       <Line type="dashed" />
       <Field className="json-field">
-        <FieldLabel required htmlFor="is_custom_json">
+        <FieldLabel required htmlFor="is_custom_json" version="v2">
           {localeTexts.ConfigFields.entrySaveRadioButton.label}
         </FieldLabel>
         <Help text={localeTexts.ConfigFields.entrySaveRadioButton.help} />
@@ -400,7 +403,7 @@ export const JsonComponent = function () {
       </Field>
       {isCustom && (
         <Field className="dam-keys">
-          <FieldLabel required htmlFor="dam_keys">
+          <FieldLabel required htmlFor="dam_keys" version="v2">
             {localeTexts.ConfigFields.keysField.label}
           </FieldLabel>
           <Help text={localeTexts.ConfigFields.keysField.help} />
