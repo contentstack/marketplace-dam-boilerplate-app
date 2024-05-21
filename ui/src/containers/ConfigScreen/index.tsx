@@ -45,11 +45,24 @@ const ConfigScreen: React.FC = function () {
   // default multiconfig key
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
+  const handleDefaultConfigFn = (e: any, acckey: string) => {
+    if (e?.target?.checked) {
+      setDefaultKey(acckey);
+      setInstallationData({
+        ...installationData,
+        configuration: {
+          ...installationData?.configuration,
+          default_multi_config_key: acckey,
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     const defaultLabel =
       installationData?.configuration?.default_multi_config_key ??
       "legacy_config";
-    setDefaultKey(defaultLabel);
+    handleDefaultConfigFn({ target: { checked: true } }, defaultLabel);
   }, []);
 
   const filterFieldsForMultiConfig = () => {
@@ -225,19 +238,6 @@ const ConfigScreen: React.FC = function () {
     updateConfig(configObj, saveConfig, saveServerConfig);
   };
 
-  const handleDefaultConfigFn = (e: any, acckey: string) => {
-    if (e?.target?.checked) {
-      setDefaultKey(acckey);
-      setInstallationData({
-        ...installationData,
-        configuration: {
-          ...installationData?.configuration,
-          default_multi_config_key: acckey,
-        },
-      });
-    }
-  };
-
   // return render jsx for the config object provided
   const renderFields = (nonAccordianFields: any, acckey?: string) =>
     Object.entries(nonAccordianFields)?.map(
@@ -252,7 +252,7 @@ const ConfigScreen: React.FC = function () {
                   updateConfig={updateConfig}
                   acckey={acckey}
                 />
-                <Line type="dashed" />
+                {!acckey && <Line type="dashed" />}
               </div>
             );
           case "radioInputFields":
@@ -263,7 +263,7 @@ const ConfigScreen: React.FC = function () {
                   objValue={objValue}
                   acckey={acckey}
                 />
-                <Line type="dashed" />
+                {!acckey && <Line type="dashed" />}
               </div>
             );
           case "selectInputFields":
@@ -274,7 +274,7 @@ const ConfigScreen: React.FC = function () {
                   objValue={objValue}
                   acckey={acckey}
                 />
-                <Line type="dashed" />
+                {!acckey && <Line type="dashed" />}
               </div>
             );
           default:
@@ -306,9 +306,7 @@ const ConfigScreen: React.FC = function () {
       configuration: {
         ...installationData?.configuration,
         multi_config_keys: { ...multiConfigData },
-        default_multi_config_key:
-          defaultConfigKey ??
-          installationData?.configuration?.default_multi_config_key,
+        default_multi_config_key: defaultConfigKey ?? "",
       },
       serverConfiguration: {
         ...installationData?.serverConfiguration,
@@ -374,7 +372,10 @@ const ConfigScreen: React.FC = function () {
                         </div>
                       ),
                       action: () => {
-                        setDefaultKey(acckey);
+                        handleDefaultConfigFn(
+                          { target: { checked: true } },
+                          acckey
+                        );
                       },
                     },
                     {

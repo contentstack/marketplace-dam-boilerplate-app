@@ -211,7 +211,7 @@
   }
 
   & .multi-config-default-checkbox {
-    padding: 30px 24px 24px !important;
+    padding: 30px 24px !important;
 
     & .Checkbox__label {
       font-family: Inter;
@@ -237,5 +237,11 @@
     & svg {
       margin-right: 8px;
     }
+  }
+}
+
+.ReactModal__Content {
+  & .Field {
+    padding: 24px !important;
   }
 }
