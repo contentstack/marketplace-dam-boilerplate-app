@@ -33,13 +33,10 @@ const handleConfigtoSelectorPage = (
   config: any,
   contentTypeConfig: any,
   currentLocale: string
-) =>
-  utils.getSelectorConfig({
-    keyArr: DamEnvVariables?.CONFIG_FIELDS,
-    appConfig: config,
-    customConfig: contentTypeConfig,
-    currentLocale,
-  });
+) => {
+  /* Return Config to be used on selector page */
+  return {};
+};
 
 const getSelectorWindowUrl = (config: any, contentTypeConfig: any) => {
   return ""; // return url to be opened as selector page
