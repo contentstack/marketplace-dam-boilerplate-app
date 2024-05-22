@@ -281,16 +281,21 @@
 }
 .Table .Table__head__column:nth-child(2),
 .Table .Table__body__column:nth-child(2) {
-  width: 60%;
+  border: 1px solid red;
+  min-width: 200px !important;
+  width: 320px !important;
 }
 .Table .Table__body__column:nth-child(2) {
   overflow: hidden;
 
-  & p {
+  & .tippy-wrapper {
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    & p {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
