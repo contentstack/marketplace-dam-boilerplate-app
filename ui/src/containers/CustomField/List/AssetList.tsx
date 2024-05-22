@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { ActionTooltip } from "@contentstack/venus-components";
+import { ActionTooltip, Tooltip } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TypeAssetList } from "../../../common/types";
@@ -67,7 +67,12 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
               : CustomFieldUtils.noAssetElement}
           </div>
           <div role="cell" className="Table__body__column">
-            <p>{name?.charAt(0)?.toUpperCase() + name?.slice(1)}</p>
+            <Tooltip
+              content={name?.charAt(0)?.toUpperCase() + name?.slice(1)}
+              position="top"
+            >
+              <p>{name?.charAt(0)?.toUpperCase() + name?.slice(1)}</p>
+            </Tooltip>
           </div>
           <div role="cell" className="Table__body__column">
             {type?.charAt(0)?.toUpperCase() + type.slice(1)}
