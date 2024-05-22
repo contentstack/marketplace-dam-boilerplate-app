@@ -79,7 +79,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
         serverConfiguration
       )) ?? true;
 
-    if (missingValues?.length && isConfigValid) {
+    if (missingValues?.length || isConfigValid) {
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.missingCredentials,
       });
