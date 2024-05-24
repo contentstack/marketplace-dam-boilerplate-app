@@ -57,14 +57,12 @@
         position: relative !important;
 
         & .table-overflow {
-          overflow: visible;
-          height: 0;
+          overflow: auto;
         }
       }
 
       & .Table__body {
         max-height: 355px;
-        overflow: auto;
         width: 100%;
       }
     }
@@ -253,6 +251,14 @@
       stroke: #d62400 !important;
     }
   }
+}
+
+.Table__head,
+.Table__head__row {
+  display: flex;
+  position: sticky !important;
+  top: 0px !important;
+  z-index: 5 !important ;
 }
 
 .Table__head__column {
