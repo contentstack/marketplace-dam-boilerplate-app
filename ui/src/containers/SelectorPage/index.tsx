@@ -69,7 +69,11 @@ const SelectorPage: React.FC<any> = function () {
       );
       if (isScriptLoaded === true) {
         // condition's for checking config variable's
-        if (checkConfigValues(configParams)) {
+        const checkValues = Object.keys(configParams?.selected_config ?? {})
+          ?.length
+          ? configParams?.selected_config
+          : configParams;
+        if (checkConfigValues(checkValues)) {
           setIsErrorPresent(true);
           return;
         }

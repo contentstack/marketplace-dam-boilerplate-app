@@ -57,26 +57,29 @@ const CustomField: React.FC = function () {
     const { config, contentTypeConfig } = state;
     // eslint-disable-next-line
     const { multi_config_keys, default_multi_config_key } = config;
-    const finalConfigLabel = getCurrentConfigLabel();
-    const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
+    if (Object.keys(multi_config_keys ?? {})?.length) {
+      const finalConfigLabel = getCurrentConfigLabel();
+      const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
 
-    const finalConfig = default_multi_config_key
-      ? {
-          ...config,
-          selected_config: {
-            ...multiConfig,
-          },
-        }
-      : { ...config };
-    delete finalConfig.default_multi_config_key;
-    delete finalConfig.multi_config_keys;
+      const finalConfig = default_multi_config_key
+        ? {
+            ...config,
+            selected_config: {
+              ...multiConfig,
+            },
+          }
+        : { ...config };
+      delete finalConfig.default_multi_config_key;
+      delete finalConfig.multi_config_keys;
 
-    const finalContentTypeConfig = { ...contentTypeConfig };
-    delete finalContentTypeConfig.advanced;
-    delete finalContentTypeConfig.config_label;
-    delete finalContentTypeConfig.locale;
+      const finalContentTypeConfig = { ...contentTypeConfig };
+      delete finalContentTypeConfig.advanced;
+      delete finalContentTypeConfig.config_label;
+      delete finalContentTypeConfig.locale;
 
-    return { config: finalConfig, contentTypeConfig, finalContentTypeConfig };
+      return { config: finalConfig, contentTypeConfig, finalContentTypeConfig };
+    }
+    return { config, contentTypeConfig };
   };
 
   // save data of "selectedAssets" state in contentstack when updated
@@ -101,9 +104,22 @@ const CustomField: React.FC = function () {
 
   const handleUniqueSelectedData = (dataArr: any[]) => {
     if (dataArr?.length) {
+      let modifiedAssetsData = dataArr;
+      if (Object.keys(state?.config?.multi_config_keys ?? {})?.length) {
+        const configLabel = getCurrentConfigLabel();
+        modifiedAssetsData = dataArr?.map((asset: any) => ({
+          ...asset,
+          cs_metadata: {
+            config_label: configLabel,
+          },
+        }));
+      }
       const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
       let finalAssets = CustomFieldUtils.uniqBy(
-        [...(Array.isArray(selectedAssets) ? selectedAssets : []), ...dataArr],
+        [
+          ...(Array.isArray(selectedAssets) ? selectedAssets : []),
+          ...modifiedAssetsData,
+        ],
         uniqueID
       );
       if (assetLimit && finalAssets?.length > assetLimit) {
@@ -122,15 +138,7 @@ const CustomField: React.FC = function () {
         });
       }
       if (finalAssets?.length) {
-        const configLabel = getCurrentConfigLabel();
-        setSelectedAssets(
-          finalAssets?.map((asset: any) => ({
-            ...asset,
-            cs_metadata: {
-              config_label: configLabel,
-            },
-          }))
-        ); // selectedAssets is array of assets selected in selectorpage
+        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
         handleBtnDisable(
           finalAssets,
           state?.contentTypeConfig?.advanced?.max_limit
@@ -150,7 +158,7 @@ const CustomField: React.FC = function () {
       ) ?? {};
 
     if (Object.keys(configObj)?.length) return configObj;
-    return finalConfig;
+    return finalConfig?.config;
   };
 
   // handle message event for selector window

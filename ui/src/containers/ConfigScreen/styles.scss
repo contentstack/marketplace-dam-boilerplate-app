@@ -244,3 +244,9 @@
     padding: 24px !important;
   }
 }
+
+.TextInput--suffix
+  .TextInput__suffix__wrapper.TextInput__password
+  + .TextInput__input {
+  padding-right: 10px !important;
+}
