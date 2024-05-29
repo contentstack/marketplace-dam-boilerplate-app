@@ -43,8 +43,8 @@ const customSelectorComponent = rootSelectorPage?.customSelectorComponent;
 const rootConfig: TypeRootConfig = {
   damEnv,
   configureConfigScreen,
-  customConfigComponent,
   checkConfigValidity,
+  customConfigComponent,
   customWholeJson,
   filterAssetData,
   handleConfigtoSelectorPage,

@@ -70,6 +70,12 @@ const configureConfigScreen = () =>
     },
   });
 
+// eslint-disable-next-line
+const checkConfigValidity = async (config: any, serverConfig: any) => {
+  // return value of the function is object which takes disableSave[type=boolean] and message[type=string]. Assigning "true" to disableSave will disable the button and "false" will enable to button.
+  return { disableSave: false, message: "Enter a Valid Config" };
+};
+
 const customConfigComponent = (
   config: any,
   serverConfig: any,
@@ -77,11 +83,6 @@ const customConfigComponent = (
     updateConfigObj: TypeCustomConfigUpdateParams
   ) => void
 ) => <CustomComponent />;
-
-const checkConfigValidity = async (config: any, serverConfig: any) => {
-  // return value of the function is boolean. Return "true" to disable the button and "false" to enable to button.
-  return false;
-};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -107,8 +108,8 @@ const customWholeJson = () => {
 
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
-  customConfigComponent,
   checkConfigValidity,
+  customConfigComponent,
   customWholeJson,
 };
 
