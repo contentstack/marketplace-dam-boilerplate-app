@@ -137,11 +137,17 @@ const uniqBy = (arr: any[], iteratee: any) => {
     const prop = iteratee;
     iteratee = (item: any) => item?.[prop];
   }
-
-  return arr?.filter(
-    (x, i, self) =>
-      i === self?.findIndex((y) => iteratee(x) === iteratee(y)) && x !== null
-  );
+  const seen = new Set();
+  const result = [];
+  for (let i = arr?.length - 1; i >= 0; i -= 1) {
+    const item = arr?.[i];
+    const key = iteratee(item);
+    if (!seen?.has(key) && item !== null) {
+      seen?.add(key);
+      result?.unshift(item);
+    }
+  }
+  return result;
 };
 
 // find asset index from array of assets

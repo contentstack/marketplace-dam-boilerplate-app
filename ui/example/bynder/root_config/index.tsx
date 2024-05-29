@@ -14,6 +14,8 @@ const configureConfigScreen = rootConfigScreen?.configureConfigScreen;
 
 const customConfigComponent = rootConfigScreen?.customConfigComponent;
 
+const checkConfigValidity = rootConfigScreen?.checkConfigValidity;
+
 const customWholeJson = rootConfigScreen?.customWholeJson;
 
 // <---------- CUSTOM FIELD FUNCTIONS ---------->
@@ -42,6 +44,7 @@ const rootConfig: TypeRootConfig = {
   damEnv,
   configureConfigScreen,
   customConfigComponent,
+  checkConfigValidity,
   customWholeJson,
   filterAssetData,
   handleConfigtoSelectorPage,

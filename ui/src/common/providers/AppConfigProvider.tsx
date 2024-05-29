@@ -71,6 +71,18 @@ const AppConfigProvider: React.FC = function ({ children }) {
     }
   };
 
+  const getCustomFieldConfigObj = (config: any) => {
+    // eslint-disable-next-line
+    const { is_custom_json, dam_keys } = config;
+    if (!dam_keys && !is_custom_json?.toString()) {
+      return customJsonConfigObj;
+    }
+    return {
+      is_custom_json,
+      dam_keys,
+    };
+  };
+
   const getInitialInstallationState = (
     installationDataFromSDK: TypeAppSdkConfigState
   ) => {
@@ -147,7 +159,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
               ),
             });
           }, {}),
-          ...customJsonConfigObj,
+          ...getCustomFieldConfigObj(savedConfig),
         },
         serverConfiguration: {
           ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
