@@ -422,7 +422,21 @@ const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
         </div>
       );
       break;
+    case "powerpoint":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="PPT" />
+        </div>
+      );
+      break;
     case "document":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="DOC2" />
+        </div>
+      );
+      break;
+    case "word":
       returnEl = (
         <div className="noImage icon-element">
           <Icon icon="DOC2" />
@@ -444,6 +458,13 @@ const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
       );
       break;
     case "zip":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon="ZIP" />
+        </div>
+      );
+      break;
+    case "archive":
       returnEl = (
         <div className="noImage icon-element">
           <Icon icon="ZIP" />

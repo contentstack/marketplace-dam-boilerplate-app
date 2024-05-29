@@ -54,15 +54,17 @@ const AppConfigProvider: React.FC = function ({ children }) {
       }
     });
 
-    const isConfigValid =
+    const { disableSave: isConfigValid, message: disableMsg } =
       (await rootConfig?.checkConfigValidity?.(
         configuration,
         serverConfiguration
-      )) ?? true;
+      )) ?? false;
 
-    if (missingValues?.length && isConfigValid) {
+    if (isConfigValid || missingValues?.length) {
       appConfig?.current?.setValidity(false, {
-        message: localeTexts.ConfigFields.missingCredentials,
+        message: isConfigValid
+          ? disableMsg
+          : localeTexts.ConfigFields.missingCredentials,
       });
     } else {
       appConfig?.current?.setValidity(true);

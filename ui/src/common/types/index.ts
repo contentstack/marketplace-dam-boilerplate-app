@@ -100,8 +100,8 @@ export interface TypeRootDamEnv {
 
 export interface TypeRootConfigSreen {
   configureConfigScreen?: Function;
-  customConfigComponent?: Function;
   checkConfigValidity?: Function;
+  customConfigComponent?: Function;
   customWholeJson?: Function;
 }
 

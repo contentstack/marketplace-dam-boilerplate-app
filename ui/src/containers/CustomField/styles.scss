@@ -57,14 +57,12 @@
         position: relative !important;
 
         & .table-overflow {
-          overflow: visible;
-          height: 0;
+          overflow: auto;
         }
       }
 
       & .Table__body {
         max-height: 355px;
-        overflow: auto;
         width: 100%;
       }
     }
@@ -255,6 +253,14 @@
   }
 }
 
+.Table__head,
+.Table__head__row {
+  display: flex;
+  position: sticky !important;
+  top: 0px !important;
+  z-index: 5 !important ;
+}
+
 .Table__head__column {
   text-align: left;
 }
@@ -281,16 +287,20 @@
 }
 .Table .Table__head__column:nth-child(2),
 .Table .Table__body__column:nth-child(2) {
-  width: 60%;
+  min-width: 200px !important;
+  width: 320px !important;
 }
 .Table .Table__body__column:nth-child(2) {
   overflow: hidden;
 
-  & p {
+  & .tippy-wrapper {
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    & p {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
