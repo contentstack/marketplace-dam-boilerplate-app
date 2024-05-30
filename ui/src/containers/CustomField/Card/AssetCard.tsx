@@ -65,8 +65,8 @@ const AssetCard: React.FC<TypeAssetCard> = function ({ id }) {
           assetUrl={thumbnailUrl || ""}
           key={id}
           canHover
-          width={width || ""}
-          height={height || ""}
+          width={width ?? "--"}
+          height={height ?? "--"}
           size={Number(size)}
           actions={CustomFieldUtils.getHoverActions(
             type,

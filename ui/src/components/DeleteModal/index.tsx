@@ -85,7 +85,7 @@ const DeleteModal: React.FC<Props> = function ({
             }}
             size="small"
             version="v2"
-            disabled={configLocation ? deleteBtnDisable : false}
+            disabled={deleteBtnDisable}
             onClick={useCallback(() => {
               props.closeModal();
               setTimeout(() => {
