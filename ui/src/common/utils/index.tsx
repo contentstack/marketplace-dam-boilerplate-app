@@ -1,8 +1,8 @@
-/* Utility functions for root_config */
+/* Utility functions */
 
 import React from "react";
 import { Link, Tooltip } from "@contentstack/venus-components";
-import noImage from "../../common/asset/NoImg.svg";
+import noImage from "../asset/NoImg.svg";
 
 const getAssetType = (extension: string) => {
   extension = extension?.toLowerCase();
@@ -70,59 +70,12 @@ const getAssetType = (extension: string) => {
   return assetType;
 };
 
-const CustomComponentTexts = {
-  EmptySearch: {
-    heading: "No matching results found!",
-    description:
-      "Please try changing the search query or filters to find what you are looking for.",
-    actions: "Not sure where to start? Visit our",
-    help: "help center",
-  },
-  NoImg: {
-    content: "File Image Not Available",
-    alt: "No Image available",
-  },
-  Table: {
-    search: "Search by Name",
-    name: {
-      singular: "Asset",
-      plural: "Assets",
-    },
-    cancel: "Cancel",
-    addBtn: {
-      s: "Add",
-      e: "Asset(s)",
-    },
-  },
-};
-
-const EmptySearch: any = {
-  heading: (
-    <h4 style={{ color: "#222222" }}>
-      {CustomComponentTexts.EmptySearch.heading}
-    </h4>
-  ),
-  description: <p>{CustomComponentTexts.EmptySearch.description}</p>,
-  actions: (
-    <div className="">
-      <p>
-        {CustomComponentTexts.EmptySearch.actions}{" "}
-        <Link
-          fontColor="link"
-          fontSize="medium"
-          fontWeight="regular"
-          href="https://contentstack.com"
-          iconName="NewTab"
-          target="_blank"
-          testId="cs-link"
-          underline={false}
-        >
-          {CustomComponentTexts.EmptySearch.help}
-        </Link>
-      </p>
-    </div>
-  ),
-  moduleIcon: "Search",
+const getItemStatusMap = (length: number, status: string) => {
+  const itemStatusMap: any = {};
+  for (let index = 0; index < length; index += 1) {
+    itemStatusMap[index] = status;
+  }
+  return itemStatusMap;
 };
 
 const errorImage = `<svg
@@ -189,7 +142,7 @@ const errorImage = `<svg
 const getNoImageUrl = (imageSvg: string) =>
   `data:image/svg+xml;base64,${btoa(imageSvg)}`;
 
-const getImageDOM = (url: string) => {
+const getImageDOM = (url: string, texts: any) => {
   if (url) {
     return (
       <div className="img-container">
@@ -199,80 +152,51 @@ const getImageDOM = (url: string) => {
   }
   return (
     <Tooltip
-      content={CustomComponentTexts.NoImg.content}
+      content={texts.toolTip}
       position="top"
       variantType="light"
       type="secondary"
     >
       <div className="no-image-container">
         {/* eslint-disable-next-line */}
-        <img
-          src={noImage}
-          alt={CustomComponentTexts.NoImg.alt}
-          className="noimage-container"
-        />
+        <img src={noImage} alt={texts.altText} className="noimage-container" />
       </div>
     </Tooltip>
   );
 };
 
-const tableColumns = [
-  {
-    Header: "Image",
-    id: "Image",
-    accessor: (obj: any) => getImageDOM(obj?.assetUrl),
-    default: true,
-    disableSortBy: true,
-    columnWidthMultiplier: 1,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "ID",
-    id: "ID",
-    accessor: (obj: any) =>
-      // eslint-disable-next-line
-      obj?._id?.toString() ?? "",
-    default: true,
-    disableSortBy: true,
-    columnWidthMultiplier: 1,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Name",
-    id: "Name",
-    accessor: (obj: any) => obj?.assetName ?? "--",
-    default: true,
-    disableSortBy: true,
-    columnWidthMultiplier: 2,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Dimensions (H x W)",
-    id: "Dimensions",
-    accessor: (obj: any) => (
-      <div>{`${obj?.dimensions?.height} x ${obj?.dimensions?.width}`}</div>
-    ),
-    default: false,
-    disableSortBy: true,
-    columnWidthMultiplier: 3.5,
-    addToColumnSelector: true,
-  },
-];
-
-const getItemStatusMap = (length: number, status: string) => {
-  const itemStatusMap: any = {};
-  for (let index = 0; index < length; index += 1) {
-    itemStatusMap[index] = status;
-  }
-  return itemStatusMap;
-};
+const EmptySearch = (texts: any) => ({
+  heading: <h4 style={{ color: "#222222" }}>{texts.EmptySearchHeading}</h4>,
+  description: <p>{texts.EmptySearchDescription}</p>,
+  actions: (
+    <div className="">
+      <p>
+        {texts.EmptySearchMessage}
+        {texts.EmptySearchHelpLink && (
+          <Link
+            fontColor="link"
+            fontSize="medium"
+            fontWeight="regular"
+            href={texts.EmptySearchHelpLink}
+            iconName="NewTab"
+            target="_blank"
+            testId="cs-link"
+            underline={false}
+          >
+            {texts.EmptySearchHelpText}
+          </Link>
+        )}
+      </p>
+    </div>
+  ),
+  moduleIcon: "Search",
+});
 
 const utils = {
   getAssetType,
   getItemStatusMap,
-  tableColumns,
+  getImageDOM,
   EmptySearch,
-  CustomComponentTexts,
 };
 
 export default utils;

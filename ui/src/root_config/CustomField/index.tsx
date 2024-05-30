@@ -8,8 +8,6 @@ import {
   TypeErrorFn,
   TypeRootCustomField,
 } from "../../common/types";
-import DamEnvVariables from "../DamEnv";
-import utils from "../utils";
 
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
