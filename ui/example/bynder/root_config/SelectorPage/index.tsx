@@ -23,14 +23,18 @@ const openComptactView = (
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
   use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]  */
+  let configObj = config;
+  if (config?.selected_config) {
+    configObj = config?.selected_config;
+  }
   window.BynderCompactView?.open({
-    language: config?.language,
-    mode: config?.mode,
+    language: configObj?.language,
+    mode: configObj?.mode,
     theme: {
       colorButtonPrimary: "#3380FF",
     },
     portal: {
-      url: `${config?.org_url}`,
+      url: `${configObj?.org_url}`,
     },
     assetTypes: ["image", "audio", "video", "document", "archive"],
     onSuccess(data: any, additionalInfo: any) {

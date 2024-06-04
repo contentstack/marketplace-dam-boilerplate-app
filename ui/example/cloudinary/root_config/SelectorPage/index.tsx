@@ -25,10 +25,14 @@ const openComptactView = (
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
   use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]  */
+  let configObj = config;
+  if (config?.selected_config) {
+    configObj = config?.selected_config;
+  }
   window.CompactView = cloudinary?.openMediaLibrary(
     {
-      cloud_name: config?.cloudName,
-      api_key: config?.apiKey,
+      cloud_name: configObj?.cloudName,
+      api_key: configObj?.apiKey,
       inline_container: `.${containerClass}`,
       multiple: true,
       max_files: 8,
