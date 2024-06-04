@@ -54,10 +54,8 @@ const handleSelectorWindow = (
 };
 
 const handleAuthWindow = (
-  configObj: {
-    config: any;
-    contentTypeConfig: any;
-  },
+  config: any,
+  contentTypeConfig: any,
   resolve: Function,
   reject: Function
 ) => {

@@ -77,7 +77,7 @@ const CustomField: React.FC = function () {
       delete finalContentTypeConfig.config_label;
       delete finalContentTypeConfig.locale;
 
-      return { config: finalConfig, contentTypeConfig, finalContentTypeConfig };
+      return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
     }
     return { config, contentTypeConfig };
   };
@@ -274,10 +274,8 @@ const CustomField: React.FC = function () {
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
         new Promise((resolve, reject) => {
           rootConfig?.handleAuthWindow?.(
-            {
-              config: finalConfig?.config,
-              contentTypeConfig: finalConfig?.contentTypeConfig,
-            },
+            finalConfig?.config,
+            finalConfig?.contentTypeConfig,
             resolve,
             reject
           );
