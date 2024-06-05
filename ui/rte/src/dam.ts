@@ -87,6 +87,12 @@ const saveData = (event: any) => {
     dataArr?.forEach((asset: any) => {
       asset.height = null;
       asset.width = null;
+      if (Object.keys(config?.multi_config_keys ?? {})?.length) {
+        const configLabel = getCurrentConfigLabel();
+        asset.cs_metadata = {
+          config_label: configLabel,
+        };
+      }
 
       const element = {
         type: rteConfig?.damEnv?.DAM_APP_NAME,
