@@ -59,7 +59,11 @@ const DeleteModal: React.FC<Props> = function ({
         <br />
         <TextInput
           required
-          placeholder={localeTexts.ConfigFields.DeleteModal.textPlaceholder}
+          placeholder={
+            configLocation
+              ? localeTexts.ConfigFields.DeleteModal.textPlaceholder
+              : localeTexts.CustomFields.DeleteModal.textPlaceholder
+          }
           name="deleteConfirmationName"
           value={deleteConfirmationName}
           onChange={handleDeleteInput}
