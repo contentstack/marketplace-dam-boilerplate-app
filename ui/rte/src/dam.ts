@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { Notification } from "@contentstack/venus-components";
 import localeTexts from "./common/locale/en-us/index";
 import utils from "./common/utils/index";
 import rteConfig from "./rte_config";
@@ -59,6 +60,37 @@ const getSelectorConfig = () => {
   return finalConfig?.config;
 };
 
+const flatten = (data: any) => {
+  const result: any = {};
+  function recurse(cur: any, prop: string) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+    } else if (Array.isArray(cur)) {
+      let l;
+      // eslint-disable-next-line
+      for (let i = 0, l = cur?.length; i < l; i++)
+        recurse(cur?.[i], `${prop}[${i}]`);
+      if (l === 0) result[prop] = [];
+    } else {
+      let isEmpty = true;
+      // eslint-disable-next-line
+      for (const p in cur) {
+        isEmpty = false;
+        recurse(cur?.[p], prop ? `${prop}.${p}` : p);
+      }
+      if (isEmpty && prop) result[prop] = {};
+    }
+  }
+  recurse(data, "");
+  return result;
+};
+
+const convertToBytes = (value: number, unit: string) => {
+  const units = ["BYTES", "KB", "MB", "GB", "TB"];
+  const index = units?.findIndex((u) => u === unit);
+  return value * 1024 ** (index ?? 0);
+};
+
 const saveData = (event: any) => {
   const { data } = event;
 
@@ -84,27 +116,116 @@ const saveData = (event: any) => {
     ) {
       dataArr = data?.selectedAssets;
     }
+    const {
+      SIZE_NAME: SIZE,
+      SIZE_UNIT = "BYTES",
+      HEIGHT_NAME: HEIGHT,
+      WIDTH_NAME: WIDTH,
+    } = rteConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
+    const { size, height, width } = advancedConfig?.advanced;
+    const acceptedAssets: any[] = [];
+    const rejectedAssets: any[] = [];
+
+    const checkValues = new Map([
+      [SIZE, size],
+      [HEIGHT, height],
+      [WIDTH, width],
+    ]);
+    const checks: string[] = [];
+    [SIZE, HEIGHT, WIDTH]?.forEach((key) => {
+      if (key) {
+        checks?.push(key);
+      }
+    });
+
     dataArr?.forEach((asset: any) => {
-      asset.height = null;
-      asset.width = null;
       if (Object.keys(config?.multi_config_keys ?? {})?.length) {
         const configLabel = getCurrentConfigLabel();
         asset.cs_metadata = {
           config_label: configLabel,
         };
       }
+      const assetFlatStructure = flatten(asset);
+      let itemCount = 0;
+      let validationCount = 0;
 
-      const element = {
-        type: rteConfig?.damEnv?.DAM_APP_NAME,
-        attrs: asset,
-        uid: v4()?.split("-")?.join(""),
-        children: [{ text: "" }],
-      };
-
-      rte?.insertNode(element, {
-        at: savedSelection,
+      checks?.forEach((key) => {
+        const propValue = checkValues?.get(key);
+        if (propValue) {
+          itemCount += 1;
+          const value = convertToBytes(assetFlatStructure?.[key], SIZE_UNIT);
+          if (
+            (propValue?.max &&
+              propValue?.min &&
+              !propValue?.exact &&
+              value <= propValue?.max &&
+              value >= propValue?.min) ||
+            (propValue?.max &&
+              !propValue?.min &&
+              !propValue?.exact &&
+              value <= propValue?.max) ||
+            (propValue?.min &&
+              !propValue?.max &&
+              !propValue?.exact &&
+              value >= propValue?.min) ||
+            (propValue?.exact && value === propValue?.exact)
+          ) {
+            validationCount += 1;
+          }
+        }
       });
+
+      if (itemCount === validationCount) {
+        acceptedAssets?.push(asset);
+        
+        asset.height = null;
+        asset.width = null;
+
+        const element = {
+          type: rteConfig?.damEnv?.DAM_APP_NAME,
+          attrs: asset,
+          uid: v4()?.split("-")?.join(""),
+          children: [{ text: "" }],
+        };
+
+        rte?.insertNode(element, {
+          at: savedSelection,
+        });
+      } else rejectedAssets?.push(asset);
     });
+
+    if (rejectedAssets?.length) {
+      let message = `${localeTexts.RTE.assetValidation.errorStatement.replace(
+        "$var",
+        "Some Assets"
+      )}`;
+
+      if (rteConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME) {
+        const rejectedAssetNames = rejectedAssets?.map((asset: any) => {
+          const assetFlatStructure = flatten(asset);
+          return assetFlatStructure?.[
+            rteConfig?.damEnv?.ADVANCED_ASSET_PARAMS?.ASSET_NAME ?? ""
+          ];
+        });
+        message = `${localeTexts.RTE.assetValidation.errorStatement.replace(
+          "$var",
+          rejectedAssetNames?.map((item) => `"${item}"`)?.join(", ")
+        )}`;
+      }
+
+      Notification({
+        displayContent: {
+          error: {
+            error_message: message,
+          },
+        },
+        notifyProps: {
+          hideProgressBar: true,
+          closeButton: true,
+        },
+        type: "error",
+      });
+    }
   }
 };
 
