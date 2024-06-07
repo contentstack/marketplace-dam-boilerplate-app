@@ -19,6 +19,10 @@ const handleSelectorPageData = rteFunctions?.handleSelectorPageData;
 
 const handleSelectorWindow = rteFunctions?.handleSelectorWindow;
 
+const handleAuthWindow = rteFunctions?.handleAuthWindow;
+
+const handleConfigtoSelectorPage = rteFunctions?.handleConfigtoSelectorPage;
+
 const rteConfig: any = {
   damEnv,
   getDisplayUrl,
@@ -27,6 +31,8 @@ const rteConfig: any = {
   getSelectorWindowUrl,
   handleSelectorPageData,
   handleSelectorWindow,
+  handleAuthWindow,
+  handleConfigtoSelectorPage,
 };
 
 export default rteConfig;
