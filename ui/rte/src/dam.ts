@@ -92,8 +92,8 @@ const convertToBytes = (value: number, unit: string) => {
 };
 
 const saveData = (event: any) => {
+  if (event?.origin !== process.env.REACT_APP_CUSTOM_FIELD_URL) return;
   const { data } = event;
-
   if (data?.message === "openedReady") {
     event?.source?.postMessage(
       {

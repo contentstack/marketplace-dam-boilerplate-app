@@ -181,6 +181,7 @@ const CustomField: React.FC = function () {
   // function called on postmessage from selector page. used in "novalue" and "authWindow" option
   const saveData = useCallback(
     (event: any) => {
+      if (event?.origin !== process.env.REACT_APP_CUSTOM_FIELD_URL) return;
       const { data } = event;
       if (data?.message === "openedReady") {
         event?.source?.postMessage(
