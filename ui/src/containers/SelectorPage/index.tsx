@@ -88,6 +88,8 @@ const SelectorPage: React.FC<any> = function () {
   };
 
   const handleMessage = (event: MessageEvent) => {
+    const allowedOrigin = [process.env.REACT_APP_CUSTOM_FIELD_URL, url];
+    if (!allowedOrigin?.includes(event?.origin)) return;
     const { data } = event;
     if (data?.config) {
       if (
