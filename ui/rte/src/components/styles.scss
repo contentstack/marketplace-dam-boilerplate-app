@@ -252,6 +252,15 @@
 
 .ReactModal__Overlay .ReactModal__Content .ReactModal__Content__body {
   max-height: unset !important;
+
+  .Select .Select__menu {
+    margin-top: 5px !important;
+    height: 180px !important;
+
+    & .Select__menu-list {
+      height: 173px !important;
+    }
+  }
 }
 
 .edit-modal-properties {

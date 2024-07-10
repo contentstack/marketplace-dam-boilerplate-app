@@ -321,7 +321,7 @@ const advancedFilters = (assets: any[], contentTypeConfig: any) => {
     HEIGHT_NAME: HEIGHT,
     WIDTH_NAME: WIDTH,
   } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
-  const { size, height, width } = contentTypeConfig;
+  const { size, height, width } = contentTypeConfig ?? {};
   const acceptedAssets: any[] = [];
   const rejectedAssets: any[] = [];
 
