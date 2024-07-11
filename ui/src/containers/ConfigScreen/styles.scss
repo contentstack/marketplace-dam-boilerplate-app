@@ -263,3 +263,9 @@
   + .TextInput__input {
   padding-right: 10px !important;
 }
+
+.deleteModalBody {
+  & .TextInput__v2 {
+    width: 625px !important;
+  }
+}
