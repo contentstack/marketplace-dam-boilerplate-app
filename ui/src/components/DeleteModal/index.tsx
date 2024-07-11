@@ -59,6 +59,9 @@ const DeleteModal: React.FC<Props> = function ({
         <br />
         <TextInput
           required
+          maxLength={50}
+          showCharacterCount
+          hideCharCountError={false}
           placeholder={
             configLocation
               ? localeTexts.ConfigFields.DeleteModal.textPlaceholder
