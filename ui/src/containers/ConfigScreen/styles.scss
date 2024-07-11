@@ -19,6 +19,19 @@
     display: inline-block;
   }
 
+  .TextInput--with-count {
+    padding-right: 0 !important;
+  }
+
+  .TextInput__char-count {
+    margin: 0.3125rem 0 0 0.5rem !important;
+  }
+
+  .TextInput__char-length--reached-text {
+    float: initial !important;
+    margin: 10px !important;
+  }
+
   .tippy-wrapper {
     margin-right: 10px;
   }
@@ -130,7 +143,7 @@
 }
 
 .multiConfig--warn {
-  color: #ff0000;
+  color: #a31b00;
 }
 
 .multi-config-accordian-wrapper {

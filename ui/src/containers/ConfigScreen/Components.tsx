@@ -69,6 +69,9 @@ export const TextInputField = function ({
       <TextInput
         id={`${objKey}-id`}
         value={fieldValue}
+        maxLength={250}
+        showCharacterCount
+        hideCharCountError={false}
         placeholder={objValue?.placeholderText}
         name={`${acckey}$--${objKey}`}
         onChange={updateConfig}
@@ -294,6 +297,9 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
             <TextInput
               required
               autoFocus
+              maxLength={250}
+              showCharacterCount
+              hideCharCountError={false}
               value={modalValue}
               placeholder={
                 localeTexts.ConfigFields.customWholeJson.modal.placeholder

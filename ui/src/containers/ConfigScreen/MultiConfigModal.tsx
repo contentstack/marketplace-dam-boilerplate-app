@@ -67,6 +67,8 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
             </FieldLabel>
             <TextInput
               required
+              maxLength={50}
+              showCharacterCount
               placeholder={localeTexts.ConfigFields.accModal.textPlaceholder}
               name="multiConfigLabelName"
               data-testid="multiconfiglabel-input"
