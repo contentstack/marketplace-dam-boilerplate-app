@@ -73,7 +73,10 @@ const CustomField: React.FC = function () {
       delete finalConfig.multi_config_keys;
 
       const finalContentTypeConfig = { ...contentTypeConfig };
-      delete finalContentTypeConfig.advanced;
+      delete finalContentTypeConfig.advanced.max_limit;
+      delete finalContentTypeConfig.advanced.height;
+      delete finalContentTypeConfig.advanced.width;
+      delete finalContentTypeConfig.advanced.size;
       delete finalContentTypeConfig.config_label;
       delete finalContentTypeConfig.locale;
 
