@@ -61,24 +61,31 @@ const CustomField: React.FC = function () {
       const finalConfigLabel = getCurrentConfigLabel();
       const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
 
-      const finalConfig = default_multi_config_key
-        ? {
-            ...config,
-            selected_config: {
-              ...multiConfig,
-            },
-          }
-        : { ...config };
-      delete finalConfig.default_multi_config_key;
-      delete finalConfig.multi_config_keys;
+      let finalConfig = { ...config };
+      if (default_multi_config_key) {
+        finalConfig = {
+          ...config,
+          selected_config: {
+            ...multiConfig,
+          },
+        };
+        delete finalConfig.default_multi_config_key;
+        delete finalConfig.multi_config_keys;
+      }
 
       const finalContentTypeConfig = { ...contentTypeConfig };
-      delete finalContentTypeConfig.advanced.max_limit;
-      delete finalContentTypeConfig.advanced.height;
-      delete finalContentTypeConfig.advanced.width;
-      delete finalContentTypeConfig.advanced.size;
-      delete finalContentTypeConfig.config_label;
-      delete finalContentTypeConfig.locale;
+      if (finalContentTypeConfig?.advanced) {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { max_limit, height, width, size } =
+          finalContentTypeConfig?.advanced;
+        if (max_limit) delete finalContentTypeConfig.advanced.max_limit;
+        if (height) delete finalContentTypeConfig.advanced.height;
+        if (width) delete finalContentTypeConfig.advanced.width;
+        if (size) delete finalContentTypeConfig.advanced.size;
+      }
+      if (finalContentTypeConfig?.config_label)
+        delete finalContentTypeConfig.config_label;
+      if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;
 
       return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
     }
