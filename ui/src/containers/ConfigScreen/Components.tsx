@@ -267,9 +267,11 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
     if (updatedValue?.length) {
       setOptions([...options, ...updatedValue]);
       setSelectOptions([...selectOptions, ...updatedValue]);
-      ConfigScreenUtils.toastMessage(
-        localeTexts.ConfigFields.customWholeJson.modal.successToast
-      );
+      if ([...options, ...selectOptions, ...updatedValue]?.length <= 150) {
+        ConfigScreenUtils.toastMessage(
+          localeTexts.ConfigFields.customWholeJson.modal.successToast
+        );
+      }
     }
     if (action === "create") {
       setModalValue("");

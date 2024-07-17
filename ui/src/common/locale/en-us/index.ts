@@ -78,6 +78,7 @@ const localeTexts = {
       },
       notification: {
         error: `The option "$var" already exists`,
+        limitError: "Error: Limit of 150 options exceeded",
       },
     },
     missingCredentials: "Missing Required Fields",

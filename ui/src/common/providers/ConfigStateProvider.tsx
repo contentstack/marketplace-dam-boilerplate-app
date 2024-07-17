@@ -5,11 +5,13 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
+import { Notification } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
 import { TypeOption } from "../types";
 import ConfigStateContext from "../contexts/ConfigStateContext";
 import AppConfigContext from "../contexts/AppConfigContext";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
+import localeTexts from "../locale/en-us";
 
 const ConfigStateProvider: React.FC<any> = function ({
   children,
@@ -143,13 +145,30 @@ const ConfigStateProvider: React.FC<any> = function ({
       ...modalValueArr,
       ...updatedValue,
     ];
-    setKeyPathOptions(updatedOptions);
-    updateValueFunc("keypath_options", updatedOptions, true);
-    setCustomOptions([...customOptions, ...modalValueArr, ...updatedValue]);
-    if (mode === "createApply") {
-      const selectedKeys = [...damKeys, ...updatedValue];
-      setDamKeys(selectedKeys);
-      updateTypeObj(selectedKeys);
+
+    if ([...customOptions, ...modalValueArr, ...updatedValue]?.length <= 150) {
+      setKeyPathOptions(updatedOptions);
+      updateValueFunc("keypath_options", updatedOptions, true);
+      setCustomOptions([...customOptions, ...modalValueArr, ...updatedValue]);
+      if (mode === "createApply") {
+        const selectedKeys = [...damKeys, ...updatedValue];
+        setDamKeys(selectedKeys);
+        updateTypeObj(selectedKeys);
+      }
+    } else {
+      Notification({
+        displayContent: {
+          error: {
+            error_message:
+              localeTexts.ConfigFields.customWholeJson.notification.limitError,
+          },
+        },
+        notifyProps: {
+          hideProgressBar: true,
+          className: "modal_toast_message",
+        },
+        type: "error",
+      });
     }
   };
 
