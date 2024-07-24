@@ -74,15 +74,8 @@ const CustomField: React.FC = function () {
       }
 
       const finalContentTypeConfig = { ...contentTypeConfig };
-      if (finalContentTypeConfig?.advanced) {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        const { max_limit, height, width, size } =
-          finalContentTypeConfig?.advanced;
-        if (max_limit) delete finalContentTypeConfig.advanced.max_limit;
-        if (height) delete finalContentTypeConfig.advanced.height;
-        if (width) delete finalContentTypeConfig.advanced.width;
-        if (size) delete finalContentTypeConfig.advanced.size;
-      }
+      if (finalContentTypeConfig?.advanced)
+        delete finalContentTypeConfig.advanced;
       if (finalContentTypeConfig?.config_label)
         delete finalContentTypeConfig.config_label;
       if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;
