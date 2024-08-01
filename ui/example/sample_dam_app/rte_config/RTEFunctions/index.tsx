@@ -12,11 +12,19 @@ const ASSET_AUDIO_TYPE = "Audio";
 const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
-const getDisplayUrl = (asset: any) => `http://localhost:4000${asset?.assetUrl}`;
+const getDisplayUrl = (asset: any) => {
+  return {
+    preview: `http://localhost:4000${asset?.assetUrl}` ?? "", // preview_url present in asset object
+  };
+};
 
 const getAssetType = (asset: any) => "image";
 
-const getViewIconforTooltip = (type: string) => PREVIEW_ICON;
+const getViewIconforTooltip = (type: string) => {
+  return {
+    preview: PREVIEW_ICON, // preview_url present in asset object
+  };
+};
 
 const rteFunctions: any = {
   getDisplayUrl,

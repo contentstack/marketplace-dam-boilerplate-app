@@ -2,7 +2,9 @@
 const PREVIEW_ICON = "Eye";
 
 const getDisplayUrl = (asset: any) => {
-  return asset?.secure_url;
+  return {
+    preview: asset?.secure_url ?? "", // preview_url present in asset object
+  };
 };
 
 const getAssetType = (asset: any) => {
@@ -77,7 +79,9 @@ const getAssetType = (asset: any) => {
 
 const getViewIconforTooltip = (type: string) => {
   /* possible return values ==> Eye and NewTab */
-  return PREVIEW_ICON;
+  return {
+    preview: PREVIEW_ICON, // preview_url present in asset object
+  };
 };
 
 const rteFunctions: any = {

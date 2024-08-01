@@ -9,11 +9,19 @@ const NEWTAB_ICON = "NewTab";
 const getDisplayUrl = (asset: any) => {
   switch (asset?.__typename) {
     case ASSET_IMAGE_TYPE:
-      return asset?.files?.webImage?.url;
+      return {
+        preview: asset?.files?.webImage?.url ?? "", // preview_url present in asset object
+        openInDam: asset?.url ?? "", // openInDAM_url present in asset object
+      };
     case ASSET_VIDEO_TYPE:
-      return asset?.previewUrls?.[0];
+      return {
+        preview: asset?.previewUrls?.[0] ?? "", // preview_url present in asset object
+        openInDam: asset?.url ?? "", // openInDAM_url present in asset object
+      };
     default:
-      return asset?.url;
+      return {
+        openInDam: asset?.url ?? "", // openInDAM_url present in asset object
+      };
   }
 };
 
@@ -25,8 +33,14 @@ const getAssetType = (asset: any) => {
 const getViewIconforTooltip = (type: string) => {
   /* possible return values ==> Eye and NewTab */
   type = type?.toLowerCase();
-  if (type === "image" || type === "video") return PREVIEW_ICON;
-  return NEWTAB_ICON;
+  if (type === "image" || type === "video")
+    return {
+      preview: PREVIEW_ICON, // preview_url present in asset object
+      openInDam: NEWTAB_ICON, // openInDAM_url present in asset object
+    };
+  return {
+    openInDam: NEWTAB_ICON, // openInDAM_url present in asset object
+  };
 };
 
 const rteFunctions: any = {
