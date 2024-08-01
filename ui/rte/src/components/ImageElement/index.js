@@ -20,7 +20,8 @@ const ImageElement = function ({
   ...props
 }) {
   const RTE_RESOURCE_TYPE = rteConfig?.getAssetType?.(element?.attrs) ?? "";
-  const RTE_DISPLAY_URL = rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
+  const { preview: RTE_DISPLAY_URL, openInDam: RTE_OPENDAM_URL } =
+    rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
   const isSelected = rte?.selection?.isSelected();
   const isFocused = rte?.selection?.isFocused();
   const isHighlight = isFocused && isSelected;
@@ -96,9 +97,10 @@ const ImageElement = function ({
     }
   }, [element?.attrs?.position, rte?.getPath(element)]);
 
-  const handleView = useCallback(() => {
-    window.open(RTE_DISPLAY_URL, "_blank");
-  }, [RTE_DISPLAY_URL]);
+  const handleView = (view) => {
+    const url = view === "preview" ? RTE_DISPLAY_URL : RTE_OPENDAM_URL;
+    window.open(url, "_blank", "noreferrer");
+  };
 
   const handleEdit = useCallback(() => {
     cbModal({
@@ -158,7 +160,7 @@ const ImageElement = function ({
           <EmbedBtn
             title={localeTexts.RTE.iconContent.preview}
             content={utils.getToolTipIconContent(preview)}
-            onClick={handleView}
+            onClick={() => handleView("preview")}
           >
             <Icon icon={preview} size="tiny" version="v2" />
           </EmbedBtn>
@@ -167,7 +169,7 @@ const ImageElement = function ({
           <EmbedBtn
             title={localeTexts.RTE.iconContent.openInDAM}
             content={utils.getToolTipIconContent(openInDam)}
-            onClick={handleView}
+            onClick={() => handleView("openInDAM")}
           >
             <Icon icon={openInDam} size="tiny" version="v2" />
           </EmbedBtn>
