@@ -20,7 +20,7 @@ const localeTexts = {
       duplicateError:
         "Configuration label name already exists. Please use a different name and try again.",
       nameLengthError:
-        "Configuration Name length should be between 5 to 50 characters.",
+        "Configuration Name length should be between 1 to 50 characters.",
       legacyNameError: `"legacy_config" is a reserved configuration name. Please use a
       different name.`,
       cancelBtn: "Cancel",

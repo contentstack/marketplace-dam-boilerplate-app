@@ -271,3 +271,13 @@
   margin: 8px 0;
   padding: 8px;
 }
+
+.Toastify__toast-container .Toastify__toast-wrapper {
+  width: 100% !important;
+
+  & .Toastify__toast-displayMessage__title {
+    word-break: break-all !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+}

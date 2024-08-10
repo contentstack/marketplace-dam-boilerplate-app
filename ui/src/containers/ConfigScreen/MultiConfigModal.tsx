@@ -24,7 +24,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
 
   const onInputChange = (e: any) => {
     const enteredValue = e.target.value.trim();
-    if (enteredValue?.length >= 5 && enteredValue?.length <= 50) {
+    if (enteredValue?.length >= 1 && enteredValue?.length <= 50) {
       setNameLengthError(false);
     } else {
       setNameLengthError(true);

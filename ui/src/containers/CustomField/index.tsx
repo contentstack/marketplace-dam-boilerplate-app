@@ -245,8 +245,8 @@ const CustomField: React.FC = function () {
               },
             },
             notifyProps: {
+              autoClose: true,
               hideProgressBar: true,
-              closeButton: true,
             },
             type: "error",
           });
