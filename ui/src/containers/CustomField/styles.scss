@@ -9,6 +9,7 @@
   .field-wrapper {
     padding: 0 10px;
     width: 100%;
+    min-height: 150px !important;
 
     .add-asset-btn {
       margin-bottom: 2px !important;
@@ -17,9 +18,10 @@
     .no-asset {
       color: #647696;
       font-family: Inter, Serif, Sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       height: 16px;
-      width: 200px;
+      width: 300px;
+      margin-top: 20px;
     }
 
     .asset-box {
@@ -356,5 +358,15 @@
     & svg path {
       stroke: #edf1f7 !important;
     }
+  }
+}
+
+.Toastify__toast-container .Toastify__toast-wrapper {
+  width: 100% !important;
+
+  & .Toastify__toast-displayMessage__title {
+    word-break: break-all !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
   }
 }

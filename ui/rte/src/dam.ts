@@ -220,8 +220,8 @@ const saveData = (event: any) => {
           },
         },
         notifyProps: {
+          autoClose: true,
           hideProgressBar: true,
-          closeButton: true,
         },
         type: "error",
       });

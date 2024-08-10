@@ -56,22 +56,22 @@ const DeleteModal: React.FC<Props> = function ({
             }`,
           }}
         />
-        <br />
-        <TextInput
-          required
-          maxLength={50}
-          showCharacterCount
-          hideCharCountError={false}
-          placeholder={
-            configLocation
-              ? localeTexts.ConfigFields.DeleteModal.textPlaceholder
-              : localeTexts.CustomFields.DeleteModal.textPlaceholder
-          }
-          name="deleteConfirmationName"
-          value={deleteConfirmationName}
-          onChange={handleDeleteInput}
-          version="v2"
-        />
+        {configLocation && (
+          <>
+            <br />
+            <TextInput
+              required
+              maxLength={50}
+              showCharacterCount
+              hideCharCountError={false}
+              placeholder={localeTexts.ConfigFields.DeleteModal.textPlaceholder}
+              name="deleteConfirmationName"
+              value={deleteConfirmationName}
+              onChange={handleDeleteInput}
+              version="v2"
+            />
+          </>
+        )}
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>
@@ -92,7 +92,7 @@ const DeleteModal: React.FC<Props> = function ({
             }}
             size="small"
             version="v2"
-            disabled={deleteBtnDisable}
+            disabled={configLocation && deleteBtnDisable}
             onClick={useCallback(() => {
               props.closeModal();
               setTimeout(() => {
