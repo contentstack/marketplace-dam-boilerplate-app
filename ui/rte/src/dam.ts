@@ -26,20 +26,22 @@ const getConfig = () => {
     const finalConfigLabel = getCurrentConfigLabel();
     const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
 
-    const finalConfig = default_multi_config_key
-      ? {
-          ...config,
-          selected_config: {
-            ...multiConfig,
-          },
-        }
-      : { ...config };
-    delete finalConfig.default_multi_config_key;
-    delete finalConfig.multi_config_keys;
+    let finalConfig = { ...config };
+    if (default_multi_config_key) {
+      finalConfig = {
+        ...config,
+        selected_config: {
+          ...multiConfig,
+        },
+      };
+      delete finalConfig.default_multi_config_key;
+      delete finalConfig.multi_config_keys;
+    }
 
     const finalContentTypeConfig = { ...advancedConfig };
-    delete finalContentTypeConfig.config_label;
-    delete finalContentTypeConfig.locale;
+    if (finalContentTypeConfig?.config_label)
+      delete finalContentTypeConfig.config_label;
+    if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;
 
     return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
   }

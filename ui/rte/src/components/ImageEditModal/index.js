@@ -326,7 +326,7 @@ const ImageEditModal = function (props) {
           <Button onClick={closeModal} buttonType="light">
             {localeTexts.RTE.button.cancel}
           </Button>
-          <Button onClick={handleSave} icon="SaveWhite">
+          <Button onClick={handleSave} icon={localeTexts.Icons.saveWhite}>
             {localeTexts.RTE.button.save}
           </Button>
         </ButtonGroup>

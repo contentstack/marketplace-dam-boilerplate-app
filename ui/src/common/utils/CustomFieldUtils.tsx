@@ -33,7 +33,9 @@ const getHoverActions = (
   const tootipActionArray = [
     {
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      actionIcon: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      actionIcon: (
+        <Icon icon={localeTexts.Icons.moveIcon} size="mini" className="drag" />
+      ),
       actionOnClick: () => {
         /**/
       },
@@ -46,7 +48,7 @@ const getHoverActions = (
   ) {
     tootipActionArray?.push({
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.preview,
-      actionIcon: <Icon icon="View" size="tiny" />,
+      actionIcon: <Icon icon={localeTexts.Icons.view} size="tiny" />,
       actionOnClick: () => window.open(previewUrl, "_blank"),
     });
   }
@@ -55,13 +57,13 @@ const getHoverActions = (
     tootipActionArray?.push({
       actionTitle:
         localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
-      actionIcon: <Icon icon="NewTab" size="mini" />,
+      actionIcon: <Icon icon={localeTexts.Icons.newTab} size="mini" />,
       actionOnClick: () => window.open(platformUrl, "_blank"),
     });
   }
 
   tootipActionArray?.push({
-    actionIcon: <Icon icon="RemoveFilled" size="mini" />,
+    actionIcon: <Icon icon={localeTexts.Icons.removeFilled} size="mini" />,
     actionTitle: localeTexts.CustomFields.assetCard.hoverActions.remove,
     actionOnClick: () =>
       cbModal({
@@ -88,7 +90,9 @@ const getListHoverActions = (
   const tootipActionArray = [
     {
       title: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      label: (
+        <Icon icon={localeTexts.Icons.moveIcon} size="mini" className="drag" />
+      ),
       action: () => {
         /**/
       },
@@ -101,7 +105,7 @@ const getListHoverActions = (
   ) {
     tootipActionArray?.push({
       title: localeTexts.CustomFields.assetCard.hoverActions.preview,
-      label: <Icon icon="View" size="tiny" />,
+      label: <Icon icon={localeTexts.Icons.view} size="tiny" />,
       action: () => window.open(previewUrl, "_blank"),
     });
   }
@@ -109,13 +113,13 @@ const getListHoverActions = (
   if (platformUrl) {
     tootipActionArray?.push({
       title: localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
-      label: <Icon icon="NewTab" size="mini" />,
+      label: <Icon icon={localeTexts.Icons.newTab} size="mini" />,
       action: () => window.open(platformUrl, "_blank"),
     });
   }
 
   tootipActionArray?.push({
-    label: <Icon icon="RemoveFilled" size="mini" />,
+    label: <Icon icon={localeTexts.Icons.removeFilled} size="mini" />,
     title: localeTexts.CustomFields.assetCard.hoverActions.remove,
     action: () =>
       cbModal({
@@ -265,7 +269,7 @@ const gridViewDropdown = [
   {
     label: (
       <span className="select-view">
-        <Icon icon="Thumbnail" size="original" />
+        <Icon icon={localeTexts.Icons.thumbnail} size="original" />
         <div>{localeTexts?.CustomFields?.toolTip?.thumbnail}</div>
       </span>
     ),
@@ -275,7 +279,7 @@ const gridViewDropdown = [
   {
     label: (
       <span className="select-view">
-        <Icon icon="List" />
+        <Icon icon={localeTexts.Icons.list} />
         <div>{localeTexts?.CustomFields?.toolTip?.list}</div>
       </span>
     ),
@@ -403,98 +407,98 @@ const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
     case "code":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="DOC2" />
+          <Icon icon={localeTexts.Icons.doc2} />
         </div>
       );
       break;
     case "pdf":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="PDF2" />
+          <Icon icon={localeTexts.Icons.pdf2} />
         </div>
       );
       break;
     case "excel":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="XLS" />
+          <Icon icon={localeTexts.Icons.xls} />
         </div>
       );
       break;
     case "presentation":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="PPT" />
+          <Icon icon={localeTexts.Icons.ppt} />
         </div>
       );
       break;
     case "powerpoint":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="PPT" />
+          <Icon icon={localeTexts.Icons.ppt} />
         </div>
       );
       break;
     case "document":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="DOC2" />
+          <Icon icon={localeTexts.Icons.doc2} />
         </div>
       );
       break;
     case "word":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="DOC2" />
+          <Icon icon={localeTexts.Icons.doc2} />
         </div>
       );
       break;
     case "json":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="JSON" />
+          <Icon icon={localeTexts.Icons.json} />
         </div>
       );
       break;
     case "text/plain":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="DOC2" />
+          <Icon icon={localeTexts.Icons.doc2} />
         </div>
       );
       break;
     case "zip":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="ZIP" />
+          <Icon icon={localeTexts.Icons.zip} />
         </div>
       );
       break;
     case "archive":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="ZIP" />
+          <Icon icon={localeTexts.Icons.zip} />
         </div>
       );
       break;
     case "video":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="MP4" size="small" />
+          <Icon icon={localeTexts.Icons.mp4} size="small" />
         </div>
       );
       break;
     case "audio":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="MP3" />
+          <Icon icon={localeTexts.Icons.mp3} />
         </div>
       );
       break;
     case "image/tiff":
       returnEl = (
         <div className="noImage icon-element">
-          <Icon icon="Document" />
+          <Icon icon={localeTexts.Icons.document} />
         </div>
       );
       break;

@@ -147,11 +147,11 @@ const AppConfigProvider: React.FC = function ({ children }) {
               : ["legacy_config"];
 
             return ConfigScreenUtils.mergeObjects(acc, {
-              multi_config_keys: multiConfigKeys.reduce(
+              multi_config_keys: multiConfigKeys?.reduce(
                 (nestedAcc: any, nestedValue: any) => ({
                   ...nestedAcc,
                   [nestedValue]: {
-                    ...(nestedAcc[nestedValue] ?? {}),
+                    ...(nestedAcc?.[nestedValue] ?? {}),
                     [value]: finalConfigValue,
                   },
                 }),
@@ -185,7 +185,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
                 (nestedAcc: any, nestedValue: any) => ({
                   ...nestedAcc,
                   [nestedValue]: {
-                    ...(nestedAcc[nestedValue] ?? {}),
+                    ...(nestedAcc?.[nestedValue] ?? {}),
                     [value]: finalServerConfigValue,
                   },
                 }),

@@ -38,6 +38,14 @@ const localeTexts = {
     image: "Edit Image Properties",
     default: "Edit Asset Properties",
   },
+  Icons: {
+    embed: "Embed",
+    dontSave: "DontSave",
+    imageSettings: "ImageSettings",
+    addPlus: "AddPlus",
+    saveWhite: "SaveWhite",
+    removeFilled: "RemoveFilled",
+  },
 };
 
 export default localeTexts;

@@ -173,11 +173,11 @@ const ConfigStateProvider: React.FC<any> = function ({
   };
 
   const transformObject = (input: any) =>
-    Object.keys(input).reduce((output: any, key) => {
+    Object.keys(input)?.reduce((output: any, key) => {
       const prefix = `${key}$:`;
       Object.keys(input[key]).forEach((nestedKey) => {
         const newKey = prefix + nestedKey;
-        output[newKey] = input[key][nestedKey];
+        output[newKey] = input?.[key]?.[nestedKey];
       });
       return output;
     }, {});

@@ -23,7 +23,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
   const [hasLegacyName, setHasLegacyName] = useState<boolean>(false);
 
   const onInputChange = (e: any) => {
-    const enteredValue = e.target.value.trim();
+    const enteredValue = e?.target?.value?.trim();
     if (enteredValue?.length >= 1 && enteredValue?.length <= 50) {
       setNameLengthError(false);
     } else {
