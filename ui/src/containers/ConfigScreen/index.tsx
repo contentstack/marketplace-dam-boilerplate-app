@@ -361,7 +361,7 @@ const ConfigScreen: React.FC = function () {
                       label: (
                         <div className="multi-config-dropdown-action-item">
                           <Icon
-                            icon="CheckCircleDark"
+                            icon={localeTexts.Icons.checkCircleDark}
                             size="small"
                             version="v2"
                           />
@@ -381,7 +381,11 @@ const ConfigScreen: React.FC = function () {
                     {
                       label: (
                         <div className="multi-config-dropdown-action-item">
-                          <Icon icon="Delete" size="small" version="v2" />
+                          <Icon
+                            icon={localeTexts.Icons.delete}
+                            size="small"
+                            version="v2"
+                          />
                           {
                             localeTexts.ConfigFields.AccordianConfig.accActions
                               .delete
@@ -397,7 +401,7 @@ const ConfigScreen: React.FC = function () {
                   withIcon
                 >
                   <Icon
-                    icon="DotsThreeLargeVertical"
+                    icon={localeTexts.Icons.dotsThreeLargeVertical}
                     size="medium"
                     version="v2"
                   />
@@ -443,7 +447,7 @@ const ConfigScreen: React.FC = function () {
           <Button
             className="multi-config-button"
             buttonType="secondary"
-            icon="AddPlusBold"
+            icon={localeTexts.Icons.addPlusBold}
             size="medium"
             onClick={() => setIsModalOpen(true)}
           >

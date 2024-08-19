@@ -85,7 +85,11 @@ const DeleteModal: React.FC<Props> = function ({
           </Button>
           <Button
             buttonType="delete"
-            icon={configLocation ? "Delete" : "RemoveFilled"}
+            icon={
+              configLocation
+                ? localeTexts.Icons.delete
+                : localeTexts.Icons.removeFilled
+            }
             iconProps={{
               size: "mini",
               className: "remove-modal-icon",

@@ -1,5 +1,5 @@
 .config-wrapper {
-  margin: 0;
+  margin: 0 0 10px 0;
 
   & .TextInput__input {
     width: 97% !important;
@@ -267,5 +267,45 @@
 .deleteModalBody {
   & .TextInput__v2 {
     width: 625px !important;
+  }
+}
+
+.config-rules-section {
+  padding: 0 30px 30px;
+
+  & .Button--link {
+    margin: 0 10px;
+    padding: 8px 10px !important;
+  }
+
+  & .config-rule {
+    margin: 10px;
+
+    & .config-rule__select--flex {
+      // border: 0.1px solid black;
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0;
+      padding: 10px 0;
+
+      & .Select {
+        min-width: 230px !important;
+        // margin: 5px 0;
+      }
+
+      & .config-rule__seperator {
+        border-bottom: 1px solid #dde3ee;
+        height: 1px;
+        position: relative;
+        top: 1.25rem;
+        width: 1.5rem;
+      }
+
+      & .config_rule__remove {
+        cursor: pointer;
+        padding: 0.5rem;
+        text-align: center;
+      }
+    }
   }
 }

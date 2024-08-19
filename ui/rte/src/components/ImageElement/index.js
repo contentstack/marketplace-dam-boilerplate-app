@@ -179,14 +179,18 @@ const ImageElement = function ({
           content={localeTexts.RTE.iconContent.edit}
           onClick={handleEdit}
         >
-          <Icon icon="ImageSettings" size="tiny" version="v2" />
+          <Icon
+            icon={localeTexts.Icons.imageSettings}
+            size="tiny"
+            version="v2"
+          />
         </EmbedBtn>
         <EmbedBtn
           title="remove"
           content={localeTexts.RTE.iconContent.remove}
           onClick={handleDelete}
         >
-          <Icon icon="DontSave" size="tiny" version="v2" />
+          <Icon icon={localeTexts.Icons.dontSave} size="tiny" version="v2" />
         </EmbedBtn>
       </div>
     );
@@ -267,7 +271,7 @@ const ImageElement = function ({
                   )}
                   {!isInline && (
                     <div className="embed-icon">
-                      <Icon icon="Embed" />
+                      <Icon icon={localeTexts.Icons.embed} />
                     </div>
                   )}
                   {icon && (

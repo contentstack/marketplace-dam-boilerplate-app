@@ -35,7 +35,7 @@ const DeleteModal = function ({ remove, name: itemName, closeModal }) {
           </Button>
           <Button
             buttonType="delete"
-            icon="RemoveFilled"
+            icon={localeTexts.Icons.removeFilled}
             iconProps={{
               size: "mini",
               className: "remove-modal-icon",

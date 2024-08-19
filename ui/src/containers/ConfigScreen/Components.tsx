@@ -340,7 +340,7 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
                 disabled={!modalValue?.length || isEmptySpace}
                 version="v2"
               >
-                <Icon icon="CheckedPurple" />
+                <Icon icon={localeTexts.Icons.checkedPurple} />
                 {localeTexts.ConfigFields.customWholeJson.modal.btn.create}
               </Button>
               <Button
@@ -349,7 +349,7 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
                 disabled={!modalValue?.length || isEmptySpace}
                 onClick={() => handleValueCreate("createApply")}
               >
-                <Icon icon="CheckedWhite" />
+                <Icon icon={localeTexts.Icons.checkedWhite} />
                 {localeTexts.ConfigFields.customWholeJson.modal.btn.apply}
               </Button>
             </ButtonGroup>
@@ -431,7 +431,7 @@ export const JsonComponent = function () {
             className="dam-keys-select"
             addOptionText={
               <>
-                <Icon icon="Plus" />
+                <Icon icon={localeTexts.Icons.plus} />
                 {localeTexts.ConfigFields.customWholeJson.modal.addOption}
               </>
             }
