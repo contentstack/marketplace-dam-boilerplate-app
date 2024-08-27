@@ -7,6 +7,7 @@ import {
   ModalHeader,
   TextInput,
 } from "@contentstack/venus-components";
+import parse from "html-react-parser";
 import localeTexts from "../../common/locale/en-us";
 import { Props } from "../../common/types";
 
@@ -41,21 +42,21 @@ const DeleteModal: React.FC<Props> = function ({
         closeModal={props.closeModal}
       />
       <ModalBody className="deleteModalBody">
-        <p
-          dangerouslySetInnerHTML={{
-            __html: `${
-              configLocation
-                ? localeTexts.ConfigFields.DeleteModal.body.replace(
-                    /\$/g,
-                    itemName
-                  )
-                : localeTexts.CustomFields.DeleteModal.body.replace(
-                    /\$/g,
-                    itemName
-                  )
-            }`,
-          }}
-        />
+        <p>
+          {configLocation
+            ? parse(
+                localeTexts.ConfigFields.DeleteModal.body.replace(
+                  /\$/g,
+                  itemName
+                )
+              )
+            : parse(
+                localeTexts.CustomFields.DeleteModal.body.replace(
+                  /\$/g,
+                  itemName
+                )
+              )}
+        </p>
         {configLocation && (
           <>
             <br />

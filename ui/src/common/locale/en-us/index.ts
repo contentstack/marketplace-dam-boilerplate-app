@@ -38,14 +38,12 @@ const localeTexts = {
       help: `You can select how you want to save the data you get from ${rootConfig.damEnv.DAM_APP_NAME}.`,
       placeholder:
         "Enter the structure of the data you want to save in the entry",
-      instruction:
-        "If the 'All Fields' option is selected, you might be able to add limited assets in the custom field depending on the size of the data. If you select the 'Custom Fields' option, you can select the structure of the data you want to save in the entry. ",
-      referS: "(Refer to the",
-      custom: "Custom Fields Limitations",
-      referE:
-        " documentation, for more details). To increase this limit, please contact support.",
+      all_field_instruction:
+        "The 'All Fields' option allows you to add a limited number of assets based on the asset's JSON data.",
+      custom_field_instruction:
+        "The 'Custom Field' option allows you to define and select the JSON data you want to save in the entry.",
       notetext:
-        "<b>Note:</b> When you change the settings from All Fields to Custom Fields, and vice versa, the existing assets follow the old configuration settings, whereas new assets added to the entry will store the data according to the updated configuration settings.",
+        "<b>Note:</b> Switching between 'All' and 'Custom' Fields only affects the newly added assets, whereas the old assets use the previous configuration.",
       wholeJson: "All Fields",
       customJson: "Custom Fields",
     },

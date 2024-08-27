@@ -167,7 +167,7 @@ marketplace-dam-boilerplate-app
     │   │   │   └── SelectorPage.tsx
     │   │   ├── NoImage
     │   │   │   └── index.tsx
-    │   │   └── WarningMessage
+    │   │   └── InfoMessage
     │   │       └── index.tsx
     │   ├── containers
     │   │   ├── App

@@ -7,7 +7,7 @@ import localeTexts from "../../common/locale/en-us";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
-import WarningMessage from "../../components/WarningMessage";
+import InfoMessage from "../../components/InfoMessage";
 import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
@@ -357,7 +357,7 @@ const CustomField: React.FC = function () {
               </>
             ) : (
               <div data-testid="warning-component">
-                <WarningMessage content={warningText} />
+                <InfoMessage content={warningText} type="attention" />
               </div>
             )}
           </div>

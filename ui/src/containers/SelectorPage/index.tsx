@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
-import WarningMessage from "../../components/WarningMessage";
+import InfoMessage from "../../components/InfoMessage";
 import "./style.scss";
 import { TypeErrorFn } from "../../common/types";
 
@@ -164,7 +164,7 @@ const SelectorPage: React.FC<any> = function () {
       >
         {isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
-            <WarningMessage content={warningText} />
+            <InfoMessage content={warningText} type="attention" />
           </div>
         ) : (
           // eslint-disable-next-line
