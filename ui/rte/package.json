@@ -41,6 +41,7 @@
     "@emotion/css": "^11.9.0",
     "babel-loader": "^9.1.2",
     "dotenv": "^16.0.1",
+    "html-react-parser": "^5.1.13",
     "lodash.clonedeep": "^4.5.0",
     "prop-types": "^15.8.1",
     "re-resizable": "^6.9.9",

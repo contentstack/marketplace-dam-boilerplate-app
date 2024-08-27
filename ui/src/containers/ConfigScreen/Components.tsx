@@ -17,6 +17,7 @@ import {
   Icon,
   Notification,
 } from "@contentstack/venus-components";
+import parse from "html-react-parser";
 /* Import our modules */
 import {
   TypeConfigComponent,
@@ -24,8 +25,7 @@ import {
   TypeRadioOption,
 } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
-import WarningMessage from "../../components/WarningMessage";
-import constants from "../../common/constants";
+import InfoMessage from "../../components/InfoMessage";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateContext from "../../common/contexts/ConfigStateContext";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
@@ -81,11 +81,7 @@ export const TextInputField = function ({
         version="v2"
       />
       <InstructionText data-testid="text_instruction">
-        <div
-          dangerouslySetInnerHTML={{
-            __html: objValue?.instructionText,
-          }}
-        />
+        <div>{parse(objValue?.instructionText)}</div>
       </InstructionText>
     </Field>
   );
@@ -157,11 +153,7 @@ export const RadioInputField = function ({
         ))}
       </div>
       <InstructionText data-testid="radio_instruction">
-        <div
-          dangerouslySetInnerHTML={{
-            __html: objValue?.instructionText,
-          }}
-        />
+        <div>{parse(objValue?.instructionText)}</div>
       </InstructionText>
     </Field>
   );
@@ -204,11 +196,7 @@ export const SelectInputField = function ({
         version="v2"
       />
       <InstructionText data-testid="select_instruction">
-        <div
-          dangerouslySetInnerHTML={{
-            __html: objValue?.instructionText,
-          }}
-        />
+        <div>{parse(objValue?.instructionText)}</div>
       </InstructionText>
     </Field>
   );
@@ -376,11 +364,6 @@ export const JsonComponent = function () {
           {localeTexts.ConfigFields.entrySaveRadioButton.label}
         </FieldLabel>
         <Help text={localeTexts.ConfigFields.entrySaveRadioButton.help} />
-        <br />
-        <br />
-        <WarningMessage
-          content={localeTexts.ConfigFields.entrySaveRadioButton.notetext}
-        />
         <div className="Radio-wrapper">
           <Radio
             id="wholeJSON"
@@ -402,17 +385,16 @@ export const JsonComponent = function () {
           />
         </div>
         <InstructionText>
-          {localeTexts.ConfigFields.entrySaveRadioButton.instruction}{" "}
-          {localeTexts.ConfigFields.entrySaveRadioButton.referS}{" "}
-          <a
-            href={constants.limitationsDocUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {localeTexts.ConfigFields.entrySaveRadioButton.custom}
-          </a>{" "}
-          {localeTexts.ConfigFields.entrySaveRadioButton.referE}
+          {!isCustom
+            ? localeTexts.ConfigFields.entrySaveRadioButton
+                .all_field_instruction
+            : localeTexts.ConfigFields.entrySaveRadioButton
+                .custom_field_instruction}
         </InstructionText>
+        <br />
+        <InfoMessage
+          content={localeTexts.ConfigFields.entrySaveRadioButton.notetext}
+        />
       </Field>
       {isCustom && (
         <Field className="dam-keys">
