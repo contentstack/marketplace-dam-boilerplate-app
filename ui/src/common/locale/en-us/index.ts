@@ -41,7 +41,7 @@ const localeTexts = {
       all_field_instruction:
         "The 'All Fields' option allows you to add a limited number of assets based on the asset's JSON data.",
       custom_field_instruction:
-        "The 'Custom Field' option allows you to define and select the JSON data you want to save in the entry.",
+        "The 'Custom Fields' option allows you to define and select the JSON data you want to save in the entry.",
       notetext:
         "<b>Note:</b> Switching between 'All' and 'Custom' Fields only affects the newly added assets, whereas the old assets use the previous configuration.",
       wholeJson: "All Fields",
