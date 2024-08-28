@@ -39,7 +39,6 @@ module.exports = {
     "no-param-reassign": 0,
     "react/jsx-props-no-spreading": 0,
     "no-prototype-builtins": 0,
-    "import/no-extraneous-dependencies": 0,
   },
   ignorePatterns: ["rte/*", "example/*"],
 };

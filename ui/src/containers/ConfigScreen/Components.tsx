@@ -81,7 +81,7 @@ export const TextInputField = function ({
         version="v2"
       />
       <InstructionText data-testid="text_instruction">
-        <div>{parse(objValue?.instructionText)}</div>
+        <div>{parse(objValue?.instructionText ?? "")}</div>
       </InstructionText>
     </Field>
   );
@@ -153,7 +153,7 @@ export const RadioInputField = function ({
         ))}
       </div>
       <InstructionText data-testid="radio_instruction">
-        <div>{parse(objValue?.instructionText)}</div>
+        <div>{parse(objValue?.instructionText ?? "")}</div>
       </InstructionText>
     </Field>
   );
@@ -196,7 +196,7 @@ export const SelectInputField = function ({
         version="v2"
       />
       <InstructionText data-testid="select_instruction">
-        <div>{parse(objValue?.instructionText)}</div>
+        <div>{parse(objValue?.instructionText ?? "")}</div>
       </InstructionText>
     </Field>
   );
