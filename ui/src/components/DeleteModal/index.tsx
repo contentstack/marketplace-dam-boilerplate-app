@@ -48,13 +48,13 @@ const DeleteModal: React.FC<Props> = function ({
                 localeTexts.ConfigFields.DeleteModal.body.replace(
                   /\$/g,
                   itemName
-                )
+                ) ?? ""
               )
             : parse(
                 localeTexts.CustomFields.DeleteModal.body.replace(
                   /\$/g,
                   itemName
-                )
+                ) ?? ""
               )}
         </p>
         {configLocation && (

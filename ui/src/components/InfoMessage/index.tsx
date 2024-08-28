@@ -20,7 +20,7 @@ const InfoMessage: React.FC<Props> = function ({ content, type }) {
       className="component"
       icon={infoIcon}
       content={content?.split("\n")?.map((i: string) => (
-        <div key={`key-${i}`}>{parse(i)}</div>
+        <div key={`key-${i}`}>{parse(i ?? "")}</div>
       ))}
       type={type}
     />

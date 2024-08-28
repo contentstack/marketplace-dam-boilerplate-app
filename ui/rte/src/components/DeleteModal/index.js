@@ -18,7 +18,9 @@ const DeleteModal = function ({ remove, name: itemName, closeModal }) {
         closeModal={closeModal}
       />
       <ModalBody className="deleteModalBody">
-        <p>{parse(localeTexts.DeleteModal.body.replace(/\$/g, itemName))}</p>
+        <p>
+          {parse(localeTexts.DeleteModal.body.replace(/\$/g, itemName) ?? "")}
+        </p>
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>
