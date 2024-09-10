@@ -96,10 +96,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
         configuration: {
           ...Object.keys(saveInConfig)?.reduce((acc, value) => {
             let finalConfigValue = "";
-            if (saveInConfig?.[value]?.type !== "textInputFields")
+            if (saveInConfig?.[value]?.type !== "textInputField")
               finalConfigValue =
                 saveInConfig?.[value]?.defaultSelectedOption ?? "";
-            if (!saveInConfig?.[value]?.isAccordianConfig) {
+            if (!saveInConfig?.[value]?.isMultiConfig) {
               return {
                 ...acc,
                 [value]: finalConfigValue,
@@ -112,10 +112,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
         serverConfiguration: {
           ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
             let finalServerConfigValue = "";
-            if (saveInServerConfig?.[value]?.type !== "textInputFields")
+            if (saveInServerConfig?.[value]?.type !== "textInputField")
               finalServerConfigValue =
                 saveInServerConfig?.[value]?.defaultSelectedOption ?? "";
-            if (!saveInServerConfig?.[value]?.isAccordianConfig) {
+            if (!saveInServerConfig?.[value]?.isMultiConfig) {
               return {
                 ...acc,
                 [value]: finalServerConfigValue,
@@ -130,12 +130,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
         configuration: {
           ...Object.keys(saveInConfig)?.reduce((acc, value) => {
             let finalConfigValue = savedConfig?.[value] ?? "";
-            if (saveInConfig?.[value]?.type !== "textInputFields")
+            if (saveInConfig?.[value]?.type !== "textInputField")
               finalConfigValue =
                 savedConfig?.[value] ??
                 saveInConfig?.[value]?.defaultSelectedOption ??
                 "";
-            if (!saveInConfig?.[value]?.isAccordianConfig) {
+            if (!saveInConfig?.[value]?.isMultiConfig) {
               return {
                 ...acc,
                 [value]: finalConfigValue,
@@ -164,12 +164,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
         serverConfiguration: {
           ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
             let finalServerConfigValue = savedServerCofig?.[value] ?? "";
-            if (saveInServerConfig?.[value]?.type !== "textInputFields")
+            if (saveInServerConfig?.[value]?.type !== "textInputField")
               finalServerConfigValue =
                 savedServerCofig?.[value] ??
                 saveInServerConfig?.[value]?.defaultSelectedOption ??
                 "";
-            if (!saveInServerConfig?.[value]?.isAccordianConfig) {
+            if (!saveInServerConfig?.[value]?.isMultiConfig) {
               return {
                 ...acc,
                 [value]: finalServerConfigValue,

@@ -101,7 +101,6 @@ export interface TypeRootDamEnv {
 export interface TypeRootConfigSreen {
   configureConfigScreen?: Function;
   checkConfigValidity?: Function;
-  customConfigComponent?: Function;
   customWholeJson?: Function;
 }
 
@@ -123,7 +122,6 @@ export interface TypeRootSelector {
 export interface TypeRootConfig {
   damEnv: TypeRootDamEnv;
   configureConfigScreen?: Function;
-  customConfigComponent?: Function;
   checkConfigValidity?: Function;
   customWholeJson?: Function;
   filterAssetData?: Function;
@@ -140,8 +138,8 @@ export interface TypeRootConfig {
 export interface TypeCustomConfigUpdateParams {
   fieldName: string;
   fieldValue: string;
-  saveConfig: boolean;
-  saveServerConfig: boolean;
+  saveConfig?: boolean;
+  saveServerConfig?: boolean;
 }
 
 export interface TypeErrorFn {
@@ -153,4 +151,19 @@ export interface AddMultiConfigurationModalProps {
   handleMultiConfig: (config: any) => void;
   multiConfigData: any;
   closeModal: any;
+}
+
+export interface TypeCustomConfigParams {
+  config: any;
+  serverConfig: any;
+  handleCustomConfigUpdate: (
+    configLabel: string,
+    fieldName: string,
+    fieldValue: string
+  ) => void;
+}
+
+export interface TypeCustomConfig {
+  customConfig?: TypeCustomConfigParams;
+  currentConfigLabel: string;
 }

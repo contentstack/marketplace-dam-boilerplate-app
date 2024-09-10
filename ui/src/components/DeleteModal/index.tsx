@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "@contentstack/venus-components";
 import parse from "html-react-parser";
+import { debounce } from "lodash";
 import localeTexts from "../../common/locale/en-us";
 import { Props } from "../../common/types";
 
@@ -68,7 +69,7 @@ const DeleteModal: React.FC<Props> = function ({
               placeholder={localeTexts.ConfigFields.DeleteModal.textPlaceholder}
               name="deleteConfirmationName"
               value={deleteConfirmationName}
-              onChange={handleDeleteInput}
+              onChange={debounce(handleDeleteInput, 300)}
               version="v2"
             />
           </>
