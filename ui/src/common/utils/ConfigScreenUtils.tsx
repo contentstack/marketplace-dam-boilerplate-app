@@ -87,19 +87,19 @@ const getDefaultInputValues = (configInputFields: any) => {
 
   const radioValuesKeys = [
     ...(Object.keys(saveInConfig)?.filter(
-      (value) => saveInConfig?.[value]?.type === "radioInputFields"
+      (value) => saveInConfig?.[value]?.type === "radioInputField"
     ) ?? []),
     ...(Object.keys(saveInServerConfig)?.filter(
-      (value) => saveInServerConfig?.[value]?.type === "radioInputFields"
+      (value) => saveInServerConfig?.[value]?.type === "radioInputField"
     ) ?? []),
   ];
 
   const selectValuesKeys = [
     ...(Object.keys(saveInConfig)?.filter(
-      (value) => saveInConfig?.[value]?.type === "selectInputFields"
+      (value) => saveInConfig?.[value]?.type === "selectInputField"
     ) ?? []),
     ...(Object.keys(saveInServerConfig)?.filter(
-      (value) => saveInServerConfig?.[value]?.type === "selectInputFields"
+      (value) => saveInServerConfig?.[value]?.type === "selectInputField"
     ) ?? []),
   ];
 

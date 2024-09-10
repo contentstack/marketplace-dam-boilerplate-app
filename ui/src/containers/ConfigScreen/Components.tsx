@@ -18,6 +18,7 @@ import {
   Notification,
 } from "@contentstack/venus-components";
 import parse from "html-react-parser";
+import { debounce } from "lodash";
 /* Import our modules */
 import {
   TypeConfigComponent,
@@ -37,7 +38,7 @@ import rootConfig from "../../root_config";
 export const TextInputField = function ({
   objKey,
   objValue,
-  updateConfig,
+  updateConfig = () => {},
   acckey,
 }: TypeConfigComponent) {
   const { installationData } = useContext(AppConfigContext);
@@ -51,6 +52,11 @@ export const TextInputField = function ({
           objValue.saveInConfig ? "configuration" : "serverConfiguration"
         ]?.[objKey];
   }
+
+  const debouncedUpdateConfig = useCallback(
+    debounce((...args: [any]) => updateConfig(...args), 300),
+    []
+  );
 
   return (
     <Field>
@@ -74,7 +80,7 @@ export const TextInputField = function ({
         hideCharCountError={false}
         placeholder={objValue?.placeholderText}
         name={`${acckey}$--${objKey}`}
-        onChange={updateConfig}
+        onChange={(e: any) => debouncedUpdateConfig(e)}
         type={objValue?.inputFieldType}
         canShowPassword
         data-testid="text_input"
@@ -296,7 +302,7 @@ export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
               }
               name="label"
               autoComplete="off"
-              onChange={handleChange}
+              onChange={debounce(handleChange, 300)}
               version="v2"
             />
             <InstructionText>

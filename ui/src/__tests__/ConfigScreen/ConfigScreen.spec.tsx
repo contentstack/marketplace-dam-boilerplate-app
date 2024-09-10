@@ -6,7 +6,7 @@ import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 
 const ConfigScreenObj = {
   configField1: {
-    type: "textInputFields",
+    type: "textInputField",
     labelText: "DAM URL",
     helpText: "Help: DAM domain URL",
     placeholderText: "Placeholder: Enter Your DAM URL",
@@ -15,7 +15,7 @@ const ConfigScreenObj = {
     saveInServerConfig: true,
   },
   selectField1: {
-    type: "selectInputFields",
+    type: "selectInputField",
     labelText: "DAM Select Input Option 1",
     helpText: "Help: DAM Select Input Option 1",
     placeholderText: "Placeholder: DAM Select Input Option 1",
@@ -32,7 +32,7 @@ const ConfigScreenObj = {
     saveInServerConfig: true,
   },
   radioInput1: {
-    type: "radioInputFields",
+    type: "radioInputField",
     labelText: "DAM Radio Input Option 1",
     helpText: "Help: DAM Radio Input Option 1",
     instructionText: "Instruction: DAM Radio Input Instruction Text",
@@ -57,9 +57,6 @@ jest.mock("../../root_config/index.tsx", () => ({
     DAM_APP_NAME: "DAM",
   })),
   configureConfigScreen: jest.fn(() => ConfigScreenObj),
-  customConfigComponent: jest.fn(() => (
-    <div data-testid="custom-config-component" />
-  )),
   customWholeJson: jest.fn(() => ({
     customJsonOptions: ["option 1", "option 2", "option 3"],
     defaultFeilds: ["option 1"],

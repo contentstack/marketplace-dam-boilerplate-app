@@ -39,7 +39,7 @@ const ConfigStateProvider: React.FC<any> = function ({
   // local state for radio option config
   const [radioInputValues, setRadioInputValues] = React.useState<any>({
     ...Object.keys(saveInConfig)?.reduce((acc, value) => {
-      if (saveInConfig?.[value]?.type === "radioInputFields")
+      if (saveInConfig?.[value]?.type === "radioInputField")
         return {
           ...acc,
           [value]: saveInConfig?.[value]?.options?.filter(
@@ -50,7 +50,7 @@ const ConfigStateProvider: React.FC<any> = function ({
       return acc;
     }, {}),
     ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
-      if (saveInServerConfig?.[value]?.type === "radioInputFields")
+      if (saveInServerConfig?.[value]?.type === "radioInputField")
         return {
           ...acc,
           [value]: saveInServerConfig?.[value]?.options?.filter(
@@ -65,7 +65,7 @@ const ConfigStateProvider: React.FC<any> = function ({
   // local state for select option config
   const [selectInputValues, setSelectInputValues] = React.useState<any>({
     ...Object.keys(saveInConfig)?.reduce((acc, value) => {
-      if (saveInConfig?.[value]?.type === "selectInputFields")
+      if (saveInConfig?.[value]?.type === "selectInputField")
         return {
           ...acc,
           [value]: saveInConfig?.[value]?.options?.filter(
@@ -76,7 +76,7 @@ const ConfigStateProvider: React.FC<any> = function ({
       return acc;
     }, {}),
     ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
-      if (saveInServerConfig?.[value]?.type === "selectInputFields")
+      if (saveInServerConfig?.[value]?.type === "selectInputField")
         return {
           ...acc,
           [value]: saveInServerConfig?.[value]?.options?.filter(

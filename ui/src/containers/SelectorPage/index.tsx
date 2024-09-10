@@ -115,6 +115,7 @@ const SelectorPage: React.FC<any> = function () {
     if (windowOpener) {
       const queryString = window.location.href
         ?.split("?")?.[1]
+        ?.split("&")?.[0]
         ?.split("=")?.[1];
       let postMessageUrl: string = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
       const regionMapping = JSON.parse(

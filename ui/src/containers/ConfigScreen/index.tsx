@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 /* ContentStack Modules */
 import {
   Accordion,
@@ -24,7 +24,6 @@ import {
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateProvider from "../../common/providers/ConfigStateProvider";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
-import { TypeCustomConfigUpdateParams } from "../../common/types";
 import MultiConfigModal from "./MultiConfigModal";
 import AppFailed from "../../components/AppFailed";
 import DeleteModal from "../../components/DeleteModal";
@@ -38,8 +37,26 @@ const ConfigScreen: React.FC = function () {
   // context usage for global states thorughout the component
   const { installationData, setInstallationData, checkConfigFields } =
     useContext(AppConfigContext);
+  const [customUpdateTrigger, setCustomUpdateTrigger] = useState<any>({});
+
+  // updating the custom config state
+  const handleCustomConfigUpdate = (
+    configLabel: string,
+    configName: string,
+    configValue: any
+  ) => {
+    let configname = configName;
+    if (configLabel) configname = `${configLabel}$--${configName}`;
+    setCustomUpdateTrigger({ configname, configValue });
+  };
+
   // entire configuration object returned from configureConfigScreen
-  const configInputFields: any = rootConfig?.configureConfigScreen?.();
+  const configInputFields: any = rootConfig?.configureConfigScreen?.({
+    config: installationData?.configuration,
+    serverConfig: installationData?.serverConfiguration,
+    handleCustomConfigUpdate,
+  });
+
   // state for rendering multi-config name modal
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   // default multiconfig key
@@ -70,7 +87,7 @@ const ConfigScreen: React.FC = function () {
     const accServerFields: any = {};
     Object.entries(configInputFields)?.forEach(
       ([fieldKey, fieldValue]: any) => {
-        if (fieldValue?.isAccordianConfig) {
+        if (fieldValue?.isMultiConfig) {
           if (fieldValue?.saveInConfig) {
             accConfigFields[fieldKey] = fieldValue;
           }
@@ -115,7 +132,7 @@ const ConfigScreen: React.FC = function () {
       }
 
       if (inConfig || configInputFields?.[configFieldName]?.saveInConfig) {
-        if (configInputFields?.[configFieldName]?.isAccordianConfig) {
+        if (configInputFields?.[configFieldName]?.isMultiConfig) {
           updatedConfig.multi_config_keys[mutiConfigName][configFieldName] =
             fieldValue;
         } else {
@@ -127,7 +144,7 @@ const ConfigScreen: React.FC = function () {
         inServerConfig ||
         configInputFields?.[configFieldName]?.saveInServerConfig
       ) {
-        if (configInputFields?.[configFieldName]?.isAccordianConfig) {
+        if (configInputFields?.[configFieldName]?.isMultiConfig) {
           updatedServerConfig.multi_config_keys[mutiConfigName][
             configFieldName
           ] = fieldValue;
@@ -161,7 +178,7 @@ const ConfigScreen: React.FC = function () {
     const configFieldObj: any = {};
     Object.entries(accConfigFields)?.forEach(([key, value]: any) => {
       let finalValue = "";
-      if (value?.type !== "textInputFields") {
+      if (value?.type !== "textInputField") {
         finalValue = value?.defaultSelectedOption ?? "";
       }
       configFieldObj[key] = finalValue;
@@ -170,7 +187,7 @@ const ConfigScreen: React.FC = function () {
     const serverConfigFieldObj: any = {};
     Object.entries(accServerFields)?.forEach(([key, value]: any) => {
       let finalValue = "";
-      if (value?.type !== "textInputFields") {
+      if (value?.type !== "textInputField") {
         finalValue = value?.defaultSelectedOption ?? "";
       }
       serverConfigFieldObj[key] = finalValue;
@@ -226,24 +243,21 @@ const ConfigScreen: React.FC = function () {
     updateConfig(value, inConfig, inServerConfig);
   };
 
-  // updating the custom config state
-  const handleCustomConfigUpdate = ({
-    fieldName,
-    fieldValue,
-    saveConfig,
-    saveServerConfig,
-  }: TypeCustomConfigUpdateParams) => {
-    const configObj: any = {};
-    configObj.target = { name: fieldName, value: fieldValue };
-    updateConfig(configObj, saveConfig, saveServerConfig);
-  };
+  useEffect(() => {
+    if (Object.keys(customUpdateTrigger)?.length) {
+      updateValueFunc(
+        customUpdateTrigger?.configname,
+        customUpdateTrigger?.configValue
+      );
+    }
+  }, [customUpdateTrigger]);
 
   // return render jsx for the config object provided
   const renderFields = (nonAccordianFields: any, acckey?: string) =>
     Object.entries(nonAccordianFields)?.map(
       ([objKey, objValue, index]: any) => {
         switch (objValue?.type) {
-          case "textInputFields":
+          case "textInputField":
             return (
               <div key={`${objKey}_${index}`}>
                 <TextInputField
@@ -255,7 +269,7 @@ const ConfigScreen: React.FC = function () {
                 {!acckey && <Line type="dashed" />}
               </div>
             );
-          case "radioInputFields":
+          case "radioInputField":
             return (
               <div key={`${objKey}_${index}`}>
                 <RadioInputField
@@ -266,7 +280,7 @@ const ConfigScreen: React.FC = function () {
                 {!acckey && <Line type="dashed" />}
               </div>
             );
-          case "selectInputFields":
+          case "selectInputField":
             return (
               <div key={`${objKey}_${index}`}>
                 <SelectInputField
@@ -277,6 +291,9 @@ const ConfigScreen: React.FC = function () {
                 {!acckey && <Line type="dashed" />}
               </div>
             );
+          case "customInputField":
+            // eslint-disable-next-line
+            return objValue?.component(acckey) ?? <></>;
           default:
             // eslint-disable-next-line
             return <></>;
@@ -476,7 +493,7 @@ const ConfigScreen: React.FC = function () {
     const nonAccordianFields: any = {};
     const dashedLine = <Line type="dashed" />;
     Object.entries(configInputFields)?.forEach(([objKey, objValue]: any) => {
-      if (objValue?.isAccordianConfig) accordianFields[objKey] = objValue;
+      if (objValue?.isMultiConfig) accordianFields[objKey] = objValue;
       else nonAccordianFields[objKey] = objValue;
     });
 
@@ -490,13 +507,6 @@ const ConfigScreen: React.FC = function () {
       const value = renderFields(nonAccordianFields);
       renderValue?.push(value);
     }
-
-    const customComponent = rootConfig?.customConfigComponent?.(
-      installationData?.configuration,
-      installationData?.serverConfiguration,
-      handleCustomConfigUpdate
-    );
-    renderValue?.push(customComponent);
 
     return renderValue;
   };

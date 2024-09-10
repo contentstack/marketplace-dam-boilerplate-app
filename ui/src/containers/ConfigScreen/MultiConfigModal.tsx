@@ -9,6 +9,7 @@ import {
   Button,
   InstructionText,
 } from "@contentstack/venus-components";
+import { debounce } from "lodash";
 import { AddMultiConfigurationModalProps } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 
@@ -72,7 +73,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
               placeholder={localeTexts.ConfigFields.accModal.textPlaceholder}
               name="multiConfigLabelName"
               data-testid="multiconfiglabel-input"
-              onChange={onInputChange}
+              onChange={debounce(onInputChange, 300)}
               error={hasDuplicateName || nameLengthError || hasLegacyName}
               version="v2"
             />

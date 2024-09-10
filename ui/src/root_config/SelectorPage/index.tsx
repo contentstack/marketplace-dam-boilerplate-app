@@ -8,7 +8,7 @@ import {
   TypeRootSelector,
   TypeSelectorContainer,
 } from "../../common/types";
-import CustomComponent from "../CustomComponent";
+import CustomSelector from "../Components/CustomSelector";
 
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
@@ -37,7 +37,7 @@ const customSelectorComponent = (
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) => <CustomComponent />;
+) => <CustomSelector />;
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,
