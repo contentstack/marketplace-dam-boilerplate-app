@@ -189,7 +189,7 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 [availability-of-auth-window]: #availability-of-auth-window
 
-## Availability of Auth Window + DAM Selector ---change
+## Availability of Auth Window + DAM Selector
 
 Availability of Auth Window Flow is to be used when the third-party DAM application has an Auth Window for Authentication and then it needs to open another window using API or SDK support for accessing their assets.
 
@@ -617,7 +617,7 @@ In order to configure the JSON RTE plugin for your thir-party DAM, you need to m
 
 All configurations will be done in this directory. You need to define and specify how the JSON RTE elements of your app will be handled here.
 
-### JSON RTE Environment Variables ---change
+### JSON RTE Environment Variables
 
 ---
 
@@ -738,7 +738,7 @@ Implement the below mentioned functions to configure JSON RTE in the Custom DAM 
 
 [json-rte-availability-of-auth-window]: #json-rte-availability-of-auth-window
 
-## JSON RTE: Availability of Auth Window + DAM Selector ---change
+## JSON RTE: Availability of Auth Window + DAM Selector
 
 Availability of Auth Window Flow is to be used when the third-party DAM application has an Auth Window for Authentication and then it needs to open another window using API or SDK support for accessing their assets.
 
