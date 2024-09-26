@@ -17,7 +17,7 @@ const DamEnvVariables = {
       />
     </svg>
   ),
-  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", default => "novalue",
+  DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", "authWindow", default => "novalue",
   ADVANCED_ASSET_PARAMS: {
     ASSET_NAME: "name", // add property name for NAME. If present in nested structure, add nested structure reference.
     SIZE_NAME: "bytes", // add property name for SIZE. If present in nested structure, add nested structure reference.
