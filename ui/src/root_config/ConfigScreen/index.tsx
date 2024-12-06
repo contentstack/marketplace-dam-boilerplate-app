@@ -105,7 +105,6 @@ const customWholeJson = () => {
   };
 };
 
-// eslint-disable-next-line
 const checkConfigValidity = async (config: any, serverConfig: any) => {
   // return value of the function is object which takes disableSave[type=boolean] and message[type=string]. Assigning "true" to disableSave will disable the button and "false" will enable to button.
   return { disableSave: false, message: "Enter a Valid Config" };

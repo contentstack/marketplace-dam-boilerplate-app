@@ -22,7 +22,7 @@ import rteConfig from "../../rte_config/index";
 import localeTexts from "../../common/locale/en-us/index";
 
 const ImageEditModal = function (props) {
-  const { element, rte, icon, closeModal, path } = props;
+  const { element, rte, icon, closeModal, path, isConfigAvailable } = props;
   const { preview: RTE_DISPLAY_URL } =
     rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
   const [state, setState] = useState({});
@@ -66,7 +66,7 @@ const ImageEditModal = function (props) {
     closeModal();
     let node = rte?.getNode(rte?.getPath(element));
     let newNode = cloneDeep(node[0]);
-    newNode.attrs = { ...(state || {}) };
+    newNode.attrs = { ...(state ?? {}) };
     if (state?.inline) {
       if (rte?._adv?.editor?.isInline(element)) {
         rte?._adv?.Transforms?.setNodes(
@@ -204,10 +204,10 @@ const ImageEditModal = function (props) {
     const fname = attr[fieldName];
     await setState((prevState) => ({
       ...prevState,
-      [fname]: fieldValue || undefined,
+      [fname]: fieldValue ?? undefined,
       "redactor-attributes": {
         ...prevState["redactor-attributes"],
-        [fieldName]: fieldValue || undefined,
+        [fieldName]: fieldValue ?? undefined,
       },
     }));
   };
@@ -236,18 +236,37 @@ const ImageEditModal = function (props) {
       <ModalHeader title={modalTitle} closeModal={closeModal} />
       <ModalBody className="modalBodyCustomClass">
         <div className="scrte-form-container">
-          <div>
-            {!icon ? (
-              <img
-                src={RTE_DISPLAY_URL}
-                onError={utils.handleImageError}
-                className="modal"
-                alt={element?.attrs?.["asset-alt"]}
+          {isConfigAvailable && (
+            <div className="editModalImage">
+              {!icon ? (
+                <img
+                  src={RTE_DISPLAY_URL}
+                  onError={utils.handleImageError}
+                  className="modal"
+                  alt={element?.attrs?.["asset-alt"]}
+                />
+              ) : (
+                <Icon className="modal-icon" icon={icon} />
+              )}
+            </div>
+          )}
+          {!isConfigAvailable && isConfigAvailable !== "noMultiConfig" && (
+            <div
+              title={element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
+              className="noConfigAvailable"
+            >
+              <Icon
+                icon="WarningBoldNew"
+                version="v2"
+                size="large"
+                withTooltip
+                tooltipContent={
+                  localeTexts.RTE.assetValidation.configDeletedImg
+                }
+                tooltipPosition="top"
               />
-            ) : (
-              <Icon className="modal-icon" icon={icon} />
-            )}
-          </div>
+            </div>
+          )}
           <div className="edit-modal-properties">
             <Field>
               <FieldLabel htmlFor="alt">
@@ -265,8 +284,8 @@ const ImageEditModal = function (props) {
               <Select
                 selectLabel={constantValues.constants.alignment.label}
                 value={{
-                  label: state?.position || "none",
-                  value: state?.position || "none",
+                  label: state?.position ?? "none",
+                  value: state?.position ?? "none",
                   type: "select",
                 }}
                 onChange={updateData}

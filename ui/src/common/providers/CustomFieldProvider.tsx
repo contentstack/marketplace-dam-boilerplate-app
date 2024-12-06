@@ -36,7 +36,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   // state to manage disable of "add button"
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   // unique param in the asset object
-  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
+  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID ?? "id";
 
   const { location } = useAppLocation();
 

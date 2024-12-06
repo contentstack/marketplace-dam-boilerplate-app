@@ -14,7 +14,10 @@ export default ContentstackSDK.init()
 
     if (!RTE) return;
 
-    const DAM = RTE(rteConfig?.damEnv?.DAM_APP_NAME, (rte: any) => {
+    // @ts-ignore
+    const DAM = RTE(rteConfig?.damEnv?.DAM_APP_NAME, async (rte: any) => {
+      const config = await rte?.getConfig();
+      const availableConfig = Object.keys(config?.multi_config_keys ?? {});
       const inline = rte?._adv?.editor?.isInline;
       rte._adv.editor.isInline = (element: any) => {
         if (
@@ -29,7 +32,9 @@ export default ContentstackSDK.init()
       return {
         title: localeTexts.RTE.title,
         icon: <DAMIcon />,
-        render: ImageElement,
+        render: (props: any) => {
+          return <ImageElement availableConfig={availableConfig} {...props} />;
+        },
         display: ["toolbar"],
         elementType: ["void"],
       };

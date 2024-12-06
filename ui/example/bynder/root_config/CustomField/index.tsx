@@ -13,9 +13,9 @@ const filterAssetData = (assets: any[]) => {
       width: files?.webImage?.width,
       height: files?.webImage?.height,
       size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: files?.webImage?.url || "",
-      previewUrl: files?.webImage?.url || "", // add this parameter if you want "Preview" in tooltip action items
-      platformUrl: url || "", // add this parameter if you want "Open In DAM" in tooltip action items
+      thumbnailUrl: files?.webImage?.url ?? "",
+      previewUrl: files?.webImage?.url ?? "", // add this parameter if you want "Preview" in tooltip action items
+      platformUrl: url ?? "", // add this parameter if you want "Open In DAM" in tooltip action items
     };
   });
   return filterAssetArray;

@@ -13,7 +13,7 @@ const mergeObjects = (target: any, source: any) => {
   });
 
   // Join `target` and modified `source`
-  Object.assign(target || {}, source);
+  Object.assign(target ?? {}, source);
   return target;
 };
 
@@ -39,19 +39,19 @@ const getOptions = (arr: string[], defaultFeilds?: any[]) =>
 
 const configRootUtils = () => {
   // custom whole json options from rootconfig
-  // eslint-disable-next-line
-  let { customJsonOptions, defaultFeilds } =
+  const { customJsonOptions, defaultFeilds } =
     rootConfig?.customWholeJson?.() ?? {};
+  let defaultFeildsVal = [...defaultFeilds];
   let customJsonConfigObj: any = {};
   let jsonOptions: any[] = [];
 
   // create actual options for select field
   if (customJsonOptions?.length && defaultFeilds?.length) {
     jsonOptions = getOptions(customJsonOptions, defaultFeilds);
-    defaultFeilds = getOptions(defaultFeilds);
+    defaultFeildsVal = getOptions(defaultFeilds);
     customJsonConfigObj = {
       is_custom_json: false,
-      dam_keys: defaultFeilds,
+      dam_keys: defaultFeildsVal,
     };
   }
 

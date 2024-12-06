@@ -55,7 +55,7 @@ const CustomField: React.FC = function () {
 
   const getConfig = () => {
     const { config, contentTypeConfig } = state;
-    // eslint-disable-next-line
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { multi_config_keys, default_multi_config_key } = config;
     if (Object.keys(multi_config_keys ?? {})?.length) {
       const finalConfigLabel = getCurrentConfigLabel();
