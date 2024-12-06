@@ -211,6 +211,52 @@ const AppConfigProvider: React.FC = function ({ children }) {
     return finalState;
   };
 
+  const checkEmptyMultiConfigKey = ({
+    configuration,
+    serverConfiguration,
+  }: any) => {
+    let isEmptyKeyPresent = false;
+    const newConfiguration = { ...configuration };
+    const rawConfigKeys: string[] = Object.keys(
+      configuration?.multi_config_keys ?? {}
+    );
+    const invalidConfigValues = rawConfigKeys?.filter(
+      (key) => key?.trim() === "" || key === "null" || key === "undefined"
+    );
+    if (invalidConfigValues?.length) {
+      isEmptyKeyPresent = true;
+      invalidConfigValues?.forEach((value) => {
+        delete newConfiguration[value];
+      });
+    }
+
+    const newServerConfiguration = { ...serverConfiguration };
+    const rawServerConfigKeys: string[] = Object.keys(
+      serverConfiguration?.multi_config_keys ?? {}
+    );
+    const invalidServerConfigValues = rawServerConfigKeys?.filter(
+      (key) => key?.trim() === "" || key === "null" || key === "undefined"
+    );
+    if (invalidServerConfigValues?.length) {
+      isEmptyKeyPresent = true;
+      invalidServerConfigValues?.forEach((value) => {
+        delete newServerConfiguration[value];
+      });
+    }
+    if (isEmptyKeyPresent) {
+      return {
+        isEmptyKeyPresent,
+        data: {
+          configuration: newConfiguration,
+          serverConfiguration: newServerConfiguration,
+        },
+      };
+    }
+    return {
+      isEmptyKeyPresent,
+    };
+  };
+
   useEffect(() => {
     if (location) {
       const sdkConfigData = location?.installation;
@@ -223,7 +269,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
             const initialState = getInitialInstallationState(
               installationDataFromSDK
             );
+            const { isEmptyKeyPresent, data } =
+              checkEmptyMultiConfigKey(initialState);
+            if (isEmptyKeyPresent)
+              sdkConfigData?.setInstallationData({ ...sdkConfigData, ...data });
             await setInstallation(initialState);
+
             setInitialStateLoaded(true);
             checkConfigFields(initialState);
           })
