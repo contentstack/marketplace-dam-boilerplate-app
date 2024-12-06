@@ -472,8 +472,9 @@ const ConfigScreen: React.FC = function () {
           <p className="multi-config-wrapper__sublabel">
             {localeTexts.ConfigFields.AccordianConfig.multiConfigLabel}
           </p>
-          {accordianKeys?.map((acckey: any) =>
-            accordianInstance(acckey, accordianFields)
+          {accordianKeys?.map(
+            (acckey: any) =>
+              acckey && accordianInstance(acckey, accordianFields)
           )}
           <Button
             className="multi-config-button"

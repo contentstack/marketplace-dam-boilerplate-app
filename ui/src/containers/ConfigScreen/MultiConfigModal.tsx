@@ -22,6 +22,7 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
   const [hasDuplicateName, setHasDuplicateName] = useState<boolean>(false);
   const [nameLengthError, setNameLengthError] = useState<boolean>(false);
   const [hasLegacyName, setHasLegacyName] = useState<boolean>(false);
+  const [hasNullUndefined, setHasNullUndefined] = useState<boolean>(false);
 
   const onInputChange = (e: any) => {
     const enteredValue = e?.target?.value?.trim();
@@ -35,6 +36,15 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
       setHasLegacyName(true);
     } else {
       setHasLegacyName(false);
+    }
+
+    if (
+      enteredValue?.toLowerCase() === "null" ||
+      enteredValue?.toLowerCase() === "undefined"
+    ) {
+      setHasNullUndefined(true);
+    } else {
+      setHasNullUndefined(false);
     }
 
     setEnteredConfigName(enteredValue);
@@ -74,7 +84,12 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
               name="multiConfigLabelName"
               data-testid="multiconfiglabel-input"
               onChange={debounce(onInputChange, 300)}
-              error={hasDuplicateName || nameLengthError || hasLegacyName}
+              error={
+                hasDuplicateName ||
+                nameLengthError ||
+                hasLegacyName ||
+                hasNullUndefined
+              }
               version="v2"
             />
             {hasDuplicateName && (
@@ -90,6 +105,11 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
             {hasLegacyName && (
               <InstructionText className="multiConfig--warn">
                 {localeTexts.ConfigFields.accModal.legacyNameError}
+              </InstructionText>
+            )}
+            {hasNullUndefined && (
+              <InstructionText className="multiConfig--warn">
+                {localeTexts.ConfigFields.accModal.nullundefinedError}
               </InstructionText>
             )}
           </Field>
