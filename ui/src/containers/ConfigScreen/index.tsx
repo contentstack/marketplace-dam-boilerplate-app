@@ -10,6 +10,7 @@ import {
   Icon,
   cbModal,
   Line,
+  Tooltip,
 } from "@contentstack/venus-components";
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -29,16 +30,24 @@ import AppFailed from "../../components/AppFailed";
 import DeleteModal from "../../components/DeleteModal";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
+import { TypeFnHandleCustomConfigProps } from "../../common/types";
 /* Import our CSS */
 import "./styles.scss";
-import { TypeFnHandleCustomConfigProps } from "../../common/types";
 
 const ConfigScreen: React.FC = function () {
+  // default limit for Multi-Config
+  const MAX_MULTI_CONFIG_LIMIT = parseInt(
+    process.env.REACT_APP_MULTI_CONFIG_LIMIT ?? "10",
+    10
+  );
+  // failed state received from MarketplaceAppContext
   const { appFailed } = useContext(MarketplaceAppContext);
   // context usage for global states thorughout the component
   const { installationData, setInstallationData, checkConfigFields } =
     useContext(AppConfigContext);
   const [customUpdateTrigger, setCustomUpdateTrigger] = useState<any>({});
+  // state for disabling multi-config Add Btn
+  const [isAddBtnDisble, setIsAddBtnDisble] = useState<boolean>(false);
 
   // updating the custom config state
   const handleCustomConfigUpdate = (...args: TypeFnHandleCustomConfigProps) => {
@@ -186,6 +195,14 @@ const ConfigScreen: React.FC = function () {
     ]
   );
 
+  const handleMultiConfigLimit = (multiConfigObj: any) => {
+    if (Object.keys(multiConfigObj ?? {})?.length === MAX_MULTI_CONFIG_LIMIT) {
+      setIsAddBtnDisble(true);
+    } else {
+      setIsAddBtnDisble(false);
+    }
+  };
+
   const handleMultiConfig = (newConfigName: string) => {
     const { accConfigFields, accServerFields } = filterFieldsForMultiConfig();
 
@@ -230,17 +247,26 @@ const ConfigScreen: React.FC = function () {
       setDefaultKey(newConfigName);
     }
 
+    const serverConfigInstallationObj = {
+      ...installationData?.serverConfiguration,
+      multi_config_keys: {
+        ...installationData?.serverConfiguration?.multi_config_keys,
+        [newConfigName]: serverConfigFieldObj,
+      },
+    };
+
+    handleMultiConfigLimit(
+      configInstallationObj?.multi_config_keys ??
+        serverConfigInstallationObj?.multi_config_keys
+    );
+
     setInstallationData({
       ...installationData,
       configuration: {
         ...configInstallationObj,
       },
       serverConfiguration: {
-        ...installationData?.serverConfiguration,
-        multi_config_keys: {
-          ...installationData?.serverConfiguration?.multi_config_keys,
-          [newConfigName]: serverConfigFieldObj,
-        },
+        ...serverConfigInstallationObj,
       },
     });
   };
@@ -332,6 +358,8 @@ const ConfigScreen: React.FC = function () {
       defaultConfig = Object.keys(multiConfigData)?.[0];
       setDefaultKey(defaultConfig);
     }
+
+    handleMultiConfigLimit(multiConfigData ?? serverMultiConfigData);
 
     setInstallationData({
       ...installationData,
@@ -476,15 +504,23 @@ const ConfigScreen: React.FC = function () {
             (acckey: any) =>
               acckey && accordianInstance(acckey, accordianFields)
           )}
-          <Button
-            className="multi-config-button"
-            buttonType="secondary"
-            icon={localeTexts.Icons.addPlusBold}
-            size="medium"
-            onClick={() => setIsModalOpen(true)}
+          <Tooltip
+            content="Maximum Limit Reached"
+            position="right"
+            disabled={!isAddBtnDisble}
           >
-            {localeTexts.ConfigFields.AccordianConfig.btnText}
-          </Button>
+            <Button
+              className="multi-config-button"
+              buttonType="secondary"
+              icon={localeTexts.Icons.addPlusBold}
+              size="medium"
+              onClick={() => setIsModalOpen(true)}
+              disabled={isAddBtnDisble}
+            >
+              {localeTexts.ConfigFields.AccordianConfig.btnText}
+            </Button>
+          </Tooltip>
+
           {isModalOpen ? (
             <MultiConfigModal
               handleMultiConfig={handleMultiConfig}
