@@ -153,14 +153,18 @@ export interface AddMultiConfigurationModalProps {
   closeModal: any;
 }
 
+export type TypeFnHandleCustomConfigProps = [
+  configLabel: string,
+  fieldName: string,
+  fieldValue: any,
+  saveInConfig?: boolean,
+  saveInServerConfig?: boolean
+];
+
 export interface TypeCustomConfigParams {
   config: any;
   serverConfig: any;
-  handleCustomConfigUpdate: (
-    configLabel: string,
-    fieldName: string,
-    fieldValue: string
-  ) => void;
+  handleCustomConfigUpdate: (...args: TypeFnHandleCustomConfigProps) => void;
 }
 
 export interface TypeCustomConfig {

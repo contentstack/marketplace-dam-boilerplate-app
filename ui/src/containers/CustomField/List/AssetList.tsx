@@ -8,9 +8,20 @@ import CustomFieldUtils from "../../../common/utils/CustomFieldUtils";
 import CustomFieldContext from "../../../common/contexts/CustomFieldContext";
 
 const AssetList: React.FC<TypeAssetList> = function ({ id }) {
-  const { removeAsset, renderAssets: assets } = useContext(CustomFieldContext);
+  const {
+    removeAsset,
+    renderAssets: assets,
+    state,
+  } = useContext(CustomFieldContext);
   const asset = CustomFieldUtils.findAsset(assets, id);
   const [imageError, setImageError] = useState<boolean>(false);
+
+  const configLabel = asset?.cs_metadata?.config_label ?? "legacy_config";
+  let isConfigAvailable: boolean =
+    state?.config?.multi_config_keys?.[configLabel] || false;
+  const isMultiConfig = state?.config?.multi_config_keys || false;
+  if (!isMultiConfig) isConfigAvailable = true;
+
   const { name, type, thumbnailUrl, previewUrl, platformUrl } = asset;
   const {
     attributes,
@@ -63,6 +74,7 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
                   type,
                   thumbnailUrl,
                   handleImageError,
+                  isConfigAvailable,
                 })
               : CustomFieldUtils.noAssetElement}
           </div>

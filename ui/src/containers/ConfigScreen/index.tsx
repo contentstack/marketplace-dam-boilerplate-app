@@ -31,6 +31,7 @@ import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
 /* Import our CSS */
 import "./styles.scss";
+import { TypeFnHandleCustomConfigProps } from "../../common/types";
 
 const ConfigScreen: React.FC = function () {
   const { appFailed } = useContext(MarketplaceAppContext);
@@ -40,14 +41,21 @@ const ConfigScreen: React.FC = function () {
   const [customUpdateTrigger, setCustomUpdateTrigger] = useState<any>({});
 
   // updating the custom config state
-  const handleCustomConfigUpdate = (
-    configLabel: string,
-    configName: string,
-    configValue: any
-  ) => {
-    let configname = configName;
-    if (configLabel) configname = `${configLabel}$--${configName}`;
-    setCustomUpdateTrigger({ configname, configValue });
+  const handleCustomConfigUpdate = (...args: TypeFnHandleCustomConfigProps) => {
+    const [
+      configLabel,
+      configName,
+      configValue,
+      saveInConfig,
+      saveInServerConfig,
+    ] = args;
+    const configToUpdate: any = { configName, configValue };
+    if (configLabel)
+      configToUpdate.configName = `${configLabel}$--${configName}`;
+    if (saveInConfig) configToUpdate.saveInConfig = saveInConfig;
+    if (saveInServerConfig)
+      configToUpdate.saveInServerConfig = saveInServerConfig;
+    setCustomUpdateTrigger(configToUpdate);
   };
 
   // entire configuration object returned from configureConfigScreen
@@ -108,14 +116,14 @@ const ConfigScreen: React.FC = function () {
    * */
   const updateConfig = useCallback(
     async (e: any, inConfig?: boolean, inServerConfig?: boolean) => {
-      // eslint-disable-next-line prefer-const
-      let { name: fieldName, value: fieldValue } = e?.target ?? {};
+      const { name: fieldName, value } = e?.target ?? {};
+      let fieldValue = value;
       if (typeof fieldValue === "string") {
         fieldValue = fieldValue?.trim();
       }
 
-      const updatedConfig = installationData?.configuration || {};
-      const updatedServerConfig = installationData?.serverConfiguration || {};
+      const updatedConfig = installationData?.configuration ?? {};
+      const updatedServerConfig = installationData?.serverConfiguration ?? {};
 
       const descructValue = fieldName?.split("$--");
       let mutiConfigName = descructValue?.[0];
@@ -132,7 +140,10 @@ const ConfigScreen: React.FC = function () {
       }
 
       if (inConfig || configInputFields?.[configFieldName]?.saveInConfig) {
-        if (configInputFields?.[configFieldName]?.isMultiConfig) {
+        if (
+          configInputFields?.[configFieldName]?.isMultiConfig ||
+          mutiConfigName
+        ) {
           updatedConfig.multi_config_keys[mutiConfigName][configFieldName] =
             fieldValue;
         } else {
@@ -144,7 +155,10 @@ const ConfigScreen: React.FC = function () {
         inServerConfig ||
         configInputFields?.[configFieldName]?.saveInServerConfig
       ) {
-        if (configInputFields?.[configFieldName]?.isMultiConfig) {
+        if (
+          configInputFields?.[configFieldName]?.isMultiConfig ||
+          mutiConfigName
+        ) {
           updatedServerConfig.multi_config_keys[mutiConfigName][
             configFieldName
           ] = fieldValue;
@@ -245,9 +259,13 @@ const ConfigScreen: React.FC = function () {
 
   useEffect(() => {
     if (Object.keys(customUpdateTrigger)?.length) {
+      const { configName, configValue, saveInConfig, saveInServerConfig } =
+        customUpdateTrigger;
       updateValueFunc(
-        customUpdateTrigger?.configname,
-        customUpdateTrigger?.configValue
+        configName,
+        configValue,
+        saveInConfig,
+        saveInServerConfig
       );
     }
   }, [customUpdateTrigger]);
@@ -292,11 +310,9 @@ const ConfigScreen: React.FC = function () {
               </div>
             );
           case "customInputField":
-            // eslint-disable-next-line
-            return objValue?.component(acckey) ?? <></>;
+            return objValue?.component(acckey) ?? null;
           default:
-            // eslint-disable-next-line
-            return <></>;
+            return null;
         }
       }
     );
@@ -306,16 +322,15 @@ const ConfigScreen: React.FC = function () {
       installationData?.configuration?.multi_config_keys ?? {};
     const serverMultiConfigData =
       installationData?.serverConfiguration?.multi_config_keys ?? {};
-    const defaultConfig =
+    let defaultConfig =
       installationData?.configuration?.default_multi_config_key ?? "";
 
     delete multiConfigData[configKey];
     delete serverMultiConfigData[configKey];
 
-    let defaultConfigKey;
     if (defaultConfig === configKey) {
-      defaultConfigKey = Object.keys(multiConfigData)?.[0];
-      setDefaultKey(defaultConfigKey);
+      defaultConfig = Object.keys(multiConfigData)?.[0];
+      setDefaultKey(defaultConfig);
     }
 
     setInstallationData({
@@ -323,7 +338,7 @@ const ConfigScreen: React.FC = function () {
       configuration: {
         ...installationData?.configuration,
         multi_config_keys: { ...multiConfigData },
-        default_multi_config_key: defaultConfigKey ?? "",
+        default_multi_config_key: defaultConfig ?? "",
       },
       serverConfiguration: {
         ...installationData?.serverConfiguration,
@@ -332,7 +347,7 @@ const ConfigScreen: React.FC = function () {
     });
   };
 
-  const handleClickDeleteModal = (configKey: string) => {
+  const handleClickDeleteModal = (configKey: string) =>
     cbModal({
       // eslint-disable-next-line react/no-unstable-nested-components
       component: (props: any) => (
@@ -346,7 +361,6 @@ const ConfigScreen: React.FC = function () {
       ),
       testId: "cs-modal-storybook",
     });
-  };
 
   const accordianInstance = (acckey: any, accordianFields: any) => (
     <div className="multi-config-wrapper__configblock" key={acckey}>
@@ -478,10 +492,7 @@ const ConfigScreen: React.FC = function () {
               }
               closeModal={() => setIsModalOpen(false)}
             />
-          ) : (
-            // eslint-disable-next-line
-            <></>
-          )}
+          ) : null}
         </Accordion>
       </div>
     );

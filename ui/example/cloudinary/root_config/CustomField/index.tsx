@@ -16,8 +16,8 @@ const filterAssetData = (assets: any[]) => {
       width,
       height,
       size: bytes, // add size in bytes as string eg.'416246'
-      thumbnailUrl: secure_url || "",
-      previewUrl: secure_url || "", // add this parameter if you want "Preview" in tooltip action items
+      thumbnailUrl: secure_url ?? "",
+      previewUrl: secure_url ?? "", // add this parameter if you want "Preview" in tooltip action items
     };
   });
   return filterAssetArray;

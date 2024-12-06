@@ -5,6 +5,7 @@ import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us";
 import rootConfig from "../../root_config";
 import NoImage from "../../components/NoImage";
+import NoConfigImage from "../../components/NoConfigImage";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -157,7 +158,7 @@ const uniqBy = (arr: any[], iteratee: any) => {
 // find asset index from array of assets
 function findAssetIndex(assets: any[], id: any) {
   let prod: number = -1;
-  const assetsLength = (assets || [])?.length;
+  const assetsLength = (assets ?? [])?.length;
   for (let p = 0; p < assetsLength; p += 1) {
     if (assets[p]?.id === id) {
       prod = p;
@@ -169,7 +170,7 @@ function findAssetIndex(assets: any[], id: any) {
 
 // find assest from array of assets
 function findAsset(assets: any[], id: any) {
-  return assets?.find((asset: any) => asset?.id === id) || {};
+  return assets?.find((asset: any) => asset?.id === id) ?? {};
 }
 
 const extractKeys = (arr: any[]) => arr?.map((key: any) => key?.value);
@@ -293,10 +294,8 @@ const flatten = (data: any) => {
     if (Object(cur) !== cur) {
       result[prop] = cur;
     } else if (Array.isArray(cur)) {
-      let l;
-      // eslint-disable-next-line
-      for (let i = 0, l = cur?.length; i < l; i++)
-        recurse(cur?.[i], `${prop}[${i}]`);
+      const l = cur?.length;
+      for (let i = 0; i < l; i += 1) recurse(cur?.[i], `${prop}[${i}]`);
       if (l === 0) result[prop] = [];
     } else {
       let isEmpty = true;
@@ -384,7 +383,7 @@ const noAssetElement = (
       content={localeTexts?.CustomFields?.toolTip?.content}
       position="top"
       showArrow={false}
-      variantType="light"
+      // variantType="light"
       type="secondary"
     >
       <NoImage />
@@ -392,7 +391,26 @@ const noAssetElement = (
   </div>
 );
 
-const getIconElement = ({ type, thumbnailUrl, handleImageError }: any) => {
+const getIconElement = ({
+  type,
+  thumbnailUrl,
+  handleImageError,
+  isConfigAvailable,
+}: any) => {
+  if (!isConfigAvailable) {
+    return (
+      <div className="rowImage noImage">
+        <Tooltip
+          content={localeTexts.CustomFields.assetCard.configDeletedImg}
+          position="top"
+          showArrow={false}
+          type="secondary"
+        >
+          <NoConfigImage />
+        </Tooltip>
+      </div>
+    );
+  }
   let returnEl;
   switch (type?.toLowerCase()) {
     case "image":

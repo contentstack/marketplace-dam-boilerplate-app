@@ -20,7 +20,6 @@ const getCurrentConfigLabel = () => {
 };
 
 const getConfig = () => {
-  // eslint-disable-next-line
   const { multi_config_keys, default_multi_config_key } = config;
   if (Object.keys(multi_config_keys ?? {})?.length) {
     const finalConfigLabel = getCurrentConfigLabel();
@@ -69,13 +68,11 @@ const flatten = (data: any) => {
       result[prop] = cur;
     } else if (Array.isArray(cur)) {
       let l;
-      // eslint-disable-next-line
       for (let i = 0, l = cur?.length; i < l; i++)
         recurse(cur?.[i], `${prop}[${i}]`);
       if (l === 0) result[prop] = [];
     } else {
       let isEmpty = true;
-      // eslint-disable-next-line
       for (const p in cur) {
         isEmpty = false;
         recurse(cur?.[p], prop ? `${prop}.${p}` : p);

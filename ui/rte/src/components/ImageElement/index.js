@@ -17,11 +17,16 @@ const ImageElement = function ({
   element,
   attrs,
   rte,
+  availableConfig,
   ...props
 }) {
   const RTE_RESOURCE_TYPE = rteConfig?.getAssetType?.(element?.attrs) ?? "";
   const { preview: RTE_DISPLAY_URL, openInDam: RTE_OPENDAM_URL } =
     rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
+  const configLabel = attrs?.cs_metadata?.config_label ?? "";
+  const isConfigAvailable = configLabel
+    ? availableConfig?.includes(configLabel)
+    : "noMultiConfig";
   const isSelected = rte?.selection?.isSelected();
   const isFocused = rte?.selection?.isFocused();
   const isHighlight = isFocused && isSelected;
@@ -110,6 +115,7 @@ const ImageElement = function ({
           rte,
           icon,
           path: rte?.getPath(element),
+          isConfigAvailable,
           ...compProps,
         }),
     });
@@ -254,38 +260,58 @@ const ImageElement = function ({
                 contentEditable={false}
                 style={{ width: "100%", height: "100%" }}
               >
-                <div className={tooltipclass}>
-                  {!icon && (
-                    <img
-                      src={RTE_DISPLAY_URL}
-                      onError={utils.handleImageError}
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                      }}
-                      alt={element?.attrs?.["asset-alt"]}
-                      title={
-                        element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
-                      }
-                    />
-                  )}
-                  {!isInline && (
-                    <div className="embed-icon">
-                      <Icon icon={localeTexts.Icons.embed} />
+                {isConfigAvailable && (
+                  <div className={tooltipclass}>
+                    {!icon && (
+                      <img
+                        src={RTE_DISPLAY_URL}
+                        onError={utils.handleImageError}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                        }}
+                        alt={element?.attrs?.["asset-alt"]}
+                        title={
+                          element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                        }
+                      />
+                    )}
+                    {!isInline && (
+                      <div className="embed-icon">
+                        <Icon icon={localeTexts.Icons.embed} />
+                      </div>
+                    )}
+                    {icon && (
+                      <Icon
+                        icon={icon}
+                        size="large"
+                        withTooltip
+                        tooltipContent={
+                          attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                        }
+                        tooltipPosition="top"
+                      />
+                    )}
+                  </div>
+                )}
+                {!isConfigAvailable &&
+                  isConfigAvailable !== "noMultiConfig" && (
+                    <div
+                      className={tooltipclass}
+                      title={attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
+                    >
+                      <Icon
+                        icon="WarningBoldNew"
+                        version="v2"
+                        size="large"
+                        withTooltip
+                        tooltipContent={
+                          localeTexts.RTE.assetValidation.configDeletedImg
+                        }
+                        tooltipPosition="top"
+                      />
                     </div>
                   )}
-                  {icon && (
-                    <Icon
-                      icon={icon}
-                      size="large"
-                      withTooltip
-                      tooltipContent={
-                        attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
-                      }
-                      tooltipPosition="top"
-                    />
-                  )}
-                </div>
               </div>
               <span
                 contentEditable={false}

@@ -103,6 +103,9 @@ const localeTexts = {
         remove: "Remove",
         drag: "Reorder",
       },
+      noImage: "No image available",
+      configDeletedImg:
+        "We are unable to access the image url. The link could be broken, the asset might be deleted or you do not have access to it.",
     },
     header: {
       asset: {

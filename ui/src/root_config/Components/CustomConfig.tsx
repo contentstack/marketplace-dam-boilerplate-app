@@ -7,7 +7,7 @@ const CustomConfig: React.FC<TypeCustomConfig> = function ({
   customConfig,
   currentConfigLabel,
 }) {
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { config, serverConfig, handleCustomConfigUpdate } = customConfig ?? {
     config: {},
     serverConfig: {},

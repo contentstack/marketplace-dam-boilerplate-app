@@ -168,23 +168,15 @@ const SelectorPage: React.FC<any> = function () {
             <InfoMessage content={warningText} type="attention" />
           </div>
         ) : (
-          // eslint-disable-next-line
-          <>
-            {rootConfig?.damEnv?.IS_DAM_SCRIPT ? (
-              // If Compact view script avaialble
-              // eslint-disable-next-line
-              <></>
-            ) : (
-              // If there is no script custom component will be added
-              rootConfig?.customSelectorComponent?.(
-                config,
-                setError,
-                successFn,
-                closeFn,
-                selectedAssetIds
-              )
-            )}
-          </>
+          !rootConfig?.damEnv?.IS_DAM_SCRIPT &&
+          // If there is no script custom component will be added
+          rootConfig?.customSelectorComponent?.(
+            config,
+            setError,
+            successFn,
+            closeFn,
+            selectedAssetIds
+          )
         )}
       </div>
     </div>
