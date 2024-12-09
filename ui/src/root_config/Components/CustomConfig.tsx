@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Field, Select } from "@contentstack/venus-components";
-import { TypeCustomConfig } from "../../common/types";
+import { TypeCustomConfig, TypeOption } from "../../common/types";
 import "../styles.scss";
 
 const CustomConfig: React.FC<TypeCustomConfig> = function ({
@@ -13,7 +13,7 @@ const CustomConfig: React.FC<TypeCustomConfig> = function ({
     serverConfig: {},
     handleCustomConfigUpdate: () => {},
   };
-  const [selectValues, setSelectValues] = useState(null);
+  const [selectValues, setSelectValues] = useState<TypeOption[] | null>(null);
 
   const getOptions = (num: number) => {
     const options: any = [];
@@ -25,6 +25,22 @@ const CustomConfig: React.FC<TypeCustomConfig> = function ({
     }
     return options;
   };
+
+  useEffect(() => {
+    let savedValue: TypeOption[] | null = null;
+    if (customConfig?.config?.customField) {
+      savedValue = customConfig?.config?.customField;
+    }
+    if (
+      currentConfigLabel &&
+      customConfig?.config?.multi_config_keys?.[currentConfigLabel]?.customField
+    ) {
+      savedValue =
+        customConfig?.config?.multi_config_keys?.[currentConfigLabel]
+          ?.customField;
+    }
+    setSelectValues(savedValue);
+  }, []);
 
   return (
     <Field>

@@ -23,10 +23,14 @@ const ImageElement = function ({
   const RTE_RESOURCE_TYPE = rteConfig?.getAssetType?.(element?.attrs) ?? "";
   const { preview: RTE_DISPLAY_URL, openInDam: RTE_OPENDAM_URL } =
     rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
-  const configLabel = attrs?.cs_metadata?.config_label ?? "";
-  const isConfigAvailable = configLabel
-    ? availableConfig?.includes(configLabel)
-    : "noMultiConfig";
+  const configLabel = attrs?.cs_metadata?.config_label ?? "legacy_config";
+  let isConfigAvailable = false;
+  if (Array.isArray(availableConfig)) {
+    isConfigAvailable = availableConfig?.includes(configLabel);
+    const isMultiConfig = availableConfig?.length || false;
+    if (!isMultiConfig) isConfigAvailable = true;
+  } else isConfigAvailable = availableConfig;
+
   const isSelected = rte?.selection?.isSelected();
   const isFocused = rte?.selection?.isFocused();
   const isHighlight = isFocused && isSelected;
@@ -294,24 +298,28 @@ const ImageElement = function ({
                     )}
                   </div>
                 )}
-                {!isConfigAvailable &&
-                  isConfigAvailable !== "noMultiConfig" && (
-                    <div
-                      className={tooltipclass}
-                      title={attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
-                    >
-                      <Icon
-                        icon="WarningBoldNew"
-                        version="v2"
-                        size="large"
-                        withTooltip
-                        tooltipContent={
-                          localeTexts.RTE.assetValidation.configDeletedImg
-                        }
-                        tooltipPosition="top"
-                      />
-                    </div>
-                  )}
+                {!isConfigAvailable && (
+                  <div
+                    className={`${tooltipclass} ${
+                      !element?.attrs?.width && !element?.attrs?.height
+                        ? "embed-download"
+                        : ""
+                    }`}
+                    title={attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
+                  >
+                    <Icon
+                      icon="WarningBoldNew"
+                      version="v2"
+                      size="large"
+                      withTooltip
+                      tooltipContent={
+                        localeTexts.RTE.assetValidation.configDeletedImg
+                      }
+                      tooltipPosition="top"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </div>
+                )}
               </div>
               <span
                 contentEditable={false}

@@ -92,13 +92,6 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
-  useEffect(() => {
-    const defaultLabel =
-      installationData?.configuration?.default_multi_config_key ??
-      "legacy_config";
-    handleDefaultConfigFn({ target: { checked: true } }, defaultLabel);
-  }, []);
-
   const filterFieldsForMultiConfig = () => {
     const accConfigFields: any = {};
     const accServerFields: any = {};
