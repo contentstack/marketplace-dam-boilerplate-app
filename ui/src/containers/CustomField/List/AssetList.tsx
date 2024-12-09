@@ -16,13 +16,26 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
   const asset = CustomFieldUtils.findAsset(assets, id);
   const [imageError, setImageError] = useState<boolean>(false);
 
+  let name = "";
+  let type = "";
+  let thumbnailUrl = "";
+  let previewUrl = "";
+  let platformUrl = "";
+
+  if (asset) {
+    name = asset?.name;
+    type = asset?.type;
+    thumbnailUrl = asset?.thumbnailUrl;
+    previewUrl = asset?.previewUrl ?? "";
+    platformUrl = asset?.platformUrl ?? "";
+  }
+
   const configLabel = asset?.cs_metadata?.config_label ?? "legacy_config";
   let isConfigAvailable: boolean =
     state?.config?.multi_config_keys?.[configLabel] || false;
   const isMultiConfig = state?.config?.multi_config_keys || false;
   if (!isMultiConfig) isConfigAvailable = true;
 
-  const { name, type, thumbnailUrl, previewUrl, platformUrl } = asset;
   const {
     attributes,
     listeners,
@@ -30,7 +43,7 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: asset?.id });
+  } = useSortable({ id: asset?.id ?? "" });
 
   const style = {
     transform: CSS.Transform.toString(transform),

@@ -1,3 +1,4 @@
+import { TypeAsset } from "../../common/types";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 
 describe("popupWindow", () => {
@@ -115,38 +116,124 @@ describe("uniqBy", () => {
 
 describe("findAssetIndex", () => {
   it("should return -1 when the input array is empty", () => {
-    const assets: any[] = [];
-    const id = 1;
+    const assets: TypeAsset[] = [];
+    const id = "1";
     const result = CustomFieldUtils.findAssetIndex(assets, id);
     expect(result).toBe(-1);
   });
 
   it("should return -1 when the specified id is not found in the array", () => {
-    const assets = [{ id: 2 }, { id: 3 }, { id: 4 }];
-    const id = 1;
+    const assets: TypeAsset[] = [
+      {
+        id: "2",
+        type: "image",
+        name: "sampleImage",
+        width: "100",
+        height: "100",
+        size: "1000",
+        thumbnailUrl: "",
+      },
+      {
+        id: "3",
+        type: "image",
+        name: "sampleImage",
+        width: "100",
+        height: "100",
+        size: "1000",
+        thumbnailUrl: "",
+      },
+      {
+        id: "4",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+    ];
+    const id = "1";
     const result = CustomFieldUtils.findAssetIndex(assets, id);
     expect(result).toBe(-1);
   });
 
   it("should return the index of the specified id when found", () => {
-    const assets = [{ id: 2 }, { id: 1 }, { id: 3 }];
-    const id = 1;
+    const assets = [
+      {
+        id: "2",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+      {
+        id: "1",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+      {
+        id: "3",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+    ];
+    const id = "1";
     const result = CustomFieldUtils.findAssetIndex(assets, id);
     expect(result).toBe(1);
   });
 
   it("should return the index of the first occurrence when id appears multiple times", () => {
-    const assets = [{ id: 2 }, { id: 1 }, { id: 3 }, { id: 1 }];
-    const id = 1;
+    const assets = [
+      {
+        id: "2",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+      {
+        id: "1",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+      {
+        id: "3",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+      {
+        id: "1",
+        type: "image",
+        name: "sampleImage",
+        width: 100,
+        height: 100,
+        size: 1000,
+        thumbnailUrl: "",
+      },
+    ];
+    const id = "1";
     const result = CustomFieldUtils.findAssetIndex(assets, id);
     expect(result).toBe(1);
-  });
-
-  it("should handle cases with null and undefined values", () => {
-    const assets = [null, { id: 1 }, undefined, { id: 2 }, null];
-    const id = 2;
-    const result = CustomFieldUtils.findAssetIndex(assets, id);
-    expect(result).toBe(3);
   });
 });
 
@@ -158,7 +245,11 @@ describe("extractKeys", () => {
   });
 
   it("should extract values from an array of objects", () => {
-    const input = [{ value: "A" }, { value: "B" }, { value: "C" }];
+    const input = [
+      { label: "A", value: "A" },
+      { label: "B", value: "B" },
+      { label: "C", value: "C" },
+    ];
     const expected = ["A", "B", "C"];
     const result = CustomFieldUtils.extractKeys(input);
     expect(result).toEqual(expected);

@@ -54,7 +54,10 @@ export const TextInputField = function ({
   }
 
   const debouncedUpdateConfig = useCallback(
-    debounce((...args: [any]) => updateConfig(...args), 300),
+    debounce(
+      (...args: [React.ChangeEvent<HTMLInputElement>]) => updateConfig(...args),
+      300
+    ),
     []
   );
 
@@ -80,7 +83,9 @@ export const TextInputField = function ({
         hideCharCountError={false}
         placeholder={objValue?.placeholderText}
         name={`${acckey}$--${objKey}`}
-        onChange={(e: any) => debouncedUpdateConfig(e)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          debouncedUpdateConfig(e)
+        }
         type={objValue?.inputFieldType}
         canShowPassword
         data-testid="text_input"
@@ -208,10 +213,18 @@ export const SelectInputField = function ({
   );
 };
 
-const checkModalValue = ({ modalValue, customOptions }: any) => {
-  let returnValue: any[] = [];
+const checkModalValue = ({
+  modalValue,
+  customOptions,
+}: {
+  modalValue: string;
+  customOptions: TypeOption[];
+}) => {
+  let returnValue: TypeOption[] = [];
   modalValue = modalValue?.trim();
-  const matchValue = customOptions?.find((i: any) => i?.value === modalValue);
+  const matchValue = customOptions?.find(
+    (i: TypeOption) => i?.value === modalValue
+  );
   if (!matchValue) {
     returnValue = [{ label: modalValue, value: modalValue }];
   } else {
@@ -234,16 +247,22 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
   return returnValue;
 };
 
-export const ModalComponent = function ({ closeModal, handleModalValue }: any) {
+export const ModalComponent = function ({
+  closeModal,
+  handleModalValue,
+}: {
+  closeModal: () => void;
+  handleModalValue: Function;
+}) {
   const {
     CustomOptionsContext: { customOptions },
   } = useContext(ConfigStateContext);
   const [modalValue, setModalValue] = useState("");
-  const [selectOptions, setSelectOptions] = useState<any[]>([]);
-  const [options, setOptions] = useState<any>([...customOptions]);
+  const [selectOptions, setSelectOptions] = useState<TypeOption[]>([]);
+  const [options, setOptions] = useState<TypeOption[]>([...customOptions]);
   const [isEmptySpace, setIsEmptySpace] = useState<boolean>(false);
 
-  const handleChange = async (e: any) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.trim();
     if (/\s/.test(value) || value === "") {
       setIsEmptySpace(true);

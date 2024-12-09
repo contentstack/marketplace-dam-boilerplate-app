@@ -7,13 +7,13 @@ import React, {
 } from "react";
 import { Notification } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
-import { TypeOption } from "../types";
+import { ConfigStateProviderProps, TypeOption } from "../types";
 import ConfigStateContext from "../contexts/ConfigStateContext";
 import AppConfigContext from "../contexts/AppConfigContext";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import localeTexts from "../locale/en-us";
 
-const ConfigStateProvider: React.FC<any> = function ({
+const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   children,
   updateValueFunc,
 }) {
@@ -29,21 +29,27 @@ const ConfigStateProvider: React.FC<any> = function ({
   } = useContext(AppConfigContext);
 
   // local state for options of custom json
-  const [customOptions, setCustomOptions] = useState<any[]>(jsonOptions);
+  const [customOptions, setCustomOptions] = useState<TypeOption[] | []>(
+    jsonOptions
+  );
   // local state for custom / whole json boolean value
   const [isCustom, setIsCustom] = React.useState(false);
   // local state for selected options of custom json dropdown
-  const [damKeys, setDamKeys] = React.useState<any[]>(defaultFeilds ?? []);
+  const [damKeys, setDamKeys] = React.useState<TypeOption[]>(
+    defaultFeilds ?? []
+  );
   // saved custom key options
-  const [keyPathOptions, setKeyPathOptions] = useState<any[]>([]);
+  const [keyPathOptions, setKeyPathOptions] = useState<TypeOption[]>([]);
   // local state for radio option config
-  const [radioInputValues, setRadioInputValues] = React.useState<any>({
+  const [radioInputValues, setRadioInputValues] = React.useState<
+    Record<string, TypeOption>
+  >({
     ...Object.keys(saveInConfig)?.reduce((acc, value) => {
       if (saveInConfig?.[value]?.type === "radioInputField")
         return {
           ...acc,
           [value]: saveInConfig?.[value]?.options?.filter(
-            (option: any) =>
+            (option: TypeOption) =>
               option?.value === saveInConfig?.[value]?.defaultSelectedOption
           )?.[0],
         };
@@ -54,7 +60,7 @@ const ConfigStateProvider: React.FC<any> = function ({
         return {
           ...acc,
           [value]: saveInServerConfig?.[value]?.options?.filter(
-            (option: any) =>
+            (option: TypeOption) =>
               option?.value ===
               saveInServerConfig?.[value]?.defaultSelectedOption
           )?.[0],
@@ -63,13 +69,15 @@ const ConfigStateProvider: React.FC<any> = function ({
     }, {}),
   });
   // local state for select option config
-  const [selectInputValues, setSelectInputValues] = React.useState<any>({
+  const [selectInputValues, setSelectInputValues] = React.useState<
+    Record<string, TypeOption>
+  >({
     ...Object.keys(saveInConfig)?.reduce((acc, value) => {
       if (saveInConfig?.[value]?.type === "selectInputField")
         return {
           ...acc,
           [value]: saveInConfig?.[value]?.options?.filter(
-            (option: any) =>
+            (option: TypeOption) =>
               option?.value === saveInConfig?.[value]?.defaultSelectedOption
           )?.[0],
         };
@@ -80,7 +88,7 @@ const ConfigStateProvider: React.FC<any> = function ({
         return {
           ...acc,
           [value]: saveInServerConfig?.[value]?.options?.filter(
-            (option: any) =>
+            (option: TypeOption) =>
               option?.value ===
               saveInServerConfig?.[value]?.defaultSelectedOption
           )?.[0],
@@ -122,25 +130,23 @@ const ConfigStateProvider: React.FC<any> = function ({
     [radioInputValues]
   );
 
-  const updateCustomJSON = (e: any) => {
+  const updateCustomJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
     const check = e?.target?.id !== "wholeJSON";
     setIsCustom(check);
     updateValueFunc("is_custom_json", check, true);
   };
 
-  const updateTypeObj = (list: any[]) => {
-    const damKeysTemp: any[] = [];
-    list?.forEach((key: any) => damKeysTemp?.push(key?.value));
+  const updateTypeObj = (list: TypeOption[]) => {
     setDamKeys(list);
     updateValueFunc("dam_keys", list, true);
   };
 
   const handleModalValue = (
-    modalValueArr: any[],
+    modalValueArr: TypeOption[],
     mode: string,
-    updatedValue: any[]
+    updatedValue: TypeOption[]
   ) => {
-    const updatedOptions = [
+    const updatedOptions: TypeOption[] = [
       ...keyPathOptions,
       ...modalValueArr,
       ...updatedValue,

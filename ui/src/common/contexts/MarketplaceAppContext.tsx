@@ -1,15 +1,16 @@
 import React from "react";
-import { Props } from "../types";
+import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
+import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 
 export type MarketplaceAppContextType = {
-  appSdk: any;
-  appConfig: Props;
+  appSdk: UiLocation | null;
+  appConfig: GenericObjectType;
   appFailed: boolean;
 };
 
 export const MarketplaceAppContext =
   React.createContext<MarketplaceAppContextType>({
-    appSdk: {},
+    appSdk: null,
     appConfig: {},
     appFailed: false,
   });

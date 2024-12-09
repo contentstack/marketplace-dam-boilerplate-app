@@ -22,7 +22,7 @@ const DeleteModal: React.FC<Props> = function ({
   const [deleteConfirmationName, setDeleteConfirmationName] = useState("");
   const [deleteBtnDisable, setDeleteBtnDisable] = useState(true);
 
-  const handleDeleteInput = (e: any) => {
+  const handleDeleteInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e?.target?.value?.trim();
     if (inputValue === itemName) {
       setDeleteConfirmationName(inputValue);

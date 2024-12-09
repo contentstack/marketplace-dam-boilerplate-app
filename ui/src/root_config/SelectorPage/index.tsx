@@ -4,6 +4,7 @@
 
 import React from "react";
 import {
+  Props,
   TypeErrorFn,
   TypeRootSelector,
   TypeSelectorContainer,
@@ -18,7 +19,7 @@ declare global {
 }
 
 const openComptactView = (
-  config: any,
+  config: Props,
   selectedIds: string[],
   onSuccess: (assets: any[]) => void,
   onCancel: () => void,
@@ -32,7 +33,7 @@ const openComptactView = (
 
 // If there is no script then provide a custom component here
 const customSelectorComponent = (
-  config: any,
+  config: Props,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
   closeFn: () => void,

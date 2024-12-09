@@ -3,16 +3,19 @@ import { fireEvent, render, screen } from "@testing-library/react/pure";
 import ConfigScreen from "../../containers/ConfigScreen/index";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import { Configurations } from "../../common/types";
 
-const ConfigScreenObj = {
+const ConfigScreenObj: Configurations = {
   configField1: {
     type: "textInputField",
     labelText: "DAM URL",
     helpText: "Help: DAM domain URL",
     placeholderText: "Placeholder: Enter Your DAM URL",
     instructionText: "Instruction: Your DAM domain URL",
+    inputFieldType: "text",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
   selectField1: {
     type: "selectInputField",
@@ -30,6 +33,7 @@ const ConfigScreenObj = {
     defaultSelectedOption: "option5",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
   radioInput1: {
     type: "radioInputField",
@@ -49,6 +53,7 @@ const ConfigScreenObj = {
     defaultSelectedOption: "MultiSelect",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
 };
 

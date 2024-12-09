@@ -4,6 +4,7 @@
 /* NOTE: Remove Functions which are not used */
 
 import {
+  Props,
   TypeAsset,
   TypeErrorFn,
   TypeRootCustomField,
@@ -29,34 +30,34 @@ const filterAssetData = (assets: any[]) => {
 };
 
 const handleConfigtoSelectorPage = (
-  config: any,
-  contentTypeConfig: any,
+  config: Props,
+  contentTypeConfig: Props,
   currentLocale: string
 ) => {
   /* Return Config to be used on selector page */
   return {};
 };
 
-const getSelectorWindowUrl = (config: any, contentTypeConfig: any) => {
+const getSelectorWindowUrl = (config: Props, contentTypeConfig: Props) => {
   return ""; // return url to be opened as selector page
 };
 
-const handleSelectorPageData = (event: any) => {
+const handleSelectorPageData = (event: MessageEvent) => {
   // "event" is the event object which is received from your opened selector page
   return []; // return array of asset objects which are selected
 };
 
 const handleSelectorWindow = (
-  config: any,
-  contentTypeConfig: any,
+  config: Props,
+  contentTypeConfig: Props,
   setError: (errObj: TypeErrorFn) => void
 ) => {
   /* code logic to open the DAM selector window */
 };
 
 const handleAuthWindow = (
-  config: any,
-  contentTypeConfig: any,
+  config: Props,
+  contentTypeConfig: Props,
   resolve: Function,
   reject: Function
 ) => {
@@ -65,8 +66,8 @@ const handleAuthWindow = (
 };
 
 const modifyAssetsToSave = (
-  config: any,
-  contentTypeConfig: any,
+  config: Props,
+  contentTypeConfig: Props,
   assets: any[]
 ) => {
   /* code logic to modify the assets to save in Custom Field */

@@ -18,13 +18,13 @@ const MultiConfigModal: React.FC<AddMultiConfigurationModalProps> = function ({
   multiConfigData,
   closeModal,
 }) {
-  const [enteredConfigName, setEnteredConfigName] = useState<any>("");
+  const [enteredConfigName, setEnteredConfigName] = useState<string>("");
   const [hasDuplicateName, setHasDuplicateName] = useState<boolean>(false);
   const [nameLengthError, setNameLengthError] = useState<boolean>(false);
   const [hasLegacyName, setHasLegacyName] = useState<boolean>(false);
   const [hasNullUndefined, setHasNullUndefined] = useState<boolean>(false);
 
-  const onInputChange = (e: any) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const enteredValue = e?.target?.value?.trim();
     if (enteredValue?.length >= 1 && enteredValue?.length <= 50) {
       setNameLengthError(false);

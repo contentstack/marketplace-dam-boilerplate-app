@@ -1,7 +1,13 @@
 import React from "react";
 import { Icon, Tooltip, cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
-import { TypePopupWindowDetails } from "../types";
+import {
+  TypeAdvancedConfig,
+  TypeAsset,
+  TypeIconElement,
+  TypeOption,
+  TypePopupWindowDetails,
+} from "../types";
 import localeTexts from "../locale/en-us";
 import rootConfig from "../../root_config";
 import NoImage from "../../components/NoImage";
@@ -156,7 +162,7 @@ const uniqBy = (arr: any[], iteratee: any) => {
 };
 
 // find asset index from array of assets
-function findAssetIndex(assets: any[], id: any) {
+function findAssetIndex(assets: TypeAsset[], id: string) {
   let prod: number = -1;
   const assetsLength = (assets ?? [])?.length;
   for (let p = 0; p < assetsLength; p += 1) {
@@ -169,11 +175,12 @@ function findAssetIndex(assets: any[], id: any) {
 }
 
 // find assest from array of assets
-function findAsset(assets: any[], id: any) {
-  return assets?.find((asset: any) => asset?.id === id) ?? {};
+function findAsset(assets: TypeAsset[], id: string) {
+  return assets?.find((asset: TypeAsset) => asset?.id === id);
 }
 
-const extractKeys = (arr: any[]) => arr?.map((key: any) => key?.value);
+const extractKeys = (arr: TypeOption[]) =>
+  arr?.map((key: TypeOption) => key?.value);
 
 const removeEmptyFromArray = (arr: any) =>
   arr?.filter((item: any) => item !== undefined);
@@ -317,7 +324,10 @@ const convertToBytes = (value: number, unit: string) => {
   return value * 1024 ** (index ?? 0);
 };
 
-const advancedFilters = (assets: any[], contentTypeConfig: any) => {
+const advancedFilters = (
+  assets: any[],
+  contentTypeConfig: TypeAdvancedConfig
+) => {
   const {
     SIZE_NAME: SIZE,
     SIZE_UNIT = "BYTES",
@@ -383,7 +393,6 @@ const noAssetElement = (
       content={localeTexts?.CustomFields?.toolTip?.content}
       position="top"
       showArrow={false}
-      // variantType="light"
       type="secondary"
     >
       <NoImage />
@@ -396,7 +405,7 @@ const getIconElement = ({
   thumbnailUrl,
   handleImageError,
   isConfigAvailable,
-}: any) => {
+}: TypeIconElement) => {
   if (!isConfigAvailable) {
     return (
       <div className="rowImage noImage">
