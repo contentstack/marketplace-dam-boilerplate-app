@@ -250,7 +250,7 @@ const ImageEditModal = function (props) {
               )}
             </div>
           )}
-          {!isConfigAvailable && isConfigAvailable !== "noMultiConfig" && (
+          {!isConfigAvailable && (
             <div
               title={element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
               className="noConfigAvailable"
