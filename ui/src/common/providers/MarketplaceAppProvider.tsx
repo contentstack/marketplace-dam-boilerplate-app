@@ -1,21 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
+import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
+import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 import { isNull } from "lodash";
-import { Props } from "../types";
 import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
 const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [failed, setFailed] = useState<boolean>(false);
-  const [appSdk, setAppSdk] = useState<any>({});
-  const [appConfig, setAppConfig] = useState<Props>({});
+  const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
+  const [appConfig, setAppConfig] = useState<GenericObjectType>({});
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
     ContentstackAppSDK.init()
-      .then(async (appSDK: any) => {
+      .then(async (appSDK: UiLocation) => {
         await setAppSdk(appSDK);
         await appSDK?.location?.CustomField?.frame?.updateHeight(200);
-        const appSdkConfig = await appSDK?.getConfig();
+        const appSdkConfig: GenericObjectType = await appSDK?.getConfig();
         await setAppConfig(appSdkConfig);
       })
       .catch((error) => {

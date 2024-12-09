@@ -1,18 +1,20 @@
 import { createContext } from "react";
+import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
+import { Props, Configurations, TypeOption } from "../types";
 
 interface TypeAppConfigContext {
-  installationData: any;
+  installationData: Props;
   setInstallationData: Function;
-  appConfig: any;
-  jsonOptions: any[];
-  defaultFeilds: any[];
-  saveInConfig: any;
-  saveInServerConfig: any;
+  appConfig: GenericObjectType;
+  jsonOptions: TypeOption[] | [];
+  defaultFeilds: TypeOption[];
+  saveInConfig: Configurations;
+  saveInServerConfig: Configurations;
   checkConfigFields: Function;
 }
 
 const AppConfigContext = createContext<TypeAppConfigContext>({
-  installationData: {},
+  installationData: { configuration: {}, serverConfiguration: {} },
   setInstallationData: () => {},
   appConfig: {},
   jsonOptions: [],

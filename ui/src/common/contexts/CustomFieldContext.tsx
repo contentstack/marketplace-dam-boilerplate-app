@@ -1,14 +1,15 @@
 import { createContext } from "react";
+import { TypeAsset, TypeSDKData } from "../types";
 
 interface TypeCustomFieldContext {
-  renderAssets: any[];
+  renderAssets: TypeAsset[];
   setRenderAssets: Function;
   selectedAssets: any;
   setSelectedAssets: Function;
   removeAsset: Function;
   uniqueID: string;
   setRearrangedAssets: Function;
-  state: any;
+  state: TypeSDKData;
   currentLocale: string;
   handleBtnDisable: Function;
   isBtnDisable: boolean;
@@ -22,7 +23,12 @@ const CustomFieldContext = createContext<TypeCustomFieldContext>({
   removeAsset: () => {},
   uniqueID: "",
   setRearrangedAssets: () => {},
-  state: {},
+  state: {
+    config: {},
+    contentTypeConfig: {},
+    location: null,
+    appSdkInitialized: false,
+  },
   currentLocale: "",
   handleBtnDisable: () => {},
   isBtnDisable: false,

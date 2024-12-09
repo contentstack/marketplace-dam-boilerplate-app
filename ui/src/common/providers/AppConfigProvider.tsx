@@ -5,10 +5,11 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 import { isEmpty } from "lodash";
 import AppConfigContext from "../contexts/AppConfigContext";
 import rootConfig from "../../root_config";
-import { TypeAppSdkConfigState } from "../types";
+import { Props, TypeAppSdkConfigState } from "../types";
 import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
@@ -22,12 +23,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
     ConfigScreenUtils.configRootUtils();
 
   // ref for managing the save button disable state
-  const appConfig = useRef<any>();
+  const appConfig = useRef<GenericObjectType>();
 
   const { location } = useAppLocation();
 
   // state for configuration
-  const [installation, setInstallation] = React.useState<any>({});
+  const [installation, setInstallation] = React.useState<Props>({});
   // check for initial state for rendering children
   const [initialStateLoaded, setInitialStateLoaded] = useState(false);
 
@@ -35,24 +36,28 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const checkConfigFields = async ({
     configuration,
     serverConfiguration,
-  }: any) => {
+  }: TypeAppSdkConfigState) => {
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
 
-    const flatStructure = CustomFieldUtils.flatten({
+    const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
       configuration,
       serverConfiguration,
     });
 
-    Object.entries(flatStructure)?.forEach(([objKey, objValue]: any) => {
-      const key = objKey.split(".")?.at(-1);
-      if (requiredFields?.includes(key)) {
-        const value = typeof objValue === "boolean" ? `${objValue}` : objValue;
-        if (!value) {
-          missingValues?.push(objKey?.split(".multi_config_keys.")?.at(-1));
+    Object.entries(flatStructure)?.forEach(
+      ([objKey, objValue]: [string, string]) => {
+        const key = objKey.split(".")?.at(-1);
+        if (key && requiredFields?.includes(key)) {
+          const value =
+            typeof objValue === "boolean" ? `${objValue}` : objValue;
+          const missingValue = objKey?.split(".multi_config_keys.")?.at(-1);
+          if (!value && missingValue) {
+            missingValues?.push(missingValue);
+          }
         }
       }
-    });
+    );
 
     const { disableSave: isConfigValid, message: disableMsg } =
       (await rootConfig?.checkConfigValidity?.(
@@ -71,7 +76,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
     }
   };
 
-  const getCustomFieldConfigObj = (config: any) => {
+  const getCustomFieldConfigObj = (config: Props) => {
     // eslint-disable-next-line
     const { is_custom_json, dam_keys } = config;
     if (!dam_keys && !is_custom_json?.toString()) {
@@ -148,7 +153,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
 
             return ConfigScreenUtils.mergeObjects(acc, {
               multi_config_keys: multiConfigKeys?.reduce(
-                (nestedAcc: any, nestedValue: any) => ({
+                (nestedAcc: Props, nestedValue: string) => ({
                   ...nestedAcc,
                   [nestedValue]: {
                     ...(nestedAcc?.[nestedValue] ?? {}),
@@ -182,7 +187,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
 
             return ConfigScreenUtils.mergeObjects(acc, {
               multi_config_keys: multiServerConfigKeys.reduce(
-                (nestedAcc: any, nestedValue: any) => ({
+                (nestedAcc: Props, nestedValue: string) => ({
                   ...nestedAcc,
                   [nestedValue]: {
                     ...(nestedAcc?.[nestedValue] ?? {}),
@@ -214,7 +219,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const checkEmptyMultiConfigKey = ({
     configuration,
     serverConfiguration,
-  }: any) => {
+  }: Props) => {
     let isEmptyKeyPresent = false;
     const newConfiguration = { ...configuration };
     const rawConfigKeys: string[] = Object.keys(
@@ -266,7 +271,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
         sdkConfigData
           .getInstallationData()
           .then(async (installationDataFromSDK: TypeAppSdkConfigState) => {
-            const initialState = getInitialInstallationState(
+            const initialState: Props = getInitialInstallationState(
               installationDataFromSDK
             );
             const { isEmptyKeyPresent, data } =
@@ -276,7 +281,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
             await setInstallation(initialState);
 
             setInitialStateLoaded(true);
-            checkConfigFields(initialState);
+            checkConfigFields({
+              configuration: initialState?.configuration,
+              serverConfiguration: initialState?.serverConfiguration,
+            });
           })
           .catch((err: Error) => {
             console.error(err);
@@ -286,7 +294,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   }, [location]);
 
   const setInstallationData = useCallback(
-    async (data: { [key: string]: any }) => {
+    async (data: TypeAppSdkConfigState) => {
       const newInstallationData: TypeAppSdkConfigState = {
         ...installation,
         configuration: data?.configuration,

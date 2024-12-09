@@ -16,7 +16,7 @@ const CustomConfig: React.FC<TypeCustomConfig> = function ({
   const [selectValues, setSelectValues] = useState<TypeOption[] | null>(null);
 
   const getOptions = (num: number) => {
-    const options: any = [];
+    const options: TypeOption[] = [];
     for (let i = 0; i < num; i += 1) {
       options[i] = {
         label: `item ${i}`,
@@ -55,7 +55,7 @@ const CustomConfig: React.FC<TypeCustomConfig> = function ({
         className="sample-multiple-select"
         multiDisplayLimit={4}
         options={getOptions(10)}
-        onChange={(value: any) => {
+        onChange={(value: TypeOption[]) => {
           setSelectValues(value);
           handleCustomConfigUpdate(currentConfigLabel, "customField", value); // currentConfigLabel is MultiConfig label and is required.
         }}

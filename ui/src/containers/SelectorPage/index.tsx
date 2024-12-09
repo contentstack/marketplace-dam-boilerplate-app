@@ -3,26 +3,26 @@ import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
 import InfoMessage from "../../components/InfoMessage";
+import { TypeErrorFn, Props } from "../../common/types";
 import "./style.scss";
-import { TypeErrorFn } from "../../common/types";
 
-let isScriptLoaded: any = false;
+let isScriptLoaded: boolean = false;
 let url: string = "";
 
-const SelectorPage: React.FC<any> = function () {
+const SelectorPage: React.FC = function () {
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
   // config in selector page
-  const [config, setConfig] = useState<any>();
+  const [config, setConfig] = useState<Props>();
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
-  const damContainer = useRef(null);
+  const damContainer = useRef<any>(null);
 
   // function to check null or missing values of config
-  const checkConfigValues = (configParams: any) => {
+  const checkConfigValues = (configParams: Props) => {
     const configFieldsLength =
       rootConfig?.damEnv?.SELECTOR_CONFIG_CHECK_FIELDS?.length;
     for (let i = 0; i < configFieldsLength; i += 1) {
@@ -60,13 +60,14 @@ const SelectorPage: React.FC<any> = function () {
 
   // function to load dam script and mount component
   const compactViewImplementation = async (
-    configParams: any,
+    configParams: Props,
     selectedIds: string[]
   ) => {
     if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
-      isScriptLoaded = await SelectorPageUtils.loadDAMScript(
+      const scriptLoaded = await SelectorPageUtils.loadDAMScript(
         rootConfig?.damEnv?.DAM_SCRIPT_URL as string
       );
+      isScriptLoaded = scriptLoaded === true;
       if (isScriptLoaded === true) {
         // condition's for checking config variable's
         const checkValues = Object.keys(configParams?.selected_config ?? {})

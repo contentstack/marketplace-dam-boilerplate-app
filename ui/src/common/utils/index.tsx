@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Link } from "@contentstack/venus-components";
+import { TypeEmptySearchProps } from "../types";
 
 const getAssetType = (extension: string) => {
   extension = extension?.toLowerCase();
@@ -70,7 +71,7 @@ const getAssetType = (extension: string) => {
 };
 
 const getItemStatusMap = (length: number, status: string) => {
-  const itemStatusMap: any = {};
+  const itemStatusMap: Record<number, string> = {};
   for (let index = 0; index < length; index += 1) {
     itemStatusMap[index] = status;
   }
@@ -80,7 +81,7 @@ const getItemStatusMap = (length: number, status: string) => {
 const getNoImageUrl = (imageSvg: string) =>
   `data:image/svg+xml;base64,${btoa(imageSvg)}`;
 
-const EmptySearch = (texts: any) => ({
+const EmptySearch = (texts: TypeEmptySearchProps) => ({
   heading: <h4 style={{ color: "#222222" }}>{texts.EmptySearchHeading}</h4>,
   description: <p>{texts.EmptySearchDescription}</p>,
   actions: (

@@ -1,5 +1,6 @@
 import { Notification } from "@contentstack/venus-components";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import { Configurations } from "../../common/types";
 
 jest.mock("@contentstack/venus-components", () => ({
   Notification: jest.fn(),
@@ -16,15 +17,17 @@ jest.mock("../../root_config/index.tsx", () => ({
   },
 }));
 
-const ConfigScreenObj = {
+const ConfigScreenObj: Configurations = {
   configField1: {
     type: "textInputField",
     labelText: "DAM URL",
     helpText: "Help: DAM domain URL",
     placeholderText: "Placeholder: Enter Your DAM URL",
     instructionText: "Instruction: Your DAM domain URL",
+    inputFieldType: "text",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
   selectField1: {
     type: "selectInputField",
@@ -42,6 +45,7 @@ const ConfigScreenObj = {
     defaultSelectedOption: "option5",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
   radioInput1: {
     type: "radioInputField",
@@ -61,6 +65,7 @@ const ConfigScreenObj = {
     defaultSelectedOption: "MultiSelect",
     saveInConfig: true,
     saveInServerConfig: true,
+    isMultiConfig: false,
   },
 };
 
@@ -201,9 +206,29 @@ describe("configRootUtils", () => {
 
 describe("getSaveConfigOptions", () => {
   it("should return config objects to be saved", () => {
-    const configInputFields = {
-      field1: { saveInConfig: true },
-      field2: { saveInServerConfig: true },
+    const configInputFields: Configurations = {
+      field1: {
+        type: "textInputField",
+        labelText: "DAM URL",
+        helpText: "Help: DAM domain URL",
+        placeholderText: "Placeholder: Enter Your DAM URL",
+        instructionText: "Instruction: Your DAM domain URL",
+        inputFieldType: "text",
+        saveInConfig: true,
+        saveInServerConfig: false,
+        isMultiConfig: false,
+      },
+      field2: {
+        type: "textInputField",
+        labelText: "DAM URL",
+        helpText: "Help: DAM domain URL",
+        placeholderText: "Placeholder: Enter Your DAM URL",
+        instructionText: "Instruction: Your DAM domain URL",
+        inputFieldType: "text",
+        saveInConfig: false,
+        saveInServerConfig: true,
+        isMultiConfig: false,
+      },
     };
     const expected = {
       saveInConfig: {

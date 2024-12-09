@@ -9,9 +9,21 @@ export type Props = {
   [key: string]: any;
 };
 
+interface ConfigStructure {
+  selected_config: Props;
+  default_multi_config_key: string;
+  multi_config_keys: Props;
+  is_custom_json: boolean;
+  dam_keys: TypeOption[];
+  [key: string]: any;
+}
+
 export interface TypeAppSdkConfigState {
-  configuration: Props;
-  serverConfiguration: Props;
+  configuration: ConfigStructure;
+  serverConfiguration: {
+    multi_config_keys: Props;
+    [key: string]: any;
+  };
 }
 
 export interface TypeSDKData {
@@ -25,12 +37,13 @@ export interface TypeAsset {
   id: string;
   type: string;
   name: string;
-  width: string;
-  height: string;
-  size: string;
   thumbnailUrl: string;
-  previewUrl?: string; // if you don't want "preview" platform option don't provide this parameter
-  platformUrl?: string; // if you don't want "open in DAM" platform option don't provide this parameter
+  size?: any;
+  height?: any;
+  width?: any;
+  previewUrl?: string;
+  platformUrl?: string;
+  cs_metadata?: Props;
 }
 
 export interface TypeCardContainer {
@@ -58,6 +71,7 @@ export interface TypeAssetList {
 export interface TypeOption {
   label: string;
   value: string;
+  isDisabled?: boolean;
 }
 
 export interface TypeConfigComponent {
@@ -74,11 +88,6 @@ export interface TypeRadioOption {
   radioOption: TypeOption;
   updateRadioOptions: Function;
 }
-
-export type TypeWarningtext = {
-  error: boolean;
-  data: any;
-};
 
 export interface TypeRootDamEnv {
   IS_DAM_SCRIPT?: boolean;
@@ -148,9 +157,9 @@ export interface TypeErrorFn {
 }
 
 export interface AddMultiConfigurationModalProps {
-  handleMultiConfig: (config: any) => void;
-  multiConfigData: any;
-  closeModal: any;
+  handleMultiConfig: (config: string) => void;
+  multiConfigData: Props;
+  closeModal: () => void;
 }
 
 export type TypeFnHandleCustomConfigProps = [
@@ -162,12 +171,101 @@ export type TypeFnHandleCustomConfigProps = [
 ];
 
 export interface TypeCustomConfigParams {
-  config: any;
-  serverConfig: any;
+  config: Props;
+  serverConfig: Props;
   handleCustomConfigUpdate: (...args: TypeFnHandleCustomConfigProps) => void;
 }
 
 export interface TypeCustomConfig {
   customConfig?: TypeCustomConfigParams;
   currentConfigLabel: string;
+}
+
+type InputFieldType =
+  | "text"
+  | "password"
+  | "email"
+  | "number"
+  | "search"
+  | "url"
+  | "date"
+  | "time"
+  | string;
+
+export interface TypeBaseFields {
+  type:
+    | "textInputField"
+    | "radioInputField"
+    | "selectInputField"
+    | "customInputField";
+  labelText: string;
+  helpText?: string;
+  placeholderText?: string;
+  instructionText?: string;
+  saveInConfig: boolean;
+  saveInServerConfig: boolean;
+  isMultiConfig?: boolean;
+  options?: TypeOption[];
+  defaultSelectedOption?: string;
+  component?: (acckey: string) => React.ReactNode;
+}
+
+export interface TypeInputField extends TypeBaseFields {
+  inputFieldType: InputFieldType;
+}
+
+export interface TypeCustomField
+  extends Omit<
+    TypeBaseFields,
+    "labelText" | "helpText" | "placeholderText" | "instructionText"
+  > {
+  type: "customInputField";
+}
+
+export type CombinedFields = TypeBaseFields | TypeCustomField | TypeInputField;
+
+export type Configurations = Record<string, CombinedFields>;
+
+export interface TypeUpdateTrigger {
+  configName: string;
+  configValue: any;
+  saveInConfig?: boolean;
+  saveInServerConfig?: boolean;
+}
+
+export interface ConfigStateProviderProps {
+  children: React.ReactNode;
+  updateValueFunc: (
+    configName: string,
+    configValue: any,
+    inConfig?: boolean,
+    inServerConfig?: boolean
+  ) => void;
+}
+
+export interface TypeEmptySearchProps {
+  EmptySearchHeading: string;
+  EmptySearchDescription: string;
+  EmptySearchMessage: string;
+  EmptySearchHelpLink: string;
+  EmptySearchHelpText: string;
+}
+
+interface MinMax {
+  min: number;
+  max: number;
+  exact: number;
+}
+
+export interface TypeAdvancedConfig {
+  size: MinMax;
+  height: MinMax;
+  width: MinMax;
+}
+
+export interface TypeIconElement {
+  type: string;
+  thumbnailUrl: string;
+  handleImageError: () => void;
+  isConfigAvailable: boolean;
 }

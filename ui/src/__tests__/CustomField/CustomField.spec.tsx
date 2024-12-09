@@ -101,7 +101,7 @@ beforeEach(() => {
     },
     currentLocale: "",
   };
-  let appcontextValue = { appSdk: {}, appConfig: {}, appFailed: false };
+  let appcontextValue = { appSdk: null, appConfig: {}, appFailed: false };
 
   if (testName?.includes("**")) {
     jest
@@ -150,7 +150,7 @@ beforeEach(() => {
   }
 
   if (testName?.includes("AppFailed")) {
-    appcontextValue = { appSdk: {}, appConfig: {}, appFailed: true };
+    appcontextValue = { appSdk: null, appConfig: {}, appFailed: true };
   }
 
   if (testName?.includes("AssetList")) {

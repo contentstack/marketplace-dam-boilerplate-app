@@ -5,12 +5,16 @@
 
 import React from "react";
 import {
+  Configurations,
+  Props,
   TypeCustomConfigParams,
   TypeRootConfigSreen,
 } from "../../common/types";
 import CustomConfig from "../Components/CustomConfig";
 
-const configureConfigScreen = (params?: TypeCustomConfigParams) => {
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -105,7 +109,7 @@ const customWholeJson = () => {
   };
 };
 
-const checkConfigValidity = async (config: any, serverConfig: any) => {
+const checkConfigValidity = async (config: Props, serverConfig: Props) => {
   // return value of the function is object which takes disableSave[type=boolean] and message[type=string]. Assigning "true" to disableSave will disable the button and "false" will enable to button.
   return { disableSave: false, message: "Enter a Valid Config" };
 };
