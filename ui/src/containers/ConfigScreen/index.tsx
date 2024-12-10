@@ -10,7 +10,11 @@ import {
   Icon,
   cbModal,
   Line,
+  Select,
+  ToggleSwitch,
   Tooltip,
+  FieldLabel,
+  Help,
 } from "@contentstack/venus-components";
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -37,7 +41,10 @@ import {
   TypeUpdateTrigger,
   Props,
   TypeOption,
+  BranchOption,
+  TypeMultiBranch,
 } from "../../common/types";
+import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 /* Import our CSS */
 import "./styles.scss";
 
@@ -48,14 +55,28 @@ const ConfigScreen: React.FC = function () {
     10
   );
   // failed state received from MarketplaceAppContext
-  const { appFailed } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk } = useContext(MarketplaceAppContext);
   // context usage for global states thorughout the component
   const { installationData, setInstallationData, checkConfigFields } =
     useContext(AppConfigContext);
+  // state to handle updatation of field of "type = customInputField"
   const [customUpdateTrigger, setCustomUpdateTrigger] =
     useState<TypeUpdateTrigger>({} as TypeUpdateTrigger);
   // state for disabling multi-config Add Btn
   const [isAddBtnDisble, setIsAddBtnDisble] = useState<boolean>(false);
+  // state for multiconfig branch options
+  const [branchOptions, setBranchOptions] = useState<BranchOption[]>([]);
+  // state to handle branch checkbox
+  const [branchChkboxState, setBranchChkboxState] = useState<any>({});
+  // state for multiconfig branch support values
+  const [selectedBranchOptions, setSelectedBranchOptions] =
+    React.useState<TypeMultiBranch>({});
+  // state for selected branches
+  const [activeBranches, setActiveBranches] = useState<string[]>([]);
+  // state for rendering multi-config name modal
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  // default multiconfig key
+  const [defaultKey, setDefaultKey] = React.useState<string>();
 
   // updating the custom config state
   const handleCustomConfigUpdate = (...args: TypeFnHandleCustomConfigProps) => {
@@ -84,24 +105,115 @@ const ConfigScreen: React.FC = function () {
     }
   );
 
-  // state for rendering multi-config name modal
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  // default multiconfig key
-  const [defaultKey, setDefaultKey] = React.useState<string>();
-
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
     acckey: string
   ) => {
-    if (e?.target?.checked) {
-      setDefaultKey(acckey);
-      setInstallationData({
-        ...installationData,
-        configuration: {
-          ...installationData?.configuration,
-          default_multi_config_key: acckey,
-        },
-      });
+    const target = e?.target as HTMLInputElement;
+    let currentKey = "";
+    if (target?.checked) {
+      currentKey = acckey;
+    }
+    setDefaultKey(currentKey);
+    setInstallationData({
+      ...installationData,
+      configuration: {
+        ...installationData?.configuration,
+        default_multi_config_key: currentKey,
+      },
+    });
+  };
+
+  useEffect(() => {
+    const fn = async () => {
+      if (appSdk) {
+        const allBranches = appSdk?.stack?.getAllBranches();
+        await setBranchOptions(
+          allBranches?.map(({ uid, api_key }: any) => ({
+            label: uid,
+            value: uid,
+            api_key,
+          }))
+        );
+        const defaultLabel =
+          installationData?.configuration?.default_multi_config_key ??
+          "legacy_config";
+        handleDefaultConfigFn({ target: { checked: true } }, defaultLabel);
+        const multiConfigBranchObj: Record<string, string[]> =
+          installationData?.configuration?.multi_config_branches ?? {};
+        const branchCheckBox: Record<string, boolean> = {};
+        Object.values(multiConfigBranchObj)?.forEach((value: string[]) => {
+          branchCheckBox[value?.[0]] = true;
+        });
+        setBranchChkboxState(branchCheckBox);
+      }
+    };
+    fn();
+  }, []);
+
+  useEffect(() => {
+    const multiConfigBranchObj: Record<string, string[]> =
+      installationData?.configuration?.multi_config_branches;
+    if (multiConfigBranchObj) {
+      const branchOptionsState =
+        ConfigScreenUtils.generateSelectedBranchOptions(
+          multiConfigBranchObj,
+          branchOptions
+        );
+      setSelectedBranchOptions(branchOptionsState);
+      setActiveBranches(Object.keys(multiConfigBranchObj) ?? []);
+    }
+  }, [installationData]);
+  const handleSelectedBranchOptions = (
+    values: BranchOption[],
+    acckey: string
+  ) => {
+    setSelectedBranchOptions({ ...selectedBranchOptions, [acckey]: values });
+    const multibranchValue = ConfigScreenUtils.generateMultiBranchConfig({
+      ...selectedBranchOptions,
+      [acckey]: values,
+    });
+    const updatedData = {
+      ...installationData,
+      configuration: {
+        ...installationData?.configuration,
+        multi_config_branches: multibranchValue,
+      },
+    };
+    setInstallationData(updatedData);
+  };
+  const generateBranchOptions = (configLabel: string) => {
+    const selectedOptions = selectedBranchOptions?.[configLabel]?.map(
+      (option: BranchOption) => option?.value
+    );
+    return branchOptions?.map((option: BranchOption) => ({
+      ...option,
+      isDisabled:
+        activeBranches?.includes(option?.value) &&
+        !selectedOptions?.includes(option?.value),
+    }));
+  };
+  const handleMultiConfigBranchChkbox = (
+    e: React.MouseEvent<HTMLInputElement>,
+    acckey: string
+  ) => {
+    const target = e?.target as HTMLInputElement;
+    if (target?.checked) {
+      setBranchChkboxState({ ...branchChkboxState, [acckey]: true });
+      setSelectedBranchOptions({ ...selectedBranchOptions, [acckey]: [] });
+      handleSelectedBranchOptions([], acckey);
+      handleDefaultConfigFn({ target: { checked: false } }, "");
+    } else {
+      setBranchChkboxState({ ...branchChkboxState, [acckey]: false });
+      const tempMultiBranch = { ...selectedBranchOptions };
+      const branchsToRemove = tempMultiBranch?.[acckey];
+      const usedBranches = [...activeBranches];
+      const updatedActiveBranches = usedBranches?.filter(
+        (branch) =>
+          !branchsToRemove?.some((toRemove) => toRemove?.value === branch)
+      );
+      setActiveBranches(updatedActiveBranches);
+      handleSelectedBranchOptions([], acckey);
     }
   };
 
@@ -200,6 +312,7 @@ const ConfigScreen: React.FC = function () {
       return true;
     },
     [
+      branchOptions,
       setInstallationData,
       installationData,
       installationData?.configuration,
@@ -503,14 +616,81 @@ const ConfigScreen: React.FC = function () {
         ]}
       >
         {renderFields(accordianFields, acckey)}
+        <Field className="multi-config-branch-checkbox">
+          <div className="multi-config-toggle">
+            <Tooltip
+              content={
+                localeTexts.ConfigFields.AccordianConfig.tooltip.branchsupport
+              }
+              position="right"
+              disabled={
+                !(defaultKey === acckey && !branchChkboxState?.[acckey])
+              }
+            >
+              <>
+                <FieldLabel
+                  htmlFor="toggleSwitch"
+                  requiredText="(optional)"
+                  className={`${
+                    !branchChkboxState?.[acckey]
+                      ? "Label--color--secondary"
+                      : ""
+                  }`}
+                  disabled={
+                    defaultKey === acckey && !branchChkboxState?.[acckey]
+                  }
+                >
+                  {localeTexts.ConfigFields.AccordianConfig.branchBoxText}
+                  <span className=" FieldLabel__required-text ml-8">
+                    (optional)
+                  </span>
+                  <Help
+                    text={localeTexts.ConfigFields.AccordianConfig.helptext}
+                  />
+                </FieldLabel>
+                <ToggleSwitch
+                  labelColor="primary"
+                  labelPosition="left"
+                  onChange={(e: any) =>
+                    handleMultiConfigBranchChkbox(e, acckey)
+                  }
+                  checked={branchChkboxState?.[acckey]}
+                  disabled={
+                    defaultKey === acckey && !branchChkboxState?.[acckey]
+                  }
+                />
+              </>
+            </Tooltip>
+          </div>
+          {branchChkboxState?.[acckey] && (
+            <Select
+              options={generateBranchOptions(acckey)}
+              onChange={(values: BranchOption[]) =>
+                handleSelectedBranchOptions(values, acckey)
+              }
+              value={selectedBranchOptions?.[acckey] ?? []}
+              isClearable
+              isMulti
+              isSearchable
+              version="v2"
+            />
+          )}
+        </Field>
         <Field className="multi-config-default-checkbox">
-          <Checkbox
-            label={localeTexts.ConfigFields.AccordianConfig.checkboxText}
-            onClick={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleDefaultConfigFn(e, acckey)
+          <Tooltip
+            content={
+              localeTexts.ConfigFields.AccordianConfig.tooltip.setasdefault
             }
-            checked={defaultKey === acckey}
-          />
+            position="right"
+            disabled={!branchChkboxState?.[acckey]}
+          >
+            <Checkbox
+              label={localeTexts.ConfigFields.AccordianConfig.checkboxText}
+              onClick={(e: any) => handleDefaultConfigFn(e, acckey)}
+              checked={defaultKey === acckey && !branchChkboxState?.[acckey]}
+              disabled={branchChkboxState?.[acckey]}
+            />
+          </Tooltip>
         </Field>
       </Accordion>
     </div>

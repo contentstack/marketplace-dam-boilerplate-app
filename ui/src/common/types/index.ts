@@ -269,3 +269,14 @@ export interface TypeIconElement {
   handleImageError: () => void;
   isConfigAvailable: boolean;
 }
+
+export type BranchOption = {
+  label: string;
+  value: string;
+  api_key: string;
+};
+export type MultiConfigBranchObj = {
+  [key: string]: string[];
+};
+export type TypeSelectOptions = Omit<BranchOption, "api_key">;
+export type TypeMultiBranch = Record<string, BranchOption[]>;

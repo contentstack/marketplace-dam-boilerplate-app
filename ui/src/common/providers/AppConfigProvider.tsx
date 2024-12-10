@@ -4,6 +4,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  useContext,
 } from "react";
 import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 import { isEmpty } from "lodash";
@@ -14,6 +15,7 @@ import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import CustomFieldUtils from "../utils/CustomFieldUtils";
+import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
@@ -26,6 +28,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const appConfig = useRef<GenericObjectType>();
 
   const { location } = useAppLocation();
+  const { appSdk } = useContext(MarketplaceAppContext);
 
   // state for configuration
   const [installation, setInstallation] = React.useState<Props>({});
@@ -37,8 +40,13 @@ const AppConfigProvider: React.FC = function ({ children }) {
     configuration,
     serverConfiguration,
   }: TypeAppSdkConfigState) => {
+    let allBranches = [];
+    if (appSdk) {
+      allBranches = appSdk?.stack?.getAllBranches();
+    }
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
+    const lengthExceeded: string[] = [];
 
     const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
       configuration,
@@ -47,13 +55,20 @@ const AppConfigProvider: React.FC = function ({ children }) {
 
     Object.entries(flatStructure)?.forEach(
       ([objKey, objValue]: [string, string]) => {
-        const key = objKey.split(".")?.at(-1);
-        if (key && requiredFields?.includes(key)) {
+        const key: string = objKey.split(".")?.at(-1) ?? "";
+        if (requiredFields?.includes(key)) {
           const value =
             typeof objValue === "boolean" ? `${objValue}` : objValue;
-          const missingValue = objKey?.split(".multi_config_keys.")?.at(-1);
-          if (!value && missingValue) {
-            missingValues?.push(missingValue);
+          const keySplit = objKey?.split(".multi_config_keys.")?.at(-1);
+          if (!value && keySplit) {
+            missingValues?.push(keySplit);
+          }
+          if (
+            configInputFields?.[key]?.maxLength &&
+            value?.length > configInputFields?.[key]?.maxLength &&
+            keySplit
+          ) {
+            lengthExceeded?.push(keySplit);
           }
         }
       }
@@ -65,11 +80,24 @@ const AppConfigProvider: React.FC = function ({ children }) {
         serverConfiguration
       )) ?? false;
 
-    if (isConfigValid || missingValues?.length) {
+    let errorMsg = "";
+    if (isConfigValid) errorMsg = disableMsg;
+    else if (missingValues?.length)
+      errorMsg = localeTexts.ConfigFields.missingCredentials;
+    else if (lengthExceeded?.length)
+      errorMsg = localeTexts.ConfigFields.maxLengthExceeded;
+    else if (configuration?.default_multi_config_key === "")
+      errorMsg = localeTexts.ConfigFields.missingDefaultConfig;
+
+    if (
+      allBranches?.length ===
+      Object.keys(configuration?.multi_config_branches ?? {})?.length
+    )
+      errorMsg = "";
+
+    if (errorMsg) {
       appConfig?.current?.setValidity(false, {
-        message: isConfigValid
-          ? disableMsg
-          : localeTexts.ConfigFields.missingCredentials,
+        message: errorMsg,
       });
     } else {
       appConfig?.current?.setValidity(true);

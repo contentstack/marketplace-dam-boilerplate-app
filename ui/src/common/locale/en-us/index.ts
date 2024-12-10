@@ -11,7 +11,16 @@ const localeTexts = {
       },
       defaultLabel: "Default",
       checkboxText: "Set as Default",
+      branchBoxText: "Enable Config for Contentstack Branches",
+      helptext:
+        "Toggle this option to enable multi-config support for Contentstack Branches",
       btnText: "New Configuration",
+      tooltip: {
+        branchsupport:
+          "'CS Branches' support is unavailable for this configuration as 'Set as Default' is enabled.",
+        setasdefault:
+          "'Set as Default' is unavailable for this configuration as 'CS Branches' is enabled.",
+      },
     },
     accModal: {
       header: "Add Configuration",
@@ -80,7 +89,11 @@ const localeTexts = {
         limitError: "Error: Limit of 150 options exceeded",
       },
     },
-    missingCredentials: "Missing Required Fields",
+    missingCredentials:
+      "Required fields are missing. Please provide all necessary details.",
+    maxLengthExceeded:
+      "The field(s) exceed the maximum allowed character limit.",
+    missingDefaultConfig: "Please select a default configuration.",
     emptyValue: "Field Value Missing",
   },
   CustomFields: {
@@ -139,6 +152,7 @@ const localeTexts = {
   },
   Warnings: {
     incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
+    defaultLabelEmpty: "Error: No configuration available",
   },
   AppFailed: {
     Message1: "App Location Iniailization Failed.",

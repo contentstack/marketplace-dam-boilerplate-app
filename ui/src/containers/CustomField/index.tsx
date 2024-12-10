@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* Import React modules */
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 /* Import ContentStack modules */
 import { Button, Notification, Tooltip } from "@contentstack/venus-components";
 /* Import our modules */
@@ -19,7 +20,7 @@ import "./styles.scss";
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
 const CustomField: React.FC = function () {
-  const { appFailed } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk } = useContext(MarketplaceAppContext);
   const {
     renderAssets,
     setRenderAssets,
@@ -42,40 +43,91 @@ const CustomField: React.FC = function () {
   );
   // window variable for selector page
   let selectorPageWindow: any;
+  // state for current branch
+  const [currentBranch, setCurrentBranch] = useState<string>("");
 
+  const validateLabel = (uniqueConfigs: string[], label: string) =>
+    !uniqueConfigs?.includes(label) ? label : null;
+
+  // get current config label based on "default_multi_config_key" and "contentTypeConfig"
   const getCurrentConfigLabel = () => {
+    let uniqueConfigs: any = new Set(
+      Object.values(state?.config?.multi_config_branches)?.flat()
+    );
+    uniqueConfigs = [...uniqueConfigs];
     const { config_label: configLabel, locale } = state?.contentTypeConfig;
-    let finalConfigLabel =
-      configLabel?.[0] ?? state?.config?.default_multi_config_key;
+    let finalConfigLabel = state?.config?.default_multi_config_key;
+    finalConfigLabel =
+      validateLabel(uniqueConfigs, configLabel?.[0]) ?? finalConfigLabel;
     if (locale?.[currentLocale]?.config_label?.length) {
-      finalConfigLabel = locale?.[currentLocale]?.config_label?.[0];
+      finalConfigLabel =
+        validateLabel(
+          uniqueConfigs,
+          locale?.[currentLocale]?.config_label?.[0]
+        ) ?? finalConfigLabel;
     }
     return finalConfigLabel;
   };
 
+  // get current active branch from appSdk
+  useEffect(() => {
+    if (appSdk) {
+      const activeBranch = appSdk?.stack?.getCurrentBranch();
+      if (activeBranch?.uid) setCurrentBranch(activeBranch?.uid);
+    }
+  }, [appSdk]);
+
+  useEffect(() => {
+    if (Object.keys(state?.config)?.length && !getCurrentConfigLabel()) {
+      setIsError(true);
+      setWarningText(localeTexts.Warnings.defaultLabelEmpty);
+    }
+  }, [state]);
+
+  // get config object (based on deafult|branch|locale|multi-config)
   const getConfig = () => {
     const { config, contentTypeConfig } = state;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { multi_config_keys, default_multi_config_key } = config;
+
+    const {
+      multi_config_keys,
+      default_multi_config_key,
+      multi_config_branches,
+    } = config;
+
+    // multi-config enabled
     if (Object.keys(multi_config_keys ?? {})?.length) {
-      const finalConfigLabel = getCurrentConfigLabel();
-      const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
+      let multiConfig = {};
+      // branch config is enabled
+      const branchLabel = multi_config_branches?.[currentBranch];
+      if (branchLabel) {
+        multiConfig = multi_config_keys?.[branchLabel] ?? {};
+      } else {
+        // identify config label based on default_label and Contenttype Config
+        const finalConfigLabel = getCurrentConfigLabel();
+        multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
+      }
 
       let finalConfig = { ...config };
-      if (default_multi_config_key) {
+      if (default_multi_config_key || Object.keys(multi_config_keys).length) {
         finalConfig = {
           ...config,
           selected_config: {
             ...multiConfig,
           },
         };
-        delete finalConfig.default_multi_config_key;
-        delete finalConfig.multi_config_keys;
       }
+      if (default_multi_config_key || default_multi_config_key === "")
+        delete finalConfig.default_multi_config_key;
+      if (multi_config_keys) delete finalConfig.multi_config_keys;
+      if (multi_config_branches) delete finalConfig.multi_config_branches;
 
       const finalContentTypeConfig = { ...contentTypeConfig };
-      if (finalContentTypeConfig?.advanced)
-        delete finalContentTypeConfig.advanced;
+
+      if (finalContentTypeConfig?.advanced) {
+        const { max_limit, height, width, size, ...restAdvanced } =
+          finalContentTypeConfig?.advanced;
+        finalContentTypeConfig.advanced = restAdvanced;
+      }
       if (finalContentTypeConfig?.config_label)
         delete finalContentTypeConfig.config_label;
       if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;

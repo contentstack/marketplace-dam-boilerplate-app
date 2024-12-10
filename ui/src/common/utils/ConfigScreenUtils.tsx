@@ -1,5 +1,11 @@
 import { Notification } from "@contentstack/venus-components";
-import { Configurations, Props, TypeOption } from "../types";
+import {
+  Configurations,
+  Props,
+  TypeOption,
+  BranchOption,
+  MultiConfigBranchObj,
+} from "../types";
 import rootConfig from "../../root_config";
 
 // function to merge 2 objects
@@ -144,6 +150,44 @@ const getIntialValueofComponents = ({
   return { radioValuesObj, selectValuesObj };
 };
 
+const generateSelectedBranchOptions = (
+  multiConfigBranchObj: MultiConfigBranchObj,
+  branchOptions: BranchOption[]
+): Record<string, BranchOption[]> => {
+  const branchStateObj: Record<string, BranchOption[]> = {};
+  Object.entries(multiConfigBranchObj)?.forEach(([branch, configLabels]) => {
+    const item = branchOptions?.find(
+      (branchOption) => branchOption?.value === branch
+    );
+    if (item) {
+      configLabels?.forEach((label) => {
+        if (!branchStateObj?.[label]) {
+          branchStateObj[label] = [];
+        }
+        branchStateObj?.[label]?.push(item);
+      });
+    }
+  });
+  return branchStateObj;
+};
+const generateMultiBranchConfig = (
+  multiBranch: Record<
+    string,
+    { label: string; value: string; api_key: string }[]
+  >
+): Record<string, string[]> => {
+  const multiBranchObj: Record<string, string[]> = {};
+  Object.entries(multiBranch)?.forEach(([configLabel, branchOptions]) => {
+    branchOptions?.forEach((branch) => {
+      if (!multiBranchObj?.[branch?.value]) {
+        multiBranchObj[branch?.value] = [];
+      }
+      multiBranchObj?.[branch?.value]?.push(configLabel);
+    });
+  });
+  return multiBranchObj;
+};
+
 const ConfigScreenUtils = {
   mergeObjects,
   toastMessage,
@@ -152,6 +196,8 @@ const ConfigScreenUtils = {
   getIntialValueofComponents,
   getDefaultInputValues,
   getSaveConfigOptions,
+  generateSelectedBranchOptions,
+  generateMultiBranchConfig,
 };
 
 export default ConfigScreenUtils;

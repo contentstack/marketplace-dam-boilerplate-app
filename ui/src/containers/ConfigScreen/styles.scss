@@ -217,14 +217,10 @@
 
   & .Field {
     padding: 24px 24px 0 24px !important;
-
-    & .Checkbox {
-      margin: 10px !important;
-    }
   }
 
   & .multi-config-default-checkbox {
-    padding: 30px 24px !important;
+    padding: 35px 0 24px 32px !important;
 
     & .Checkbox__label {
       font-family: Inter;
@@ -233,6 +229,24 @@
       font-weight: 400;
       letter-spacing: 0.16px;
       color: #212121;
+    }
+  }
+
+  & .multi-config-branch-checkbox {
+    padding: 24px 24px 0 24px !important;
+
+    & .Select {
+      min-width: 200px !important;
+      width: 350px !important;
+    }
+
+    & .Select__menu {
+      min-width: 150px !important;
+      width: 250px !important;
+
+      & .Select__menu-list {
+        max-height: 250px !important;
+      }
     }
   }
 
@@ -309,5 +323,22 @@
         text-align: center;
       }
     }
+  }
+}
+
+.Checkbox .Checkbox__label {
+  display: inline !important;
+}
+
+.multi-config-toggle {
+  & div {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16.2px;
+    font-family: Inter;
+  }
+  & span .tippy-wrapper {
+    margin-left: 8px;
+    margin-right: 0;
   }
 }
