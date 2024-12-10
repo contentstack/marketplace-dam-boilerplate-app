@@ -53,14 +53,6 @@ export const TextInputField = function ({
         ]?.[objKey];
   }
 
-  const debouncedUpdateConfig = useCallback(
-    debounce(
-      (...args: [React.ChangeEvent<HTMLInputElement>]) => updateConfig(...args),
-      300
-    ),
-    []
-  );
-
   return (
     <Field>
       <FieldLabel
@@ -83,9 +75,7 @@ export const TextInputField = function ({
         hideCharCountError={false}
         placeholder={objValue?.placeholderText}
         name={`${acckey}$--${objKey}`}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          debouncedUpdateConfig(e)
-        }
+        onChange={updateConfig}
         type={objValue?.inputFieldType}
         canShowPassword
         data-testid="text_input"
