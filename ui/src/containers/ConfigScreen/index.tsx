@@ -65,6 +65,7 @@ const ConfigScreen: React.FC = function () {
       configValue,
       saveInConfig,
       saveInServerConfig,
+      isMultiConfig,
     ] = args;
     const configToUpdate: TypeUpdateTrigger = { configName, configValue };
     if (configLabel)
@@ -72,6 +73,7 @@ const ConfigScreen: React.FC = function () {
     if (saveInConfig) configToUpdate.saveInConfig = saveInConfig;
     if (saveInServerConfig)
       configToUpdate.saveInServerConfig = saveInServerConfig;
+    if (isMultiConfig) configToUpdate.isMultiConfig = isMultiConfig;
     setCustomUpdateTrigger(configToUpdate);
   };
 
@@ -105,6 +107,14 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
+  useEffect(() => {
+    const defaultLabel =
+      installationData?.configuration?.default_multi_config_key;
+    if (defaultLabel) {
+      handleDefaultConfigFn({ target: { checked: true } }, defaultLabel);
+    }
+  }, []);
+
   const filterFieldsForMultiConfig = () => {
     const accConfigFields: Configurations = {};
     const accServerFields: Configurations = {};
@@ -135,7 +145,8 @@ const ConfigScreen: React.FC = function () {
         | React.ChangeEvent<HTMLInputElement>
         | { target: { name: string; value: any } },
       inConfig?: boolean,
-      inServerConfig?: boolean
+      inServerConfig?: boolean,
+      isMultiConfig?: boolean
     ) => {
       const { name: fieldName, value } = e?.target ?? {};
       let fieldValue = value;
@@ -162,8 +173,9 @@ const ConfigScreen: React.FC = function () {
 
       if (inConfig || configInputFields?.[configFieldName]?.saveInConfig) {
         if (
-          configInputFields?.[configFieldName]?.isMultiConfig &&
-          mutiConfigName
+          (inConfig && isMultiConfig && mutiConfigName) ||
+          (configInputFields?.[configFieldName]?.isMultiConfig &&
+            mutiConfigName)
         ) {
           updatedConfig.multi_config_keys[mutiConfigName][configFieldName] =
             fieldValue;
@@ -177,8 +189,9 @@ const ConfigScreen: React.FC = function () {
         configInputFields?.[configFieldName]?.saveInServerConfig
       ) {
         if (
-          configInputFields?.[configFieldName]?.isMultiConfig &&
-          mutiConfigName
+          (inServerConfig && isMultiConfig && mutiConfigName) ||
+          (configInputFields?.[configFieldName]?.isMultiConfig &&
+            mutiConfigName)
         ) {
           updatedServerConfig.multi_config_keys[mutiConfigName][
             configFieldName
@@ -208,7 +221,7 @@ const ConfigScreen: React.FC = function () {
   );
 
   const handleMultiConfigLimit = (multiConfigObj: Props) => {
-    if (Object.keys(multiConfigObj ?? {})?.length === MAX_MULTI_CONFIG_LIMIT) {
+    if (Object.keys(multiConfigObj ?? {})?.length >= MAX_MULTI_CONFIG_LIMIT) {
       setIsAddBtnDisble(true);
     } else {
       setIsAddBtnDisble(false);
@@ -292,12 +305,13 @@ const ConfigScreen: React.FC = function () {
     configName: string,
     configValue: any,
     inConfig?: boolean,
-    inServerConfig?: boolean
+    inServerConfig?: boolean,
+    isMultiConfig?: boolean
   ) => {
     const value: { target: { name: string; value: any } } = {
       target: { name: configName, value: configValue },
     };
-    updateConfig(value, inConfig, inServerConfig);
+    updateConfig(value, inConfig, inServerConfig, isMultiConfig);
   };
 
   useEffect(() => {
@@ -305,14 +319,16 @@ const ConfigScreen: React.FC = function () {
       const {
         configName,
         configValue,
-        saveInConfig = true,
-        saveInServerConfig = false,
+        saveInConfig,
+        saveInServerConfig,
+        isMultiConfig,
       } = customUpdateTrigger;
       updateValueFunc(
         configName,
         configValue,
         saveInConfig,
-        saveInServerConfig
+        saveInServerConfig,
+        isMultiConfig
       );
     }
   }, [customUpdateTrigger]);

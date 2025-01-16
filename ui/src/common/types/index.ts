@@ -167,7 +167,8 @@ export type TypeFnHandleCustomConfigProps = [
   fieldName: string,
   fieldValue: any,
   saveInConfig?: boolean,
-  saveInServerConfig?: boolean
+  saveInServerConfig?: boolean,
+  isMultiConfig?: boolean
 ];
 
 export interface TypeCustomConfigParams {
@@ -231,6 +232,7 @@ export interface TypeUpdateTrigger {
   configValue: any;
   saveInConfig?: boolean;
   saveInServerConfig?: boolean;
+  isMultiConfig?: boolean;
 }
 
 export interface ConfigStateProviderProps {
