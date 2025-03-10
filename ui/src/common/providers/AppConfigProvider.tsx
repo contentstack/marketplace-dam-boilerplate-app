@@ -39,6 +39,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   }: TypeAppSdkConfigState) => {
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
+    let defaultEmpty = false;
 
     const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
       configuration,
@@ -48,13 +49,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
     Object.entries(flatStructure)?.forEach(
       ([objKey, objValue]: [string, string]) => {
         const key = objKey.split(".")?.at(-1);
-        if (key && requiredFields?.includes(key)) {
-          const value =
-            typeof objValue === "boolean" ? `${objValue}` : objValue;
-          const missingValue = objKey?.split(".multi_config_keys.")?.at(-1);
-          if (!value && missingValue) {
-            missingValues?.push(missingValue);
-          }
+        const value = typeof objValue === "boolean" ? `${objValue}` : objValue;
+        const missingValue = objKey?.split(".multi_config_keys.")?.at(-1);
+        if (key && requiredFields?.includes(key) && !value && missingValue) {
+          missingValues?.push(missingValue);
+        } else if (!value && key === "default_multi_config_key") {
+          defaultEmpty = true;
         }
       }
     );
@@ -65,15 +65,17 @@ const AppConfigProvider: React.FC = function ({ children }) {
         serverConfiguration
       )) ?? false;
 
-    if (isConfigValid || missingValues?.length) {
+    if (isConfigValid || missingValues?.length)
       appConfig?.current?.setValidity(false, {
         message: isConfigValid
           ? disableMsg
           : localeTexts.ConfigFields.missingCredentials,
       });
-    } else {
-      appConfig?.current?.setValidity(true);
-    }
+    else if (defaultEmpty)
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.noSelectedDefault,
+      });
+    else appConfig?.current?.setValidity(true);
   };
 
   const getCustomFieldConfigObj = (config: Props) => {

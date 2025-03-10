@@ -2,14 +2,18 @@ import { Notification } from "@contentstack/venus-components";
 import { Configurations, Props, TypeOption } from "../types";
 import rootConfig from "../../root_config";
 
+const isObject = (value: any) =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
 // function to merge 2 objects
-const mergeObjects = (target: any, source: any) => {
+const mergeObjects = (target: any = [], source: any = []) => {
   // Iterate through `source` properties and if an `Object` then
   // set property to merge of `target` and `source` properties
   Object.keys(source)?.forEach((key) => {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], mergeObjects(target[key], source[key]));
-    }
+    if (isObject(target) && isObject(source)) {
+      if (source[key] instanceof Object && key in target)
+        Object.assign(source[key], mergeObjects(target[key], source[key]));
+    } else Object.assign(source[key], target[key]);
   });
 
   // Join `target` and modified `source`
