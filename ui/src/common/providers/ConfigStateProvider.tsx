@@ -198,7 +198,11 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     setDamKeys(installationData?.configuration?.dam_keys ?? []);
     const keyOptions = installationData?.configuration?.keypath_options ?? [];
     setKeyPathOptions(keyOptions);
-    setCustomOptions([...customOptions, ...keyOptions]);
+    const optionsToAdd = keyOptions?.filter(
+      (option: TypeOption) =>
+        !customOptions?.some((opt: TypeOption) => opt?.value === option?.value)
+    );
+    setCustomOptions([...customOptions, ...optionsToAdd]);
 
     const configCopy = {
       ...installationData?.configuration,
