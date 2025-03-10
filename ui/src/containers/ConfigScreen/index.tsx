@@ -399,14 +399,13 @@ const ConfigScreen: React.FC = function () {
     delete serverMultiConfigData[configKey];
 
     if (defaultConfig === configKey) {
-      defaultConfig = Object.keys(multiConfigData)?.[0];
+      defaultConfig = "";
       setDefaultKey(defaultConfig);
     }
 
     handleMultiConfigLimit(multiConfigData ?? serverMultiConfigData);
 
-    setInstallationData({
-      ...installationData,
+    const finaldata = {
       configuration: {
         ...installationData?.configuration,
         multi_config_keys: { ...multiConfigData },
@@ -416,6 +415,12 @@ const ConfigScreen: React.FC = function () {
         ...installationData?.serverConfiguration,
         multi_config_keys: { ...serverMultiConfigData },
       },
+    };
+
+    checkConfigFields(finaldata);
+    setInstallationData({
+      ...installationData,
+      ...finaldata,
     });
   };
 
