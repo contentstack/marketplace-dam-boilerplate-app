@@ -175,6 +175,7 @@ export interface TypeCustomConfigParams {
   config: Props;
   serverConfig: Props;
   handleCustomConfigUpdate: (...args: TypeFnHandleCustomConfigProps) => void;
+  setSaveValidity: (isDisable: boolean, message?: string) => void;
 }
 
 export interface TypeCustomConfig {
