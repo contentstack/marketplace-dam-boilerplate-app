@@ -169,26 +169,26 @@ const ConfigScreen: React.FC = function () {
       const updatedServerConfig = installationData?.serverConfiguration ?? {};
 
       const descructValue = fieldName?.split("$--");
-      let mutiConfigName: string | undefined = descructValue?.[0];
+      let multiConfigName: string | undefined = descructValue?.[0];
       let configFieldName: string | undefined = descructValue?.[1];
 
       if (descructValue?.length === 1) {
-        mutiConfigName = undefined;
+        multiConfigName = undefined;
         configFieldName = descructValue?.[0];
       }
 
       if (inConfig !== undefined && inServerConfig !== undefined) {
-        mutiConfigName = undefined;
+        multiConfigName = undefined;
         configFieldName = fieldName;
       }
 
       if (inConfig || configInputFields?.[configFieldName]?.saveInConfig) {
         if (
-          (inConfig && isMultiConfig && mutiConfigName) ||
+          (inConfig && isMultiConfig && multiConfigName) ||
           (configInputFields?.[configFieldName]?.isMultiConfig &&
-            mutiConfigName)
+            multiConfigName)
         ) {
-          updatedConfig.multi_config_keys[mutiConfigName][configFieldName] =
+          updatedConfig.multi_config_keys[multiConfigName][configFieldName] =
             fieldValue;
         } else {
           updatedConfig[configFieldName] = fieldValue;
@@ -200,11 +200,11 @@ const ConfigScreen: React.FC = function () {
         configInputFields?.[configFieldName]?.saveInServerConfig
       ) {
         if (
-          (inServerConfig && isMultiConfig && mutiConfigName) ||
+          (inServerConfig && isMultiConfig && multiConfigName) ||
           (configInputFields?.[configFieldName]?.isMultiConfig &&
-            mutiConfigName)
+            multiConfigName)
         ) {
-          updatedServerConfig.multi_config_keys[mutiConfigName][
+          updatedServerConfig.multi_config_keys[multiConfigName][
             configFieldName
           ] = fieldValue;
         } else {
