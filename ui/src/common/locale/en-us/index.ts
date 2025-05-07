@@ -83,6 +83,7 @@ const localeTexts = {
     missingCredentials: "Missing Required Fields",
     emptyValue: "Field Value Missing",
     noSelectedDefault: "Please select at least one default configuration",
+    noConfiguration: "Please add at least one configuration",
   },
   CustomFields: {
     assetLimit: {

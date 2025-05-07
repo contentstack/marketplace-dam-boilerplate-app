@@ -114,9 +114,13 @@ const ConfigScreen: React.FC = function () {
   };
 
   useEffect(() => {
+    const multiConfigKeys = installationData?.configuration?.multi_config_keys;
+
     const defaultLabel =
       installationData?.configuration?.default_multi_config_key ??
-      "legacy_config";
+      (multiConfigKeys && "legacy_config" in multiConfigKeys
+        ? "legacy_config"
+        : undefined);
     if (defaultLabel) {
       handleDefaultConfigFn({ target: { checked: true } }, defaultLabel);
     }
