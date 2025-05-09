@@ -17,7 +17,7 @@ import CustomFieldUtils from "../utils/CustomFieldUtils";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  const { saveInConfig, saveInServerConfig } =
+  const { saveInConfig, saveInServerConfig, isLegacyEnabled } =
     ConfigScreenUtils.getSaveConfigOptions(configInputFields);
   const { jsonOptions, defaultFeilds, customJsonConfigObj } =
     ConfigScreenUtils.configRootUtils();
@@ -71,7 +71,15 @@ const AppConfigProvider: React.FC = function ({ children }) {
           ? disableMsg
           : localeTexts.ConfigFields.missingCredentials,
       });
-    else if (defaultEmpty)
+    else if (
+      defaultEmpty &&
+      Object.keys(configuration?.multi_config_keys ?? {}).length <= 0 &&
+      isLegacyEnabled
+    ) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.noConfiguration,
+      });
+    } else if (defaultEmpty)
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.noSelectedDefault,
       });
@@ -148,7 +156,6 @@ const AppConfigProvider: React.FC = function ({ children }) {
                 [value]: finalConfigValue,
               };
             }
-
             const multiConfigKeys = savedConfig?.multi_config_keys
               ? Object.keys(savedConfig?.multi_config_keys)
               : ["legacy_config"];
