@@ -18,7 +18,7 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   updateValueFunc,
 }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-
+  const { conditionalFieldExec } = rootConfig?.customWholeJson?.() ?? {};
   const {
     jsonOptions,
     defaultFeilds,
@@ -26,6 +26,7 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     saveInServerConfig,
     checkConfigFields,
     installationData,
+    setInstallationData,
   } = useContext(AppConfigContext);
 
   // local state for options of custom json
@@ -37,6 +38,9 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   // local state for selected options of custom json dropdown
   const [damKeys, setDamKeys] = React.useState<TypeOption[]>(
     defaultFeilds ?? []
+  );
+  const [conditionalDAMKeys, setConditionalDAMKeys] = React.useState<string[]>(
+    []
   );
   // saved custom key options
   const [keyPathOptions, setKeyPathOptions] = useState<TypeOption[]>([]);
@@ -193,9 +197,28 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     const { radioValuesKeys, selectValuesKeys } =
       ConfigScreenUtils.getDefaultInputValues(configInputFields);
 
+    const conditionalKeys = conditionalFieldExec(
+      installationData?.configuration,
+      installationData?.serverConfiguration
+    );
+    const updatedDAMKeys =
+      installationData?.configuration?.dam_keys?.map((keyObj: any) => {
+        if (conditionalKeys?.includes(keyObj?.value)) {
+          return {
+            ...keyObj,
+            isDisabled: true,
+          };
+        }
+        return keyObj;
+      }) ?? [];
+
+    if (updatedDAMKeys?.length) {
+      setConditionalDAMKeys(conditionalKeys);
+    }
+
     checkConfigFields(installationData);
     setIsCustom(installationData?.configuration?.is_custom_json ?? false);
-    setDamKeys(installationData?.configuration?.dam_keys ?? []);
+    setDamKeys([...updatedDAMKeys]);
     const keyOptions = installationData?.configuration?.keypath_options ?? [];
     setKeyPathOptions(keyOptions);
     const optionsToAdd = keyOptions?.filter(
@@ -237,6 +260,24 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     setRadioInputValues(radioValuesObj);
     setSelectInputValues(selectValuesObj);
   }, [installationData?.configuration, installationData?.serverConfiguration]);
+
+  useEffect(() => {
+    const keys = installationData?.configuration?.dam_keys;
+    if (keys?.length && conditionalDAMKeys?.length) {
+      const val = keys?.filter((k: { label: string; value: string }) =>
+        conditionalDAMKeys?.includes(k?.value)
+      );
+      if (val?.length) {
+        setInstallationData({
+          ...installationData,
+          configuration: {
+            ...installationData?.configuration,
+            dam_keys: damKeys,
+          },
+        });
+      }
+    }
+  }, [conditionalDAMKeys]);
 
   const contextValue = useMemo(
     () => ({
