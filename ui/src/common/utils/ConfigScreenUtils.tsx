@@ -73,20 +73,20 @@ const getSaveConfigOptions = (configInputFields: Configurations) => {
   const saveInConfig: Configurations = {};
   // config objs to be saved in serverConfiguration
   const saveInServerConfig: Configurations = {};
-  let isLegacyEnabled = false;
+  let isLegacy = true;
 
   Object.keys(configInputFields)?.forEach((field: string) => {
     if (configInputFields?.[field]?.saveInConfig)
       saveInConfig[field] = configInputFields[field];
     if (configInputFields?.[field]?.saveInServerConfig)
       saveInServerConfig[field] = configInputFields[field];
-    if (configInputFields?.[field]?.isMultiConfig) isLegacyEnabled = true;
+    if (configInputFields?.[field]?.isMultiConfig) isLegacy = false;
   });
 
   return {
     saveInConfig,
     saveInServerConfig,
-    isLegacyEnabled,
+    isLegacy,
   };
 };
 
