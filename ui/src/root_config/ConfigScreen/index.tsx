@@ -103,9 +103,15 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const newDefault: string[] = [];
+    return newDefault;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 
