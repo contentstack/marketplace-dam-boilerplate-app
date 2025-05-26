@@ -17,7 +17,7 @@ import CustomFieldUtils from "../utils/CustomFieldUtils";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  const { saveInConfig, saveInServerConfig, isLegacyEnabled } =
+  const { saveInConfig, saveInServerConfig, isLegacy } =
     ConfigScreenUtils.getSaveConfigOptions(configInputFields);
   const { jsonOptions, defaultFeilds, customJsonConfigObj } =
     ConfigScreenUtils.configRootUtils();
@@ -39,7 +39,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   }: TypeAppSdkConfigState) => {
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
-    let defaultEmpty = false;
+    let isDefaultLabel = false;
 
     const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
       configuration,
@@ -54,7 +54,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
         if (key && requiredFields?.includes(key) && !value && missingValue) {
           missingValues?.push(missingValue);
         } else if (!value && key === "default_multi_config_key") {
-          defaultEmpty = true;
+          isDefaultLabel = true;
         }
       }
     );
@@ -72,14 +72,14 @@ const AppConfigProvider: React.FC = function ({ children }) {
           : localeTexts.ConfigFields.missingCredentials,
       });
     else if (
-      defaultEmpty &&
-      Object.keys(configuration?.multi_config_keys ?? {}).length <= 0 &&
-      isLegacyEnabled
+      isDefaultLabel &&
+      Object.keys(configuration?.multi_config_keys ?? {}).length &&
+      !isLegacy
     ) {
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.noConfiguration,
       });
-    } else if (defaultEmpty)
+    } else if (isDefaultLabel && !isLegacy)
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.noSelectedDefault,
       });
