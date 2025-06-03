@@ -1,8 +1,8 @@
 /* Utility functions */
 
 import React from "react";
-import { Link } from "@contentstack/venus-components";
-import { TypeEmptySearchProps } from "../types";
+import { Link, Notification } from "@contentstack/venus-components";
+import { TypeEmptySearchProps, Props } from "../types";
 
 const getAssetType = (extension: string) => {
   extension = extension?.toLowerCase();
@@ -108,11 +108,23 @@ const EmptySearch = (texts: TypeEmptySearchProps) => ({
   moduleIcon: "Search",
 });
 
+const toastMessage = ({ type, content }: Props) => {
+  Notification({
+    notificationContent: content,
+    notifyProps: {
+      hideProgressBar: true,
+      className: "modal_toast_message",
+    },
+    type,
+  });
+};
+
 const utils = {
   getAssetType,
   getItemStatusMap,
   EmptySearch,
   getNoImageUrl,
+  toastMessage,
 };
 
 export default utils;

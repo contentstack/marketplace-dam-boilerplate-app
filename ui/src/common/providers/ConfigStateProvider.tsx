@@ -5,11 +5,11 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { Notification } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
 import { ConfigStateProviderProps, TypeOption } from "../types";
 import ConfigStateContext from "../contexts/ConfigStateContext";
 import AppConfigContext from "../contexts/AppConfigContext";
+import utils from "../utils";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import localeTexts from "../locale/en-us";
 
@@ -18,15 +18,14 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   updateValueFunc,
 }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  const { conditionalFieldExec } = rootConfig?.customWholeJson?.() ?? {};
   const {
     jsonOptions,
     defaultFeilds,
+    modifiedOptions,
     saveInConfig,
     saveInServerConfig,
     checkConfigFields,
     installationData,
-    setInstallationData,
   } = useContext(AppConfigContext);
 
   // local state for options of custom json
@@ -38,9 +37,6 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   // local state for selected options of custom json dropdown
   const [damKeys, setDamKeys] = React.useState<TypeOption[]>(
     defaultFeilds ?? []
-  );
-  const [conditionalDAMKeys, setConditionalDAMKeys] = React.useState<string[]>(
-    []
   );
   // saved custom key options
   const [keyPathOptions, setKeyPathOptions] = useState<TypeOption[]>([]);
@@ -100,6 +96,15 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
       return acc;
     }, {}),
   });
+
+  useEffect(() => {
+    setCustomOptions(
+      ConfigScreenUtils.mergeOptions(customOptions, modifiedOptions, "unset")
+    );
+    setDamKeys(
+      ConfigScreenUtils.mergeOptions(damKeys, modifiedOptions, "remove")
+    );
+  }, [modifiedOptions]);
 
   const trandformFieldName = (fieldName: string) => {
     let transformedFieldName = fieldName;
@@ -166,18 +171,14 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
         updateTypeObj(selectedKeys);
       }
     } else {
-      Notification({
-        displayContent: {
+      utils.toastMessage({
+        type: "error",
+        content: {
           error: {
             error_message:
               localeTexts.ConfigFields.customWholeJson.notification.limitError,
           },
         },
-        notifyProps: {
-          hideProgressBar: true,
-          className: "modal_toast_message",
-        },
-        type: "error",
       });
     }
   };
@@ -197,28 +198,9 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     const { radioValuesKeys, selectValuesKeys } =
       ConfigScreenUtils.getDefaultInputValues(configInputFields);
 
-    const conditionalKeys = conditionalFieldExec(
-      installationData?.configuration,
-      installationData?.serverConfiguration
-    );
-    const updatedDAMKeys =
-      installationData?.configuration?.dam_keys?.map((keyObj: any) => {
-        if (conditionalKeys?.includes(keyObj?.value)) {
-          return {
-            ...keyObj,
-            isDisabled: true,
-          };
-        }
-        return keyObj;
-      }) ?? [];
-
-    if (updatedDAMKeys?.length) {
-      setConditionalDAMKeys(conditionalKeys);
-    }
-
     checkConfigFields(installationData);
     setIsCustom(installationData?.configuration?.is_custom_json ?? false);
-    setDamKeys([...updatedDAMKeys]);
+    setDamKeys(installationData?.configuration?.dam_keys);
     const keyOptions = installationData?.configuration?.keypath_options ?? [];
     setKeyPathOptions(keyOptions);
     const optionsToAdd = keyOptions?.filter(
@@ -260,24 +242,6 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     setRadioInputValues(radioValuesObj);
     setSelectInputValues(selectValuesObj);
   }, [installationData?.configuration, installationData?.serverConfiguration]);
-
-  useEffect(() => {
-    const keys = installationData?.configuration?.dam_keys;
-    if (keys?.length && conditionalDAMKeys?.length) {
-      const val = keys?.filter((k: { label: string; value: string }) =>
-        conditionalDAMKeys?.includes(k?.value)
-      );
-      if (val?.length) {
-        setInstallationData({
-          ...installationData,
-          configuration: {
-            ...installationData?.configuration,
-            dam_keys: damKeys,
-          },
-        });
-      }
-    }
-  }, [conditionalDAMKeys]);
 
   const contextValue = useMemo(
     () => ({
