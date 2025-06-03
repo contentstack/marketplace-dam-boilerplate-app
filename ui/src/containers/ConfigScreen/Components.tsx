@@ -15,7 +15,6 @@ import {
   ButtonGroup,
   Button,
   Icon,
-  Notification,
 } from "@contentstack/venus-components";
 import parse from "html-react-parser";
 import { debounce } from "lodash";
@@ -29,10 +28,8 @@ import localeTexts from "../../common/locale/en-us";
 import InfoMessage from "../../components/InfoMessage";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateContext from "../../common/contexts/ConfigStateContext";
-import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import utils from "../../common/utils";
 import rootConfig from "../../root_config";
-/* Import node module CSS */
-/* Import our CSS */
 
 // component for Text Input Field
 export const TextInputField = function ({
@@ -65,7 +62,11 @@ export const TextInputField = function ({
         {objValue?.labelText}
       </FieldLabel>
       {objValue?.helpText && (
-        <Help text={objValue?.helpText} data-testid="text_help" />
+        <Help
+          text={objValue?.helpText}
+          data-testid="text_help"
+          type="primary"
+        />
       )}
       <TextInput
         id={`${objKey}-id`}
@@ -135,7 +136,11 @@ export const RadioInputField = function ({
         {objValue?.labelText}
       </FieldLabel>
       {objValue?.helpText && (
-        <Help text={objValue?.helpText} data-testid="radio_help" />
+        <Help
+          text={objValue?.helpText}
+          data-testid="radio_help"
+          type="primary"
+        />
       )}
       <div className="Radio-wrapper" data-testid="radio_wrapper">
         {objValue?.options?.map((option: TypeOption, index: number) => (
@@ -183,7 +188,11 @@ export const SelectInputField = function ({
         {objValue?.labelText}
       </FieldLabel>
       {objValue?.helpText && (
-        <Help text={objValue?.helpText} data-testid="select_help" />
+        <Help
+          text={objValue?.helpText}
+          data-testid="select_help"
+          type="primary"
+        />
       )}
       <Select
         onChange={(e: TypeOption) =>
@@ -218,8 +227,9 @@ const checkModalValue = ({
   if (!matchValue) {
     returnValue = [{ label: modalValue, value: modalValue }];
   } else {
-    Notification({
-      displayContent: {
+    utils.toastMessage({
+      type: "error",
+      content: {
         error: {
           error_message: `${localeTexts.ConfigFields.customWholeJson.notification.error.replace(
             "$var",
@@ -227,11 +237,6 @@ const checkModalValue = ({
           )}`,
         },
       },
-      notifyProps: {
-        hideProgressBar: true,
-        className: "modal_toast_message",
-      },
-      type: "error",
     });
   }
   return returnValue;
@@ -271,9 +276,12 @@ export const ModalComponent = function ({
       setOptions([...options, ...updatedValue]);
       setSelectOptions([...selectOptions, ...updatedValue]);
       if ([...options, ...selectOptions, ...updatedValue]?.length <= 150) {
-        ConfigScreenUtils.toastMessage(
-          localeTexts.ConfigFields.customWholeJson.modal.successToast
-        );
+        utils.toastMessage({
+          type: "success",
+          content: {
+            text: localeTexts.ConfigFields.customWholeJson.modal.successToast,
+          },
+        });
       }
     }
     if (action === "create") {
@@ -371,14 +379,16 @@ export const JsonComponent = function () {
     JSONCompContext: { handleModalValue, updateCustomJSON, updateTypeObj },
   } = useContext(ConfigStateContext);
   const [isModalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <Field className="json-field">
         <FieldLabel required htmlFor="is_custom_json" version="v2">
           {localeTexts.ConfigFields.entrySaveRadioButton.label}
         </FieldLabel>
-        <Help text={localeTexts.ConfigFields.entrySaveRadioButton.help} />
+        <Help
+          text={localeTexts.ConfigFields.entrySaveRadioButton.help}
+          type="primary"
+        />
         <div className="Radio-wrapper">
           <Radio
             id="wholeJSON"
@@ -416,7 +426,7 @@ export const JsonComponent = function () {
           <FieldLabel required htmlFor="dam_keys" version="v2">
             {localeTexts.ConfigFields.keysField.label}
           </FieldLabel>
-          <Help text={localeTexts.ConfigFields.keysField.help} />
+          <Help text={localeTexts.ConfigFields.keysField.help} type="primary" />
           <Select
             options={customOptions}
             onChange={updateTypeObj}

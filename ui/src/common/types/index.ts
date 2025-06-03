@@ -272,3 +272,8 @@ export interface TypeIconElement {
   handleImageError: () => void;
   isConfigAvailable: boolean;
 }
+
+export interface TypedefaultOp {
+  operation: "add" | "remove";
+  options: string[];
+}

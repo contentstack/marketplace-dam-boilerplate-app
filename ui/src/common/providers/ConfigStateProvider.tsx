@@ -5,11 +5,11 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { Notification } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
 import { ConfigStateProviderProps, TypeOption } from "../types";
 import ConfigStateContext from "../contexts/ConfigStateContext";
 import AppConfigContext from "../contexts/AppConfigContext";
+import utils from "../utils";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import localeTexts from "../locale/en-us";
 
@@ -18,10 +18,10 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
   updateValueFunc,
 }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-
   const {
     jsonOptions,
     defaultFeilds,
+    modifiedOptions,
     saveInConfig,
     saveInServerConfig,
     checkConfigFields,
@@ -97,6 +97,15 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
     }, {}),
   });
 
+  useEffect(() => {
+    setCustomOptions(
+      ConfigScreenUtils.mergeOptions(customOptions, modifiedOptions, "unset")
+    );
+    setDamKeys(
+      ConfigScreenUtils.mergeOptions(damKeys, modifiedOptions, "remove")
+    );
+  }, [modifiedOptions]);
+
   const trandformFieldName = (fieldName: string) => {
     let transformedFieldName = fieldName;
     if (fieldName?.includes("undefined$--"))
@@ -162,18 +171,14 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
         updateTypeObj(selectedKeys);
       }
     } else {
-      Notification({
-        displayContent: {
+      utils.toastMessage({
+        type: "error",
+        content: {
           error: {
             error_message:
               localeTexts.ConfigFields.customWholeJson.notification.limitError,
           },
         },
-        notifyProps: {
-          hideProgressBar: true,
-          className: "modal_toast_message",
-        },
-        type: "error",
       });
     }
   };
@@ -195,7 +200,7 @@ const ConfigStateProvider: React.FC<ConfigStateProviderProps> = function ({
 
     checkConfigFields(installationData);
     setIsCustom(installationData?.configuration?.is_custom_json ?? false);
-    setDamKeys(installationData?.configuration?.dam_keys ?? []);
+    setDamKeys(installationData?.configuration?.dam_keys);
     const keyOptions = installationData?.configuration?.keypath_options ?? [];
     setKeyPathOptions(keyOptions);
     const optionsToAdd = keyOptions?.filter(
