@@ -15,7 +15,6 @@ import {
   ButtonGroup,
   Button,
   Icon,
-  Notification,
 } from "@contentstack/venus-components";
 import parse from "html-react-parser";
 import { debounce } from "lodash";
@@ -29,10 +28,8 @@ import localeTexts from "../../common/locale/en-us";
 import InfoMessage from "../../components/InfoMessage";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateContext from "../../common/contexts/ConfigStateContext";
-import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import utils from "../../common/utils";
 import rootConfig from "../../root_config";
-/* Import node module CSS */
-/* Import our CSS */
 
 // component for Text Input Field
 export const TextInputField = function ({
@@ -230,8 +227,9 @@ const checkModalValue = ({
   if (!matchValue) {
     returnValue = [{ label: modalValue, value: modalValue }];
   } else {
-    Notification({
-      displayContent: {
+    utils.toastMessage({
+      type: "error",
+      content: {
         error: {
           error_message: `${localeTexts.ConfigFields.customWholeJson.notification.error.replace(
             "$var",
@@ -239,11 +237,6 @@ const checkModalValue = ({
           )}`,
         },
       },
-      notifyProps: {
-        hideProgressBar: true,
-        className: "modal_toast_message",
-      },
-      type: "error",
     });
   }
   return returnValue;
@@ -283,9 +276,12 @@ export const ModalComponent = function ({
       setOptions([...options, ...updatedValue]);
       setSelectOptions([...selectOptions, ...updatedValue]);
       if ([...options, ...selectOptions, ...updatedValue]?.length <= 150) {
-        ConfigScreenUtils.toastMessage(
-          localeTexts.ConfigFields.customWholeJson.modal.successToast
-        );
+        utils.toastMessage({
+          type: "success",
+          content: {
+            text: localeTexts.ConfigFields.customWholeJson.modal.successToast,
+          },
+        });
       }
     }
     if (action === "create") {
@@ -383,7 +379,6 @@ export const JsonComponent = function () {
     JSONCompContext: { handleModalValue, updateCustomJSON, updateTypeObj },
   } = useContext(ConfigStateContext);
   const [isModalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <Field className="json-field">
