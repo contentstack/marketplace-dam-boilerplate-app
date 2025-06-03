@@ -9,6 +9,7 @@ import {
   Props,
   TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
 import CustomConfig from "../Components/CustomConfig";
 
@@ -103,9 +104,25 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const options = ["option 10"];
+    const defaultOpObj: TypedefaultOp = { operation: "add", options };
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    // if (option add condition) {
+    //   conditionalDefaults?.push(defaultOpObj);
+    // } else { // option remove condition
+    //   defaultOpObj.operation = "remove";
+    //   conditionalDefaults?.push(defaultOpObj);
+    // }
+
+    return conditionalDefaults;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 

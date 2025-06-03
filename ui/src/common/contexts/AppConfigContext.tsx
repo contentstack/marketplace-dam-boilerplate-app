@@ -8,6 +8,7 @@ interface TypeAppConfigContext {
   appConfig: GenericObjectType;
   jsonOptions: TypeOption[] | [];
   defaultFeilds: TypeOption[];
+  modifiedOptions: TypeOption[];
   saveInConfig: Configurations;
   saveInServerConfig: Configurations;
   checkConfigFields: Function;
@@ -19,6 +20,7 @@ const AppConfigContext = createContext<TypeAppConfigContext>({
   appConfig: {},
   jsonOptions: [],
   defaultFeilds: [],
+  modifiedOptions: [],
   saveInConfig: {},
   saveInServerConfig: {},
   checkConfigFields: () => {},

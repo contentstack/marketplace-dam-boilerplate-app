@@ -1,7 +1,7 @@
 /* Import React modules */
 import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
-import { Button, Notification, Tooltip } from "@contentstack/venus-components";
+import { Button, Tooltip } from "@contentstack/venus-components";
 /* Import our modules */
 import localeTexts from "../../common/locale/en-us";
 import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
@@ -13,6 +13,7 @@ import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppConte
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types";
 import constants from "../../common/constants";
+import utils from "../../common/utils";
 /* Import our CSS */
 import "./styles.scss";
 
@@ -127,17 +128,14 @@ const CustomField: React.FC = function () {
       );
       if (assetLimit && finalAssets?.length > assetLimit) {
         finalAssets = finalAssets?.slice(0, assetLimit);
-        Notification({
-          displayContent: {
+        utils.toastMessage({
+          type: "error",
+          content: {
             error: {
               error_message:
                 localeTexts.CustomFields.assetLimit.notificationMsg,
             },
           },
-          notifyProps: {
-            hideProgressBar: true,
-          },
-          type: "error",
         });
       }
       if (finalAssets?.length) {
@@ -238,17 +236,13 @@ const CustomField: React.FC = function () {
             )}`;
           }
 
-          Notification({
-            displayContent: {
+          utils.toastMessage({
+            type: "error",
+            content: {
               error: {
                 error_message: message,
               },
             },
-            notifyProps: {
-              autoClose: true,
-              hideProgressBar: true,
-            },
-            type: "error",
           });
         }
       } else if (data?.message === "close") {

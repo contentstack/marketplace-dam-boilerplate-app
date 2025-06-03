@@ -9,7 +9,7 @@ import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.t
 import { isEmpty } from "lodash";
 import AppConfigContext from "../contexts/AppConfigContext";
 import rootConfig from "../../root_config";
-import { Props, TypeAppSdkConfigState } from "../types";
+import { Props, TypeAppSdkConfigState, TypeOption } from "../types";
 import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
@@ -17,10 +17,18 @@ import CustomFieldUtils from "../utils/CustomFieldUtils";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  const { saveInConfig, saveInServerConfig } =
+  const {
+    customJsonOptions,
+    defaultFeilds: rootConfigDefaultOptions,
+    conditionalFieldExec,
+  } = rootConfig?.customWholeJson?.() ?? {};
+  const { saveInConfig, saveInServerConfig, isLegacy } =
     ConfigScreenUtils.getSaveConfigOptions(configInputFields);
   const { jsonOptions, defaultFeilds, customJsonConfigObj } =
-    ConfigScreenUtils.configRootUtils();
+    ConfigScreenUtils.configRootUtils({
+      customJsonOptions,
+      rootConfigDefaultOptions,
+    });
 
   // ref for managing the save button disable state
   const appConfig = useRef<GenericObjectType>();
@@ -31,6 +39,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
   const [installation, setInstallation] = React.useState<Props>({});
   // check for initial state for rendering children
   const [initialStateLoaded, setInitialStateLoaded] = useState(false);
+  // state for handling disable state of keys in custom json options
+  const [modifiedOptions, setModifiedOptions] = useState<TypeOption[]>([]);
 
   // function to check if field values are empty and handles save button disable on empty field values
   const checkConfigFields = async ({
@@ -39,7 +49,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
   }: TypeAppSdkConfigState) => {
     const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
-    let defaultEmpty = false;
+    let isDefaultLabel = false;
 
     const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
       configuration,
@@ -54,7 +64,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
         if (key && requiredFields?.includes(key) && !value && missingValue) {
           missingValues?.push(missingValue);
         } else if (!value && key === "default_multi_config_key") {
-          defaultEmpty = true;
+          isDefaultLabel = true;
         }
       }
     );
@@ -71,7 +81,15 @@ const AppConfigProvider: React.FC = function ({ children }) {
           ? disableMsg
           : localeTexts.ConfigFields.missingCredentials,
       });
-    else if (defaultEmpty)
+    else if (
+      isDefaultLabel &&
+      Object.keys(configuration?.multi_config_keys ?? {}).length &&
+      !isLegacy
+    ) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.noConfiguration,
+      });
+    } else if (isDefaultLabel && !isLegacy)
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.noSelectedDefault,
       });
@@ -148,7 +166,6 @@ const AppConfigProvider: React.FC = function ({ children }) {
                 [value]: finalConfigValue,
               };
             }
-
             const multiConfigKeys = savedConfig?.multi_config_keys
               ? Object.keys(savedConfig?.multi_config_keys)
               : ["legacy_config"];
@@ -280,6 +297,14 @@ const AppConfigProvider: React.FC = function ({ children }) {
               checkEmptyMultiConfigKey(initialState);
             if (isEmptyKeyPresent)
               sdkConfigData?.setInstallationData({ ...sdkConfigData, ...data });
+
+            const modOptions = ConfigScreenUtils.getModifiedConditionalOptions(
+              initialState,
+              conditionalFieldExec,
+              rootConfigDefaultOptions
+            );
+            setModifiedOptions(modOptions);
+            initialState.configuration.dam_keys = modOptions;
             await setInstallation(initialState);
 
             setInitialStateLoaded(true);
@@ -297,13 +322,23 @@ const AppConfigProvider: React.FC = function ({ children }) {
 
   const setInstallationData = useCallback(
     async (data: TypeAppSdkConfigState) => {
-      const newInstallationData: TypeAppSdkConfigState = {
+      const updatedInstallationData: TypeAppSdkConfigState = {
         ...installation,
         configuration: data?.configuration,
         serverConfiguration: data?.serverConfiguration,
       };
-      await setInstallation(newInstallationData);
-      await location?.installation?.setInstallationData(newInstallationData);
+
+      const modOptions = ConfigScreenUtils.getModifiedConditionalOptions(
+        data,
+        conditionalFieldExec,
+        rootConfigDefaultOptions
+      );
+      setModifiedOptions(modOptions);
+      updatedInstallationData.configuration.dam_keys = modOptions;
+      await setInstallation(updatedInstallationData);
+      await location?.installation?.setInstallationData(
+        updatedInstallationData
+      );
     },
     [location]
   );
@@ -315,6 +350,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
       appConfig,
       jsonOptions,
       defaultFeilds,
+      modifiedOptions,
       saveInConfig,
       saveInServerConfig,
       checkConfigFields,
@@ -325,6 +361,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
       appConfig,
       jsonOptions,
       defaultFeilds,
+      modifiedOptions,
       saveInConfig,
       saveInServerConfig,
       checkConfigFields,
