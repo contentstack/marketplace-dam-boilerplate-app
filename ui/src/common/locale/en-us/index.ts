@@ -70,10 +70,7 @@ const localeTexts = {
           apply: "Create and Apply",
         },
         addOption: "New Key Field",
-        successToast: {
-          type: "success",
-          text: "Successfully added key path to options",
-        },
+        successToast: "Successfully added key path to options",
       },
       notification: {
         error: `The option "$var" already exists`,
