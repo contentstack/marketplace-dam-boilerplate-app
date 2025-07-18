@@ -53,9 +53,9 @@ Navigate to the root_config file (ui/src/root_config/index.tsx). In this file, y
 
 - [`customWholeJson`][customwholejson] Function`*`
 
-- [`checkConfigValidity`][checkConfigValidity] Function
-
 - [`conditionalFieldExec`][conditionalFieldExec] Function
+
+- [`checkConfigValidity`][checkConfigValidity] Function
 
 <br />
 
@@ -355,29 +355,6 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
-[checkConfigValidity]: #checkConfigValidity-function
-
-- #### `checkConfigValidity` Function
-
-  The function validates the values entered on the ConfigScreen and enables or disables the 'Save' button accordingly, displaying a custom error message if validation fails.
-
-  Function Parameters:
-
-  | Name         | Type   | Description                                       |
-  | ------------ | ------ | ------------------------------------------------- |
-  | config       | Object | config values saved in Configuration Object       |
-  | serverConfig | Object | config values saved in ServerConfiguration Object |
-
-  Return Value:
-
-  The function should return an object with the following structure:
-
-  ```
-  { disableSave: false, message: "Enter a Valid Config" }
-  ```
-
-<br />
-
 [conditionalFieldExec]: #conditionalFieldExec-function
 
 - #### `conditionalFieldExec` Function
@@ -397,6 +374,29 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
   ```
   [{ operation: "remove" | "add", options: ["option 1"] }]
+  ```
+
+<br />
+
+[checkConfigValidity]: #checkConfigValidity-function
+
+- #### `checkConfigValidity` Function
+
+  The function validates the values entered on the ConfigScreen and enables or disables the 'Save' button accordingly, displaying a custom error message if validation fails.
+
+  Function Parameters:
+
+  | Name         | Type   | Description                                       |
+  | ------------ | ------ | ------------------------------------------------- |
+  | config       | Object | config values saved in Configuration Object       |
+  | serverConfig | Object | config values saved in ServerConfiguration Object |
+
+  Return Value:
+
+  The function should return an object with the following structure:
+
+  ```
+  { disableSave: false, message: "Enter a Valid Config" }
   ```
 
 <br />
