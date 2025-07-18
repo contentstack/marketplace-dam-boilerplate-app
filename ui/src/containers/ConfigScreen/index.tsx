@@ -50,12 +50,8 @@ const ConfigScreen: React.FC = function () {
   // failed state received from MarketplaceAppContext
   const { appFailed } = useContext(MarketplaceAppContext);
   // context usage for global states thorughout the component
-  const {
-    installationData,
-    setInstallationData,
-    checkConfigFields,
-    appConfig,
-  } = useContext(AppConfigContext);
+  const { installationData, setInstallationData, checkConfigFields } =
+    useContext(AppConfigContext);
   const [customUpdateTrigger, setCustomUpdateTrigger] =
     useState<TypeUpdateTrigger>({} as TypeUpdateTrigger);
   // state for disabling multi-config Add Btn
@@ -87,8 +83,6 @@ const ConfigScreen: React.FC = function () {
       config: installationData?.configuration,
       serverConfig: installationData?.serverConfiguration,
       handleCustomConfigUpdate,
-      setSaveValidity: (isDisable: boolean = false, message?: string) =>
-        appConfig?.current?.setValidity(isDisable, { message }),
     }
   );
 
