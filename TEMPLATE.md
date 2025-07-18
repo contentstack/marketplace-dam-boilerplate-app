@@ -373,7 +373,7 @@ Implement the below mentioned functions to configure Custom Field and Selector P
   The function should return an array of objects, where each object specifies an operation ("remove" or "add") to be performed on the provided options.
 
   ```
-  [{ operation: "remove" | "add", options: ["option 1"] }]
+  [{ operation: "remove", options: ["option 1"] }]
   ```
 
 <br />
