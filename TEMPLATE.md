@@ -53,6 +53,8 @@ Navigate to the root_config file (ui/src/root_config/index.tsx). In this file, y
 
 - [`customWholeJson`][customwholejson] Function`*`
 
+- [`conditionalFieldExec`][conditionalFieldExec] Function
+
 - [`checkConfigValidity`][checkConfigValidity] Function
 
 <br />
@@ -248,7 +250,10 @@ Implement the below mentioned functions to configure Custom Field and Selector P
           handleCustomConfigUpdate: (
               configLabel: string,
               fieldName: string,
-              fieldValue: string
+              fieldValue: string,
+              saveInConfig:boolean,
+              saveInServerConfig:boolean,
+              isMultiConfig:boolean,
           ) => void;
         }
 
@@ -350,6 +355,29 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 <br />
 
+[conditionalFieldExec]: #conditionalFieldExec-function
+
+- #### `conditionalFieldExec` Function
+
+  The function dynamically updates the default fields of customJsonOptions based on user input config values.
+
+  Function Parameters:
+
+  | Name         | Type   | Description                                       |
+  | ------------ | ------ | ------------------------------------------------- |
+  | config       | Object | config values saved in Configuration Object       |
+  | serverConfig | Object | config values saved in ServerConfiguration Object |
+
+  Return Value:
+
+  The function should return an array of objects, where each object specifies an operation ("remove" or "add") to be performed on the provided options.
+
+  ```
+  [{ operation: "remove", options: ["option 1"] }]
+  ```
+
+<br />
+
 [checkConfigValidity]: #checkConfigValidity-function
 
 - #### `checkConfigValidity` Function
@@ -365,7 +393,7 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
   Return Value:
 
-  The function return an object with the following structure:
+  The function should return an object with the following structure:
 
   ```
   { disableSave: false, message: "Enter a Valid Config" }
@@ -621,18 +649,18 @@ All configurations will be done in this directory. You need to define and specif
 
 ---
 
-| Key                    | Type                  | Possible Values            | Description                                                                                            |
-| ---------------------- | --------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
-| DAM_APP_NAME\*         | string                | --                         | Name of the third-party DAM.                                                                           |
-| ASSET_NAME_PARAM\*     | string                | --                         | Asset Name Parameter Label.                                                                            |
-| RTE_DAM_ICON\*         | svg code of Logo icon | --                         | svg code of logo which is to be added to JSON RTE actions panel.                                       |
-| DIRECT_SELECTOR_PAGE\* | string                | "novalue", "url", "window", "authWindow" | Determine the flow of Selector Page. Further details can be found in the subsequent flow descriptions. |
-| ADVANCED_ASSET_PARAMS             | Object           | --                                       | Property used for handling various Asset Constraint Validations                                                                                         |
-| ADVANCED_ASSET_PARAMS.ASSET_NAME  | String           | --                                       | Property name for ASSET NAME. If present in nested structure, add nested structure reference.                                                           |
-| ADVANCED_ASSET_PARAMS.SIZE_NAME   | String           | --                                       | Property name for ASSET SIZE. If present in nested structure, add nested structure reference.                                                           |
-| ADVANCED_ASSET_PARAMS.SIZE_UNIT   | String           | "BYTES"(default), "KB", "MB", "GB", "TB" | Unit for ASSET SIZE provided by third-party dam.                                                                                                        |
-| ADVANCED_ASSET_PARAMS.HEIGHT_NAME | String           | --                                       | Property name for ASSET HEIGHT. If present in nested structure, add nested structure reference.                                                         |
-| ADVANCED_ASSET_PARAMS.WIDTH_NAME  | String           | --                                       | Property name for ASSET WIDTH. If present in nested structure, add nested structure reference.                                                          |
+| Key                               | Type                  | Possible Values                          | Description                                                                                            |
+| --------------------------------- | --------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| DAM_APP_NAME\*                    | string                | --                                       | Name of the third-party DAM.                                                                           |
+| ASSET_NAME_PARAM\*                | string                | --                                       | Asset Name Parameter Label.                                                                            |
+| RTE_DAM_ICON\*                    | svg code of Logo icon | --                                       | svg code of logo which is to be added to JSON RTE actions panel.                                       |
+| DIRECT_SELECTOR_PAGE\*            | string                | "novalue", "url", "window", "authWindow" | Determine the flow of Selector Page. Further details can be found in the subsequent flow descriptions. |
+| ADVANCED_ASSET_PARAMS             | Object                | --                                       | Property used for handling various Asset Constraint Validations                                        |
+| ADVANCED_ASSET_PARAMS.ASSET_NAME  | String                | --                                       | Property name for ASSET NAME. If present in nested structure, add nested structure reference.          |
+| ADVANCED_ASSET_PARAMS.SIZE_NAME   | String                | --                                       | Property name for ASSET SIZE. If present in nested structure, add nested structure reference.          |
+| ADVANCED_ASSET_PARAMS.SIZE_UNIT   | String                | "BYTES"(default), "KB", "MB", "GB", "TB" | Unit for ASSET SIZE provided by third-party dam.                                                       |
+| ADVANCED_ASSET_PARAMS.HEIGHT_NAME | String                | --                                       | Property name for ASSET HEIGHT. If present in nested structure, add nested structure reference.        |
+| ADVANCED_ASSET_PARAMS.WIDTH_NAME  | String                | --                                       | Property name for ASSET WIDTH. If present in nested structure, add nested structure reference.         |
 
 [json-rte-availability-of-dam-script-url]: #json-rte-availability-of-dam-script-urll
 
