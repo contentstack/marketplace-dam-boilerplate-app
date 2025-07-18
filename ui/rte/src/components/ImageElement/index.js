@@ -46,31 +46,6 @@ const ImageElement = function ({
   const initialDimensions = utils.getInitialDimensions(element, displayType);
 
   useEffect(() => {
-    let newAttrs = cloneDeep(element?.attrs);
-    const imagePath = rte?.getPath(element);
-
-    if (element?.attrs?.position) {
-      rte?.updateNode(
-        rteConfig?.damEnv?.DAM_APP_NAME,
-        {
-          ...newAttrs,
-        },
-        { at: imagePath }
-      );
-    }
-    if (!element?.attrs?.["asset-caption"]) {
-      newAttrs["asset-caption"] = "";
-      rte?.updateNode(
-        rteConfig?.damEnv?.DAM_APP_NAME,
-        {
-          ...newAttrs,
-        },
-        { at: imagePath }
-      );
-    }
-  }, [element?.attrs?.["asset-caption"]]);
-
-  useEffect(() => {
     const DOMVal = document?.querySelectorAll(
       `div[classname='${rteConfig?.damEnv?.DAM_APP_NAME}']`
     );
