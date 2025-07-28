@@ -84,7 +84,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
     else if (
       isDefaultLabel &&
       Object.keys(configuration?.multi_config_keys ?? {}).length &&
-      !isLegacy
+      isLegacy
     ) {
       appConfig?.current?.setValidity(false, {
         message: localeTexts.ConfigFields.noConfiguration,

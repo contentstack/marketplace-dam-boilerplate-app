@@ -299,11 +299,13 @@
 }
 
 .embed-download {
-  width: 180px !important;
-  height: 180px !important;
-  // margin-bottom: 2px !important;
-  border-radius: 10px !important;
+  border-radius: 10px;
   &:hover {
     border: 1px solid #6c5ce7;
   }
+}
+
+.embed-download-delete {
+  width: 180px;
+  height: 180px;
 }

@@ -277,7 +277,7 @@ const ImageElement = function ({
                   <div
                     className={`${tooltipclass} ${
                       !element?.attrs?.width && !element?.attrs?.height
-                        ? "embed-download"
+                        ? "embed-download-delete"
                         : ""
                     }`}
                     title={attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
