@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+import React from "react";
 import {
+  Props,
   TypeErrorFn,
   TypeRootSelector,
   TypeSelectorContainer,
@@ -8,7 +11,7 @@ import {
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
   interface Window {
-    BynderCompactView: any; // change according to DAM application
+    BynderCompactView: any; // chnage according to DAM application
   }
 }
 
