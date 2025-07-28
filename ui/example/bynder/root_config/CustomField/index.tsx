@@ -16,6 +16,7 @@ const filterAssetData = (assets: any[]) => {
       thumbnailUrl: files?.webImage?.url ?? "",
       previewUrl: files?.webImage?.url ?? "", // add this parameter if you want "Preview" in tooltip action items
       platformUrl: url ?? "", // add this parameter if you want "Open In DAM" in tooltip action items
+      cs_metadata: asset?.cs_metadata,
     };
   });
   return filterAssetArray;
