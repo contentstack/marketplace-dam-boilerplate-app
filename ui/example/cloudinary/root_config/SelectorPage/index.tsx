@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+import React from "react";
 import {
+  Props,
   TypeErrorFn,
   TypeRootSelector,
   TypeSelectorContainer,
@@ -12,7 +15,7 @@ declare global {
   }
 }
 
-declare let cloudinary: any; // declare your variable for DAM compact view here
+declare let cloudinary: any;
 
 const openComptactView = (
   config: any,

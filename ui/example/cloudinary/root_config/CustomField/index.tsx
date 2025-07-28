@@ -2,7 +2,14 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { TypeAsset, TypeRootCustomField } from "../../common/types";
+/* NOTE: Remove Functions which are not used */
+
+import {
+  Props,
+  TypeAsset,
+  TypeErrorFn,
+  TypeRootCustomField,
+} from "../../common/types";
 
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
@@ -23,9 +30,18 @@ const filterAssetData = (assets: any[]) => {
   });
   return filterAssetArray;
 };
+const handleConfigtoSelectorPage = (
+  config: Props,
+  contentTypeConfig: Props,
+  currentLocale: string
+) => {
+  /* Return Config to be used on selector page */
+  return config;
+};
 
 const rootCustomField: TypeRootCustomField = {
   filterAssetData,
+  handleConfigtoSelectorPage,
 };
 
 export default rootCustomField;
