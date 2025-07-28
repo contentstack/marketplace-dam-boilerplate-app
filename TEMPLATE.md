@@ -193,7 +193,7 @@ Implement the below mentioned functions to configure Custom Field and Selector P
 
 ## Availability of Auth Window + DAM Selector
 
-Availability of Auth Window Flow is to be used when the third-party DAM application has an Auth Window for Authentication and then it needs to open another window using API or SDK support for accessing their assets.
+The Auth Window Flow should be used when the third-party DAM application uses an authentication window and needs to open another window—via API or SDK support—to access its assets.
 
 `damEnv` Values for this flow:
 
@@ -202,7 +202,7 @@ IS_DAM_SCRIPT: true | false,
 DIRECT_SELECTOR_PAGE: "authWindow"
 ```
 
-Implement the below mentioned functions to configure Custom Field and Selector Page in the Custom DAM Selector Component Flow.
+Implement the functions mentioned below to configure the Custom Field and Selector Page in the Custom DAM Selector Component Flow.
 
 - ### Custom Field
 
