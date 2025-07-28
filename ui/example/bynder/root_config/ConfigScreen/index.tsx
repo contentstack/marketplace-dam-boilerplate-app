@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable arrow-body-style */
+
 import React from "react";
 import {
+  Configurations,
   TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
 
-const configureConfigScreen = ({
-  customConfig,
-}: {
-  customConfig: TypeCustomConfigParams;
-}) =>
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -17,17 +19,15 @@ const configureConfigScreen = ({
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputField, radioInputField, selectInputField and customInputField */
-
-  ({
+  return {
     org_url: {
       type: "textInputField",
       labelText: "Bynder Organization URL",
       helpText: "Enter Your Bynder Organization URL",
       placeholderText: "Enter Bynder Organization URL",
       inputFieldType: "url",
-      saveInConfig: true,
       saveInServerConfig: false,
-      isMultiConfig: true,
+      isMultiConfig: false,
     },
     language: {
       type: "selectInputField",
@@ -39,12 +39,11 @@ const configureConfigScreen = ({
         { label: "Dutch", value: "nl_NL" },
         { label: "German", value: "de_DE" },
         { label: "French", value: "fr_FR" },
-        { label: "Spanish", value: "es_ES" },
       ],
       defaultSelectedOption: "en_US",
       saveInConfig: true,
       saveInServerConfig: false,
-      isMultiConfig: true,
+      isMultiConfig: false,
     },
     mode: {
       type: "radioInputField",
@@ -63,9 +62,10 @@ const configureConfigScreen = ({
       defaultSelectedOption: "MultiSelect",
       saveInConfig: true,
       saveInServerConfig: false,
-      isMultiConfig: true,
+      isMultiConfig: false,
     },
-  });
+  };
+};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -89,9 +89,16 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["id", "name", "type", "url", "files"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    return conditionalDefaults;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 

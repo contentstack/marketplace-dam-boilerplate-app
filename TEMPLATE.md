@@ -768,7 +768,7 @@ Implement the below mentioned functions to configure JSON RTE in the Custom DAM 
 
 ## JSON RTE: Availability of Auth Window + DAM Selector
 
-Availability of Auth Window Flow is to be used when the third-party DAM application has an Auth Window for Authentication and then it needs to open another window using API or SDK support for accessing their assets.
+The Auth Window Flow should be used when the third-party DAM application uses an authentication window and needs to open another window—via API or SDK support—to access its assets.
 
 `damEnv` Values for this flow:
 
@@ -776,7 +776,7 @@ Availability of Auth Window Flow is to be used when the third-party DAM applicat
 DIRECT_SELECTOR_PAGE: "authWindow"
 ```
 
-Implement the below mentioned functions to configure JSON RTE in the Custom DAM Selector Component Flow.
+Implement the functions mentioned below to configure the JSON RTE in the Custom DAM Selector Component Flow.
 
 - [`getDisplayUrl`][getDisplayUrlJsonRteFunction] Function`*`
 
@@ -934,7 +934,7 @@ Implement the below mentioned functions to configure JSON RTE in the Custom DAM 
 
 - #### `handleConfigtoSelectorPage` JSON RTE Function
 
-  The function manages multiple config present (i.e Config from ConfigScreen, Config from Custom Field Advanced Option) and allows configuration selection that needs to be sent to a selector page.
+  The function manages multiple config present (i.e Config from ConfigScreen, Config from JSON RTE Advanced Option) and allows configuration selection that needs to be sent to a selector page.
 
   Function Parameters:
 
