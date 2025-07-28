@@ -68,7 +68,7 @@ const configureConfigScreen = ({
       defaultSelectedOption: "Option 1",
       saveInConfig: true,
       saveInServerConfig: false,
-      isMultiConfig: true,
+      isMultiConfig: false,
     },
   });
 
@@ -88,9 +88,16 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    return conditionalDefaults;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 
