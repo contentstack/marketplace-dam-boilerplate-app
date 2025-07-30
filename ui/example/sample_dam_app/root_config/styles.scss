@@ -22,6 +22,11 @@
     justify-content: flex-end;
   }
 
+  .asset-image {
+    max-width: 60px;
+    max-height: 50px;
+  }
+
   & .img-container,
   & .no-image-container {
     margin-top: -5px;

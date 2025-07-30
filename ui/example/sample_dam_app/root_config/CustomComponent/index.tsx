@@ -47,10 +47,16 @@ const tableColumns = [
     Header: "Image",
     id: "Image",
     accessor: (obj: any) =>
-      utils.getImageDOM(obj?.assetUrl, {
-        toolTip: CustomComponentTexts.NoImg.content,
-        altText: CustomComponentTexts.NoImg.alt,
-      }),
+      obj?.assetUrl ? (
+        <img
+          src={obj.assetUrl}
+          title={CustomComponentTexts.NoImg.content}
+          alt={CustomComponentTexts.NoImg.alt}
+          className="asset-image"
+        />
+      ) : (
+        <div>{CustomComponentTexts.NoImg.content}</div>
+      ),
     default: true,
     disableSortBy: true,
     columnWidthMultiplier: 1,
@@ -121,7 +127,6 @@ const CustomComponent: React.FC<TypeCustomComponent> = function ({
       setTableData(assetData);
     }
   };
-
   return (
     <div className="selector-custom-component">
       <InfiniteScrollTable

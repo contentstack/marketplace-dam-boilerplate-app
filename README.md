@@ -69,8 +69,6 @@ marketplace-dam-boilerplate-app
     │       │   ├── SelectorPage
     │       │   │   └── index.tsx
     │       │   ├── styles.scss
-    │       │   └── utils
-    │       │       └── index.tsx
     │       └── rte_config
     │           ├── DamEnv
     │           │   └── index.tsx
