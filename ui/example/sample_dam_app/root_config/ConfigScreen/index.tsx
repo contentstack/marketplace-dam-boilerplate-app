@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* NOTE: Remove Functions which are not used */
+/* eslint-disable arrow-body-style */
 
 import React from "react";
 import {
+  Configurations,
+  Props,
   TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
 
-const configureConfigScreen = ({
-  customConfig,
-}: {
-  customConfig: TypeCustomConfigParams;
-}) =>
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -20,7 +20,7 @@ const configureConfigScreen = ({
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputField, radioInputField, selectInputField and customInputField */
-  ({
+  return {
     textField: {
       type: "textInputField",
       labelText: "DAM Text Input",
@@ -70,7 +70,8 @@ const configureConfigScreen = ({
       saveInServerConfig: false,
       isMultiConfig: false,
     },
-  });
+  };
+};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
