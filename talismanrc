@@ -1,0 +1,6 @@
+fileignoreconfig:
+  - filename: ui/.env.example
+    checksum: 0449abb786c8e9bcf5577f87269b69dea42144aeeb09082af0d93758de65e57b
+  - filename: ui/rte/.env.example
+    checksum: 92906ae549a7dc9172e516dc8d7e234ba3191216ad24573f41661535a980fb6c
+version: "1.0"
