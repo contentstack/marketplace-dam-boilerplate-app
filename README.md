@@ -228,73 +228,81 @@ marketplace-dam-boilerplate-app
 </details>
 <br />
 
-- To start the development of a DAM app using boilerplate, first Clone DAM Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP.
+- To start developing your DAM app using this boilerplate, first clone the DAM Boilerplate GitHub repository and copy its contents into a new repository for your app.
 
-- The new app repo source folder will be referred to as APP_DIRECTORY from now on.
+- The source folder of your new app repository will be referred to as APP_DIRECTORY from this point onward.
 
-- Open the package.json inside the ui and rte folders (`<APP_DIRECTORY>/ui/package.json` & `<APP_DIRECTORY>/ui/rte/package.json`) and update the name attribute to your app name.
+- Open the package.json inside the ui and rte folders (`<APP_DIRECTORY>/ui/package.json` & `<APP_DIRECTORY>/ui/rte/package.json`) and update the name field with your app's name.
 
-- Open the root html file of the app (available at `<APP_DIRECTORY>/ui/public/index.html`) and update the `<title>` tag value to the name of your app.
+- Open the main HTML file located at `<APP_DIRECTORY>/ui/public/index.html` and update the `<title>` tag with your app's name.
 
-- Change the favicon.ico as per the requirement of your app. favicon.ico file is available at `<APP_DIRECTORY>/ui/public/favicon.ico`.
+- Replace the default favicon.ico with your app-specific icon. The file is located at `<APP_DIRECTORY>/ui/public/favicon.ico`.
 
 ## Environment Variables
 
-- `.env` files are required in both ui and ui/rte. Rename `.env.example` files to `.env` and add the following values.
+- `.env` files are required in both ui and ui/rte directories. Rename the existing `.env.example` files to `.env` and add the following values.
 
 - UI (<APP_DIRECTORY>/ui/.env) and JSON RTE (<APP_DIRECTORY>/ui/rte/.env) ENVIRONMENT VARIABLES
 
   ```
   REACT_APP_CUSTOM_FIELD_URL = http://localhost:4000
-  REACT_APP_REGION_MAPPING = '{"NA": {"JSON_RTE_URL": "https://rte-extension.contentstack.com"},"EU": {"JSON_RTE_URL": "https://eu-rte-extension.contentstack.com"},"AZURE_NA": {"JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com"},"AZURE_EU": {"JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com"}}'
+  REACT_APP_REGION_MAPPING='{
+  "NA": { "JSON_RTE_URL": "https://rte-extension.contentstack.com" },
+  "EU": { "JSON_RTE_URL": "https://eu-rte-extension.contentstack.com" },
+  "AZURE_NA": { "JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com" },
+  "AZURE_EU": { "JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com" },
+  "GCP_NA": { "JSON_RTE_URL": "https://gcp-na-rte-extension.contentstack.com" },
+  "GCP_EU": { "JSON_RTE_URL": "https://gcp-eu-rte-extension.contentstack.com" },
+  "AU": { "JSON_RTE_URL": "https://au-rte-extension.contentstack.com" }
+  }'
   ```
 
 ## Install Dependencies
 
-- In the terminal go to APP_DIRECTORY and install the necessary packages :
+1. Open a terminal, navigate to your APP_DIRECTORY, and install the necessary packages :
 
-  ```
-  cd <APP_DIRECTORY>
-  npm i
-  ```
+```
+cd <APP_DIRECTORY>
+npm i
+```
 
-- To install the necessary packages for ui , navigate to the ui folder
+2. Then, navigate to the ui directory and install its dependencies:
 
-  ```
-  cd <APP_DIRECTORY>/ui
-  npm i
-  ```
+```
+cd <APP_DIRECTORY>/ui
+npm i
+```
 
-- After you install the packages, run the following command in the ui folder to get started:
+3. After you install the dependencies, run the following command in the ui folder to get started:
 
-  - For Linux / MacOS
-
-    ```
-    npm run start
-    ```
-
-  - For Windows
-
-    ```
-    npm run winStart
-    ```
-
-The UI server will start at port 4000.
-
-- To install the necessary packages for rte , navigate to the rte folder
-
-  ```
-  cd <APP_DIRECTORY>/ui/rte
-  npm i
-  ```
-
-- After you install the packages, run the following command in the rte folder to start the webpack server.
+- For Linux / MacOS
 
   ```
   npm run start
   ```
 
-The webpack server will start at port 1268.
+- For Windows
+
+  ```
+  npm run winStart
+  ```
+
+The UI server will start on port 4000.
+
+4. Next, navigate to the rte folder and install the dependencies:
+
+```
+cd <APP_DIRECTORY>/ui/rte
+npm i
+```
+
+5. After you install the dependencies, run the following command in the rte folder to start the webpack server.
+
+```
+npm run start
+```
+
+The RTE webpack server will start on port 1268.
 
 ## Providers (Use of React's Contexts)
 
@@ -313,8 +321,7 @@ The webpack server will start at port 1268.
 
 ## Routes
 
-Each route represents one location. It is recommended to lazy load the route components to reduce the bundle
-size.
+Each route corresponds to a specific UI location. Lazy loading route components are recommended to reduce the bundle size.
 
 #### Existing Routes
 
@@ -322,7 +329,7 @@ size.
 - CustomField `(path = "/custom-field")`
 - SelectorPage `(path = "/selector-page")`
 
-#### Adding new route
+#### Adding a New Route
 
 - Create a new Route component inside route. Use default export
   - Inside `ui/src/containers/App/index.tsx`, lazy load the route component. Example:
@@ -350,11 +357,19 @@ size.
 
 ## Creating an app in Developer Hub/Marketplace
 
-- Go to developer hub at [NA Region](https://app.contentstack.com/#!/developerhub), [EU Region](https://eu-app.contentstack.com/#!/developerhub), [AZURE-NA Region](https://azure-na-app.contentstack.com/#!/developerhub), [AZURE-EU Region](https://azure-eu-app.contentstack.com/#!/developerhub).
+- Visit Developer Hub on the following region of your preference:
+
+  - [NA Region](https://app.contentstack.com/#!/developerhub)
+  - [EU Region](https://eu-app.contentstack.com/#!/developerhub)
+  - [AZURE-NA Region](https://azure-na-app.contentstack.com/#!/developerhub)
+  - [AZURE-EU Region](https://azure-eu-app.contentstack.com/#!/developerhub)
+  - [GCP-NA Region](https://gcp-na-app.contentstack.com/#!/developerhub)
+  - [GCP-EU Region](https://gcp-eu-app.contentstack.com/#!/developerhub)
+  - [AU Region](https://au-app.contentstack.com/#!/developerhub)
 
 - Create a new app by clicking `+ New App` button at top right and Select app type as `Stack App`, add Name and Description. The app will be initially private. To make an app public on Contextstack Marketplace, refer [App Submission and Approval Guide](https://www.contentstack.com/docs/developers/marketplace-platform-guides/app-submission-and-approval-guide).
 
-- After creating an app, you will be redirected to the Basic Information page. Add the icon for your app.
+- Once created, go to the Basic Information page and upload your app icon.
 
 - Open the UI Locations tab and add the URL of your app.
   For e.g. : https://localhost:4000
@@ -376,7 +391,7 @@ size.
 
 - Now install the app by clicking the Install App button at top right. From the next window, select the stack in which you want to install the app.
 
-> Note : You can give any path values but make sure the path value in `<APP_DIRECTORY>/ui/src/containers/App/index.tsx` and in UI location should be the same.
+> Note : Ensure the paths defined in `<APP_DIRECTORY>/ui/src/containers/App/index.tsx` match exactly with those set in the Developer Hub UI Location settings.
 
 ## Source code file locations for various ui location
 
@@ -422,9 +437,12 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 
 ## Steps for Developing Marketplace DAM App
 
-To develop your Marketplace DAM App, you have to customize `root_config` files for UI and `rte_config` files for JSON RTE as per your needs.
+To develop your Marketplace DAM App:
 
-Please refer to the [`TEMPLATE.md`](./TEMPLATE.md) file placed in `<APP_DIRECTORY>/TEMPLATE.md`, for more details.
+- Modify files in `root_config` for UI integration.
+- Modify files in `rte_config` for JSON RTE integration.
+
+Refer to the [`TEMPLATE.md`](./TEMPLATE.md) file located at `<APP_DIRECTORY>/TEMPLATE.md`, for more details.
 
 For reference purpose, Examples of DAM Apps like `Bynder` and `Cloudinary` are added to the `'example'` directory.
 

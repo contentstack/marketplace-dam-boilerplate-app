@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable arrow-body-style */
+
 import React from "react";
 import {
+  Configurations,
   TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
 
-const configureConfigScreen = ({
-  customConfig,
-}: {
-  customConfig: TypeCustomConfigParams;
-}) =>
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -17,8 +19,7 @@ const configureConfigScreen = ({
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputField, radioInputField, selectInputField and customInputField */
-
-  ({
+  return {
     cloudName: {
       type: "textInputField",
       labelText: "Cloud Name",
@@ -39,7 +40,8 @@ const configureConfigScreen = ({
       saveInServerConfig: false,
       isMultiConfig: true,
     },
-  });
+  };
+};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -64,10 +66,16 @@ const customWholeJson = () => {
   ];
 
   const defaultFeilds: string[] = ["public_id", "resource_type", "secure_url"];
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    return conditionalDefaults;
+  };
 
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 
