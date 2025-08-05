@@ -26,6 +26,7 @@ const configureConfigScreen = (
       helpText: "Enter Your Bynder Organization URL",
       placeholderText: "Enter Bynder Organization URL",
       inputFieldType: "url",
+      saveInConfig: true,
       saveInServerConfig: false,
       isMultiConfig: false,
     },
