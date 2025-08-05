@@ -246,7 +246,15 @@ marketplace-dam-boilerplate-app
 
   ```
   REACT_APP_CUSTOM_FIELD_URL = http://localhost:4000
-  REACT_APP_REGION_MAPPING = '{"NA": {"JSON_RTE_URL": "https://rte-extension.contentstack.com"},"EU": {"JSON_RTE_URL": "https://eu-rte-extension.contentstack.com"},"AZURE_NA": {"JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com"},"AZURE_EU": {"JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com"}}'
+  REACT_APP_REGION_MAPPING='{
+  "NA": { "JSON_RTE_URL": "https://rte-extension.contentstack.com" },
+  "EU": { "JSON_RTE_URL": "https://eu-rte-extension.contentstack.com" },
+  "AZURE_NA": { "JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com" },
+  "AZURE_EU": { "JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com" },
+  "GCP_NA": { "JSON_RTE_URL": "https://gcp-na-rte-extension.contentstack.com" },
+  "GCP_EU": { "JSON_RTE_URL": "https://gcp-eu-rte-extension.contentstack.com" },
+  "AU": { "JSON_RTE_URL": "https://au-rte-extension.contentstack.com" }
+  }'
   ```
 
 ## Install Dependencies
@@ -355,6 +363,9 @@ Each route corresponds to a specific UI location. Lazy loading route components 
   - [EU Region](https://eu-app.contentstack.com/#!/developerhub)
   - [AZURE-NA Region](https://azure-na-app.contentstack.com/#!/developerhub)
   - [AZURE-EU Region](https://azure-eu-app.contentstack.com/#!/developerhub)
+  - [GCP-NA Region](https://gcp-na-app.contentstack.com/#!/developerhub)
+  - [GCP-EU Region](https://gcp-eu-app.contentstack.com/#!/developerhub)
+  - [AU Region](https://au-app.contentstack.com/#!/developerhub)
 
 - Create a new app by clicking `+ New App` button at top right and Select app type as `Stack App`, add Name and Description. The app will be initially private. To make an app public on Contextstack Marketplace, refer [App Submission and Approval Guide](https://www.contentstack.com/docs/developers/marketplace-platform-guides/app-submission-and-approval-guide).
 
