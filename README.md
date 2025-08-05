@@ -426,9 +426,12 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 
 ## Steps for Developing Marketplace DAM App
 
-To develop your Marketplace DAM App, you have to customize `root_config` files for UI and `rte_config` files for JSON RTE as per your needs.
+To develop your Marketplace DAM App:
 
-Please refer to the [`TEMPLATE.md`](./TEMPLATE.md) file placed in `<APP_DIRECTORY>/TEMPLATE.md`, for more details.
+- Modify files in `root_config` for UI integration.
+- Modify files in `rte_config` for JSON RTE integration.
+
+Refer to the [`TEMPLATE.md`](./TEMPLATE.md) file located at `<APP_DIRECTORY>/TEMPLATE.md`, for more details.
 
 For reference purpose, Examples of DAM Apps like `Bynder` and `Cloudinary` are added to the `'example'` directory.
 
