@@ -5,85 +5,280 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
+import { isEmpty } from "lodash";
 import AppConfigContext from "../contexts/AppConfigContext";
 import rootConfig from "../../root_config";
-import { TypeAppSdkConfigState } from "../types";
+import { Props, TypeAppSdkConfigState, TypeOption } from "../types";
 import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
+import CustomFieldUtils from "../utils/CustomFieldUtils";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  const { saveInConfig, saveInServerConfig } =
+  const {
+    customJsonOptions,
+    defaultFeilds: rootConfigDefaultOptions,
+    conditionalFieldExec,
+  } = rootConfig?.customWholeJson?.() ?? {};
+  const { saveInConfig, saveInServerConfig, isLegacy } =
     ConfigScreenUtils.getSaveConfigOptions(configInputFields);
   const { jsonOptions, defaultFeilds, customJsonConfigObj } =
-    ConfigScreenUtils.configRootUtils();
+    ConfigScreenUtils.configRootUtils({
+      customJsonOptions,
+      rootConfigDefaultOptions,
+    });
 
   // ref for managing the save button disable state
-  const appConfig = useRef<any>();
+  const appConfig = useRef<GenericObjectType>();
 
   const { location } = useAppLocation();
 
-  // state for error handling of empty field values
-  const [errorState, setErrorState] = useState<any>([]);
   // state for configuration
-  const [installation, setInstallation] = React.useState<TypeAppSdkConfigState>(
-    {
-      configuration: {
-        /* Add all your config fields here */
-        /* The key defined here should match with the name attribute
-        given in the DOM that is being returned at last in this component */
-        ...Object.keys(saveInConfig)?.reduce((acc, value) => {
-          if (saveInConfig?.[value]?.type === "textInputFields")
-            return { ...acc, [value]: "" };
-          return {
-            ...acc,
-            [value]: saveInConfig?.[value]?.defaultSelectedOption || "",
-          };
-        }, {}),
-        ...customJsonConfigObj,
-      },
-      /* Use ServerConfiguration Only When Webhook is Enbaled */
-      serverConfiguration: {
-        ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
-          if (saveInServerConfig?.[value]?.type === "textInputFields")
-            return { ...acc, [value]: "" };
-          return {
-            ...acc,
-            [value]: saveInServerConfig?.[value]?.defaultSelectedOption || "",
-          };
-        }, {}),
-      },
-    }
-  );
+  const [installation, setInstallation] = React.useState<Props>({});
+  // check for initial state for rendering children
+  const [initialStateLoaded, setInitialStateLoaded] = useState(false);
+  // state for handling disable state of keys in custom json options
+  const [modifiedOptions, setModifiedOptions] = useState<TypeOption[]>([]);
 
   // function to check if field values are empty and handles save button disable on empty field values
-  const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
-    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
+  const checkConfigFields = async ({
+    configuration,
+    serverConfiguration,
+  }: TypeAppSdkConfigState) => {
+    const requiredFields = rootConfig.damEnv.REQUIRED_CONFIG_FIELDS;
     const missingValues: string[] = [];
+    let isDefaultLabel = false;
 
-    Object.entries({
-      ...configuration,
-      ...serverConfiguration,
-    })?.forEach(([key, value]: any) => {
-      if (!skipKeys?.includes(key)) {
-        if (
-          !value ||
-          (Array.isArray(value) && !value?.length) ||
-          !Object.keys(value)?.length
-        ) {
-          missingValues?.push(key);
+    const flatStructure: Record<string, string> = CustomFieldUtils.flatten({
+      configuration,
+      serverConfiguration,
+    });
+
+    Object.entries(flatStructure)?.forEach(
+      ([objKey, objValue]: [string, string]) => {
+        const key = objKey.split(".")?.at(-1);
+        const value = typeof objValue === "boolean" ? `${objValue}` : objValue;
+        const missingValue = objKey?.split(".multi_config_keys.")?.at(-1);
+        if (key && requiredFields?.includes(key) && !value && missingValue) {
+          missingValues?.push(missingValue);
+        } else if (!value && key === "default_multi_config_key") {
+          isDefaultLabel = true;
         }
       }
-    });
-    setErrorState(missingValues);
-    if (missingValues?.length) {
+    );
+
+    const { disableSave: isConfigValid, message: disableMsg } =
+      (await rootConfig?.checkConfigValidity?.(
+        configuration,
+        serverConfiguration
+      )) ?? false;
+
+    if (isConfigValid || missingValues?.length)
       appConfig?.current?.setValidity(false, {
-        message: localeTexts.ConfigFields.invalidCredentials,
+        message: isConfigValid
+          ? disableMsg
+          : localeTexts.ConfigFields.missingCredentials,
       });
-    } else {
-      appConfig?.current?.setValidity(true);
+    else if (
+      isDefaultLabel &&
+      Object.keys(configuration?.multi_config_keys ?? {}).length &&
+      isLegacy
+    ) {
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.noConfiguration,
+      });
+    } else if (isDefaultLabel && !isLegacy)
+      appConfig?.current?.setValidity(false, {
+        message: localeTexts.ConfigFields.noSelectedDefault,
+      });
+    else appConfig?.current?.setValidity(true);
+  };
+
+  const getCustomFieldConfigObj = (config: Props) => {
+    // eslint-disable-next-line
+    const { is_custom_json, dam_keys } = config;
+    if (!dam_keys && !is_custom_json?.toString()) {
+      return customJsonConfigObj;
     }
+    return {
+      is_custom_json,
+      dam_keys,
+    };
+  };
+
+  const getInitialInstallationState = (
+    installationDataFromSDK: TypeAppSdkConfigState
+  ) => {
+    const {
+      configuration: savedConfig,
+      serverConfiguration: savedServerCofig,
+    } = installationDataFromSDK;
+    let finalState = {};
+    if (isEmpty(savedConfig) && isEmpty(savedServerCofig)) {
+      finalState = {
+        configuration: {
+          ...Object.keys(saveInConfig)?.reduce((acc, value) => {
+            let finalConfigValue = "";
+            if (saveInConfig?.[value]?.type !== "textInputField")
+              finalConfigValue =
+                saveInConfig?.[value]?.defaultSelectedOption ?? "";
+            if (!saveInConfig?.[value]?.isMultiConfig) {
+              return {
+                ...acc,
+                [value]: finalConfigValue,
+              };
+            }
+            return { ...acc };
+          }, {}),
+          ...customJsonConfigObj,
+        },
+        serverConfiguration: {
+          ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
+            let finalServerConfigValue = "";
+            if (saveInServerConfig?.[value]?.type !== "textInputField")
+              finalServerConfigValue =
+                saveInServerConfig?.[value]?.defaultSelectedOption ?? "";
+            if (!saveInServerConfig?.[value]?.isMultiConfig) {
+              return {
+                ...acc,
+                [value]: finalServerConfigValue,
+              };
+            }
+            return { ...acc };
+          }, {}),
+        },
+      };
+    } else {
+      const appState = {
+        configuration: {
+          ...Object.keys(saveInConfig)?.reduce((acc, value) => {
+            let finalConfigValue = savedConfig?.[value] ?? "";
+            if (saveInConfig?.[value]?.type !== "textInputField")
+              finalConfigValue =
+                savedConfig?.[value] ??
+                saveInConfig?.[value]?.defaultSelectedOption ??
+                "";
+            if (!saveInConfig?.[value]?.isMultiConfig) {
+              return {
+                ...acc,
+                [value]: finalConfigValue,
+              };
+            }
+            const multiConfigKeys = savedConfig?.multi_config_keys
+              ? Object.keys(savedConfig?.multi_config_keys)
+              : ["legacy_config"];
+
+            return ConfigScreenUtils.mergeObjects(acc, {
+              multi_config_keys: multiConfigKeys?.reduce(
+                (nestedAcc: Props, nestedValue: string) => ({
+                  ...nestedAcc,
+                  [nestedValue]: {
+                    ...(nestedAcc?.[nestedValue] ?? {}),
+                    [value]: finalConfigValue,
+                  },
+                }),
+                {}
+              ),
+            });
+          }, {}),
+          ...getCustomFieldConfigObj(savedConfig),
+        },
+        serverConfiguration: {
+          ...Object.keys(saveInServerConfig)?.reduce((acc, value) => {
+            let finalServerConfigValue = savedServerCofig?.[value] ?? "";
+            if (saveInServerConfig?.[value]?.type !== "textInputField")
+              finalServerConfigValue =
+                savedServerCofig?.[value] ??
+                saveInServerConfig?.[value]?.defaultSelectedOption ??
+                "";
+            if (!saveInServerConfig?.[value]?.isMultiConfig) {
+              return {
+                ...acc,
+                [value]: finalServerConfigValue,
+              };
+            }
+
+            const multiServerConfigKeys = savedServerCofig?.multi_config_keys
+              ? Object.keys(savedServerCofig?.multi_config_keys)
+              : ["legacy_config"];
+
+            return ConfigScreenUtils.mergeObjects(acc, {
+              multi_config_keys: multiServerConfigKeys.reduce(
+                (nestedAcc: Props, nestedValue: string) => ({
+                  ...nestedAcc,
+                  [nestedValue]: {
+                    ...(nestedAcc?.[nestedValue] ?? {}),
+                    [value]: finalServerConfigValue,
+                  },
+                }),
+                {}
+              ),
+            });
+          }, {}),
+        },
+      };
+
+      if (
+        !savedConfig?.multi_config_keys &&
+        !savedServerCofig?.multi_config_keys
+      ) {
+        finalState = appState;
+      } else {
+        finalState = ConfigScreenUtils.mergeObjects(
+          appState,
+          installationDataFromSDK
+        );
+      }
+    }
+    return finalState;
+  };
+
+  const checkEmptyMultiConfigKey = ({
+    configuration,
+    serverConfiguration,
+  }: Props) => {
+    let isEmptyKeyPresent = false;
+    const newConfiguration = { ...configuration };
+    const rawConfigKeys: string[] = Object.keys(
+      configuration?.multi_config_keys ?? {}
+    );
+    const invalidConfigValues = rawConfigKeys?.filter(
+      (key) => key?.trim() === "" || key === "null" || key === "undefined"
+    );
+    if (invalidConfigValues?.length) {
+      isEmptyKeyPresent = true;
+      invalidConfigValues?.forEach((value) => {
+        delete newConfiguration[value];
+      });
+    }
+
+    const newServerConfiguration = { ...serverConfiguration };
+    const rawServerConfigKeys: string[] = Object.keys(
+      serverConfiguration?.multi_config_keys ?? {}
+    );
+    const invalidServerConfigValues = rawServerConfigKeys?.filter(
+      (key) => key?.trim() === "" || key === "null" || key === "undefined"
+    );
+    if (invalidServerConfigValues?.length) {
+      isEmptyKeyPresent = true;
+      invalidServerConfigValues?.forEach((value) => {
+        delete newServerConfiguration[value];
+      });
+    }
+    if (isEmptyKeyPresent) {
+      return {
+        isEmptyKeyPresent,
+        data: {
+          configuration: newConfiguration,
+          serverConfiguration: newServerConfiguration,
+        },
+      };
+    }
+    return {
+      isEmptyKeyPresent,
+    };
   };
 
   useEffect(() => {
@@ -94,13 +289,29 @@ const AppConfigProvider: React.FC = function ({ children }) {
       if (sdkConfigData) {
         sdkConfigData
           .getInstallationData()
-          .then((installationDataFromSDK: TypeAppSdkConfigState) => {
-            const installationDataOfSdk = ConfigScreenUtils.mergeObjects(
-              installation,
+          .then(async (installationDataFromSDK: TypeAppSdkConfigState) => {
+            const initialState: Props = getInitialInstallationState(
               installationDataFromSDK
             );
-            setInstallation(installationDataOfSdk);
-            checkConfigFields(installationDataOfSdk);
+            const { isEmptyKeyPresent, data } =
+              checkEmptyMultiConfigKey(initialState);
+            if (isEmptyKeyPresent)
+              sdkConfigData?.setInstallationData({ ...sdkConfigData, ...data });
+
+            const modOptions = ConfigScreenUtils.getModifiedConditionalOptions(
+              initialState,
+              conditionalFieldExec,
+              rootConfigDefaultOptions
+            );
+            setModifiedOptions(modOptions);
+            initialState.configuration.dam_keys = modOptions;
+            await setInstallation(initialState);
+
+            setInitialStateLoaded(true);
+            checkConfigFields({
+              configuration: initialState?.configuration,
+              serverConfiguration: initialState?.serverConfiguration,
+            });
           })
           .catch((err: Error) => {
             console.error(err);
@@ -110,37 +321,47 @@ const AppConfigProvider: React.FC = function ({ children }) {
   }, [location]);
 
   const setInstallationData = useCallback(
-    async (data: { [key: string]: any }) => {
-      const newInstallationData: TypeAppSdkConfigState = {
+    async (data: TypeAppSdkConfigState) => {
+      const updatedInstallationData: TypeAppSdkConfigState = {
         ...installation,
         configuration: data?.configuration,
         serverConfiguration: data?.serverConfiguration,
       };
-      await setInstallation(newInstallationData);
-      await location?.installation?.setInstallationData(newInstallationData);
+
+      const modOptions = ConfigScreenUtils.getModifiedConditionalOptions(
+        data,
+        conditionalFieldExec,
+        rootConfigDefaultOptions
+      );
+      setModifiedOptions(modOptions);
+      updatedInstallationData.configuration.dam_keys = modOptions;
+      await setInstallation(updatedInstallationData);
+      await location?.installation?.setInstallationData(
+        updatedInstallationData
+      );
     },
     [location]
   );
 
   const StateContext = useMemo(
     () => ({
-      errorState,
       installationData: installation,
       setInstallationData,
       appConfig,
       jsonOptions,
       defaultFeilds,
+      modifiedOptions,
       saveInConfig,
       saveInServerConfig,
       checkConfigFields,
     }),
     [
-      errorState,
       installation,
       setInstallationData,
       appConfig,
       jsonOptions,
       defaultFeilds,
+      modifiedOptions,
       saveInConfig,
       saveInServerConfig,
       checkConfigFields,
@@ -149,7 +370,7 @@ const AppConfigProvider: React.FC = function ({ children }) {
 
   return (
     <AppConfigContext.Provider value={StateContext}>
-      {children}
+      {initialStateLoaded && children}
     </AppConfigContext.Provider>
   );
 };

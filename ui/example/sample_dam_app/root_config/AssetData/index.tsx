@@ -1,18 +1,18 @@
-import eiffelTower from "../../Images/EiffelTower_Paris.jpeg";
-import algarDeBenagil from "../../Images/AlgarDeBenagil_Portugal.jpeg";
-import bari from "../../Images/Bari_Italy.jpeg";
-import christTheRedeemer from "../../Images/ChristTheRedeemer_Brazil.jpg";
-import colosseum from "../../Images/Colosseum_Rome.jpeg";
-import elephantRock from "../../Images/ElephantRock_SaudiArabia.jpeg";
-import fortCanning from "../../Images/FortCanningPark_Singapore.jpeg";
-import goldenBridge from "../../Images/GoldenBridge_Vietnam.jpeg";
-import hotSprings from "../../Images/HotSprings_Mexico.jpeg";
-import kohTao from "../../Images/KohTao_Thailand.jpg";
-import lakeComo from "../../Images/LakeComo_Italy.jpg";
-import lasVegas from "../../Images/Las_Vegas.jpeg";
-import medhufaru from "../../Images/Medhufaru_Maldives.jpeg";
-import santorini from "../../Images/Santorini_Greece.jpeg";
-import tajMahal from "../../Images/TajMahal_India.jpeg";
+import eiffelTower from "../Images/EiffelTower_Paris.jpeg";
+import algarDeBenagil from "../Images/AlgarDeBenagil_Portugal.jpeg";
+import bari from "../Images/Bari_Italy.jpeg";
+import christTheRedeemer from "../Images/ChristTheRedeemer_Brazil.jpg";
+import colosseum from "../Images/Colosseum_Rome.jpeg";
+import elephantRock from "../Images/ElephantRock_SaudiArabia.jpeg";
+import fortCanning from "../Images/FortCanningPark_Singapore.jpeg";
+import goldenBridge from "../Images/GoldenBridge_Vietnam.jpeg";
+import hotSprings from "../Images/HotSprings_Mexico.jpeg";
+import kohTao from "../Images/KohTao_Thailand.jpg";
+import lakeComo from "../Images/LakeComo_Italy.jpg";
+import lasVegas from "../Images/Las_Vegas.jpeg";
+import medhufaru from "../Images/Medhufaru_Maldives.jpeg";
+import santorini from "../Images/Santorini_Greece.jpeg";
+import tajMahal from "../Images/TajMahal_India.jpeg";
 
 const assetData = [
   {
@@ -21,6 +21,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: colosseum,
   },
@@ -30,6 +31,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: eiffelTower,
   },
@@ -39,6 +41,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: medhufaru,
   },
@@ -48,6 +51,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: lakeComo,
   },
@@ -57,6 +61,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: bari,
   },
@@ -66,6 +71,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: santorini,
   },
@@ -75,6 +81,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: hotSprings,
   },
@@ -84,6 +91,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: christTheRedeemer,
   },
@@ -93,6 +101,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: lasVegas,
   },
@@ -102,6 +111,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: fortCanning,
   },
@@ -111,6 +121,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: goldenBridge,
   },
@@ -120,6 +131,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: elephantRock,
   },
@@ -129,6 +141,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: kohTao,
   },
@@ -138,6 +151,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: algarDeBenagil,
   },
@@ -147,6 +161,7 @@ const assetData = [
     dimensions: {
       width: 100,
       height: 100,
+      size: 1000,
     },
     assetUrl: tajMahal,
   },

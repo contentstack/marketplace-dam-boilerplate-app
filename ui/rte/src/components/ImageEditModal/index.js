@@ -9,9 +9,9 @@ import {
   Field,
   FieldLabel,
   TextInput,
-  Checkbox,
   Select,
   Icon,
+  ToggleSwitch,
 } from "@contentstack/venus-components";
 import cloneDeep from "lodash.clonedeep";
 import { v4 } from "uuid";
@@ -22,8 +22,9 @@ import rteConfig from "../../rte_config/index";
 import localeTexts from "../../common/locale/en-us/index";
 
 const ImageEditModal = function (props) {
-  const { element, rte, icon, closeModal, path } = props;
-  const RTE_DISPLAY_URL = rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
+  const { element, rte, icon, closeModal, path, isConfigAvailable } = props;
+  const { preview: RTE_DISPLAY_URL } =
+    rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
   const [state, setState] = useState({});
   let modalTitle;
   switch (icon) {
@@ -65,7 +66,7 @@ const ImageEditModal = function (props) {
     closeModal();
     let node = rte?.getNode(rte?.getPath(element));
     let newNode = cloneDeep(node[0]);
-    newNode.attrs = { ...(state || {}) };
+    newNode.attrs = { ...(state ?? {}) };
     if (state?.inline) {
       if (rte?._adv?.editor?.isInline(element)) {
         rte?._adv?.Transforms?.setNodes(
@@ -203,10 +204,10 @@ const ImageEditModal = function (props) {
     const fname = attr[fieldName];
     await setState((prevState) => ({
       ...prevState,
-      [fname]: fieldValue || undefined,
+      [fname]: fieldValue ?? undefined,
       "redactor-attributes": {
         ...prevState["redactor-attributes"],
-        [fieldName]: fieldValue || undefined,
+        [fieldName]: fieldValue ?? undefined,
       },
     }));
   };
@@ -235,19 +236,38 @@ const ImageEditModal = function (props) {
       <ModalHeader title={modalTitle} closeModal={closeModal} />
       <ModalBody className="modalBodyCustomClass">
         <div className="scrte-form-container">
-          <div>
-            {!icon ? (
-              <img
-                src={RTE_DISPLAY_URL}
-                onError={utils.handleImageError}
-                className="modal"
-                alt={element?.attrs?.["asset-alt"]}
+          {isConfigAvailable && (
+            <div className="editModalImage">
+              {!icon ? (
+                <img
+                  src={RTE_DISPLAY_URL}
+                  onError={utils.handleImageError}
+                  className="modal"
+                  alt={element?.attrs?.["asset-alt"]}
+                />
+              ) : (
+                <Icon className="modal-icon" icon={icon} />
+              )}
+            </div>
+          )}
+          {!isConfigAvailable && (
+            <div
+              title={element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
+              className="noConfigAvailable"
+            >
+              <Icon
+                icon="WarningBoldNew"
+                version="v2"
+                size="large"
+                withTooltip
+                tooltipContent={
+                  localeTexts.RTE.assetValidation.configDeletedImg
+                }
+                tooltipPosition="top"
               />
-            ) : (
-              <Icon className="modal-icon" icon={icon} />
-            )}
-          </div>
-          <div>
+            </div>
+          )}
+          <div className="edit-modal-properties">
             <Field>
               <FieldLabel htmlFor="alt">
                 {constantValues.constants.altText.label}
@@ -257,18 +277,21 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.altText.placeholder}
                 name="alt"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
             <Field>
               <Select
                 selectLabel={constantValues.constants.alignment.label}
                 value={{
-                  label: state?.position || "none",
-                  value: state?.position || "none",
+                  label: state?.position ?? "none",
+                  value: state?.position ?? "none",
                   type: "select",
                 }}
                 onChange={updateData}
                 options={dropdownList}
+                version="v2"
+                width="100%"
               />
             </Field>
             <Field>
@@ -280,6 +303,7 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.caption.placeholder}
                 name="caption"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
             <Field>
@@ -291,29 +315,28 @@ const ImageEditModal = function (props) {
                 placeholder={constantValues.constants.embedLink.placeholder}
                 name="anchorLink"
                 onChange={updateData}
+                version="v2"
               />
             </Field>
-            <Field>
-              <Checkbox
+            <div className="rte-prop-toggle-wrap">
+              <ToggleSwitch
                 checked={state?.["redactor-attributes"]?.target ?? false}
                 name="target"
                 label={constantValues.constants.newTab.label}
                 onChange={updateData}
-                className="modal-checkbox"
               />
-            </Field>
-            <Field>
-              <Checkbox
+            </div>
+            <div className="rte-prop-toggle-wrap">
+              <ToggleSwitch
                 checked={state?.inline}
                 name="inline"
-                className="modal-checkbox"
                 label={constantValues.constants.inlineImage.label}
                 onChange={updateData}
                 disabled={
                   state?.position === "center" || state?.position === "none"
                 }
               />
-            </Field>
+            </div>
           </div>
         </div>
       </ModalBody>
@@ -322,7 +345,7 @@ const ImageEditModal = function (props) {
           <Button onClick={closeModal} buttonType="light">
             {localeTexts.RTE.button.cancel}
           </Button>
-          <Button onClick={handleSave} icon="SaveWhite">
+          <Button onClick={handleSave} icon={localeTexts.Icons.saveWhite}>
             {localeTexts.RTE.button.save}
           </Button>
         </ButtonGroup>

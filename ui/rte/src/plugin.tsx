@@ -14,7 +14,10 @@ export default ContentstackSDK.init()
 
     if (!RTE) return;
 
-    const DAM = RTE(rteConfig?.damEnv?.DAM_APP_NAME, (rte: any) => {
+    // @ts-ignore
+    const DAM = RTE(rteConfig?.damEnv?.DAM_APP_NAME, async (rte: any) => {
+      const config = await rte?.getConfig();
+      const availableConfig = Object.keys(config?.multi_config_keys ?? {});
       const inline = rte?._adv?.editor?.isInline;
       rte._adv.editor.isInline = (element: any) => {
         if (
@@ -29,7 +32,9 @@ export default ContentstackSDK.init()
       return {
         title: localeTexts.RTE.title,
         icon: <DAMIcon />,
-        render: ImageElement,
+        render: (props: any) => {
+          return <ImageElement availableConfig={availableConfig} {...props} />;
+        },
         display: ["toolbar"],
         elementType: ["void"],
       };
@@ -49,8 +54,17 @@ export default ContentstackSDK.init()
     // @ts-ignore
     DAM.on("exec", async (rte: RTE) => {
       const config = await rte?.getConfig();
+      const advancedConfig = await rte?.getFieldConfig();
+      // const currentLocale = await rte?.getLocale();
       const savedSelection = rte?.selection?.get();
-      onClickHandler({ extension: sdk, rte, savedSelection, config });
+      onClickHandler({
+        extension: sdk,
+        rte,
+        savedSelection,
+        config,
+        advancedConfig,
+        // currentLocale
+      });
     });
 
     // eslint-disable-next-line
@@ -59,5 +73,8 @@ export default ContentstackSDK.init()
     };
   })
   .catch((err) => {
-    console.error(`Error in loading DAM JSON RTE plugin :: `, err);
+    console.error(
+      `Error in loading ${rteConfig.damEnv.DAM_APP_NAME} JSON RTE plugin :: `,
+      err
+    );
   });

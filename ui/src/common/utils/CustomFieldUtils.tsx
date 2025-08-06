@@ -1,8 +1,17 @@
 import React from "react";
-import { Icon, cbModal } from "@contentstack/venus-components";
+import { Icon, Tooltip, cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
-import { TypePopupWindowDetails } from "../types";
+import {
+  TypeAdvancedConfig,
+  TypeAsset,
+  TypeIconElement,
+  TypeOption,
+  TypePopupWindowDetails,
+} from "../types";
 import localeTexts from "../locale/en-us";
+import rootConfig from "../../root_config";
+import NoImage from "../../components/NoImage";
+import NoConfigImage from "../../components/NoConfigImage";
 
 // function to open a popup window
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
@@ -31,7 +40,9 @@ const getHoverActions = (
   const tootipActionArray = [
     {
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      actionIcon: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      actionIcon: (
+        <Icon icon={localeTexts.Icons.moveIcon} size="mini" className="drag" />
+      ),
       actionOnClick: () => {
         /**/
       },
@@ -44,7 +55,7 @@ const getHoverActions = (
   ) {
     tootipActionArray?.push({
       actionTitle: localeTexts.CustomFields.assetCard.hoverActions.preview,
-      actionIcon: <Icon icon="View" size="tiny" />,
+      actionIcon: <Icon icon={localeTexts.Icons.view} size="tiny" />,
       actionOnClick: () => window.open(previewUrl, "_blank"),
     });
   }
@@ -53,13 +64,13 @@ const getHoverActions = (
     tootipActionArray?.push({
       actionTitle:
         localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
-      actionIcon: <Icon icon="NewTab" size="mini" />,
+      actionIcon: <Icon icon={localeTexts.Icons.newTab} size="mini" />,
       actionOnClick: () => window.open(platformUrl, "_blank"),
     });
   }
 
   tootipActionArray?.push({
-    actionIcon: <Icon icon="RemoveFilled" size="mini" />,
+    actionIcon: <Icon icon={localeTexts.Icons.removeFilled} size="mini" />,
     actionTitle: localeTexts.CustomFields.assetCard.hoverActions.remove,
     actionOnClick: () =>
       cbModal({
@@ -86,7 +97,9 @@ const getListHoverActions = (
   const tootipActionArray = [
     {
       title: localeTexts.CustomFields.assetCard.hoverActions.drag,
-      label: <Icon icon="MoveIcon" size="mini" className="drag" />,
+      label: (
+        <Icon icon={localeTexts.Icons.moveIcon} size="mini" className="drag" />
+      ),
       action: () => {
         /**/
       },
@@ -99,7 +112,7 @@ const getListHoverActions = (
   ) {
     tootipActionArray?.push({
       title: localeTexts.CustomFields.assetCard.hoverActions.preview,
-      label: <Icon icon="View" size="tiny" />,
+      label: <Icon icon={localeTexts.Icons.view} size="tiny" />,
       action: () => window.open(previewUrl, "_blank"),
     });
   }
@@ -107,13 +120,13 @@ const getListHoverActions = (
   if (platformUrl) {
     tootipActionArray?.push({
       title: localeTexts.CustomFields.assetCard.hoverActions.platformRedirect,
-      label: <Icon icon="NewTab" size="mini" />,
+      label: <Icon icon={localeTexts.Icons.newTab} size="mini" />,
       action: () => window.open(platformUrl, "_blank"),
     });
   }
 
   tootipActionArray?.push({
-    label: <Icon icon="RemoveFilled" size="mini" />,
+    label: <Icon icon={localeTexts.Icons.removeFilled} size="mini" />,
     title: localeTexts.CustomFields.assetCard.hoverActions.remove,
     action: () =>
       cbModal({
@@ -135,17 +148,23 @@ const uniqBy = (arr: any[], iteratee: any) => {
     const prop = iteratee;
     iteratee = (item: any) => item?.[prop];
   }
-
-  return arr?.filter(
-    (x, i, self) =>
-      i === self?.findIndex((y) => iteratee(x) === iteratee(y)) && x !== null
-  );
+  const seen = new Set();
+  const result = [];
+  for (let i = arr?.length - 1; i >= 0; i -= 1) {
+    const item = arr?.[i];
+    const key = iteratee(item);
+    if (!seen?.has(key) && item !== null) {
+      seen?.add(key);
+      result?.unshift(item);
+    }
+  }
+  return result;
 };
 
 // find asset index from array of assets
-function findAssetIndex(assets: any[], id: any) {
+function findAssetIndex(assets: TypeAsset[], id: string) {
   let prod: number = -1;
-  const assetsLength = (assets || [])?.length;
+  const assetsLength = (assets ?? [])?.length;
   for (let p = 0; p < assetsLength; p += 1) {
     if (assets[p]?.id === id) {
       prod = p;
@@ -156,11 +175,12 @@ function findAssetIndex(assets: any[], id: any) {
 }
 
 // find assest from array of assets
-function findAsset(assets: any[], id: any) {
-  return assets?.find((asset: any) => asset?.id === id) || {};
+function findAsset(assets: TypeAsset[], id: string) {
+  return assets?.find((asset: TypeAsset) => asset?.id === id);
 }
 
-const extractKeys = (arr: any[]) => arr?.map((key: any) => key?.value);
+const extractKeys = (arr: TypeOption[]) =>
+  arr?.map((key: TypeOption) => key?.value);
 
 const removeEmptyFromArray = (arr: any) =>
   arr?.filter((item: any) => item !== undefined);
@@ -257,7 +277,7 @@ const gridViewDropdown = [
   {
     label: (
       <span className="select-view">
-        <Icon icon="Thumbnail" size="original" />
+        <Icon icon={localeTexts.Icons.thumbnail} size="original" />
         <div>{localeTexts?.CustomFields?.toolTip?.thumbnail}</div>
       </span>
     ),
@@ -267,13 +287,253 @@ const gridViewDropdown = [
   {
     label: (
       <span className="select-view">
-        <Icon icon="List" />
+        <Icon icon={localeTexts.Icons.list} />
         <div>{localeTexts?.CustomFields?.toolTip?.list}</div>
       </span>
     ),
     value: "list",
   },
 ];
+
+const flatten = (data: any) => {
+  const result: any = {};
+  function recurse(cur: any, prop: string) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+    } else if (Array.isArray(cur)) {
+      const l = cur?.length;
+      for (let i = 0; i < l; i += 1) recurse(cur?.[i], `${prop}[${i}]`);
+      if (l === 0) result[prop] = [];
+    } else {
+      let isEmpty = true;
+      // eslint-disable-next-line
+      for (const p in cur) {
+        isEmpty = false;
+        recurse(cur?.[p], prop ? `${prop}.${p}` : p);
+      }
+      if (isEmpty && prop) result[prop] = {};
+    }
+  }
+  recurse(data, "");
+  return result;
+};
+
+const convertToBytes = (value: number, unit: string) => {
+  const units = ["BYTES", "KB", "MB", "GB", "TB"];
+  const index = units?.findIndex((u) => u === unit);
+  return value * 1024 ** (index ?? 0);
+};
+
+const advancedFilters = (
+  assets: any[],
+  contentTypeConfig: TypeAdvancedConfig
+) => {
+  const {
+    SIZE_NAME: SIZE,
+    SIZE_UNIT = "BYTES",
+    HEIGHT_NAME: HEIGHT,
+    WIDTH_NAME: WIDTH,
+  } = rootConfig.damEnv.ADVANCED_ASSET_PARAMS ?? {};
+  const { size, height, width } = contentTypeConfig ?? {};
+  const acceptedAssets: any[] = [];
+  const rejectedAssets: any[] = [];
+
+  const checkValues = new Map([
+    [SIZE, size],
+    [HEIGHT, height],
+    [WIDTH, width],
+  ]);
+  const checks: string[] = [];
+  [SIZE, HEIGHT, WIDTH]?.forEach((key) => {
+    if (key) {
+      checks?.push(key);
+    }
+  });
+
+  assets?.forEach((asset: any) => {
+    const assetFlatStructure = flatten(asset);
+    let itemCount = 0;
+    let validationCount = 0;
+
+    checks?.forEach((key) => {
+      const propValue = checkValues?.get(key);
+      if (propValue) {
+        itemCount += 1;
+        const value = convertToBytes(assetFlatStructure?.[key], SIZE_UNIT);
+        if (
+          (propValue?.max &&
+            propValue?.min &&
+            !propValue?.exact &&
+            value <= propValue?.max &&
+            value >= propValue?.min) ||
+          (propValue?.max &&
+            !propValue?.min &&
+            !propValue?.exact &&
+            value <= propValue?.max) ||
+          (propValue?.min &&
+            !propValue?.max &&
+            !propValue?.exact &&
+            value >= propValue?.min) ||
+          (propValue?.exact && value === propValue?.exact)
+        ) {
+          validationCount += 1;
+        }
+      }
+    });
+
+    if (itemCount === validationCount) acceptedAssets?.push(asset);
+    else rejectedAssets?.push(asset);
+  });
+  return { acceptedAssets, rejectedAssets };
+};
+
+const noAssetElement = (
+  <div className="noImage">
+    <Tooltip
+      content={localeTexts?.CustomFields?.toolTip?.content}
+      position="top"
+      showArrow={false}
+      type="secondary"
+    >
+      <NoImage />
+    </Tooltip>
+  </div>
+);
+
+const getIconElement = ({
+  type,
+  thumbnailUrl,
+  handleImageError,
+  isConfigAvailable,
+}: TypeIconElement) => {
+  if (!isConfigAvailable) {
+    return (
+      <div className="rowImage noImage">
+        <Tooltip
+          content={localeTexts.CustomFields.assetCard.configDeletedImg}
+          position="top"
+          showArrow={false}
+          type="secondary"
+        >
+          <NoConfigImage />
+        </Tooltip>
+      </div>
+    );
+  }
+  let returnEl;
+  switch (type?.toLowerCase()) {
+    case "image":
+      returnEl = thumbnailUrl ? (
+        <div className="rowImage">
+          <img src={thumbnailUrl} alt="Asset" onError={handleImageError} />
+        </div>
+      ) : (
+        noAssetElement
+      );
+      break;
+    case "code":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.doc2} />
+        </div>
+      );
+      break;
+    case "pdf":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.pdf2} />
+        </div>
+      );
+      break;
+    case "excel":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.xls} />
+        </div>
+      );
+      break;
+    case "presentation":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.ppt} />
+        </div>
+      );
+      break;
+    case "powerpoint":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.ppt} />
+        </div>
+      );
+      break;
+    case "document":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.doc2} />
+        </div>
+      );
+      break;
+    case "word":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.doc2} />
+        </div>
+      );
+      break;
+    case "json":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.json} />
+        </div>
+      );
+      break;
+    case "text/plain":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.doc2} />
+        </div>
+      );
+      break;
+    case "zip":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.zip} />
+        </div>
+      );
+      break;
+    case "archive":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.zip} />
+        </div>
+      );
+      break;
+    case "video":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.mp4} size="small" />
+        </div>
+      );
+      break;
+    case "audio":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.mp3} />
+        </div>
+      );
+      break;
+    case "image/tiff":
+      returnEl = (
+        <div className="noImage icon-element">
+          <Icon icon={localeTexts.Icons.document} />
+        </div>
+      );
+      break;
+    default:
+      returnEl = noAssetElement;
+  }
+  return returnEl;
+};
 
 const CustomFieldUtils = {
   popupWindow,
@@ -288,6 +548,10 @@ const CustomFieldUtils = {
   navigateObject,
   getFilteredAssets,
   gridViewDropdown,
+  flatten,
+  advancedFilters,
+  noAssetElement,
+  getIconElement,
 };
 
 export default CustomFieldUtils;

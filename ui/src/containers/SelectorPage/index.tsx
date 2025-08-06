@@ -2,30 +2,33 @@ import React, { useEffect, useState, useRef } from "react";
 import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";
 import rootConfig from "../../root_config";
-import WarningMessage from "../../components/WarningMessage";
+import InfoMessage from "../../components/InfoMessage";
+import { TypeErrorFn, Props } from "../../common/types";
 import "./style.scss";
-import { TypeErrorFn } from "../../common/types";
 
-let isScriptLoaded: any = false;
+let isScriptLoaded: boolean = false;
 let url: string = "";
 
-const SelectorPage: React.FC<any> = function () {
+const SelectorPage: React.FC = function () {
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
   // config in selector page
-  const [config, setConfig] = useState<any>();
+  const [config, setConfig] = useState<Props>();
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
     localeTexts.Warnings.incorrectConfig
   );
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
-  const damContainer = useRef(null);
+  const damContainer = useRef<any>(null);
 
   // function to check null or missing values of config
-  const checkConfigValues = (configParams: any) => {
-    const configFieldsLength = rootConfig?.damEnv?.CONFIG_FIELDS?.length;
+  const checkConfigValues = (configParams: Props) => {
+    const configFieldsLength =
+      rootConfig?.damEnv?.SELECTOR_CONFIG_CHECK_FIELDS?.length;
     for (let i = 0; i < configFieldsLength; i += 1) {
-      if (!configParams[rootConfig?.damEnv?.CONFIG_FIELDS?.[i]]) {
+      if (
+        !configParams[rootConfig?.damEnv?.SELECTOR_CONFIG_CHECK_FIELDS?.[i]]
+      ) {
         return true;
       }
     }
@@ -57,16 +60,21 @@ const SelectorPage: React.FC<any> = function () {
 
   // function to load dam script and mount component
   const compactViewImplementation = async (
-    configParams: any,
+    configParams: Props,
     selectedIds: string[]
   ) => {
     if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
-      isScriptLoaded = await SelectorPageUtils.loadDAMScript(
+      const scriptLoaded = await SelectorPageUtils.loadDAMScript(
         rootConfig?.damEnv?.DAM_SCRIPT_URL as string
       );
+      isScriptLoaded = scriptLoaded === true;
       if (isScriptLoaded === true) {
         // condition's for checking config variable's
-        if (checkConfigValues(configParams)) {
+        const checkValues = Object.keys(configParams?.selected_config ?? {})
+          ?.length
+          ? configParams?.selected_config
+          : configParams;
+        if (checkConfigValues(checkValues)) {
           setIsErrorPresent(true);
           return;
         }
@@ -88,6 +96,8 @@ const SelectorPage: React.FC<any> = function () {
   };
 
   const handleMessage = (event: MessageEvent) => {
+    const allowedOrigin = [process.env.REACT_APP_CUSTOM_FIELD_URL, url];
+    if (!allowedOrigin?.includes(event?.origin)) return;
     const { data } = event;
     if (data?.config) {
       if (
@@ -106,24 +116,17 @@ const SelectorPage: React.FC<any> = function () {
     if (windowOpener) {
       const queryString = window.location.href
         ?.split("?")?.[1]
+        ?.split("&")?.[0]
         ?.split("=")?.[1];
-
-      let postMessageUrl: string;
-      switch (queryString) {
-        case "NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
-          break;
-        case "EU":
-          postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
-          break;
-        case "AZURE_NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
-          break;
-        case "CUSTOM-FIELD":
-          postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
-          break;
-        default:
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
+      let postMessageUrl: string = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
+      const regionMapping = JSON.parse(
+        process.env.REACT_APP_REGION_MAPPING ?? ""
+      );
+      const appRegion = Object.keys(regionMapping)?.find(
+        (region) => queryString === region
+      );
+      if (appRegion) {
+        postMessageUrl = regionMapping?.[appRegion]?.JSON_RTE_URL;
       }
       url = postMessageUrl;
       window.addEventListener("message", handleMessage, false);
@@ -163,26 +166,18 @@ const SelectorPage: React.FC<any> = function () {
       >
         {isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
-            <WarningMessage content={warningText} />
+            <InfoMessage content={warningText} type="attention" />
           </div>
         ) : (
-          // eslint-disable-next-line
-          <>
-            {rootConfig?.damEnv?.IS_DAM_SCRIPT ? (
-              // If Compact view script avaialble
-              // eslint-disable-next-line
-              <></>
-            ) : (
-              // If there is no script custom component will be added
-              rootConfig?.customSelectorComponent?.(
-                config,
-                setError,
-                successFn,
-                closeFn,
-                selectedAssetIds
-              )
-            )}
-          </>
+          !rootConfig?.damEnv?.IS_DAM_SCRIPT &&
+          // If there is no script custom component will be added
+          rootConfig?.customSelectorComponent?.(
+            config,
+            setError,
+            successFn,
+            closeFn,
+            selectedAssetIds
+          )
         )}
       </div>
     </div>

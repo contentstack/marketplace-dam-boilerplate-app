@@ -4,11 +4,12 @@
 
 import React from "react";
 import {
+  Props,
   TypeErrorFn,
   TypeRootSelector,
   TypeSelectorContainer,
 } from "../../common/types";
-import CustomComponent from "../CustomComponent";
+import CustomSelector from "../Components/CustomSelector";
 
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
@@ -18,7 +19,7 @@ declare global {
 }
 
 const openComptactView = (
-  config: any,
+  config: Props,
   selectedIds: string[],
   onSuccess: (assets: any[]) => void,
   onCancel: () => void,
@@ -32,12 +33,12 @@ const openComptactView = (
 
 // If there is no script then provide a custom component here
 const customSelectorComponent = (
-  config: any,
+  config: Props,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) => <CustomComponent />;
+) => <CustomSelector />;
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,

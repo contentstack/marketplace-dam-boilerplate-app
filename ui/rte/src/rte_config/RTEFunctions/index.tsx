@@ -10,10 +10,17 @@ const ASSET_AUDIO_TYPE = "Audio";
 
 /* Variables for getViewIconforTooltip function */
 const PREVIEW_ICON = "Eye";
-const NEWTAB_ICON = "NewTab";
+const NEWTAB_ICON = "OpenURL";
 
 const getDisplayUrl = (asset: any) => {
-  /* returns the display url of the asset. Return Type = "String" */
+  /* 
+    Returns an object with either or both preview and openInDam properties.
+    Note: The values of the properties are url values for preview and openInDam.
+  */
+  return {
+    preview: asset?.preview_url ?? "", // preview_url present in asset object
+    openInDam: asset?.openInDAM_url ?? "", // openInDAM_url present in asset object
+  };
 };
 
 const getAssetType = (asset: any) => {
@@ -21,10 +28,17 @@ const getAssetType = (asset: any) => {
 };
 
 const getViewIconforTooltip = (type: string) => {
-  /* possible return values ==> Eye and NewTab */
+  /* 
+    Returns an object with either or both preview and openInDam properties.
+    Note: The values of the properties are the same as the values of the PREVIEW_ICON and NEWTAB_ICON variables.
+  */
+  return {
+    preview: PREVIEW_ICON,
+    openInDam: NEWTAB_ICON,
+  };
 };
 
-const getSelectorWindowUrl = (config: any) => {
+const getSelectorWindowUrl = (config: any, contentTypeConfig: any) => {
   return ""; // return url to be opened as selector page
 };
 
@@ -32,8 +46,27 @@ const handleSelectorPageData = (event: any) => {
   return []; // return array of asset objects which are selected
 };
 
-const handleSelectorWindow = (config: any) => {
+const handleSelectorWindow = (config: any, contentTypeConfig: any) => {
   /* code logic to open the DAM selector page */
+};
+
+const handleAuthWindow = (
+  config: any,
+  contentTypeConfig: any,
+  resolve: Function,
+  reject: Function
+) => {
+  /* code logic to open the DAM auth window */
+  resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
+};
+
+const handleConfigtoSelectorPage = (
+  config: any,
+  contentTypeConfig: any,
+  currentLocale: string
+) => {
+  /* Return Config to be used on selector page */
+  return {};
 };
 
 const rteFunctions: any = {
@@ -43,6 +76,8 @@ const rteFunctions: any = {
   getSelectorWindowUrl,
   handleSelectorPageData,
   handleSelectorWindow,
+  handleAuthWindow,
+  handleConfigtoSelectorPage,
 };
 
 export default rteFunctions;
