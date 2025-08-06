@@ -17,10 +17,20 @@ const ImageElement = function ({
   element,
   attrs,
   rte,
+  availableConfig,
   ...props
 }) {
   const RTE_RESOURCE_TYPE = rteConfig?.getAssetType?.(element?.attrs) ?? "";
-  const RTE_DISPLAY_URL = rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
+  const { preview: RTE_DISPLAY_URL, openInDam: RTE_OPENDAM_URL } =
+    rteConfig?.getDisplayUrl?.(element?.attrs) ?? "";
+  const configLabel = attrs?.cs_metadata?.config_label ?? "legacy_config";
+  let isConfigAvailable = false;
+  if (Array.isArray(availableConfig)) {
+    isConfigAvailable = availableConfig?.includes(configLabel);
+    const isMultiConfig = availableConfig?.length || false;
+    if (!isMultiConfig) isConfigAvailable = true;
+  } else isConfigAvailable = availableConfig;
+
   const isSelected = rte?.selection?.isSelected();
   const isFocused = rte?.selection?.isFocused();
   const isHighlight = isFocused && isSelected;
@@ -34,31 +44,6 @@ const ImageElement = function ({
   const displayType =
     RTE_RESOURCE_TYPE?.toLowerCase() === "image" ? "display" : "download";
   const initialDimensions = utils.getInitialDimensions(element, displayType);
-
-  useEffect(() => {
-    let newAttrs = cloneDeep(element?.attrs);
-    const imagePath = rte?.getPath(element);
-
-    if (element?.attrs?.position) {
-      rte?.updateNode(
-        rteConfig?.damEnv?.DAM_APP_NAME,
-        {
-          ...newAttrs,
-        },
-        { at: imagePath }
-      );
-    }
-    if (!element?.attrs?.["asset-caption"]) {
-      newAttrs["asset-caption"] = "";
-      rte?.updateNode(
-        rteConfig?.damEnv?.DAM_APP_NAME,
-        {
-          ...newAttrs,
-        },
-        { at: imagePath }
-      );
-    }
-  }, [element?.attrs?.["asset-caption"]]);
 
   useEffect(() => {
     const DOMVal = document?.querySelectorAll(
@@ -96,9 +81,10 @@ const ImageElement = function ({
     }
   }, [element?.attrs?.position, rte?.getPath(element)]);
 
-  const handleView = useCallback(() => {
-    window.open(RTE_DISPLAY_URL, "_blank");
-  }, [RTE_DISPLAY_URL]);
+  const handleView = (view) => {
+    const url = view === "preview" ? RTE_DISPLAY_URL : RTE_OPENDAM_URL;
+    window.open(url, "_blank", "noreferrer");
+  };
 
   const handleEdit = useCallback(() => {
     cbModal({
@@ -108,6 +94,7 @@ const ImageElement = function ({
           rte,
           icon,
           path: rte?.getPath(element),
+          isConfigAvailable,
           ...compProps,
         }),
     });
@@ -150,33 +137,45 @@ const ImageElement = function ({
     : `embed-asset ${highlightclass} ${downloadTypeclass}`;
 
   const CustomComponent = () => {
-    const iconType = rteConfig?.getViewIconforTooltip?.(RTE_RESOURCE_TYPE);
+    const { openInDam, preview } =
+      rteConfig?.getViewIconforTooltip?.(RTE_RESOURCE_TYPE);
     return (
       <div contentEditable={false} className="embed--btn-group">
-        {iconType && ["Eye", "NewTab"]?.includes(iconType) && (
+        {preview && (
           <EmbedBtn
             title={localeTexts.RTE.iconContent.preview}
-            content={utils.getToolTipIconContent(iconType)}
-            onClick={handleView}
+            content={utils.getToolTipIconContent(preview)}
+            onClick={() => handleView("preview")}
           >
-            <Icon icon={iconType} />
+            <Icon icon={preview} size="tiny" version="v2" />
           </EmbedBtn>
         )}
-
+        {openInDam && (
+          <EmbedBtn
+            title={localeTexts.RTE.iconContent.openInDAM}
+            content={utils.getToolTipIconContent(openInDam)}
+            onClick={() => handleView("openInDAM")}
+          >
+            <Icon icon={openInDam} size="tiny" version="v2" />
+          </EmbedBtn>
+        )}
         <EmbedBtn
           title="edit"
           content={localeTexts.RTE.iconContent.edit}
           onClick={handleEdit}
         >
-          <Icon icon="Rename" />
+          <Icon
+            icon={localeTexts.Icons.imageSettings}
+            size="tiny"
+            version="v2"
+          />
         </EmbedBtn>
-
         <EmbedBtn
           title="remove"
           content={localeTexts.RTE.iconContent.remove}
           onClick={handleDelete}
         >
-          <Icon icon="RemoveFilled" size="tiny" />
+          <Icon icon={localeTexts.Icons.dontSave} size="tiny" version="v2" />
         </EmbedBtn>
       </div>
     );
@@ -205,7 +204,10 @@ const ImageElement = function ({
   };
 
   return (
-    <div style={{ ...alignmentStyle, ...attrs?.style }}>
+    <div
+      style={{ ...alignmentStyle, ...attrs?.style }}
+      className="embed-asset-container"
+    >
       <Tooltip
         zIndex={909}
         className="p-0"
@@ -220,7 +222,7 @@ const ImageElement = function ({
           data-type="asset"
           contentEditable={false}
         >
-          <div ref={parentRef} contentEditable={false}>
+          <div ref={parentRef} contentEditable={false} className="noLineHeight">
             <Resizable
               lockAspectRatio
               onResizeStop={onResizeStop}
@@ -237,38 +239,62 @@ const ImageElement = function ({
                 contentEditable={false}
                 style={{ width: "100%", height: "100%" }}
               >
-                <div className={tooltipclass}>
-                  {!icon && (
-                    <img
-                      src={RTE_DISPLAY_URL}
-                      onError={utils.handleImageError}
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                      }}
-                      alt={element?.attrs?.["asset-alt"]}
-                      title={
-                        element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
-                      }
-                    />
-                  )}
-                  {!isInline && (
-                    <div className="embed-icon">
-                      <Icon icon="Embed" />
-                    </div>
-                  )}
-                  {icon && (
+                {isConfigAvailable && (
+                  <div className={tooltipclass}>
+                    {!icon && (
+                      <img
+                        src={RTE_DISPLAY_URL}
+                        onError={utils.handleImageError}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                        }}
+                        alt={element?.attrs?.["asset-alt"]}
+                        title={
+                          element?.attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                        }
+                      />
+                    )}
+                    {!isInline && (
+                      <div className="embed-icon">
+                        <Icon icon={localeTexts.Icons.embed} />
+                      </div>
+                    )}
+                    {icon && (
+                      <Icon
+                        icon={icon}
+                        size="large"
+                        withTooltip
+                        tooltipContent={
+                          attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                        }
+                        tooltipPosition="top"
+                      />
+                    )}
+                  </div>
+                )}
+                {!isConfigAvailable && (
+                  <div
+                    className={`${tooltipclass} ${
+                      !element?.attrs?.width && !element?.attrs?.height
+                        ? "embed-download-delete"
+                        : ""
+                    }`}
+                    title={attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]}
+                  >
                     <Icon
-                      icon={icon}
+                      icon="WarningBoldNew"
+                      version="v2"
                       size="large"
                       withTooltip
                       tooltipContent={
-                        attrs?.[rteConfig?.damEnv?.ASSET_NAME_PARAM]
+                        localeTexts.RTE.assetValidation.configDeletedImg
                       }
                       tooltipPosition="top"
+                      style={{ borderRadius: "10px" }}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <span
                 contentEditable={false}

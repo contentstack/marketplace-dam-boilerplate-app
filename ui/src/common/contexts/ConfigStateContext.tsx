@@ -1,8 +1,9 @@
 import { createContext } from "react";
+import { TypeOption } from "../types";
 
 interface TypeConfigStateContext {
   CustomOptionsContext: {
-    customOptions: any[];
+    customOptions: TypeOption[] | [];
     setCustomOptions: Function;
   };
   CustomCheckContext: {
@@ -10,16 +11,16 @@ interface TypeConfigStateContext {
     setIsCustom: Function;
   };
   DamKeysContext: {
-    damKeys: any[];
+    damKeys: TypeOption[];
     setDamKeys: Function;
   };
   RadioInputContext: {
-    radioInputValues: any;
+    radioInputValues: Record<string, TypeOption>;
     setRadioInputValues: Function;
     updateRadioOptions: Function;
   };
   SelectInputContext: {
-    selectInputValues: any;
+    selectInputValues: Record<string, TypeOption>;
     setSelectInputValues: Function;
     updateSelectConfig: Function;
   };

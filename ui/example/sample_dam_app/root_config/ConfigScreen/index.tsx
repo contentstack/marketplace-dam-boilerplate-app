@@ -1,24 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* NOTE: Remove Functions which are not used */
+/* eslint-disable arrow-body-style */
 
 import React from "react";
 import {
-  TypeCustomConfigUpdateParams,
+  Configurations,
+  Props,
+  TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
 
-const configureConfigScreen = () =>
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
   3. save the fields that are to be accessed in other location in config
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations
-  6. Supported type options are textInputFields, radioInputFields, selectInputFields */
-  ({
+  6. Supported type options are textInputField, radioInputField, selectInputField and customInputField */
+  return {
     textField: {
-      type: "textInputFields",
+      type: "textInputField",
       labelText: "DAM Text Input",
       helpText: "DAM Text Input Helptext",
       placeholderText: "DAM Text Input Placeholder",
@@ -26,9 +30,10 @@ const configureConfigScreen = () =>
       inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: false,
       saveInServerConfig: true,
+      isMultiConfig: true,
     },
     selectField: {
-      type: "selectInputFields",
+      type: "selectInputField",
       labelText: "DAM Select Input",
       helpText: "DAM Select Input Helptext",
       placeholderText: "DAM Select Input Placeholder",
@@ -43,38 +48,30 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "option5",
       saveInConfig: true,
       saveInServerConfig: false,
+      isMultiConfig: true,
     },
     radioField: {
-      type: "radioInputFields",
+      type: "radioInputField",
       labelText: "DAM Radio Input",
       helpText: "DAM Radio Input Helptext",
       instructionText: "DAM Radio Input Instruction Text",
       options: [
         {
-          label: "Single Select",
-          value: "SingleSelect",
+          label: "Option 1",
+          value: "Option 1",
         },
         {
-          label: "Multi Select",
-          value: "MultiSelect",
+          label: "Option 2",
+          value: "Option 2",
         },
       ],
-      defaultSelectedOption: "MultiSelect",
+      defaultSelectedOption: "Option 1",
       saveInConfig: true,
       saveInServerConfig: false,
+      isMultiConfig: false,
     },
-  });
-
-const customConfigComponent = (
-  config: any,
-  serverConfig: any,
-  handleCustomConfigUpdate: (
-    updateConfigObj: TypeCustomConfigUpdateParams
-  ) => void
-) => (
-  // eslint-disable-next-line
-  <></>
-);
+  };
+};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -92,15 +89,21 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    return conditionalDefaults;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
 };
 
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
-  customConfigComponent,
   customWholeJson,
 };
 

@@ -1,25 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable arrow-body-style */
 
 /* NOTE: Remove Functions which are not used */
 
 import React from "react";
-import CustomComponent from "../CustomComponent";
 import {
-  TypeCustomConfigUpdateParams,
+  Configurations,
+  Props,
+  TypeCustomConfigParams,
   TypeRootConfigSreen,
+  TypedefaultOp,
 } from "../../common/types";
+import CustomConfig from "../Components/CustomConfig";
 
-const configureConfigScreen = () =>
+const configureConfigScreen = (
+  params?: TypeCustomConfigParams
+): Configurations => {
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
   3. save the fields that are to be accessed in other location in config
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations
-  6. Supported type options are textInputFields, radioInputFields, selectInputFields */
-  ({
+  6. Supported type options are textInputField, radioInputField, selectInputField and customInputField */
+  return {
     textField: {
-      type: "textInputFields",
+      type: "textInputField",
       labelText: "DAM Text Input",
       helpText: "DAM Text Input Helptext",
       placeholderText: "DAM Text Input Placeholder",
@@ -27,9 +33,10 @@ const configureConfigScreen = () =>
       inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: false,
       saveInServerConfig: true,
+      isMultiConfig: true,
     },
     selectField: {
-      type: "selectInputFields",
+      type: "selectInputField",
       labelText: "DAM Select Input",
       helpText: "DAM Select Input Helptext",
       placeholderText: "DAM Select Input Placeholder",
@@ -44,35 +51,42 @@ const configureConfigScreen = () =>
       defaultSelectedOption: "option5",
       saveInConfig: true,
       saveInServerConfig: false,
+      isMultiConfig: true,
     },
     radioField: {
-      type: "radioInputFields",
+      type: "radioInputField",
       labelText: "DAM Radio Input",
       helpText: "DAM Radio Input Helptext",
       instructionText: "DAM Radio Input Instruction Text",
       options: [
         {
-          label: "Single Select",
-          value: "SingleSelect",
+          label: "Option 1",
+          value: "Option 1",
         },
         {
-          label: "Multi Select",
-          value: "MultiSelect",
+          label: "Option 2",
+          value: "Option 2",
         },
       ],
-      defaultSelectedOption: "MultiSelect",
+      defaultSelectedOption: "Option 1",
       saveInConfig: true,
       saveInServerConfig: false,
+      isMultiConfig: false,
     },
-  });
-
-const customConfigComponent = (
-  config: any,
-  serverConfig: any,
-  handleCustomConfigUpdate: (
-    updateConfigObj: TypeCustomConfigUpdateParams
-  ) => void
-) => <CustomComponent />;
+    customField: {
+      type: "customInputField",
+      component: (currentConfigLabel: string) => (
+        <CustomConfig
+          customConfig={params}
+          currentConfigLabel={currentConfigLabel}
+        />
+      ),
+      saveInConfig: true,
+      saveInServerConfig: false,
+      isMultiConfig: true,
+    },
+  };
+};
 
 const customWholeJson = () => {
   const customJsonOptions: string[] = [
@@ -90,16 +104,37 @@ const customWholeJson = () => {
 
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
+  const conditionalFieldExec = (config: any, serverConfig: any) => {
+    const options = ["option 10"];
+    const defaultOpObj: TypedefaultOp = { operation: "add", options };
+    const conditionalDefaults: TypedefaultOp[] = [];
+
+    // if (option add condition) {
+    //   conditionalDefaults?.push(defaultOpObj);
+    // } else { // option remove condition
+    //   defaultOpObj.operation = "remove";
+    //   conditionalDefaults?.push(defaultOpObj);
+    // }
+
+    return conditionalDefaults;
+  };
+
   return {
     customJsonOptions,
     defaultFeilds,
+    conditionalFieldExec,
   };
+};
+
+const checkConfigValidity = async (config: Props, serverConfig: Props) => {
+  // return value of the function is object which takes disableSave[type=boolean] and message[type=string]. Assigning "true" to disableSave will disable the button and "false" will enable to button.
+  return { disableSave: false, message: "Enter a Valid Config" };
 };
 
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
-  customConfigComponent,
   customWholeJson,
+  checkConfigValidity,
 };
 
 export default rootConfigScreen;

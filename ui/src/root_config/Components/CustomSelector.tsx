@@ -3,7 +3,7 @@ import "../styles.scss";
 
 interface TypeCustomComponent {}
 
-const CustomComponent: React.FC<TypeCustomComponent> = function () {
+const CustomSelector: React.FC<TypeCustomComponent> = function () {
   return (
     <div className="config-custom-component">
       Custom Component - This is a custom component and can be modified using
@@ -12,4 +12,4 @@ const CustomComponent: React.FC<TypeCustomComponent> = function () {
   );
 };
 
-export default CustomComponent;
+export default CustomSelector;

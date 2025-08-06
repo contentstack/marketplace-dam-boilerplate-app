@@ -1,11 +1,11 @@
 const placeholderImageSrc = `<svg
-			width='156'
-			height='173'
-			viewBox='0 0 156 173'
+			width='50'
+			height='50'
+			viewBox='-175 40 500 100'
 			fill='none'
 			xmlns='http://www.w3.org/2000/svg'>
 			<g clipPath='url(#clip0_2030_41621)'>
-				<rect width='156' height='173' fill='white' />
+				<rect width='156' height='173' fill='#f5f5f5' />
 				<rect
 					x='47.5'
 					y='57.5'

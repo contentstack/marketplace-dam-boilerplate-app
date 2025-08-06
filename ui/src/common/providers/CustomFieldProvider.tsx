@@ -14,7 +14,7 @@ import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
 declare global {
   interface Window {
-    iframeRef: any;
+    iframeRef: HTMLIFrameElement | null;
   }
 }
 
@@ -24,19 +24,19 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   const [state, setState] = React.useState<TypeSDKData>({
     config: {},
     contentTypeConfig: {},
-    location: {},
+    location: null,
     appSdkInitialized: false,
   });
   // state for filtered asset data which is to be rendered
   const [renderAssets, setRenderAssets] = useState<TypeAsset[]>([]);
   // state for selected assets received from selector page
-  const [selectedAssets, setSelectedAssets] = useState<any[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<any>([]);
   // state for current locale
   const [currentLocale, setCurrentLocale] = useState<string>("");
   // state to manage disable of "add button"
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   // unique param in the asset object
-  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID || "id";
+  const uniqueID = rootConfig?.damEnv?.ASSET_UNIQUE_ID ?? "id";
 
   const { location } = useAppLocation();
 
@@ -56,12 +56,10 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       const initialData = location?.field?.getData();
-      if (initialData?.length) {
-        // set App's Custom Field Data
-        setSelectedAssets(initialData);
-        // check for saved data length and handling button disable state
-        handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
-      }
+      // set App's Custom Field Data
+      setSelectedAssets(initialData);
+      // check for saved data length and handling button disable state
+      handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
       await setState({
@@ -80,21 +78,23 @@ const CustomFieldProvider: React.FC = function ({ children }) {
   // function to remove the assets when "delete" action is triggered
   const removeAsset = useCallback(
     (removedId: string) => {
-      const finalAssets = selectedAssets?.filter(
-        (asset) => asset?.[uniqueID] !== removedId
-      );
-      setSelectedAssets(finalAssets);
-      handleBtnDisable(finalAssets);
+      if (Array.isArray(selectedAssets)) {
+        const finalAssets = selectedAssets?.filter(
+          (asset) => asset?.[uniqueID] !== removedId
+        );
+        setSelectedAssets(finalAssets);
+        handleBtnDisable(finalAssets);
+      }
     },
     [selectedAssets, handleBtnDisable]
   );
 
   // rearrange the order of assets
   const setRearrangedAssets = useCallback(
-    (assets: any[]) => {
+    (assets: TypeAsset[]) => {
       setSelectedAssets(
         assets?.map(
-          (asset: any) =>
+          (asset: TypeAsset) =>
             selectedAssets?.filter(
               (item: any) => item?.[uniqueID] === asset?.id
             )?.[0]

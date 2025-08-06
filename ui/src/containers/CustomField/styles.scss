@@ -9,13 +9,19 @@
   .field-wrapper {
     padding: 0 10px;
     width: 100%;
+    min-height: 150px !important;
+
+    .add-asset-btn {
+      margin-bottom: 2px !important;
+    }
 
     .no-asset {
       color: #647696;
       font-family: Inter, Serif, Sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       height: 16px;
-      width: 200px;
+      width: 300px;
+      margin-top: 20px;
     }
 
     .asset-box {
@@ -53,21 +59,20 @@
         position: relative !important;
 
         & .table-overflow {
-          overflow: visible;
-          height: 0;
+          overflow: auto;
         }
       }
 
       & .Table__body {
         max-height: 355px;
-        overflow: auto;
         width: 100%;
       }
     }
 
     .render-items {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      min-height: 16.2rem;
       max-height: 400px;
       overflow-y: auto;
       padding: 10px 0 !important;
@@ -80,12 +85,6 @@
         font-family: Inter, Serif, Sans-serif;
         height: 180px;
         width: 170px;
-
-        .AssetCard__shortinfo__name {
-          & .tippy-wrapper {
-            width: 150px;
-          }
-        }
 
         .AssetCard__action__custom {
           cursor: pointer !important;
@@ -114,6 +113,17 @@
         & .AssetCard__shortinfo__name > .tippy-wrapper > span {
           color: #222222 !important;
           font-weight: 500 !important;
+        }
+
+        &:not(.AssetFolder):hover
+          .AssetCard__asset.AssetCard__asset--image
+          ~ .AssetCard__shortinfo {
+          bottom: -3.5rem;
+          left: 1px;
+        }
+
+        &:not(.AssetFolder):hover:before {
+          height: 16rem !important;
         }
       }
 
@@ -146,6 +156,13 @@
   height: 180px;
   margin-bottom: 20px;
   margin-right: 20px;
+
+  & .middle-truncate-start {
+    width: 125px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .AssetCard__action__custom:last-child:hover svg path {
@@ -174,26 +191,14 @@
   span {
     font-weight: 600;
   }
-}
 
-@media (max-width: 750px) and (min-width: 510px) {
-  .render-items {
-    & > div {
-      width: 150px !important;
-    }
-
-    .AssetCard {
-      width: 140px !important;
-
-      & .AssetCard__shortinfo__name > .tippy-wrapper > span {
-        width: 120px !important;
-      }
-    }
+  .TextInput__v2 {
+    width: 445px !important;
   }
 }
 
 .noImage {
-  width: 80% !important;
+  width: 90% !important;
   height: 100% !important;
   border: 1px solid #dde3ee !important;
   border-radius: 3px;
@@ -238,6 +243,14 @@
   }
 }
 
+.Table__head,
+.Table__head__row {
+  display: flex;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 5 !important ;
+}
+
 .Table__head__column {
   text-align: left;
 }
@@ -247,11 +260,12 @@
 }
 
 .Table__head__row .Table__head__column:first-child {
-  width: 150px;
   font-size: 12px;
+  width: 15%;
 }
 .Table__body__row .Table__body__column:first-child {
   width: 150px;
+  width: 15%;
 }
 .Table .Table__body__column,
 .Table .Table__head__column {
@@ -259,26 +273,30 @@
 }
 .Table .Table__body__column:last-of-type,
 .Table .Table__head__column:last-of-type {
-  width: 150px;
+  width: 25%;
 }
 .Table .Table__head__column:nth-child(2),
 .Table .Table__body__column:nth-child(2) {
-  width: 23rem;
+  min-width: 200px !important;
+  width: 320px !important;
 }
 .Table .Table__body__column:nth-child(2) {
   overflow: hidden;
 
-  & p {
+  & .tippy-wrapper {
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    & p {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
 .Table__body__column .rowVideo,
 .Table__body__column .rowImage {
-  width: 80% !important;
+  width: 90% !important;
   height: 100%;
   align-self: center;
   display: flex;
@@ -325,4 +343,21 @@
       stroke: #edf1f7 !important;
     }
   }
+}
+
+.Toastify__toast-container .Toastify__toast-wrapper {
+  width: 100% !important;
+
+  & .Toastify__toast-displayMessage__title {
+    word-break: break-all !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
+.header-flex-wrapper {
+  width: 65px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

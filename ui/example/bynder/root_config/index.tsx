@@ -12,7 +12,7 @@ const damEnv = DamEnvVariables;
 
 const configureConfigScreen = rootConfigScreen?.configureConfigScreen;
 
-const customConfigComponent = rootConfigScreen?.customConfigComponent;
+const checkConfigValidity = rootConfigScreen?.checkConfigValidity;
 
 const customWholeJson = rootConfigScreen?.customWholeJson;
 
@@ -28,6 +28,10 @@ const handleSelectorPageData = rootCustomField?.handleSelectorPageData;
 
 const handleSelectorWindow = rootCustomField?.handleSelectorWindow;
 
+const handleAuthWindow = rootCustomField?.handleAuthWindow;
+
+const modifyAssetsToSave = rootCustomField?.modifyAssetsToSave;
+
 // <---------- SELECTOR PAGE FUNCTIONS ---------->
 
 const openComptactView = rootSelectorPage?.openComptactView;
@@ -37,15 +41,17 @@ const customSelectorComponent = rootSelectorPage?.customSelectorComponent;
 const rootConfig: TypeRootConfig = {
   damEnv,
   configureConfigScreen,
-  customConfigComponent,
+  checkConfigValidity,
   customWholeJson,
   filterAssetData,
+  handleConfigtoSelectorPage,
   getSelectorWindowUrl,
   handleSelectorPageData,
+  handleAuthWindow,
+  modifyAssetsToSave,
   handleSelectorWindow,
   openComptactView,
   customSelectorComponent,
-  handleConfigtoSelectorPage,
 };
 
 export default rootConfig;

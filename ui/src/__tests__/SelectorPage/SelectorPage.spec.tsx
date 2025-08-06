@@ -15,7 +15,7 @@ jest.mock("../../root_config/index.tsx", () => ({
   damEnv: jest.fn(() => ({
     DAM_APP_NAME: "DAM",
     IS_DAM_SCRIPT: false,
-    CONFIG_FIELDS: ["url", "mode"],
+    SELECTOR_CONFIG_CHECK_FIELDS: ["url", "mode"],
     SELECTOR_PAGE_LOGO: "Logo",
   })),
   customSelectorComponent: jest.fn(() => (
@@ -27,7 +27,7 @@ beforeEach(async () => {
   const setStateMock = React.useState;
   const useStateMock: any = (useState: any) => [useState, setStateMock];
   const testName = expect.getState().currentTestName;
-  if (testName.includes("**")) {
+  if (testName?.includes("**")) {
     jest
       .spyOn(React, "useState")
       .mockImplementationOnce(() => useStateMock(true));

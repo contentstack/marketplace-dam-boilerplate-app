@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/contentstack/marketplace-dam-boilerplate-app.git"
   },
-  "author": "",
+  "author": "Saima Sayed <saima.sayed@contentstack.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/contentstack/marketplace-dam-boilerplate-app/issues"
