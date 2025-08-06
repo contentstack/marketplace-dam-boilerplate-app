@@ -1,0 +1,4 @@
+fileignoreconfig:
+  - filename: talismanrc
+    checksum: 592bdfe124e3863aa552aa066d88eca1fc1407ffcf2698a888ecc6582a643473
+version: "1.0"
