@@ -14,14 +14,15 @@ const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
     // Enter your code for filteration of assets to the specified format
     ({
-      id: "",
-      type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
-      name: "",
-      width: "",
-      height: "",
+      // eslint-disable-next-line
+      id: asset?._id,
+      type: "image", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
+      name: asset?.assetName,
+      width: asset?.width,
+      height: asset?.height,
       size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: "",
-      previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
+      thumbnailUrl: asset?.assetUrl,
+      previewUrl: asset?.assetUrl, // add this parameter if you want "Preview" in tooltip action items
       platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
       cs_metadata: asset?.cs_metadata,
     })
