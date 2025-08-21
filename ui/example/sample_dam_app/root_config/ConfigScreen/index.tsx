@@ -54,7 +54,7 @@ const configureConfigScreen = (
     },
     radioField: {
       type: "radioInputField",
-      labelText: "DAM Radio Input",
+      labelText: "DAM radio input",
       helpText: "Select one option to configure this integration.",
       instructionText: "Select one option to define the app behavior.",
       options: [
