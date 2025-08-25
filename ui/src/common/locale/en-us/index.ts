@@ -18,33 +18,30 @@ const localeTexts = {
       textLabel: "Configuration Name",
       textPlaceholder: "Enter Configuration Name",
       duplicateError:
-        "Configuration label name already exists. Please use a different name and try again.",
-      nameLengthError:
-        "Configuration Name length should be between 1 to 50 characters.",
-      legacyNameError: `"legacy_config" is a reserved configuration name. Please use a
-      different name.`,
+        "This configuration name already exists. Enter a different name.",
+      nameLengthError: "Configuration name must be 1-50 characters.",
+      legacyNameError: `"legacy_config" is reserved.Enter a different name.`,
       nullundefinedError: `"null" or "undefined" cannot be used as configuration name`,
       cancelBtn: "Cancel",
       addBtn: "Add",
     },
     DeleteModal: {
       header: "Confirm Deletion",
-      body: "Are you sure you want to delete <b>&apos;$&apos;</b> configuration? If yes, type the name of the configuration and press Delete.",
-      textPlaceholder: "Enter configuration name for confirmation",
+      body: "You are about to delete the <b>&apos;$&apos;</b> configuration.This action cannot be undone.To confirm, type the configuration name and select Delete.",
+      textPlaceholder: "Enter configuration name to confirm.",
       cancelButton: "Cancel",
       confirmButton: "Delete",
     },
     entrySaveRadioButton: {
       label: "Save In Entry",
-      help: `You can select how you want to save the data you get from ${rootConfig.damEnv.DAM_APP_NAME}.`,
-      placeholder:
-        "Enter the structure of the data you want to save in the entry",
+      help: `Choose how to save data retrieved from ${rootConfig.damEnv.DAM_APP_NAME}.`,
+      placeholder: "Enter the data structure to save in the entry",
       all_field_instruction:
-        "The 'All Fields' option allows you to add a limited number of assets based on the asset's JSON data.",
+        "Select 'All Fields' to add a limited number of assets based on the asset's JSON data.",
       custom_field_instruction:
-        "The 'Custom Fields' option allows you to define and select the JSON data you want to save in the entry.",
+        "Select 'Custom Fields' to define and select the JSON data to save in the entry.",
       notetext:
-        "<b>Note:</b> Switching between 'All' and 'Custom' Fields only affects the newly added assets, whereas the old assets use the previous configuration.",
+        "<b>Note:</b> Changing between 'All' and 'Custom' Fields only applies to newly added assets. Existing assets keep their previous configuration.",
       wholeJson: "All Fields",
       customJson: "Custom Fields",
     },
@@ -58,11 +55,11 @@ const localeTexts = {
       modal: {
         header: "Add Key Path",
         label: "Key Path",
-        placeholder: "Enter Key Path",
+        placeholder: "Enter key path",
         instructionS:
-          'Use the dot format to enter nested objects, for eg: "file.url".',
+          'Use dot notation for nested objects, for eg: "file.url".',
         instructionE:
-          "Label already created/added in the dropdown will not be created.",
+          "Label already in the dropdown will not be created again.",
         note: "Note: ",
         btn: {
           cancel: "Cancel",
@@ -70,28 +67,28 @@ const localeTexts = {
           apply: "Create and Apply",
         },
         addOption: "New Key Field",
-        successToast: "Successfully added key path to options",
+        successToast: "Key path successfully added to options",
       },
       notification: {
         error: `The option "$var" already exists`,
         limitError: "Error: Limit of 150 options exceeded",
       },
     },
-    missingCredentials: "Missing Required Fields",
-    emptyValue: "Field Value Missing",
-    noSelectedDefault: "Please select at least one default configuration",
-    noConfiguration: "Please add at least one configuration",
+    missingCredentials: "Missing required fields",
+    emptyValue: "Field value missing",
+    noSelectedDefault: "Select at least one default configuration",
+    noConfiguration: "Add at least one configuration",
   },
   CustomFields: {
     assetLimit: {
       btnTooltip:
-        "You cannot choose assets as the maximum limit has been reached.",
+        "You cannot select more assets as the maximum limit has been reached.",
       notificationMsg:
-        "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
+        "Maximum asset limit has been reached. You cannot add more assets than the preconfigured limit.",
     },
     assetValidation: {
       errorStatement:
-        "Error: $var cannot be added as it does not match the asset constraints provided.",
+        "Error: $var cannot be added as it does not meet the asset constraints.",
     },
     button: {
       btnText: "Choose Asset(s)",
@@ -105,7 +102,7 @@ const localeTexts = {
       },
       noImage: "No image available",
       configDeletedImg:
-        "We are unable to access the image url. The link could be broken, the asset might be deleted or you do not have access to it.",
+        "Unable to access the image url. The link may be broken, the asset may have been deleted or you may not have the permission to view it.",
     },
     header: {
       asset: {
@@ -125,9 +122,9 @@ const localeTexts = {
       content: "Asset Image Not Available",
     },
     DeleteModal: {
-      header: "Remove Asset from Contentstack Entry",
-      body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack Entry?",
-      textPlaceholder: "Enter asset name for confirmation",
+      header: "Remove asset from Contentstack Entry",
+      body: "You are about to remove <b>&apos;$&apos;</b> from Contentstack Entry.This action cannot be undone.To proceed, select Remove.",
+      textPlaceholder: "Enter asset name.",
       cancelButton: "Cancel",
       confirmButton: "Remove",
     },
@@ -137,12 +134,12 @@ const localeTexts = {
     title: rootConfig?.damEnv?.DAM_APP_NAME,
   },
   Warnings: {
-    incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
+    incorrectConfig: `The credentials for "${rootConfig?.damEnv?.DAM_APP_NAME}" are invalid or missing. Update the configuration and try again.`,
   },
   AppFailed: {
-    Message1: "App Location Iniailization Failed.",
-    Message2: "Please reload the location and Try Again!",
-    body: "For Assistance, please reach out to us at support@contentstack.com",
+    Message1: "App location iniailization failed.",
+    Message2: "Reload and try again!",
+    body: "For assistance, reach out to us at support@contentstack.com",
     button: {
       text: "Learn More",
       url: "https://www.contentstack.com/docs/developers/developer-hub/marketplace-dam-app-boilerplate",

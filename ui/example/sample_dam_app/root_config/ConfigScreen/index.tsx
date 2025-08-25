@@ -23,10 +23,11 @@ const configureConfigScreen = (
   return {
     textField: {
       type: "textInputField",
-      labelText: "DAM Text Input",
-      helpText: "DAM Text Input Helptext",
-      placeholderText: "DAM Text Input Placeholder",
-      instructionText: "DAM Text Input Instruction Text",
+      labelText: "Text input",
+      helpText:
+        "Add the required input for this configuration. (Max 250 characters.)",
+      placeholderText: "Enter a value",
+      instructionText: "Enter DAM app value (e.g., API key or URL)",
       inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: false,
       saveInServerConfig: true,
@@ -34,10 +35,11 @@ const configureConfigScreen = (
     },
     selectField: {
       type: "selectInputField",
-      labelText: "DAM Select Input",
-      helpText: "DAM Select Input Helptext",
-      placeholderText: "DAM Select Input Placeholder",
-      instructionText: "DAM Select Input Instruction Text",
+      labelText: "Select input",
+      helpText: "Select a value that matches your DAM setup.",
+      placeholderText: "Select a value",
+      instructionText:
+        "Select a predefined option from your DAM configuration.",
       options: [
         { label: "option 1", value: "option1" },
         { label: "option 2", value: "option2" },
@@ -52,9 +54,9 @@ const configureConfigScreen = (
     },
     radioField: {
       type: "radioInputField",
-      labelText: "DAM Radio Input",
-      helpText: "DAM Radio Input Helptext",
-      instructionText: "DAM Radio Input Instruction Text",
+      labelText: "DAM radio input",
+      helpText: "Select one option to configure this integration.",
+      instructionText: "Select one option to define the app behavior.",
       options: [
         {
           label: "Option 1",
