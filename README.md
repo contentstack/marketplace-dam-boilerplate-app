@@ -246,15 +246,8 @@ marketplace-dam-boilerplate-app
 
   ```
   REACT_APP_CUSTOM_FIELD_URL = http://localhost:4000
-  REACT_APP_REGION_MAPPING='{
-  "NA": { "JSON_RTE_URL": "https://rte-extension.contentstack.com" },
-  "EU": { "JSON_RTE_URL": "https://eu-rte-extension.contentstack.com" },
-  "AZURE_NA": { "JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com" },
-  "AZURE_EU": { "JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com" },
-  "GCP_NA": { "JSON_RTE_URL": "https://gcp-na-rte-extension.contentstack.com" },
-  "GCP_EU": { "JSON_RTE_URL": "https://gcp-eu-rte-extension.contentstack.com" },
-  "AU": { "JSON_RTE_URL": "https://au-rte-extension.contentstack.com" }
-  }'
+  REACT_APP_REGION_MAPPING='{"NA": { "JSON_RTE_URL": "https://rte-extension.contentstack.com" },"EU": { "JSON_RTE_URL": "https://eu-rte-extension.contentstack.com" },"AZURE_NA": { "JSON_RTE_URL": "https://azure-na-rte-extension.contentstack.com" },"AZURE_EU": { "JSON_RTE_URL": "https://azure-eu-rte-extension.contentstack.com" },"GCP_NA": { "JSON_RTE_URL": "https://gcp-na-rte-extension.contentstack.com" },"GCP_EU": { "JSON_RTE_URL": "https://gcp-eu-rte-extension.contentstack.com" },"AU": {"JSON_RTE_URL": "https://au-rte-extension.contentstack.com" }}'
+
   ```
 
 ## Install Dependencies
