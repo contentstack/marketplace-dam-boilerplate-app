@@ -4,6 +4,7 @@ const { makeApiCall, safePromise, getBaseUrl } = require("./utils");
 const { createApp } = require("./ops/create");
 const { installApp } = require("./ops/install");
 const constants = require("./constants");
+const { createContentType } = require("./ops/contentType");
 
 (async () => {
   try {
@@ -28,7 +29,6 @@ const constants = require("./constants");
       makeApiCall({
         url: `${csBaseUrl}/v3/user-session`,
         method: "POST",
-        //   headers: { "Content-Type": "application/json" },
         data: { user: { email, password } },
       }),
       "Looks like your email or password is invalid. Please try again or reset your password."
@@ -97,10 +97,12 @@ const constants = require("./constants");
       return;
     }
 
+    console.log({ authtoken });
     orgIndex = readlineSync.keyInSelect(
       userOrgs.map((org) => org.name),
       "Please select an organization"
     );
+
     if (orgIndex === -1) {
       console.info("No organization selected...");
       return;
@@ -121,15 +123,43 @@ const constants = require("./constants");
 
     const app = await createApp(marketplace, appName, selection);
 
-    console.log("App created:", app.uid);
+    console.log("App created:" + appName);
+
+    // Step 4: Install Marketplace App
 
     console.log("Do you want to install this app now?");
     const choice = readlineSync.keyInSelect(["Yes", "No"], "Select an option");
-
+    let installationData;
     if (choice === 0) {
-      await installApp(app, marketplace, csBaseUrl, authtoken, selectedOrgUid);
+      installationData = await installApp(
+        app,
+        marketplace,
+        csBaseUrl,
+        authtoken,
+        selectedOrgUid
+      );
     } else {
       console.log("App created but not installed.");
+      return;
+    }
+
+    // Step 5: Create Content Type
+    const createContentTypeSample = readlineSync.keyInSelect(
+      ["Yes", "No"],
+      "Create Content Type with DAM field?"
+    );
+
+    console.log(installationData);
+    if (createContentTypeSample === 0) {
+      const contentType = await createContentType(
+        csBaseUrl,
+        authtoken,
+        installationData.stackApiKey,
+        installationData.installationUid,
+        selection
+      );
+    } else {
+      console.log("Skipping content type creation.");
     }
   } catch (error) {
     console.info(error);
