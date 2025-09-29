@@ -23,10 +23,12 @@ async function installApp(app, marketplace, csBaseUrl, authtoken, orgUid) {
   }
 
   const stackApiKey = stackData.stacks[stackIndex].api_key;
-  const data = await marketplace
+
+  const installation = await marketplace
     .app(app.uid)
     .install({ targetUid: stackApiKey, targetType: "stack" });
-  console.log(`✅ App installed in stack: ${stackApiKey}`);
+
+  return { stackApiKey, installationUid: installation.installation_uid };
 }
 
 module.exports = { installApp };
