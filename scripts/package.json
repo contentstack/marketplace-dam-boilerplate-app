@@ -9,8 +9,7 @@
     "login": "node ops/login.js",
     "create-app": "node ops/create-update.js create-app",
     "update-app": "node ops/create-update.js update-app",
-    "create-content-type": "node ops/content.js",
-    "create-entry": "node ops/entry.js"
+    "create-content-type": "node ops/contentType.js"
   },
   "keywords": [],
   "author": "",
