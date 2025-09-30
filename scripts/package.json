@@ -5,7 +5,12 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "login": "node ops/login.js",
+    "create-app": "node ops/create-update.js create-app",
+    "update-app": "node ops/create-update.js update-app",
+    "create-content-type": "node ops/content.js",
+    "create-entry": "node ops/entry.js"
   },
   "keywords": [],
   "author": "",
