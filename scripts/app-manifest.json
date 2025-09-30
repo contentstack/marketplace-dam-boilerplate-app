@@ -1,0 +1,11 @@
+{
+  "name": "App from script",
+  "description": "DAM integration app for Contentstack",
+  "target_type": "stack",
+  "ui_location": {
+    "signed": false,
+    "base_url": "",
+    "locations": []
+  },
+  "uid": "68da7fa6883ddb8637a70185"
+}
