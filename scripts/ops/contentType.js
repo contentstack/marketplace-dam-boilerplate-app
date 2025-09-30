@@ -6,21 +6,16 @@ const {
   updateInstallationContentType,
 } = require("../utils");
 const { getExtensionUid } = require("./extension");
+const { createSampleEntry } = require("./entry");
 const loginData = require("../credentials.json");
-
-const INSTALLATIONS_FILE = "app-installation.json";
+const installationData = require("../app-installation.json");
 
 (async () => {
   try {
-    if (!fs.existsSync(INSTALLATIONS_FILE)) {
-      console.log("No installations found.");
-      return;
-    }
+    if (!loginData.authtoken)
+      return console.info("Login credentials not found.");
 
-    const installations = JSON.parse(
-      fs.readFileSync(INSTALLATIONS_FILE, "utf-8")
-    );
-    if (!installations.length) {
+    if (!installationData.length) {
       console.log("No installations found.");
       return;
     }
@@ -111,6 +106,25 @@ const INSTALLATIONS_FILE = "app-installation.json";
 
     console.log("Content Type created:", ctData.content_type.uid);
     updateInstallationContentType(appUid, ctData.content_type.uid);
+
+    const createEntrySample = readlineSync.keyInSelect(
+      ["Yes", "No"],
+      "Create Sample Entry for this Content Type?"
+    );
+
+    if (createEntrySample === 0) {
+      const fieldUid = isRte ? "dam_rte_field" : "dam_field";
+      await createSampleEntry(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        ctUid,
+        fieldUid,
+        isRte
+      );
+    } else {
+      console.log("Skipped entry creation.");
+    }
   } catch (error) {
     console.error("Error:", error.message || error);
   }
