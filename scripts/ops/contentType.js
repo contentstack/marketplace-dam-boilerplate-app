@@ -1,10 +1,6 @@
 const fs = require("fs");
 const readlineSync = require("readline-sync");
-const {
-  makeApiCall,
-  safePromise,
-  updateInstallationContentType,
-} = require("../utils");
+const { makeApiCall, safePromise } = require("../utils");
 const { getExtensionUid } = require("./extension");
 const { createSampleEntry } = require("./entry");
 const loginData = require("../credentials.json");
@@ -21,21 +17,23 @@ const installationData = require("../app-installation.json");
     }
 
     // Show user list of apps
-    const appChoices = installations.map((inst) => inst.appName || inst.appUid);
+    const appChoices = installationData.map(
+      (inst) => inst.appName || inst.appUid
+    );
     const selectedIndex = readlineSync.keyInSelect(
       appChoices,
       "Select an app for which you want to create a Content Type"
     );
+
     if (selectedIndex === -1) {
       console.log("No app selected. Exiting...");
       return;
     }
 
-    const selectedApp = installations[selectedIndex];
+    const selectedApp = installationData[selectedIndex];
     console.log("You selected:", selectedApp);
 
-    const { appUid, stackApiKey, installationUid, isRte, csBaseUrl } =
-      selectedApp;
+    const { stackApiKey, installationUid, isRte, csBaseUrl } = selectedApp;
 
     // Fetch extension UID for the stored field type
     const extensionUid = await getExtensionUid(
@@ -105,7 +103,6 @@ const installationData = require("../app-installation.json");
     }
 
     console.log("Content Type created:", ctData.content_type.uid);
-    updateInstallationContentType(appUid, ctData.content_type.uid);
 
     const createEntrySample = readlineSync.keyInSelect(
       ["Yes", "No"],
