@@ -2,7 +2,6 @@ const axios = require("axios");
 const constants = require("../constants");
 const fs = require("fs");
 const appManifest = require("../app-manifest.json");
-
 const INSTALLATIONS_FILE = "app-installation.json";
 
 const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
@@ -68,7 +67,7 @@ const saveInstallation = (
     try {
       installations = JSON.parse(fs.readFileSync(INSTALLATIONS_FILE, "utf-8"));
     } catch (e) {
-      console.error("⚠️ Failed to parse installations.json, resetting file.");
+      console.error("Failed to parse installations.json, resetting file.");
     }
   }
 
@@ -94,19 +93,8 @@ const saveInstallation = (
       JSON.stringify(installations, null, 2)
     );
   } else {
-    console.log("ℹ️ Installation already recorded.");
+    console.log("Installation already recorded.");
   }
-};
-
-const updateInstallationContentType = (appUid, contentTypeUid) => {
-  if (!fs.existsSync(INSTALLATIONS_FILE)) return;
-  const installations = JSON.parse(
-    fs.readFileSync(INSTALLATIONS_FILE, "utf-8")
-  );
-  const index = installations.findIndex((inst) => inst.appUid === appUid);
-  if (index === -1) return;
-  installations[index].contentTypeUid = contentTypeUid;
-  fs.writeFileSync(INSTALLATIONS_FILE, JSON.stringify(installations, null, 2));
 };
 
 module.exports = {
@@ -117,5 +105,4 @@ module.exports = {
   updateAppManifest,
   getAppBaseUrl,
   saveInstallation,
-  updateInstallationContentType,
 };
