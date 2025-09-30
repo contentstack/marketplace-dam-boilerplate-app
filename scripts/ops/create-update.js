@@ -160,7 +160,7 @@ const appManifest = require("../app-manifest.json");
         // Save installation details
         saveInstallation(
           appManifest.name,
-          appManifest.uid,
+          appUid,
           STACK_API_KEY,
           installation.installation_uid,
           fieldType,
