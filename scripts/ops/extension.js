@@ -12,7 +12,7 @@ async function getExtensionUid(
   authtoken,
   stackApiKey,
   installationUid,
-  selection
+  isRte
 ) {
   try {
     const [extErr, extensions] = await safePromise(
@@ -31,11 +31,10 @@ async function getExtensionUid(
       return;
     }
 
-    const type = selection === 1 ? "rte_plugin" : "field";
+    const type = isRte ? "rte_plugin" : "field";
     const damExtension = extensions.extensions.find(
       (ext) => ext.app_installation_uid === installationUid && ext.type === type
     );
-    console.log(damExtension);
 
     if (!damExtension) {
       console.error("No DAM extension found in this stack.");
