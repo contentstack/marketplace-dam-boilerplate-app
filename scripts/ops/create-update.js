@@ -1,5 +1,3 @@
-const fs = require("fs");
-const path = require("path");
 const readlineSync = require("readline-sync");
 const contentstack = require("@contentstack/marketplace-sdk");
 const {
@@ -32,21 +30,31 @@ const appManifest = require("../app-manifest.json");
     if (orgIndex === -1) return;
     const selectedOrgUid = userOrgs[orgIndex].uid;
 
-    // Ask user: RTE or Custom DAM Field
-    const fieldType = readlineSync.keyInSelect(
-      ["RTE Field", "Custom DAM Field"],
+    // Ask user: RTE, Custom DAM, or Both
+    const selection = readlineSync.keyInSelect(
+      ["RTE Field", "Custom DAM Field", "Both (RTE + Custom DAM)"],
       "Which type of field do you want to create?"
     );
-    if (fieldType === -1)
+    if (selection === -1)
       return console.log("No field type selected. Exiting...");
 
+    let fieldType;
     console.log(
-      `You selected: ${fieldType === 0 ? "RTE Field" : "Custom DAM Field"}`
+      `You selected: ${
+        selection === 0
+          ? "RTE Field"
+          : selection === 1
+          ? "Custom DAM Field"
+          : "Both"
+      }`
     );
 
     // Update app manifest dynamically
     const updatedManifest = { ...appManifest };
-    if (fieldType === 0) {
+
+    if (selection === 0) {
+      // RTE Only
+      fieldType = "RTE";
       updatedManifest.ui_location.base_url = "http://localhost:1268";
       updatedManifest.ui_location.locations = [
         {
@@ -55,15 +63,37 @@ const appManifest = require("../app-manifest.json");
         },
         {
           type: "cs.cm.stack.rte",
-          meta: [{ title: "Rte Field", path: "/dam.js", data_type: "json" }],
+          meta: [{ title: "RTE Field", path: "/dam.js", data_type: "json" }],
         },
       ];
-    } else {
+    } else if (selection === 1) {
+      // Custom DAM Only
+      fieldType = "CUSTOM";
       updatedManifest.ui_location.base_url = "http://localhost:4000/#";
       updatedManifest.ui_location.locations = [
         {
           type: "cs.cm.stack.config",
           meta: [{ title: "Configuration", path: "/config" }],
+        },
+        {
+          type: "cs.cm.stack.custom_field",
+          meta: [
+            { title: "DAM Field", path: "/custom-field", data_type: "json" },
+          ],
+        },
+      ];
+    } else {
+      fieldType = "BOTH";
+      // Both RTE + Custom DAM
+      updatedManifest.ui_location.base_url = "http://localhost:4000/#"; // external hosting
+      updatedManifest.ui_location.locations = [
+        {
+          type: "cs.cm.stack.config",
+          meta: [{ title: "Configuration", path: "/config" }],
+        },
+        {
+          type: "cs.cm.stack.rte",
+          meta: [{ title: "RTE Field", path: "/dam.js", data_type: "json" }],
         },
         {
           type: "cs.cm.stack.custom_field",
@@ -157,7 +187,7 @@ const appManifest = require("../app-manifest.json");
 
         console.log("App installed successfully");
 
-        // Save installation details
+        // Save installation details with selection
         saveInstallation(
           appManifest.name,
           appUid,
