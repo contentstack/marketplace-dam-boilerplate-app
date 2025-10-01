@@ -8,54 +8,90 @@ const { exec } = require("child_process");
  * @param {string} stackApiKey - API key of the stack
  * @param {string} contentTypeUid - ContentType uid for entry
  * @param {string} fieldUid - Type of field in entry
- * @param {boolean} isRte - API key of the stack
+ * @param {string} type -  Field Type in entry
  */
+
 async function createSampleEntry(
   csBaseUrl,
   authtoken,
   stackApiKey,
   contentTypeUid,
   fieldUid,
-  isRte
+  type
 ) {
-  const entryData = isRte
-    ? {
-        new_title: "Entry with JSON RTE",
-        [fieldUid]: {
-          type: "doc",
-          attrs: {},
-          children: [
-            {
-              type: "DAM",
-              attrs: {
-                _id: 1,
-                assetName: "Colosseum, Rome",
-                width: 100,
-                height: 100,
-                size: 1000,
-                assetUrl:
-                  "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
-              },
-              children: [{ text: "" }],
-            },
-          ],
-        },
-      }
-    : {
-        new_title: "Entry with DAM field",
-        locale: "en-us",
-        [fieldUid]: [
-          {
+  let entryData = {
+    new_title: "Sample DAM Entry",
+    locale: "en-us",
+  };
+
+  if (type === true) {
+    // RTE entry
+    entryData[fieldUid] = {
+      type: "doc",
+      attrs: {},
+      children: [
+        {
+          type: "DAM",
+          attrs: {
             _id: 1,
             assetName: "Colosseum, Rome",
-            width: 500,
-            height: 500,
+            width: 100,
+            height: 100,
             size: 1000,
             assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
           },
-        ],
-      };
+          children: [{ text: "" }],
+        },
+      ],
+    };
+  } else if (type === false) {
+    // Custom field entry
+    entryData[fieldUid] = [
+      {
+        _id: 1,
+        assetName: "Colosseum, Rome",
+        width: 500,
+        height: 500,
+        size: 1000,
+        assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+      },
+    ];
+  } else if (type === "BOTH" && Array.isArray(fieldUid)) {
+    // Both field + RTE
+    const [rteFieldUid, damFieldUid] = fieldUid;
 
+    entryData[rteFieldUid] = {
+      type: "doc",
+      attrs: {},
+      children: [
+        {
+          type: "DAM",
+          attrs: {
+            _id: 1,
+            assetName: "Colosseum, Rome",
+            width: 100,
+            height: 100,
+            size: 1000,
+            assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+          },
+          children: [{ text: "" }],
+        },
+      ],
+    };
+
+    entryData[damFieldUid] = [
+      {
+        _id: 2,
+        assetName: "Eiffel Tower, Paris",
+        width: 600,
+        height: 800,
+        size: 2000,
+        assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+      },
+    ];
+  }
+
+  // API call
   const [entryErr, entryRes] = await safePromise(
     makeApiCall({
       url: `${csBaseUrl}/v3/content_types/${contentTypeUid}/entries`,

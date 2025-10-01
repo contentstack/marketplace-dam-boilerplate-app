@@ -76,16 +76,12 @@ const saveInstallation = (
   );
 
   if (!exists) {
-    let isRte = true;
-    if (fieldType) {
-      isRte = false;
-    }
     installations.push({
       appName,
       appUid,
       stackApiKey,
       installationUid,
-      isRte,
+      fieldType,
       csBaseUrl,
     });
     fs.writeFileSync(
