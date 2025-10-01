@@ -7,12 +7,12 @@ const { makeApiCall, safePromise } = require("../utils");
  * @param {string} stackApiKey - API key of the stack
  */
 
-async function getExtensionUid(
+async function getExtension(
   csBaseUrl,
   authtoken,
   stackApiKey,
   installationUid,
-  isRte
+  fieldType
 ) {
   try {
     const [extErr, extensions] = await safePromise(
@@ -31,24 +31,43 @@ async function getExtensionUid(
       return;
     }
 
-    const type = isRte ? "rte_plugin" : "field";
-    const damExtension = extensions.extensions.find(
-      (ext) => ext.app_installation_uid === installationUid && ext.type === type
+    // Filter extensions that belong to this installation
+    const appExtensions = extensions.extensions.filter(
+      (ext) => ext.app_installation_uid === installationUid
     );
 
-    if (!damExtension) {
-      console.error("No DAM extension found in this stack.");
+    if (!appExtensions.length) {
+      console.error("No extensions found for this installation.");
       return;
     }
 
-    return damExtension.uid;
+    if (fieldType === "RTE") {
+      const rteExt = appExtensions.find((ext) => ext.type === "rte_plugin");
+      return rteExt ? rteExt.uid : null;
+    }
+
+    if (fieldType === "CUSTOM") {
+      const fieldExt = appExtensions.find((ext) => ext.type === "field");
+      return fieldExt ? fieldExt.uid : null;
+    }
+
+    if (fieldType === "BOTH") {
+      const rteExt = appExtensions.find((ext) => ext.type === "rte_plugin");
+      const fieldExt = appExtensions.find((ext) => ext.type === "field");
+
+      const result = [];
+      if (rteExt) result.push({ type: "RTE", uid: rteExt.uid });
+      if (fieldExt) result.push({ type: "CUSTOM", uid: fieldExt.uid });
+
+      return result.length ? result : null;
+    }
   } catch (err) {
     console.error(
-      "Failed to create content type with DAM field:",
+      "Failed to fetch extensions for content type creation:",
       err.response?.data || err.message
     );
     throw err;
   }
 }
 
-module.exports = { getExtensionUid };
+module.exports = { getExtension };
