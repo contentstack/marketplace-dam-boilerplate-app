@@ -276,3 +276,14 @@ export interface TypedefaultOp {
   operation: "add" | "remove";
   options: string[];
 }
+
+export interface BranchRule {
+  branch_uid: string[];
+  config_label: string;
+}
+
+export interface LocaleRule {
+  branch_uid: string;
+  locales_uid: string[];
+  config_label: string;
+}
