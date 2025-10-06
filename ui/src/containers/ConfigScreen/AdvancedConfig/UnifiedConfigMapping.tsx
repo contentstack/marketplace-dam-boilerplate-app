@@ -1,5 +1,8 @@
 import {
+  Field,
   FieldLabel,
+  Help,
+  Paragraph,
   MiniScrollableTable,
   Button,
 } from "@contentstack/venus-components";
@@ -20,7 +23,7 @@ const TableHeader: React.FC<{ title: string }> = function ({ title }) {
   );
 };
 
-function LocaleSpecificConfig({
+function UnifiedConfigMapping({
   mappings,
   leftOptions,
   middleOptions,
@@ -33,31 +36,55 @@ function LocaleSpecificConfig({
     console.warn("handleDelete function not implemented");
   },
 }: any) {
-  const texts = localeTexts.ConfigFields.AdvancedConfig;
+  const texts = localeTexts?.ConfigFields?.AdvancedConfig;
+
+  if (!texts || !texts?.unified || !texts?.common) {
+    return null;
+  }
+
+  const safeLeftOptions = Array.isArray(leftOptions) ? leftOptions : [];
+  const safeMiddleOptions = Array.isArray(middleOptions) ? middleOptions : [];
+  const safeRightOptions = Array.isArray(rightOptions) ? rightOptions : [];
+  const safeMappings = Array.isArray(mappings) ? mappings : [];
 
   return (
     <div>
+      <Field>
+        <FieldLabel
+          htmlFor="contentType"
+          className="contentMapWrapper-tags-label"
+        >
+          {texts?.unified?.label || "Config Rule Selector"}
+        </FieldLabel>
+        <Help type="basic" text={texts?.unified?.helpText || "help"} />
+        <Paragraph
+          className="contentMapWrapper-heading"
+          tagName="p"
+          variant="p2"
+          text={texts?.unified?.heading || "Choose your default config rules"}
+        />
+      </Field>
 
       <MiniScrollableTable
         width="700px"
-        headerComponent={<TableHeader title={texts.localeSpecific.tableTitle} />}
+        headerComponent={<TableHeader title={texts?.unified?.tableTitle || "Config Mapping"} />}
         rowComponent={
           <PairSelector
-            mappings={mappings}
-            leftOptions={leftOptions}
-            middleOptions={middleOptions}
-            rightOptions={rightOptions}
+            mappings={safeMappings}
+            leftOptions={safeLeftOptions}
+            middleOptions={safeMiddleOptions}
+            rightOptions={safeRightOptions}
             onLeftSelect={onLeftSelect}
             onMiddleSelect={onMiddleSelect}
             onRightSelect={onRightSelect}
             onDelete={onDelete}
             config={{
-              leftPlaceholder: texts.localeSpecific.leftPlaceholder,
-              middlePlaceholder: texts.localeSpecific.middlePlaceholder,
-              rightPlaceholder: texts.localeSpecific.rightPlaceholder,
-              noOptionsMessage: texts.common.noOptionsMessage,
-              deleteTooltip: texts.common.deleteTooltip,
-              separator: texts.common.separator,
+              leftPlaceholder: texts?.unified?.leftPlaceholder || "Select Branch",
+              middlePlaceholder: texts?.unified?.middlePlaceholder || "Select Locale (Optional)",
+              rightPlaceholder: texts?.unified?.rightPlaceholder || "Select Config",
+              noOptionsMessage: texts?.common?.noOptionsMessage || "No options available",
+              deleteTooltip: texts?.common?.deleteTooltip || "Remove mapping",
+              separator: texts?.common?.separator || "-",
               containerClass: "custom-pair-container",
               selectWidth: "180px",
               separatorClass: "custom-separator",
@@ -67,8 +94,8 @@ function LocaleSpecificConfig({
               isRightDisabled: false,
               isSearchable: true,
               multiDisplayLimit: 10,
-              isMultiLeft: false, // branch
-              isMultiMiddle: true, // locale
+              isMultiLeft: false,
+              isMultiMiddle: true,
               isLeftExhaustive: false,
               isMiddleExhaustive: false,
               isRightExhaustive: false,
@@ -84,7 +111,7 @@ function LocaleSpecificConfig({
               icon="Plus"
               iconAlignment="left"
             >
-              {texts.localeSpecific.addMoreBtn}
+              {texts?.unified?.addMoreBtn || "add more"}
             </Button>
           </div>
         }
@@ -93,4 +120,4 @@ function LocaleSpecificConfig({
   );
 }
 
-export default LocaleSpecificConfig;
+export default UnifiedConfigMapping;

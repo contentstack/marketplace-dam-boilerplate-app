@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect } from "react";
-import BranchSpecificConfig from "./BranchSpecificConfig";
-import LocaleSpecificConfig from "./LocaleSpecificConfig";
-import useBranchRulesMappings from "../../../common/hooks/useBranchRulesMappings";
-import useLocaleRulesMappings from "../../../common/hooks/useLocaleRulesMappings";
+import UnifiedConfigMapping from "./UnifiedConfigMapping";
+import useUnifiedConfigMappings from "../../../common/hooks/useUnifiedConfigMappings";
 import { MarketplaceAppContext } from "../../../common/contexts/MarketplaceAppContext";
 import AppConfigContext from "../../../common/contexts/AppConfigContext";
 
@@ -14,97 +12,88 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper }: any) {
   const defaultKey =
     installationData?.configuration?.default_multi_config_key || "config-1";
 
-  function clubLocaleMappings(localeRules: any[]) {
-    const clubbed: any = {};
-
-    localeRules.forEach((rule) => {
-      const branch = rule.branch_uid;
-      const config = Array.isArray(rule.config_label)
-        ? rule.config_label[0]
-        : rule.config_label;
-      const locale = rule.locales_uid[0];
-
-      if (!clubbed[branch]) clubbed[branch] = {};
-      if (!clubbed[branch][config]) clubbed[branch][config] = new Set();
-
-      clubbed[branch][config].add(locale);
-    });
-
-    const result: any = [];
-    Object.entries(clubbed).forEach(([branch, configsObj]: any) => {
-      Object.entries(configsObj).forEach(([config, localesSet]: any) => {
-        result.push({
-          branch_uid: branch,
-          locales_uid: Array.from(localesSet),
-          config_label: config,
-        });
-      });
-    });
-
-    return result;
-  }
-
-  const extractPresets = useCallback(() => {
-    const innerBranchRules: any[] = [];
-    const innerLocaleRules: any[] = [];
+  /**
+   * Extract unified mappings from config_rules
+   * Handles both branch-only and branch+locale mappings
+   * Groups locales with same branch+config into single row
+   */
+  const extractUnifiedMappings = useCallback(() => {
+    const unifiedRules: any[] = [];
+    const localeGroupMap: Map<string, Set<string>> = new Map(); // key: "branch|config", value: Set of locales
 
     const configRules = installationData?.configuration?.config_rules;
-    if (!configRules) {
-      return { branchRules: [], localeRules: [] };
+    if (!configRules || typeof configRules !== 'object') {
+      return [];
     }
 
-    Object.entries(configRules).forEach(([branchUid, branchObj]: any) => {
+    Object.entries(configRules)?.forEach(([branchUid, branchObj]: any) => {
+      if (!branchUid || !branchObj) return;
+
       const configLabel =
-        Array.isArray(branchObj.config_label) && branchObj.config_label.length
+        Array.isArray(branchObj?.config_label) && branchObj?.config_label?.length
           ? branchObj.config_label[0]
-          : [defaultKey];
+          : defaultKey;
 
-      innerBranchRules.push({
-        branch_uid: [branchUid],
-        config_label: configLabel,
-      });
+      // Branch-specific mappings (applies to ALL locales)
+      if (branchUid && configLabel) {
+        unifiedRules.push({
+          branch_uid: branchUid,
+          locales_uid: [],
+          config_label: configLabel,
+        });
+      }
 
-      Object.entries(branchObj.locales || {}).forEach(
-        ([locale, localeObj]: any) => {
-          const localeConfigLabel =
-            Array.isArray(localeObj.config_label) &&
-              localeObj.config_label.length
-              ? localeObj.config_label[0]
-              : [defaultKey];
-          innerLocaleRules.push({
-            branch_uid: branchUid,
-            locales_uid: [locale],
-            config_label: localeConfigLabel,
-          });
-        }
-      );
+      // Locale-specific mappings - GROUP by branch+config
+      if (branchObj?.locales && typeof branchObj.locales === 'object') {
+        Object.entries(branchObj.locales)?.forEach(
+          ([locale, localeObj]: any) => {
+            if (!locale || !localeObj) return;
+
+            const localeConfigLabel =
+              Array.isArray(localeObj?.config_label) &&
+                localeObj?.config_label?.length
+                ? localeObj.config_label[0]
+                : defaultKey;
+
+            if (branchUid && locale && localeConfigLabel) {
+              // Create unique key for branch+config combination
+              const groupKey = `${branchUid}|${localeConfigLabel}`;
+
+              if (!localeGroupMap.has(groupKey)) {
+                localeGroupMap.set(groupKey, new Set());
+              }
+              localeGroupMap.get(groupKey)?.add(locale);
+            }
+          }
+        );
+      }
     });
 
-    return { branchRules: innerBranchRules, localeRules: innerLocaleRules };
+    // Convert grouped locales into unified rules
+    localeGroupMap.forEach((localeSet, groupKey) => {
+      const [branchUid, configLabel] = groupKey.split('|');
+      if (branchUid && configLabel && localeSet.size > 0) {
+        unifiedRules.push({
+          branch_uid: branchUid,
+          locales_uid: Array.from(localeSet),
+          config_label: configLabel,
+        });
+      }
+    });
+
+    return unifiedRules || [];
   }, [installationData?.configuration, defaultKey]);
 
-  const {
-    branchRules: extractedBranchRules,
-    localeRules: extractedLocaleRules,
-  } = extractPresets();
-  const clubbedLocaleRules = clubLocaleMappings(extractedLocaleRules);
+  const extractedUnifiedRules = extractUnifiedMappings();
 
   const {
-    mappings: branchRules,
-    addMapping: addBranchRule,
-    onLeftSelect: onBranchLeftSelect,
-    onRightSelect: onBranchConfigSelect,
-    onDelete: onBranchDelete,
-  } = useBranchRulesMappings(extractedBranchRules);
-
-  const {
-    mappings: localeRules,
-    addMapping: addLocaleRule,
-    onLeftSelect: onLocaleBranchSelect,
+    mappings: unifiedMappings,
+    addMapping: addUnifiedMapping,
+    onLeftSelect: onBranchSelect,
     onMiddleSelect: onLocalesSelect,
-    onRightSelect: onLocaleConfigSelect,
-    onDelete: onLocaleDelete,
-  } = useLocaleRulesMappings(clubbedLocaleRules);
+    onRightSelect: onConfigSelect,
+    onDelete: onMappingDelete,
+  } = useUnifiedConfigMappings(extractedUnifiedRules);
 
 
   const rightBranchSpecificOptions = React.useMemo(() => {
@@ -116,27 +105,26 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper }: any) {
   }, [configList]);
 
   const leftBranchSpecificOptions = React.useMemo(() => {
-    if (!Array.isArray(branches)) return [];
-    return branches.map((b: any) => ({
-      label: b.uid,
-      value: b.uid,
-    }));
+    if (!Array.isArray(branches) || !branches?.length) return [];
+    return branches
+      .filter((b: any) => b?.uid)
+      .map((b: any) => ({
+        label: b.uid,
+        value: b.uid,
+      }));
   }, [branches]);
 
   const middleLocaleOptions = React.useMemo(() => {
-    if (!Array.isArray(locales)) return [];
-    return locales?.map((l: any) => ({
-      label: l.name,
-      value: l.code,
-    }));
+    if (!Array.isArray(locales) || !locales?.length) return [];
+    return locales
+      .filter((l: any) => l?.name && l?.code)
+      .map((l: any) => ({
+        label: l.name,
+        value: l.code,
+      }));
   }, [locales]);
 
-  interface BranchRule {
-    branch_uid: string[];
-    config_label: string | string[];
-  }
-
-  interface LocaleRule {
+  interface UnifiedRule {
     branch_uid: string | string[];
     locales_uid: string[];
     config_label: string | string[];
@@ -155,57 +143,72 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper }: any) {
     [branchId: string]: ConfigRule;
   }
 
-  function buildCombinedMapper(
-    branchRulesParam: BranchRule[],
-    localeRulesParam: LocaleRule[]
-  ): ConfigRules {
+  /**
+   * Build config mapper from unified rules
+   * Rules with empty locales_uid apply to ALL locales (branch-level)
+   * Rules with specific locales_uid apply only to those locales
+   */
+  function buildUnifiedMapper(unifiedRulesParam: UnifiedRule[]): ConfigRules {
     const result: ConfigRules = {};
 
-    branchRulesParam.forEach((rule: BranchRule) => {
-      (rule.branch_uid || []).forEach((branch: string) => {
-        if (!result[branch]) {
-          result[branch] = { config_label: [] };
-        }
-        const cfgArr = result[branch].config_label;
-        if (Array.isArray(rule.config_label)) {
-          rule.config_label.forEach((cl: string) => {
-            if (!cfgArr.includes(cl)) cfgArr.push(cl);
-          });
-        } else if (rule.config_label && !cfgArr.includes(rule.config_label)) {
-          cfgArr.push(rule.config_label);
-        }
-      });
-    });
+    if (!Array.isArray(unifiedRulesParam) || !unifiedRulesParam?.length) {
+      return result;
+    }
 
-    localeRulesParam.forEach((rule: LocaleRule) => {
-      const branchUids = Array.isArray(rule.branch_uid)
+    unifiedRulesParam?.forEach((rule: UnifiedRule) => {
+      if (!rule) return;
+
+      const branchUids = Array.isArray(rule?.branch_uid)
         ? rule.branch_uid
-        : [rule.branch_uid];
+        : [rule?.branch_uid];
 
-      branchUids.forEach((branch: string) => {
+      if (!branchUids || !branchUids?.length) return;
+
+      branchUids?.forEach((branch: string) => {
+        if (!branch) return;
+
         if (!result[branch]) {
           result[branch] = { config_label: [] };
         }
-        if (!result[branch].locales) {
-          result[branch].locales = {};
-        }
 
-        (rule.locales_uid || []).forEach((locale: string) => {
-          if (!result[branch].locales![locale]) {
-            result[branch].locales![locale] = { config_label: [] };
-          }
-          const localeCfgArr = result[branch].locales![locale].config_label;
-          if (Array.isArray(rule.config_label)) {
-            rule.config_label.forEach((cl: string) => {
-              if (!localeCfgArr.includes(cl)) localeCfgArr.push(cl);
+        const configLabels = Array.isArray(rule?.config_label)
+          ? rule.config_label
+          : [rule?.config_label];
+
+        if (!configLabels || !configLabels?.length) return;
+
+        // If locales_uid is empty or not specified, it's a branch-level rule
+        if (!rule?.locales_uid || rule.locales_uid?.length === 0) {
+          const cfgArr = result[branch]?.config_label;
+          if (cfgArr) {
+            configLabels?.forEach((cl: string) => {
+              if (cl && !cfgArr.includes(cl)) {
+                cfgArr.push(cl);
+              }
             });
-          } else if (
-            rule.config_label &&
-            !localeCfgArr.includes(rule.config_label)
-          ) {
-            localeCfgArr.push(rule.config_label);
           }
-        });
+        } else {
+          // Locale-specific rule
+          if (!result[branch].locales) {
+            result[branch].locales = {};
+          }
+
+          rule.locales_uid?.forEach((locale: string) => {
+            if (!locale) return;
+
+            if (!result[branch]?.locales![locale]) {
+              result[branch].locales![locale] = { config_label: [] };
+            }
+            const localeCfgArr = result[branch]?.locales![locale]?.config_label;
+            if (localeCfgArr) {
+              configLabels?.forEach((cl: string) => {
+                if (cl && !localeCfgArr.includes(cl)) {
+                  localeCfgArr.push(cl);
+                }
+              });
+            }
+          });
+        }
       });
     });
 
@@ -217,34 +220,26 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper }: any) {
   }, [appConfig]);
 
   useEffect(() => {
-    const newConfigRules = buildCombinedMapper(branchRules, localeRules);
-    setConfigRulesMapper(newConfigRules);
-  }, [branchRules, localeRules]);
+    if (!unifiedMappings || !Array.isArray(unifiedMappings)) {
+      setConfigRulesMapper?.({});
+      return;
+    }
+    const newConfigRules = buildUnifiedMapper(unifiedMappings);
+    setConfigRulesMapper?.(newConfigRules);
+  }, [unifiedMappings, setConfigRulesMapper]);
 
   return (
-    <>
-      <BranchSpecificConfig
-        mappings={branchRules}
-        leftOptions={leftBranchSpecificOptions}
-        rightOptions={rightBranchSpecificOptions}
-        onLeftSelect={onBranchLeftSelect}
-        onRightSelect={onBranchConfigSelect}
-        onDelete={onBranchDelete}
-        onAddMapping={addBranchRule}
-        isMulti
-      />
-      <LocaleSpecificConfig
-        mappings={localeRules}
-        leftOptions={leftBranchSpecificOptions}
-        middleOptions={middleLocaleOptions}
-        rightOptions={rightBranchSpecificOptions}
-        onLeftSelect={onLocaleBranchSelect}
-        onMiddleSelect={onLocalesSelect}
-        onRightSelect={onLocaleConfigSelect}
-        onDelete={onLocaleDelete}
-        onAddMapping={addLocaleRule}
-      />
-    </>
+    <UnifiedConfigMapping
+      mappings={unifiedMappings}
+      leftOptions={leftBranchSpecificOptions}
+      middleOptions={middleLocaleOptions}
+      rightOptions={rightBranchSpecificOptions}
+      onLeftSelect={onBranchSelect}
+      onMiddleSelect={onLocalesSelect}
+      onRightSelect={onConfigSelect}
+      onDelete={onMappingDelete}
+      onAddMapping={addUnifiedMapping}
+    />
   );
 }
 
