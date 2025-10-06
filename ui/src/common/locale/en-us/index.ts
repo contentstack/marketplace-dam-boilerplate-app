@@ -110,6 +110,7 @@ const localeTexts = {
     },
     button: {
       btnText: "Choose Asset(s)",
+      loadingTooltip: "Loading configuration...",
     },
     assetCard: {
       hoverActions: {
