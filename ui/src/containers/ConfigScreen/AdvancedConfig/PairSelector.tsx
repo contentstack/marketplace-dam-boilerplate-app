@@ -10,19 +10,19 @@ interface Option {
 }
 
 interface Mapping {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface PairSelectorProps {
   mappings: Mapping[];
   leftOptions: Option[];
   rightOptions: Option[];
-  middleOptions?: Option[]; 
+  middleOptions?: Option[];
 
   onLeftSelect: (data: any, index: number) => void;
   onRightSelect: (data: any, index: number) => void;
   onDelete: (index: number) => void;
-  onMiddleSelect?: (data: any, index: number) => void; 
+  onMiddleSelect?: (data: any, index: number) => void;
 
   config?: {
     leftPlaceholder?: string;
