@@ -6,6 +6,7 @@ export type MarketplaceAppContextType = {
   appSdk: UiLocation | null;
   appConfig: GenericObjectType;
   appFailed: boolean;
+  locales: any[];
 };
 
 export const MarketplaceAppContext =
@@ -13,4 +14,5 @@ export const MarketplaceAppContext =
     appSdk: null,
     appConfig: {},
     appFailed: false,
+    locales: [],
   });
