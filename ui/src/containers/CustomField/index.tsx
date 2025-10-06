@@ -78,7 +78,7 @@ const CustomField: React.FC = function () {
     // 5. Main Default
     return config?.default_multi_config_key;
   };
-  
+
 
   const getConfig = () => {
     const { config, contentTypeConfig } = state;
