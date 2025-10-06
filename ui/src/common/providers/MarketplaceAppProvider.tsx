@@ -9,6 +9,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
   const [appConfig, setAppConfig] = useState<GenericObjectType>({});
+  const [locales, setLocales] = useState<any[]>([]); 
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
@@ -18,6 +19,9 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         await appSDK?.location?.CustomField?.frame?.updateHeight(200);
         const appSdkConfig: GenericObjectType = await appSDK?.getConfig();
         await setAppConfig(appSdkConfig);
+        const stack: any = appSDK?.stack;
+        const localesData = await stack?.getLocales();
+        await setLocales(localesData?.locales ?? []);
       })
       .catch((error) => {
         const currentLocation = window?.location?.href;
@@ -28,8 +32,8 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
   }, []);
 
   const contextValue = useMemo(
-    () => ({ appSdk, appConfig, appFailed: failed }),
-    [appSdk, appConfig, failed]
+    () => ({ appSdk, appConfig, appFailed: failed, locales }),
+    [appSdk, appConfig, failed, locales]
   );
 
   return (

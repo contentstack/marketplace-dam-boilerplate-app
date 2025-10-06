@@ -1,4 +1,5 @@
 /* Import React modules */
+/* eslint-disable no-underscore-dangle */
 import React, { useCallback, useContext, useEffect, useState } from "react";
 /* ContentStack Modules */
 import {
@@ -11,6 +12,7 @@ import {
   cbModal,
   Line,
   Tooltip,
+  Tabs,
 } from "@contentstack/venus-components";
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
@@ -40,6 +42,7 @@ import {
 } from "../../common/types";
 /* Import our CSS */
 import "./styles.scss";
+import AdvancedConfig from "./AdvancedConfig";
 
 const ConfigScreen: React.FC = function () {
   // default limit for Multi-Config
@@ -50,8 +53,12 @@ const ConfigScreen: React.FC = function () {
   // failed state received from MarketplaceAppContext
   const { appFailed } = useContext(MarketplaceAppContext);
   // context usage for global states thorughout the component
-  const { installationData, setInstallationData, checkConfigFields } =
-    useContext(AppConfigContext);
+  const {
+    installationData,
+    setInstallationData,
+    checkConfigFields,
+    appConfig,
+  } = useContext(AppConfigContext);
   const [customUpdateTrigger, setCustomUpdateTrigger] =
     useState<TypeUpdateTrigger>({} as TypeUpdateTrigger);
   // state for disabling multi-config Add Btn
@@ -91,6 +98,8 @@ const ConfigScreen: React.FC = function () {
   // default multiconfig key
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
+  const [configRulesMapper, setConfigRulesMapper] = useState<any>({});
+
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
     acckey: string
@@ -106,6 +115,20 @@ const ConfigScreen: React.FC = function () {
       });
     }
   };
+
+  useEffect(() => {
+    if (!Object.keys(configRulesMapper ?? {})?.length) {
+      return;
+    }
+
+    setInstallationData({
+      ...installationData,
+      configuration: {
+        ...installationData?.configuration,
+        config_rules: configRulesMapper,
+      },
+    });
+  }, [configRulesMapper]);
 
   useEffect(() => {
     const multiConfigKeys = installationData?.configuration?.multi_config_keys;
@@ -633,7 +656,36 @@ const ConfigScreen: React.FC = function () {
         ) : (
           <ConfigStateProvider updateValueFunc={updateValueFunc}>
             <div className="config-wrapper" data-testid="config-wrapper">
-              {renderConfig()}
+              <div className="config">
+                <Tabs
+                  tabInfo={[
+                    {
+                      componentData: renderConfig(),
+                      id: "config",
+                      title: "Configuration",
+                    },
+                    {
+                      componentData: (
+                        <AdvancedConfig
+                          branches={appConfig?.current?._data?.stack?.branches}
+                          configList={Object.keys(
+                            installationData?.serverConfiguration
+                              ?.multi_config_keys ?? {}
+                          )}
+                          appConfig={appConfig}
+                          setConfigRulesMapper={setConfigRulesMapper}
+                        />
+                      ),
+                      id: "advanced-config",
+                      title: "Advanced Configuration",
+                    },
+                  ]}
+                  tabSize="small"
+                  type="secondary"
+                  version="v2"
+                />
+              </div>
+
               <JsonComponent />
             </div>
           </ConfigStateProvider>
