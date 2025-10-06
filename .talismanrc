@@ -2,4 +2,8 @@ fileignoreconfig:
 - filename: .github/workflows/secrets-scan.yml
   ignore_detectors:
     - filecontent
+- filename: ui/src/containers/ConfigScreen/AdvancedConfig/index.tsx
+  checksum: 8c2a0ac3c7f17e60bb7ba13c735704ed4754689b329a0341a9453022b3ca042e
+- filename: ui/src/containers/ConfigScreen/AdvancedConfig/PairSelector.tsx
+  checksum: 0b24195591fc347cc8f762bc4b72a103bebae00dd9a14d998de031f9fc915d2d
 version: "1.0"
