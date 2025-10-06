@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { isEmpty } from "lodash";
 import CustomFieldContext from "../contexts/CustomFieldContext";
 import { TypeAsset, TypeSDKData } from "../types";
 import rootConfig from "../../root_config";
@@ -56,14 +55,18 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       const initialData = location?.field?.getData();
+
       // set App's Custom Field Data
       setSelectedAssets(initialData);
       // check for saved data length and handling button disable state
       handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
+
+      const hasConfig = appConfig && Object.keys(appConfig).length > 0;
+
       await setState({
-        config: isEmpty(appConfig) ? {} : appConfig,
+        config: hasConfig ? appConfig : {},
         contentTypeConfig: contenttypeConfig,
         location,
         appSdkInitialized: true,

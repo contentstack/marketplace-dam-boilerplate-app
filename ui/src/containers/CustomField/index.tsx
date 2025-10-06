@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 /* Import ContentStack modules */
 import { Button, Tooltip } from "@contentstack/venus-components";
 /* Import our modules */
@@ -291,8 +291,15 @@ const CustomField: React.FC = function () {
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-    if (state?.appSdkInitialized && !selectorPageWindow) {
+
+    const hasConfig = state?.config && Object.keys(state.config).length > 0;
+    if (!hasConfig || !state?.appSdkInitialized) {
+      return;
+    }
+
+    if (!selectorPageWindow) {
       const finalConfig = getConfig();
+
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
         handleSelectorOpen();
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
@@ -341,6 +348,14 @@ const CustomField: React.FC = function () {
     getConfig,
   ]);
 
+  const [isConfigReady, setIsConfigReady] = useState(false);
+
+  useEffect(() => {
+    const hasConfig = state?.config && Object.keys(state.config).length > 0;
+    const isReady = hasConfig && state?.appSdkInitialized;
+    setIsConfigReady(isReady);
+  }, [state?.config, state?.appSdkInitialized]);
+
   return (
     <div className="field-extension-wrapper">
       <div className="field-extension">
@@ -358,9 +373,13 @@ const CustomField: React.FC = function () {
                   </div>
                 )}
                 <Tooltip
-                  content={localeTexts.CustomFields.assetLimit.btnTooltip}
+                  content={
+                    !isConfigReady
+                      ? localeTexts.CustomFields.button.loadingTooltip
+                      : localeTexts.CustomFields.assetLimit.btnTooltip
+                  }
                   position="top"
-                  disabled={!(renderAssets?.length && isBtnDisable)}
+                  disabled={!(renderAssets?.length && isBtnDisable) && isConfigReady}
                   style={constants.constantStyles.addBtnTooltip}
                 >
                   <Button
@@ -369,7 +388,7 @@ const CustomField: React.FC = function () {
                     version="v2"
                     onClick={openDAMSelectorPage}
                     data-testid="add-btn"
-                    disabled={renderAssets?.length && isBtnDisable}
+                    disabled={!isConfigReady || (renderAssets?.length && isBtnDisable)}
                   >
                     {localeTexts.CustomFields.button.btnText}
                   </Button>
