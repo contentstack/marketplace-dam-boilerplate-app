@@ -281,8 +281,7 @@ export interface BranchRule {
   branch_uid: string[];
   config_label: string;
 }
-
-export interface LocaleRule {
+export interface UnifiedConfigRule {
   branch_uid: string;
   locales_uid: string[];
   config_label: string;

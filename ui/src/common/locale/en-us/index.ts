@@ -79,21 +79,16 @@ const localeTexts = {
     noSelectedDefault: "Select at least one default configuration",
     noConfiguration: "Add at least one configuration",
     AdvancedConfig: {
-      branchSpecific: {
+      unified: {
         label: "Config Rule Selector",
         helpText: "help",
         heading: "Choose your default config rules",
-        tableTitle: "Branch Specific Config",
+        tableTitle: "Config Mapping",
         leftPlaceholder: "Select Branch",
+        middlePlaceholder: "Select Locale (Optional)",
         rightPlaceholder: "Select Config",
         addMoreBtn: "add more",
-      },
-      localeSpecific: {
-        tableTitle: "Locale Specific Config",
-        leftPlaceholder: "Select Branch",
-        middlePlaceholder: "Select Locale",
-        rightPlaceholder: "Select Config",
-        addMoreBtn: "add more",
+        localeHelperText: "Leave empty to apply to all locales",
       },
       common: {
         noOptionsMessage: "No options available",

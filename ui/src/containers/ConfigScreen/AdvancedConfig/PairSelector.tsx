@@ -113,12 +113,8 @@ const PairSelector: React.FC<PairSelectorProps> = ({
     }),
   };
 
-  const getTooltipClass = (leftVal: any, middleVal: any, rightVal: any) => {
-    if (
-      isEmpty(leftVal) ||
-      (isMultiMiddle && isEmpty(middleVal)) ||
-      isEmpty(rightVal)
-    ) {
+  const getTooltipClass = (leftVal: any, rightVal: any) => {
+    if (isEmpty(leftVal) || isEmpty(rightVal)) {
       return "tippy-wrapper-disabled";
     }
     return "";
@@ -310,7 +306,6 @@ const PairSelector: React.FC<PairSelectorProps> = ({
           <div
             className={getTooltipClass(
               leftSelectValue,
-              middleSelectValue,
               rightSelectValue
             )}
           >
