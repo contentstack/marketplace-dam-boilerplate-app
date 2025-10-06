@@ -78,6 +78,29 @@ const localeTexts = {
     emptyValue: "Field value missing",
     noSelectedDefault: "Select at least one default configuration",
     noConfiguration: "Add at least one configuration",
+    AdvancedConfig: {
+      branchSpecific: {
+        label: "Config Rule Selector",
+        helpText: "help",
+        heading: "Choose your default config rules",
+        tableTitle: "Branch Specific Config",
+        leftPlaceholder: "Select Branch",
+        rightPlaceholder: "Select Config",
+        addMoreBtn: "add more",
+      },
+      localeSpecific: {
+        tableTitle: "Locale Specific Config",
+        leftPlaceholder: "Select Branch",
+        middlePlaceholder: "Select Locale",
+        rightPlaceholder: "Select Config",
+        addMoreBtn: "add more",
+      },
+      common: {
+        noOptionsMessage: "No options available",
+        deleteTooltip: "Remove mapping",
+        separator: "-",
+      },
+    },
   },
   CustomFields: {
     assetLimit: {

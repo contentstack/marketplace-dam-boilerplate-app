@@ -118,6 +118,16 @@
       margin: 0 15px;
     }
   }
+
+  & .config-tabs {
+    width: 70%
+  }
+}
+
+.TabWrapper .Tab.Tab--v2.Tab--small {
+  height: 2.063rem;
+  width: fit-content;
+  margin: 20px;
 }
 
 .note-p {
