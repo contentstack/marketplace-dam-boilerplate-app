@@ -20,7 +20,7 @@ import "./styles.scss";
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
 const CustomField: React.FC = function () {
-  const { appFailed } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk } = useContext(MarketplaceAppContext);
   const {
     renderAssets,
     setRenderAssets,
@@ -45,14 +45,40 @@ const CustomField: React.FC = function () {
   let selectorPageWindow: any;
 
   const getCurrentConfigLabel = () => {
-    const { config_label: configLabel, locale } = state?.contentTypeConfig;
-    let finalConfigLabel =
-      configLabel?.[0] ?? state?.config?.default_multi_config_key;
-    if (locale?.[currentLocale]?.config_label?.length) {
-      finalConfigLabel = locale?.[currentLocale]?.config_label?.[0];
+    const { config, contentTypeConfig } = state;
+    const branch = appSdk?.stack?.getCurrentBranch()?.uid;
+    const locale = contentTypeConfig?.locale;
+    // Priority order:
+    // 1 : Custom Field Advanced Settings - Locale Specific
+    if (
+      locale?.[currentLocale]?.config_label?.length > 0
+    ) {
+      return locale[currentLocale].config_label[0];
     }
-    return finalConfigLabel;
+    // 2 : Custom Field Advanced Settings - Default
+    if (
+      contentTypeConfig?.config_label?.length > 0
+    ) {
+      return contentTypeConfig.config_label[0];
+    }
+    // 3 : Locale-Specific Config 
+    if (
+      branch &&
+      config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label?.length > 0
+    ) {
+      return config.config_rules[branch].locales[currentLocale].config_label[0];
+    }
+    // 4 :  Branch-Specific Config
+    if (
+      branch &&
+      config?.config_rules?.[branch]?.config_label?.length > 0
+    ) {
+      return config.config_rules[branch].config_label[0];
+    }
+    // 5. Main Default
+    return config?.default_multi_config_key;
   };
+  
 
   const getConfig = () => {
     const { config, contentTypeConfig } = state;
