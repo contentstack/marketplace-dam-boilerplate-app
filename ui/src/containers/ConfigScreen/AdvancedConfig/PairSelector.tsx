@@ -114,9 +114,6 @@ const PairSelector: React.FC<PairSelectorProps> = ({
   };
 
   const getTooltipClass = (leftVal: any, rightVal: any) => {
-    if (isEmpty(leftVal) || isEmpty(rightVal)) {
-      return "tippy-wrapper-disabled";
-    }
     return "";
   };
 
@@ -254,6 +251,7 @@ const PairSelector: React.FC<PairSelectorProps> = ({
             menuShouldScrollIntoView={false}
             multiDisplayLimit={multiDisplayLimit}
             width={selectWidth}
+            version="v2"
             isMulti={isMultiLeft}
             noOptionsMessage={() => noOptionsMessage}
             menuPortalTarget={document.body}
@@ -264,7 +262,7 @@ const PairSelector: React.FC<PairSelectorProps> = ({
         {middleOptions && middleOptions?.length > 0 && onMiddleSelect && (
           <>
             <span className={separatorClass}>{separator}</span>
-            <div className="select-wrapper" style={{ width: selectWidth }}>
+            <div className="select-wrapper middle-select-wrapper" style={{ width: selectWidth }}>
               <Select
                 value={middleSelectValue}
                 onChange={(option: any) => onMiddleSelect!(option, index)}
@@ -275,9 +273,9 @@ const PairSelector: React.FC<PairSelectorProps> = ({
                 multiDisplayLimit={multiDisplayLimit}
                 width={selectWidth}
                 isMulti={isMultiMiddle}
+                version="v2"
                 noOptionsMessage={() => noOptionsMessage}
                 menuPortalTarget={document.body}
-                styles={customSelectStyles}
               />
             </div>
           </>
@@ -292,6 +290,7 @@ const PairSelector: React.FC<PairSelectorProps> = ({
             options={filteredRightOptions}
             placeholder={rightPlaceholder}
             width={selectWidth}
+            version="v2"
             isSearchable={isSearchable}
             isDisabled={isRightDisabled}
             menuShouldScrollIntoView={false}
@@ -338,7 +337,24 @@ const PairSelector: React.FC<PairSelectorProps> = ({
     );
   };
 
-  return <>{mappings.map(renderRow)}</>;
+  return (
+    <div className="pair-selector-container">
+      <div className="pair-header">
+        <div className="header-cell">Branch</div>
+        {middleOptions && middleOptions?.length > 0 && onMiddleSelect && (
+          <>
+            <span className={separatorClass}>{separator}</span>
+            <div className="header-cell">Locale</div>
+          </>
+        )}
+        <span className={separatorClass}>{separator}</span>
+        <div className="header-cell">Config</div>
+        {showDeleteIcon && <div className="header-cell delete-header"></div>}
+      </div>
+
+      {mappings.map(renderRow)}
+    </div>
+  );
 };
 
 export default PairSelector;

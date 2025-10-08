@@ -12,19 +12,19 @@ import {
 
 const filterAssetData = (assets: any[]) => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
-    // Enter your code for filteration of assets to the specified format
-    ({
-      id: "",
-      type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
-      name: "",
-      width: "",
-      height: "",
-      size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: "",
-      previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
-      platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
-      cs_metadata: asset?.cs_metadata,
-    })
+  // Enter your code for filteration of assets to the specified format
+  ({
+    id: "",
+    type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
+    name: "",
+    width: "",
+    height: "",
+    size: "", // add size in bytes as string eg.'416246'
+    thumbnailUrl: "",
+    previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
+    platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
+    cs_metadata: asset?.cs_metadata,
+  })
   );
   return filterAssetArray;
 };
