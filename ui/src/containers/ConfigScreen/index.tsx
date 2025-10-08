@@ -314,7 +314,7 @@ const ConfigScreen: React.FC = function () {
 
     handleMultiConfigLimit(
       configInstallationObj?.multi_config_keys ??
-        serverConfigInstallationObj?.multi_config_keys
+      serverConfigInstallationObj?.multi_config_keys
     );
 
     setInstallationData({
@@ -547,7 +547,7 @@ const ConfigScreen: React.FC = function () {
                 </Dropdown>
               </div>
             ),
-            onClick: () => {},
+            onClick: () => { },
           },
         ]}
       >
@@ -568,8 +568,8 @@ const ConfigScreen: React.FC = function () {
   const renderAccFields = (accordianFields: Configurations) => {
     const accordianKeys: string[] = Object.keys(
       installationData?.configuration?.multi_config_keys ??
-        installationData?.serverConfiguration?.multi_config_keys ??
-        {}
+      installationData?.serverConfiguration?.multi_config_keys ??
+      {}
     );
     return (
       <div className="multi-config-accordian-wrapper">
@@ -639,6 +639,8 @@ const ConfigScreen: React.FC = function () {
       const value: React.ReactElement[] = renderFields(nonAccordianFields);
       renderValue?.push(...(value ?? []));
     }
+    
+    renderValue?.push(<JsonComponent />);
 
     return renderValue;
   };
@@ -681,12 +683,11 @@ const ConfigScreen: React.FC = function () {
                     },
                   ]}
                   tabSize="small"
-                  type="secondary"
+                  type="primary"
                   version="v2"
+                  className="config-tabs"
                 />
               </div>
-
-              <JsonComponent />
             </div>
           </ConfigStateProvider>
         )}

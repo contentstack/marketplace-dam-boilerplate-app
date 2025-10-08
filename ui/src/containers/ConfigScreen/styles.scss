@@ -1,5 +1,5 @@
 .config-wrapper {
-  margin: 0 0 10px 0;
+  margin: 0 0 50px 0;
 
   & .TextInput__input {
     width: 97% !important;
@@ -60,6 +60,11 @@
 
   .InstructionText {
     visibility: visible;
+    margin: calc(.125rem + 1px) 0 0 0 !important;
+  }
+
+  .FieldLabel {
+    margin: 0 0 .5rem !important;
   }
 
   & .dam-keys {
@@ -120,7 +125,11 @@
   }
 
   & .config-tabs {
-    width: 70%
+    width: 93%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto auto auto;
   }
 }
 
