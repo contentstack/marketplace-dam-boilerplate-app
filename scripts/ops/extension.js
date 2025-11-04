@@ -1,4 +1,4 @@
-const { makeApiCall, safePromise } = require("../utils");
+const { safePromise, getInstalledApps } = require("../utils");
 
 /**
  * Get the extension UID for the installed app in a stack
@@ -16,11 +16,8 @@ async function getExtension(
 ) {
   try {
     const [extErr, extensions] = await safePromise(
-      makeApiCall({
-        url: `${csBaseUrl}/v3/extensions?include_marketplace_extensions=true`,
-        method: "GET",
-        headers: { authtoken, api_key: stackApiKey },
-      })
+      getInstalledApps(csBaseUrl, authtoken, stackApiKey),
+      "Failed to fetch installed apps!"
     );
 
     if (extErr) {

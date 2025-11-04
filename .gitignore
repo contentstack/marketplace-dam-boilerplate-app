@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 /scripts/build
+/scripts/node_modules
 /api/node_modules
 /ui/node_modules
 /ui/.npmrc
