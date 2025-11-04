@@ -461,13 +461,12 @@ const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
     },
   });
 
-const getInstalledApps = async (baseUrl, authtoken, orgId, stackApiKey) => {
+const getInstalledApps = async (baseUrl, authtoken, stackApiKey) => {
   return makeApiCall({
     method: "GET",
     url: `${baseUrl}/v3/extensions?include_marketplace_extensions=true`,
     headers: {
       authtoken,
-      organization_uid: orgId,
       api_key: stackApiKey,
       "content-type": "application/json",
     },
