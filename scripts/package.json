@@ -9,7 +9,7 @@
     "login": "node ops/login.js",
     "create-app": "node ops/create-update.js create-app",
     "update-app": "node ops/create-update.js update-app",
-    "create-content-type": "node ops/contentType.js",
+    "create-content-type": "node ops/content-type.js",
     "deploy": "node ops/deploy.js"
   },
   "keywords": [],

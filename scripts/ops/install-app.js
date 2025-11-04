@@ -38,9 +38,10 @@ const install = async (
 
   // Check if app already installed in the stack
   const [installedError, installedAppsData] = await safePromise(
-    getInstalledApps(baseUrl, authtoken, orgId, stackApiKey),
+    getInstalledApps(baseUrl, authtoken, stackApiKey),
     "Failed to fetch installed apps!"
   );
+
   if (installedError) return;
 
   const existingApp = installedAppsData?.extensions?.find(
