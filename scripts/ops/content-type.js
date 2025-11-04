@@ -1,4 +1,3 @@
-const fs = require("fs");
 const readlineSync = require("readline-sync");
 const { makeApiCall, safePromise } = require("../utils");
 const { getExtension } = require("./extension");
