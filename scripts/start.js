@@ -9,7 +9,7 @@ const readlineSync = require("readline-sync");
     );
 
     if (uiOrRte === -1) {
-      console.log("No option selected. Exiting...");
+      console.info("No option selected. Exiting...");
       return;
     }
 
@@ -17,7 +17,7 @@ const readlineSync = require("readline-sync");
     const folder = isUI ? "../ui" : "../ui/rte";
     const port = isUI ? 4000 : 1268;
 
-    console.log(`\nStarting server in folder: ${folder} on port ${port}...\n`);
+    console.info(`\nStarting server in folder: ${folder} on port ${port}...\n`);
 
     // Start the selected server
     const serverProcess = exec(
@@ -28,7 +28,7 @@ const readlineSync = require("readline-sync");
           return;
         }
         if (stderr) console.error(stderr);
-        if (stdout) console.log(stdout);
+        if (stdout) console.info(stdout);
       }
     );
 
@@ -37,7 +37,7 @@ const readlineSync = require("readline-sync");
 
     // If RTE is selected, also start UI
     if (!isUI) {
-      console.log(`\n➡️ Starting UI as well (port 4000)...\n`);
+      console.info(`\n➡️ Starting UI as well (port 4000)...\n`);
       const uiProcess = exec(`cd ../ui && npm start`);
       uiProcess.stdout?.pipe(process.stdout);
       uiProcess.stderr?.pipe(process.stderr);
