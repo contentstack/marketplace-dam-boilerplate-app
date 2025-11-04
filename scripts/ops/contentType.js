@@ -14,7 +14,7 @@ const installationData = require("../app-installation.json");
     }
 
     if (!installationData.length) {
-      console.log("No installations found.");
+      console.info("No installations found.");
       return;
     }
 
@@ -28,12 +28,12 @@ const installationData = require("../app-installation.json");
     );
 
     if (selectedIndex === -1) {
-      console.log("No app selected. Exiting...");
+      console.info("No app selected. Exiting...");
       return;
     }
 
     const selectedApp = installationData[selectedIndex];
-    console.log("You selected:", selectedApp);
+    console.info("You selected:", selectedApp);
 
     const { stackApiKey, installationUid, fieldType, csBaseUrl } = selectedApp;
 
@@ -151,7 +151,7 @@ const installationData = require("../app-installation.json");
       return;
     }
 
-    console.log("Content Type created:", ctData.content_type.uid);
+    console.info("Content Type created:", ctData.content_type.uid);
 
     // Ask user to create entry
     const createEntrySample = readlineSync.keyInSelect(
@@ -189,7 +189,7 @@ const installationData = require("../app-installation.json");
         );
       }
     } else {
-      console.log("Skipped entry creation.");
+      console.info("Skipped entry creation.");
     }
   } catch (error) {
     console.error("Error:", error.message || error);
