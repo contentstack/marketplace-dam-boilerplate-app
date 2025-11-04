@@ -97,6 +97,7 @@ const constants = {
       url: "https://gcp-na-developerhub-api.contentstack.com",
     },
   ],
+  LAUNCH_BASE_PATH: "launch-api/manage/graphql",
 };
 
 module.exports = constants;
