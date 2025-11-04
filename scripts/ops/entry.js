@@ -110,7 +110,7 @@ async function createSampleEntry(
     return null;
   }
 
-  console.log("Entry created:", entryRes.entry.uid);
+  console.info("Entry created:", entryRes.entry.uid);
 
   // Open entry in browser
   const entryUrl = `https://app.contentstack.com/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/en-us/entry/${entryRes.entry.uid}/edit?branch=main`;
@@ -124,7 +124,7 @@ async function createSampleEntry(
 
   exec(startCmd, (err) => {
     if (err) console.error("Failed to open entry in browser:", err);
-    else console.log(`Entry opened in browser: ${entryUrl}`);
+    else console.info(`Entry opened in browser: ${entryUrl}`);
   });
 
   return entryRes.entry.uid;
