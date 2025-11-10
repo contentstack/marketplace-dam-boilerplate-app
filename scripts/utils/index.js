@@ -88,7 +88,7 @@ const saveInstallation = (
   }
 };
 
-const updateAppManifest = (manifest) => {
+const updateAppManifest = async (manifest) => {
   fs.writeFileSync("app-manifest.json", JSON.stringify(manifest, null, 2));
 };
 
@@ -402,12 +402,11 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
 
   return {
     ...metaData,
-    deployment_url: `https://${res?.data?.Deployment?.deploymentUrl}`,
+    deployment_url: `https://${res?.data?.Deployment?.deploymentUrl}/#`,
   };
 };
 
 const createApp = async (region, authtoken, orgId, appName) => {
-  console.info({ region, authtoken, orgId, appName });
   const res = await makeApiCall({
     url: `${getDeveloperhubBaseUrl(region)}/manifests`,
     method: "POST",
@@ -431,7 +430,14 @@ const getOrgStacks = async (baseUrl, authtoken, orgId) =>
     headers: { authtoken },
   });
 
-const updateApp = async (region, authtoken, orgId, appUid, withhosting) => {
+const updateApp = async (
+  region,
+  authtoken,
+  orgId,
+  appUid,
+  withhosting,
+  appName
+) => {
   if (withhosting) {
     return makeApiCall({
       url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
@@ -444,7 +450,7 @@ const updateApp = async (region, authtoken, orgId, appUid, withhosting) => {
       url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
       method: "PUT",
       headers: { authtoken, organization_uid: orgId },
-      data: { ...appManifest },
+      data: { ...appManifest, name: appName },
     });
   }
 };

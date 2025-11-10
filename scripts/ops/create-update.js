@@ -188,14 +188,14 @@ const appManifest = require("../app-manifest.json");
 
       appUid = appData;
 
-      updateAppManifest({
+      await updateAppManifest({
         ...updatedManifest,
         name: appName,
         uid: appUid,
       });
 
       const [appUpdateError, appUpdateData] = await safePromise(
-        updateApp(region, authtoken, selectedOrgUid, appUid, false),
+        updateApp(region, authtoken, selectedOrgUid, appUid, false, appName),
         "Error while creating the app."
       );
 
