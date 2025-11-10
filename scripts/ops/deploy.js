@@ -77,10 +77,10 @@ const appManifest = require("../app-manifest.json");
     });
 
     appManifest.ui_location.base_url =
-      `${launchProjectDetails?.deployment_url}/#` || "";
+      `${launchProjectDetails?.deployment_url}` || "";
     appManifest.hosting = {
       provider: "launch",
-      deployment_url: launchProjectDetails?.deployment_url || "",
+      deployment_url: `${launchProjectDetails?.deployment_url}` || "",
       environment_uid: launchProjectDetails?.env_uid || "",
       project_uid: launchProjectDetails?.project_uid || "",
     };
