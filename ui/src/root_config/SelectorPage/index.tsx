@@ -33,12 +33,20 @@ const openComptactView = (
 
 // If there is no script then provide a custom component here
 const customSelectorComponent = (
-  config: Props,
+  config: any,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) => <CustomSelector />;
+) => {
+  <CustomSelector
+    config={config}
+    setError={setError}
+    successFn={successFn}
+    closeFn={closeFn}
+    selectedAssetIds={selectedAssetIds}
+  />
+};
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,

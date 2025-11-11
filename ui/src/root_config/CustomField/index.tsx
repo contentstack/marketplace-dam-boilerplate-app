@@ -10,22 +10,74 @@ import {
   TypeRootCustomField,
 } from "../../common/types";
 
+const convertSizeToBytes = (fileSize: string | undefined): string => {
+  if (!fileSize) return "0";
+
+  const sizeStr = fileSize.toString().trim();
+  const match = sizeStr.match(/^([\d.]+)\s*(KB|MB|GB|TB|BYTES?)?$/i);
+
+  if (!match) return "0";
+
+  const value = parseFloat(match[1]);
+  const unit = (match[2] || "BYTES").toUpperCase();
+
+  const multipliers: { [key: string]: number } = {
+    BYTES: 1,
+    BYTE: 1,
+    KB: 1024,
+    MB: 1024 * 1024,
+    GB: 1024 * 1024 * 1024,
+    TB: 1024 * 1024 * 1024 * 1024,
+  };
+
+  const bytes = Math.round(value * (multipliers[unit] || 1));
+  return bytes.toString();
+};
+
+// Helper function to normalize file type
+const normalizeFileType = (fileType: string | undefined): string => {
+  if (!fileType) return "document";
+
+  const type = fileType.toLowerCase();
+
+  if (type.includes("image") || ["jpeg", "jpg", "png", "gif", "svg", "webp"].includes(type)) {
+    return "image";
+  }
+  if (type.includes("video") || ["mp4", "mov", "avi", "webm"].includes(type)) {
+    return "video";
+  }
+  if (type.includes("audio") || ["mp3", "wav", "m4a"].includes(type)) {
+    return "audio";
+  }
+  if (type === "pdf") return "pdf";
+  if (["xlsx", "xls", "xlsm"].includes(type)) return "excel";
+  if (["pptx", "ppt", "pptm"].includes(type)) return "presentation";
+  if (["docx", "doc"].includes(type)) return "document";
+  if (type === "json") return "json";
+  if (["zip", "rar", "7z"].includes(type)) return "zip";
+  if (["html", "htm"].includes(type)) return "code";
+
+  return "document";
+};
+
 const filterAssetData = (assets: any[]) => {
-  const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
-  // Enter your code for filteration of assets to the specified format
-  ({
-    id: "",
-    type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
-    name: "",
-    width: "",
-    height: "",
-    size: "", // add size in bytes as string eg.'416246'
-    thumbnailUrl: "",
-    previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
-    platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
-    cs_metadata: asset?.cs_metadata,
-  })
-  );
+  const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
+    // Asset is in raw Table format, transform it to TypeAsset format
+    return {
+      // eslint-disable-next-line no-underscore-dangle
+      id: asset?._id || "",
+      type: normalizeFileType(asset?.fileType) || asset?.type || "document",
+      name: asset?.assetName || asset?.name || "",
+      width: asset?.dimensions?.width?.toString() || asset?.width?.toString() || "",
+      height: asset?.dimensions?.height?.toString() || asset?.height?.toString() || "",
+      size: asset?.fileSize ? convertSizeToBytes(asset?.fileSize) : (asset?.size?.toString() || "0"),
+      thumbnailUrl: asset?.thumbnail || asset?.thumbnailUrl || "",
+      previewUrl: asset?.assetUrl || asset?.previewUrl || "",
+      platformUrl: asset?.platformUrl || "",
+      cs_metadata: asset?.cs_metadata,
+    };
+  });
+
   return filterAssetArray;
 };
 
@@ -70,8 +122,7 @@ const modifyAssetsToSave = (
   contentTypeConfig: Props,
   assets: any[]
 ) => {
-  /* code logic to modify the assets to save in Custom Field */
-  return assets;
+  return filterAssetData(assets);
 };
 
 const rootCustomField: TypeRootCustomField = {

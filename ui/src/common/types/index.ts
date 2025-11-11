@@ -195,10 +195,10 @@ type InputFieldType =
 
 export interface TypeBaseFields {
   type:
-    | "textInputField"
-    | "radioInputField"
-    | "selectInputField"
-    | "customInputField";
+  | "textInputField"
+  | "radioInputField"
+  | "selectInputField"
+  | "customInputField";
   labelText: string;
   helpText?: string;
   placeholderText?: string;
@@ -285,4 +285,103 @@ export interface UnifiedConfigRule {
   branch_uid: string;
   locales_uid: string[];
   config_label: string;
+}
+
+export interface AssetData {
+  _id: string;
+  assetName: string;
+  assetUrl?: string;
+  thumbnail?: string;
+  fileSize?: string;
+  fileType?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
+  createdDate?: string;
+  [key: string]: any;
+}
+
+export interface TableColumn {
+  Header: string;
+  id?: string;
+  accessor: string | any;
+  disableSortBy?: boolean;
+  columnWidthMultiplier?: number;
+  default?: boolean;
+  addToColumnSelector?: boolean;
+  cssClass?: string;
+}
+
+export interface TableSelectorProps {
+  config: any;
+  setError: (errObj: any) => void;
+  successFn: (assets: any[]) => void;
+  closeFn: () => void;
+  selectedAssetIds: string[];
+  assetData: AssetData[];
+}
+
+export interface RuleContainerOption {
+  label: string;
+  value: any;
+}
+
+export interface RuleContainerMapping {
+  [key: string]: any;
+}
+
+export interface RuleContainerConfig {
+  branchPlaceholder?: string;
+  configPlaceholder?: string;
+  localePlaceholder?: string;
+  isMultiBranch?: boolean;
+  isMultiConfig?: boolean;
+  isMultiLocale?: boolean;
+  isBranchExhaustive?: boolean;
+  isConfigExhaustive?: boolean;
+  isLocaleExhaustive?: boolean;
+  isLocaleDisabled?: boolean;
+  // Legacy support - will be removed
+  leftPlaceholder?: string;
+  middlePlaceholder?: string;
+  rightPlaceholder?: string;
+  isMultiLeft?: boolean;
+  isMultiMiddle?: boolean;
+  isMultiRight?: boolean;
+  isLeftExhaustive?: boolean;
+  isMiddleExhaustive?: boolean;
+  isRightExhaustive?: boolean;
+  isRightDisabled?: boolean;
+  noOptionsMessage?: string;
+  deleteTooltip?: string;
+  separator?: string;
+  containerClass?: string;
+  selectWidth?: string;
+  separatorClass?: string;
+  iconClass?: string;
+  showTooltip?: boolean;
+  showDeleteIcon?: boolean;
+  isSearchable?: boolean;
+  multiDisplayLimit?: number;
+  maxCharacters?: number;
+}
+
+export interface UnifiedRule {
+  branch_uid: string | string[];
+  locales_uid: string[];
+  config_label: string | string[];
+}
+
+export interface ConfigRule {
+  config_label: string[];
+  locales?: {
+    [localeCode: string]: {
+      config_label: string[];
+    };
+  };
+}
+
+export interface ConfigRules {
+  [branchId: string]: ConfigRule;
 }

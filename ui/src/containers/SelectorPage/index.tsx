@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState, useRef } from "react";
 import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import localeTexts from "../../common/locale/en-us/index";

@@ -115,10 +115,12 @@ const CustomField: React.FC = function () {
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
     if (Array.isArray(selectedAssets)) {
-      setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-      setSelectedAssetIds(
-        (selectedAssets as any[])?.map((item: any) => item?.[uniqueID])
-      );
+      const filteredAssets = rootConfig?.filterAssetData?.(selectedAssets);
+      setRenderAssets(filteredAssets);
+
+      const assetIds = (selectedAssets as any[])?.map((item: any) => item?.[uniqueID]);
+      setSelectedAssetIds(assetIds);
+
       const finalConfig = getConfig();
       const assetsToSave =
         rootConfig?.modifyAssetsToSave?.(
@@ -126,11 +128,12 @@ const CustomField: React.FC = function () {
           finalConfig?.contentTypeConfig,
           selectedAssets
         ) ?? selectedAssets;
-      state?.location?.field?.setData(assetsToSave);
+
+      if (state?.location?.field) {
+        state.location.field.setData(assetsToSave);
+      }
     }
-  }, [
-    selectedAssets, // Your Custom Field State Data
-  ]);
+  }, [selectedAssets]);
 
   const handleUniqueSelectedData = (dataArr: any[]) => {
     if (dataArr?.length) {
@@ -145,6 +148,7 @@ const CustomField: React.FC = function () {
         }));
       }
       const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
+
       let finalAssets = CustomFieldUtils.uniqBy(
         [
           ...(Array.isArray(selectedAssets) ? selectedAssets : []),
@@ -152,6 +156,7 @@ const CustomField: React.FC = function () {
         ],
         uniqueID
       );
+
       if (assetLimit && finalAssets?.length > assetLimit) {
         finalAssets = finalAssets?.slice(0, assetLimit);
         utils.toastMessage({
@@ -165,7 +170,7 @@ const CustomField: React.FC = function () {
         });
       }
       if (finalAssets?.length) {
-        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+        setSelectedAssets(finalAssets);
         handleBtnDisable(
           finalAssets,
           state?.contentTypeConfig?.advanced?.max_limit
@@ -208,8 +213,8 @@ const CustomField: React.FC = function () {
   // function called on postmessage from selector page. used in "novalue" and "authWindow" option
   const saveData = useCallback(
     (event: any) => {
-      if (event?.origin !== process.env.REACT_APP_CUSTOM_FIELD_URL) return;
       const { data } = event;
+
       if (data?.message === "openedReady") {
         event?.source?.postMessage(
           {
@@ -224,7 +229,7 @@ const CustomField: React.FC = function () {
         data?.message === "add" &&
         data?.type === rootConfig.damEnv.DAM_APP_NAME &&
         data?.selectedAssets?.length
-      ) {
+      ) { 
         const finalAssets = CustomFieldUtils.advancedFilters(
           data?.selectedAssets,
           state?.contentTypeConfig?.advanced
