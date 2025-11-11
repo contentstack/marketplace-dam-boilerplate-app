@@ -1,0 +1,50 @@
+.default-table-selector {
+  height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+
+  .asset-thumbnail {
+    border-radius: 4px;
+    border: 1px solid #e1e5e9;
+  }
+
+  .asset-icon {
+    border-radius: 4px;
+    border: 1px solid #e1e5e9;
+    background-color: #f8f9fa;
+    
+    .cs-icon {
+      color: #6c757d;
+    }
+  }
+
+  .asset-name {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+
+  .button-group {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    padding: 16px 30px;
+    justify-content: flex-end;
+    gap: 12px;
+    background: white;
+    z-index: 9999;
+
+    .margin-right-20 {
+      margin-right: 20px;
+    }
+
+    .add-asset-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}

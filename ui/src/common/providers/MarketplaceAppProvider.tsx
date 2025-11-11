@@ -9,7 +9,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
   const [appConfig, setAppConfig] = useState<GenericObjectType>({});
-  const [locales, setLocales] = useState<any[]>([]); 
+  const [locales, setLocales] = useState<any[]>([]);
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
@@ -20,7 +20,8 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         const appSdkConfig: GenericObjectType = await appSDK?.getConfig();
         await setAppConfig(appSdkConfig);
         const stack: any = appSDK?.stack;
-        const localesData = await stack?.getLocales();
+        const localesData = await stack?.getLocales({}, { headers: { branch: "stage" } });
+        console.info('!!!🚀 localesData:', localesData);
         await setLocales(localesData?.locales ?? []);
       })
       .catch((error) => {

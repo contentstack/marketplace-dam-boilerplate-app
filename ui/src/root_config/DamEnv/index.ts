@@ -3,9 +3,9 @@ import { TypeRootDamEnv } from "../../common/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
   DAM_APP_NAME: "DAM",
-  ASSET_UNIQUE_ID: "id",
+  ASSET_UNIQUE_ID: "_id",
   SELECTOR_PAGE_LOGO: Logo,
-  IS_DAM_SCRIPT: true,
+  IS_DAM_SCRIPT: false,
   DAM_SCRIPT_URL: "",
   DIRECT_SELECTOR_PAGE: "novalue", // possible values "url", "window", "authWindow", default => "novalue"
   REQUIRED_CONFIG_FIELDS: ["textField", "radioField", "selectField"],

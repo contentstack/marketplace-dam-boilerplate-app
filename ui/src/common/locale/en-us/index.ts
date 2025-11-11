@@ -91,7 +91,7 @@ const localeTexts = {
         localeHelperText: "Leave empty to apply to all locales",
       },
       common: {
-        noOptionsMessage: "No options available",
+        noOptionsMessage: "No options",
         deleteTooltip: "Remove",
         separator: "-",
       },

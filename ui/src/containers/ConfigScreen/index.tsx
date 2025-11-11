@@ -40,7 +40,7 @@ import {
   Props,
   TypeOption,
 } from "../../common/types";
-/* Import our CSS */
+
 import "./styles.scss";
 import AdvancedConfig from "./AdvancedConfig";
 
@@ -50,9 +50,9 @@ const ConfigScreen: React.FC = function () {
     process.env.REACT_APP_MULTI_CONFIG_LIMIT ?? "10",
     10
   );
-  // failed state received from MarketplaceAppContext
+
   const { appFailed } = useContext(MarketplaceAppContext);
-  // context usage for global states thorughout the component
+
   const {
     installationData,
     setInstallationData,
@@ -93,12 +93,12 @@ const ConfigScreen: React.FC = function () {
     }
   );
 
-  // state for rendering multi-config name modal
+
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  // default multiconfig key
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
-  const [configRulesMapper, setConfigRulesMapper] = useState<any>({});
+  const [configRulesMapper, setConfigRulesMapper] = useState<any>(undefined);
+  const isConfigRulesMapperInitializedRef = React.useRef<boolean>(false);
 
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
@@ -117,18 +117,40 @@ const ConfigScreen: React.FC = function () {
   };
 
   useEffect(() => {
-    if (!Object.keys(configRulesMapper ?? {})?.length) {
+    if (configRulesMapper === undefined) {
       return;
     }
 
+    if (!isConfigRulesMapperInitializedRef.current) {
+      isConfigRulesMapperInitializedRef.current = true;
+    }
+
+    const currentConfigRules = installationData?.configuration?.config_rules;
+    const configRulesMapperStr = JSON.stringify(configRulesMapper ?? {});
+    const currentConfigRulesStr = JSON.stringify(currentConfigRules ?? {});
+
+    // if no changes, return early
+    if (configRulesMapperStr === currentConfigRulesStr) {
+      return;
+    }
+
+    const updatedConfiguration = {
+      ...installationData?.configuration,
+      config_rules: configRulesMapper ?? {},
+    };
+
+
     setInstallationData({
       ...installationData,
-      configuration: {
-        ...installationData?.configuration,
-        config_rules: configRulesMapper,
-      },
+      configuration: updatedConfiguration,
     });
-  }, [configRulesMapper]);
+
+    checkConfigFields({
+      configuration: updatedConfiguration,
+      serverConfiguration: installationData?.serverConfiguration,
+    });
+
+  }, [configRulesMapper, installationData?.configuration?.config_rules]);
 
   useEffect(() => {
     const multiConfigKeys = installationData?.configuration?.multi_config_keys;
@@ -164,9 +186,6 @@ const ConfigScreen: React.FC = function () {
     };
   };
 
-  /** updateConfig - Function where you should update the State variable
-   * Call this function whenever any field value is changed in the DOM
-   * */
   const updateConfig = useCallback(
     async (
       e:
@@ -639,7 +658,7 @@ const ConfigScreen: React.FC = function () {
       const value: React.ReactElement[] = renderFields(nonAccordianFields);
       renderValue?.push(...(value ?? []));
     }
-    
+
     renderValue?.push(<JsonComponent />);
 
     return renderValue;
@@ -647,8 +666,8 @@ const ConfigScreen: React.FC = function () {
 
   /* If need to get any data from API then use,
   getDataFromAPI({queryParams, headers, method, body}) function.
-  Refer services/index.ts for more details and update the API
-  call there as per requirement. */
+  Refer services/index.ts for more details and update 
+  the API call there as per requirement. */
 
   return (
     <div className="layout-container">

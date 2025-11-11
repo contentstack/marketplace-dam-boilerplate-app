@@ -303,7 +303,6 @@
     margin: 10px;
 
     & .config-rule__select--flex {
-      // border: 0.1px solid black;
       display: flex;
       flex-wrap: wrap;
       margin: 0;
@@ -311,7 +310,6 @@
 
       & .Select {
         min-width: 230px !important;
-        // margin: 5px 0;
       }
 
       & .config-rule__seperator {

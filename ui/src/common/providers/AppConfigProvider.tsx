@@ -73,12 +73,12 @@ const AppConfigProvider: React.FC = function ({ children }) {
       (await rootConfig?.checkConfigValidity?.(
         configuration,
         serverConfiguration
-      )) ?? false;
+      )) ?? { disableSave: false, message: "" };
 
     if (isConfigValid || missingValues?.length)
       appConfig?.current?.setValidity(false, {
         message: isConfigValid
-          ? disableMsg
+          ? disableMsg ?? "Validation error"
           : localeTexts.ConfigFields.missingCredentials,
       });
     else if (
