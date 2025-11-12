@@ -3,8 +3,8 @@ import {
   Button,
 } from "@contentstack/venus-components";
 import React from "react";
-import RuleContainer from "./RuleContainer";
-import localeTexts from "../../../common/locale/en-us";
+import RuleContainer from "../RuleContainer";
+import localeTexts from "../../../../common/locale/en-us";
 
 
 function ConfigRules({

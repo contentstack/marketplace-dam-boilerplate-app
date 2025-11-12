@@ -1,8 +1,8 @@
 /* eslint-disable */
 import React, { useMemo } from "react";
 import { Icon, Select, Tooltip } from "@contentstack/venus-components";
-import { RuleContainerOption, RuleContainerMapping, RuleContainerConfig } from "../../../common/types";
-import "./RuleContainer.scss";
+import { RuleContainerOption, RuleContainerMapping, RuleContainerConfig } from "../../../../common/types/index";
+import "./styles.scss";
 
 // Move styles outside component to prevent recreation
 const customSelectStyles = {
