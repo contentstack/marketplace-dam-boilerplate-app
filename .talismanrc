@@ -6,4 +6,18 @@ fileignoreconfig:
   checksum: 1300d4387eb60bbc7414db99f7926a4b2bd50e6386a20ed087d3d09b5b9add76
 - filename: ui/src/containers/ConfigScreen/AdvancedConfig/PairSelector.tsx
   checksum: 0b24195591fc347cc8f762bc4b72a103bebae00dd9a14d998de031f9fc915d2d
+- filename: ui/rte/package-lock.json
+  checksum: 8c4ce30559e611f3817ab7571b52d12bb7bfbc2187816ba608582e95b5ce7491
+- filename: ui/package-lock.json
+  checksum: 1f1b7a6fe8a3b2a8bf8c06a733f620c3849114f6c325aedd279ecd9b42f91d4d
+- filename: ui/src/common/types/index.ts
+  checksum: d9e4960615601bbc81299fafcc6814ea7db1d3d772b8f1b1ad1f0fdf110712ec
+- filename: ui/src/root_config/ConfigScreen/index.tsx
+  checksum: 3da80e4c3ee04d4791419e503a781541e78c66285889b2e7e451dc8793745721
+- filename: ui/src/root_config/CustomField/index.tsx
+  checksum: 6d486a41383719db8a45fdb2a73093af3e0005a380ede592a3061a2cbf6d0936
+- filename: ui/src/root_config/Components/Table.tsx
+  checksum: 22a5495bd03b4209b677f72d2d9269b45833644f58ba5be1d50a293b45aa04ba
+- filename: ui/src/containers/ConfigScreen/AdvancedConfig/RuleContainer.tsx
+  checksum: 9f87d2536ac7e24b342c71b429daf2173dc09b616876b36b102007e21e3a9326
 version: "1.0"

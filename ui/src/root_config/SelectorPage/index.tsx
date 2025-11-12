@@ -38,7 +38,7 @@ const customSelectorComponent = (
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) => {
+) => (
   <CustomSelector
     config={config}
     setError={setError}
@@ -46,7 +46,7 @@ const customSelectorComponent = (
     closeFn={closeFn}
     selectedAssetIds={selectedAssetIds}
   />
-};
+);
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,
