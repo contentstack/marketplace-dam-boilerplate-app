@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import {
     InfiniteScrollTable,
     Button,
@@ -91,37 +91,127 @@ function Table({
         return "document";
     };
 
-    const renderAssetIcon = (asset: AssetData) => {
-        const assetType = getAssetType(asset.fileType);
 
-        if (assetType === "image" && asset.thumbnail) {
+    const iconBaseStyle = {
+        width: 50,
+        height: 50,
+        display: 'flex' as const,
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        backgroundColor: '#f8f9fa',
+        borderRadius: '4px',
+        border: '1px solid #e1e5e9'
+    };
+
+
+    const ImageWithFallback: React.FC<{ src: string; alt: string }> = React.memo(({ src, alt }) => {
+        const [status, setStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle');
+        const [wasCached, setWasCached] = useState(false);
+        const imgRef = useRef<HTMLImageElement | null>(null);
+        const lastSrcRef = useRef<string | null>(null);
+
+        const handleImgRef = React.useCallback((img: HTMLImageElement | null) => {
+            if (!img) return;
+            imgRef.current = img;
+
+            if (src && lastSrcRef.current !== src) {
+                lastSrcRef.current = src;
+                if (img.complete && img.naturalWidth > 0) {
+                    setWasCached(true);
+                    setStatus('loaded');
+                } else if (status === 'idle') {
+                    setStatus('loading');
+                }
+            }
+        }, [src, status]);
+
+        useEffect(() => {
+            if (lastSrcRef.current !== src) {
+                lastSrcRef.current = src;
+                setStatus('idle');
+                setWasCached(false);
+            }
+        }, [src]);
+
+        useLayoutEffect(() => {
+            if (src && imgRef.current && lastSrcRef.current === src && status === 'idle') {
+                if (imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+                    setWasCached(true);
+                    setStatus('loaded');
+                } else {
+                    setStatus('loading');
+                }
+            }
+        }, [src, status]);
+
+        const handleError = React.useCallback(() => {
+            setStatus('error');
+            setWasCached(false);
+        }, []);
+
+        const handleLoad = React.useCallback(() => {
+            setStatus('loaded');
+        }, []);
+
+        const isLoaded = status === 'loaded';
+        const hasError = status === 'error';
+
+        if (hasError || !src) {
             return (
-                <div style={{ position: 'relative' }}>
-                    <img
-                        src={asset.thumbnail}
-                        alt={asset.assetName}
-                        className="asset-thumbnail"
-                        style={{ width: 50, height: 50, objectFit: 'cover' }}
-                        onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const iconDiv = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (iconDiv) iconDiv.style.display = 'flex';
-                        }}
-                    />
-                    <div className="asset-icon" style={{
-                        width: 50,
-                        height: 50,
-                        display: 'none',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: '#f8f9fa',
-                        borderRadius: '4px',
-                        border: '1px solid #e1e5e9'
-                    }}>
-                        <Icon icon="Document" size="small" />
-                    </div>
+                <div className="asset-icon" style={iconBaseStyle}>
+                    <Icon icon="Document" size="small" version="v2" />
                 </div>
             );
+        }
+
+        const transition = wasCached ? undefined : 'opacity 0.1s ease-in-out';
+
+        return (
+            <div style={{ position: 'relative', width: 50, height: 50 }}>
+                <div
+                    className="asset-icon"
+                    style={{
+                        ...iconBaseStyle,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        zIndex: 1,
+                        opacity: isLoaded ? 0 : 1,
+                        transition
+                    }}
+                >
+                    <Icon icon="Document" size="small" version="v2" />
+                </div>
+                <img
+                    ref={handleImgRef}
+                    src={src}
+                    alt={alt}
+                    className="asset-thumbnail"
+                    style={{
+                        width: 50,
+                        height: 50,
+                        objectFit: 'cover',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        zIndex: 2,
+                        opacity: isLoaded ? 1 : 0,
+                        transition
+                    }}
+                    onError={handleError}
+                    onLoad={handleLoad}
+                />
+            </div>
+        );
+    }, (prevProps, nextProps) => {
+        return prevProps?.src === nextProps?.src && prevProps?.alt === nextProps?.alt;
+    });
+
+    const renderAssetIcon = (asset: AssetData) => {
+        const assetType = getAssetType(asset?.fileType);
+
+        if (assetType === "image" && asset?.thumbnail) {
+            return <ImageWithFallback src={asset?.thumbnail} alt={asset?.assetName} />;
         }
 
 
