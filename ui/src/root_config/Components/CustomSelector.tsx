@@ -166,4 +166,3 @@ const CustomSelector: React.FC<TypeCustomSelector> = function ({
 };
 
 export default CustomSelector;
-
