@@ -121,7 +121,7 @@ const getEnvVariables = (launchSubDomain) => {
     const envVariables = [];
 
     const uiEnvData = fs.readFileSync(
-      path.join(__dirname, "../../ui/.env"),
+      path.join(__dirname, "../../../ui/.env"),
       "utf-8"
     );
 
@@ -154,14 +154,18 @@ const getEnvVariables = (launchSubDomain) => {
 
 const runCommand = (command, options = {}) => {
   console.info(`Running "${command}"...`);
-  execSync(command, { stdio: "inherit", ...options });
+  execSync(command, {
+    stdio: "inherit",
+    shell: true,
+    ...options
+  });
 };
 
 const buildAppZip = () => {
   try {
     console.info("Preparing the app zip...");
 
-    const uiAppBasePath = path.join(__dirname, "../../ui");
+    const uiAppBasePath = path.join(__dirname, "../../../ui");
     const rteAppBasePath = path.join(uiAppBasePath, "rte");
     const buildBasePath = path.join(__dirname, "../build");
     const buildPath = `${buildBasePath}/app.zip`;
@@ -393,7 +397,7 @@ const createProject = async (
     const projectUrl = `${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`;
     console.info("Project created successfully...");
     console.info(
-      "Build and deployment has been initiated. You can checks the logs at: "
+      "Build and deployment has been initiated. You can checks the logs at: "+projectUrl
     );
     openLink(projectUrl);
 
@@ -565,6 +569,84 @@ const openLink = (url) => {
   });
 };
 
+const getLaunchManifest = () => {
+  try {
+    const launchData = JSON.parse(
+      fs.readFileSync(
+        path.join(__dirname, "../../settings/prod-app-launch-manifest.json"),
+        "utf8"
+      ) || "{}"
+    );
+    return {
+      data: launchData,
+      created:
+        launchData?.project_uid &&
+        launchData?.env_uid &&
+        launchData?.deployment_uid &&
+        launchData?.deployment_url
+          ? true
+          : false,
+    };
+  } catch (err) {
+    console.error("Error reading or parsing file:", err);
+  }
+};
+
+const reDeployProject = async (
+  authtoken,
+  orgId,
+  baseUrl,
+  uploadUid,
+  launchMetaData
+) => {
+  try {
+    const res = await makeApiCall({
+      method: "POST",
+      maxBodyLength: Infinity,
+      url: `${baseUrl}/${constants.LAUNCH_BASE_PATH}`,
+      headers: {
+        authtoken,
+        organization_uid: orgId,
+        "x-project-uid": launchMetaData?.project_uid,
+        "content-type": "application/json",
+      },
+      data: JSON.stringify({
+        query: `fragment CoreDeploymentFields on Deployment {
+            uid
+            environment
+            status
+            createdAt
+            deploymentNumber
+            deploymentUrl
+            previewUrl
+          }
+
+          mutation createNewFileDeployment {
+            createDeployment(
+              deployment: {environment: "${launchMetaData?.env_uid}", uploadUid: "${uploadUid}"}
+            ) {
+              ...CoreDeploymentFields
+            }
+          }`,
+        variables: {},
+      }),
+    });
+
+    const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${res?.data?.createDeployment?.uid}`;
+    console.info("redeployment was successfully...");
+    console.info(
+      "Build and deployment has been initiated. You can checks the logs at: "+projectUrl
+    );
+    openLink(projectUrl);
+
+    return res?.data?.createDeployment?.uid;
+  } catch (error) {
+    console.error("Error while redeploying.");
+    console.info(JSON.stringify(error, null, 2));
+    throw error;
+  }
+};
+
 module.exports = {
   isEmpty,
   makeApiCall,
@@ -588,4 +670,6 @@ module.exports = {
   getInstalledApps,
   updateInstallation,
   openLink,
+  getLaunchManifest,
+  reDeployProject
 };
