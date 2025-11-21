@@ -244,10 +244,10 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           fieldType
         );
       } else {
+        const appName = readlineSync.question("Enter name of app: ");
         const appManifest = { ...prodAppManifest, name: appName };
 
         if (appManifest.hosting.environment_uid) {
-          const appName = readlineSync.question("Enter name of app: ");
           const [appError, appData] = await safePromise(
             createApp(
               region,

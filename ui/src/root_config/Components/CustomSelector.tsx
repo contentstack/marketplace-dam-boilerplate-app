@@ -85,9 +85,7 @@ const tableColumns = [
   {
     Header: "Dimensions (H x W)",
     id: "Dimensions",
-    accessor: (obj: any) => (
-      <div>{`${obj?.height} x ${obj?.width}`}</div>
-    ),
+    accessor: (obj: any) => <div>{`${obj?.height} x ${obj?.width}`}</div>,
     default: false,
     disableSortBy: true,
     columnWidthMultiplier: 3.5,
@@ -168,4 +166,3 @@ const CustomSelector: React.FC<TypeCustomSelector> = function ({
 };
 
 export default CustomSelector;
-
