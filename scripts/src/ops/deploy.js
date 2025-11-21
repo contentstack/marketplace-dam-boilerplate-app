@@ -49,7 +49,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     const envName = readlineSync.question("Enter the environment name: ");
     const launchSubDomain = projectName.replace(/ /g, "-");
 
-    const buildPath = buildAppZip();
+    const buildPath = buildAppZip(projectName);
 
     const uploadMetaData = await getUploadMetaData(
       authtoken,
