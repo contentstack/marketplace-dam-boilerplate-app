@@ -1,4 +1,6 @@
 const readlineSync = require("readline-sync");
+const fs = require("fs");
+const path = require("path");
 const {
   getOrgStacks,
   safePromise,
@@ -7,12 +9,14 @@ const {
   saveInstallation,
   getInstalledApps,
 } = require("../utils");
-const appManifest = require("../app-manifest.json");
+const { openLink } = require("../utils");
 
 const install = async (
+  appEnv,
   region,
   appUid,
   baseUrl,
+  appBaseUrl,
   authtoken,
   orgId,
   fieldType
@@ -44,8 +48,14 @@ const install = async (
 
   if (installedError) return;
 
+  const manifest = fs.readFileSync(
+    path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
+    "utf-8"
+  );
+  const manifestData = JSON.parse(manifest);
+ 
   const existingApp = installedAppsData?.extensions?.find(
-    (app) => app.app_uid === appManifest.uid
+    (app) => app.app_uid === manifestData.uid
   );
 
   let installData;
@@ -55,15 +65,8 @@ const install = async (
     );
 
     const [updateError, updatedData] = await safePromise(
-      updateInstallation(
-        region,
-        authtoken,
-        orgId,
-        appUid,
-        stackApiKey,
-        fieldType
-      ),
-      "Failed to update existing installation"
+      updateInstallation(region, authtoken, orgId, appUid, stackApiKey),
+      "App installation is already updated"
     );
 
     if (updateError) return;
@@ -77,19 +80,21 @@ const install = async (
 
     if (installError) return;
     installData = newInstallData;
-  }
 
+    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+    openLink(configPage);
+  }
   // Save installation info locally
   saveInstallation(
-    appManifest.name,
+    manifestData.name,
     appUid,
     stackApiKey,
     installData.data.installation_uid,
+    baseUrl,
     fieldType,
-    baseUrl
+    appEnv
   );
-  console.info("App installation info saved successfully.");
-
+  
   return installData;
 };
 

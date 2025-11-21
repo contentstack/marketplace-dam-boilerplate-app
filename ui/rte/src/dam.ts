@@ -237,7 +237,7 @@ const openSelector = (url) => {
   });
 };
 
-export const onClickHandler = async (props) => {
+export const onClickHandler = (props) => {
   rte = props?.rte;
   savedSelection = props?.savedSelection;
   config = props?.config;
