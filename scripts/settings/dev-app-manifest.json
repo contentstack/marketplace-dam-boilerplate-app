@@ -1,30 +1,17 @@
 {
-  "name": "dam-prod-app",
-  "description": "Ecommerce integration app for Contentstack",
+  "name": "dam-dev-app",
+  "description": "Dam integration app for Contentstack changed",
   "target_type": "stack",
   "ui_location": {
-    "signed": false,
-    "base_url": "https://example.com",
+    "base_url": "http://localhost:4000/#",
     "locations": [
       {
         "type": "cs.cm.stack.config",
         "meta": [
           {
             "title": "Configuration",
-            "path": "#/config",
+            "path": "/config",
             "required": true,
-            "signed": false
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.rte",
-        "meta": [
-          {
-            "name": "RTE Field",
-            "path": "/dam",
-            "enabled": true,
-            "required": false,
             "signed": false
           }
         ]
@@ -34,10 +21,22 @@
         "meta": [
           {
             "name": "DAM Field",
-            "path": "#/custom-field",
+            "path": "/custom-field",
             "data_type": "json",
             "enabled": true,
             "multiple": false,
+            "required": false,
+            "signed": false
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.rte",
+        "meta": [
+          {
+            "name": "RTE Field",
+            "path": "/dam.js",
+            "enabled": true,
             "required": false,
             "signed": false
           }
@@ -46,10 +45,8 @@
     ]
   },
   "hosting": {
-    "provider": "launch",
-    "deployment_url": "https://example.com",
-    "environment_uid": "",
-    "project_uid": ""
+    "provider": "external",
+    "deployment_url": "http://localhost:4000/#"
   },
-  "uid": ""
+  "uid": "692010ec5afee05806d5277f"
 }

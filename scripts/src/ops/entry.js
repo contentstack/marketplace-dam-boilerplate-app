@@ -82,7 +82,7 @@ async function createSampleEntry(
     entryData[damFieldUid] = [
       {
         _id: 2,
-        assetName: "Eiffel Tower, Paris",
+        assetName: "Colosseum, Rome",
         width: 600,
         height: 800,
         size: 2000,
