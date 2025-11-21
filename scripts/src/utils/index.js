@@ -4,8 +4,14 @@ const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
 const AdmZip = require("adm-zip");
+const { execSync, exec } = require("child_process");
 const INSTALLATIONS_FILE = "app-installation.json";
-const appManifest = require("../app-manifest.json");
+
+const isEmpty = (val) =>
+  val === undefined ||
+  val === null ||
+  (typeof val === "object" && !Object.keys(val)?.length) ||
+  (typeof val === "string" && !val.trim().length);
 
 const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
   try {
@@ -56,13 +62,20 @@ const saveInstallation = (
   appUid,
   stackApiKey,
   installationUid,
+  csBaseUrl,
   fieldType,
-  csBaseUrl
+  appEnv
 ) => {
   let installations = [];
-  if (fs.existsSync(INSTALLATIONS_FILE)) {
+  if (
+    fs.existsSync(path.join(__dirname, `../../settings/${INSTALLATIONS_FILE}`))
+  ) {
     try {
-      installations = JSON.parse(fs.readFileSync(INSTALLATIONS_FILE, "utf-8"));
+      const installationData = fs.readFileSync(
+        path.join(__dirname, `../../settings/${INSTALLATIONS_FILE}`),
+        "utf-8"
+      );
+      installations = JSON.parse(installationData);
     } catch (e) {
       console.error("Failed to parse installations.json, resetting file.");
     }
@@ -78,25 +91,32 @@ const saveInstallation = (
       appUid,
       stackApiKey,
       installationUid,
-      fieldType,
       csBaseUrl,
+      fieldType,
+      appEnv
     });
     fs.writeFileSync(
-      "app-installation.json",
+      path.join(__dirname, `../../settings/${INSTALLATIONS_FILE}`),
       JSON.stringify(installations, null, 2)
     );
   }
 };
 
-const updateAppManifest = async (manifest) => {
-  fs.writeFileSync("app-manifest.json", JSON.stringify(manifest, null, 2));
+const updateAppManifest = (manifest, appEnv) => {
+  fs.writeFileSync(
+    path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
+    JSON.stringify(manifest, null, 2)
+  );
 };
 
 const updateLaunchManifest = (manifest) => {
-  fs.writeFileSync("launch-manifest.json", JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(
+    path.join(__dirname, "../../settings/prod-app-launch-manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  );
 };
 
-const getEnvVariables = () => {
+const getEnvVariables = (launchSubDomain) => {
   try {
     const envVariables = [];
 
@@ -119,10 +139,22 @@ const getEnvVariables = () => {
       envVariables.push(`{ key: "${key.trim()}", value: "${value}" }`);
     });
 
+    const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
+    envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
+    envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
+    envVariables.push(
+      `{ key: "REACT_APP_API_AUTH_URL", value: "${url}/auth" }`
+    );
+
     return `[${envVariables.join(",")}]`;
   } catch (e) {
     throw new Error(`Error reading or parsing .env file: ${e.message}`);
   }
+};
+
+const runCommand = (command, options = {}) => {
+  console.info(`Running "${command}"...`);
+  execSync(command, { stdio: "inherit", ...options });
 };
 
 const buildAppZip = () => {
@@ -130,32 +162,63 @@ const buildAppZip = () => {
     console.info("Preparing the app zip...");
 
     const uiAppBasePath = path.join(__dirname, "../../ui");
+    const rteAppBasePath = path.join(uiAppBasePath, "rte");
     const buildBasePath = path.join(__dirname, "../build");
     const buildPath = `${buildBasePath}/app.zip`;
 
+    // Deleting existing build folder of UI if any
     if (fs.existsSync(`${uiAppBasePath}/build`))
       fs.rmSync(`${uiAppBasePath}/build`, { recursive: true, force: true });
 
+    // Build the RTE plugin so the latest bundle ships with the app.
+    runCommand("npm install", { cwd: rteAppBasePath });
+    runCommand("npm run build", { cwd: rteAppBasePath });
+    console.info("RTE plugin bundle ready.");
+
+    // Deleting node_modules folder of UI to reduce zip size
     if (fs.existsSync(`${uiAppBasePath}/node_modules`))
       fs.rmSync(`${uiAppBasePath}/node_modules`, {
         recursive: true,
         force: true,
       });
 
+    // Deleting the existing build folder
     if (fs.existsSync(buildBasePath))
       fs.rmSync(buildBasePath, {
         recursive: true,
         force: true,
       });
 
+    // create a new build  folder
     fs.mkdirSync(buildBasePath);
 
+    // Copy the UI app to build folder except the rte, example and build folders
     fs.cpSync(uiAppBasePath, buildBasePath, {
       recursive: true,
       filter: (src) => {
-        return !src.includes(path.join(uiAppBasePath, "rte"));
+        const skipRTE = src.includes(path.join(uiAppBasePath, "rte"));
+        const skipBuild = src.includes(path.join(uiAppBasePath, "build"));
+        const skipExample = src.includes(path.join(uiAppBasePath, "example"));
+        return !skipRTE && !skipBuild && !skipExample;
       },
     });
+
+    //Upload the dam.js plugin file build in rte into public directory
+    const damBundlePath = path.join(uiAppBasePath, "build", "dist", "dam.js");
+    const pluginDestinationPath = path.join(
+      buildBasePath,
+      "public",
+      "plugin.system.js"
+    );
+
+    if (!fs.existsSync(damBundlePath)) {
+      throw new Error(
+        "RTE build output (dam.js) not found. Please ensure the build succeeded."
+      );
+    }
+    fs.mkdirSync(path.dirname(pluginDestinationPath), { recursive: true });
+    fs.copyFileSync(damBundlePath, pluginDestinationPath);
+
     const uiPackageJson = JSON.parse(
       fs.readFileSync(`${uiAppBasePath}/package.json`, "utf8")
     );
@@ -258,8 +321,10 @@ const uploadAppZip = async (metaData, filePath = "") => {
   }
 };
 
-const _getProjectMetaData = (name, uploadUid, envName) =>
-  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables()}}}`;
+const _getProjectMetaData = (name, uploadUid, envName, launchSubDomain) =>
+  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
+    launchSubDomain
+  )}}}`;
 
 const createProject = async (
   authtoken,
@@ -267,46 +332,11 @@ const createProject = async (
   baseUrl,
   name,
   uploadUid,
-  envName
+  envName,
+  launchSubDomain
 ) => {
   try {
     console.info("Creating a launch project...");
-    console.info({
-      query: `mutation CreateProject {
-        importProject(
-          project: ${_getProjectMetaData(name, uploadUid, envName)}
-        ) {
-          projectType
-          name
-          uid
-          cmsStackApiKey
-          environments {
-            uid
-            deployments(first: 1, after: "", sortBy: "createdAt") {
-              edges {
-                node {
-                  uid
-                }
-              }
-            }
-          }
-          description
-          repository {
-            repositoryName
-            username
-            gitProviderMetadata {
-              ... on GitHubMetadata {
-                gitProvider
-              }
-              ... on ExternalGitProviderMetadata {
-                gitProvider
-              }
-            }
-          }
-        }
-      }`,
-      variables: {},
-    });
 
     const res = await makeApiCall({
       method: "POST",
@@ -320,7 +350,12 @@ const createProject = async (
       data: JSON.stringify({
         query: `mutation CreateProject {
           importProject(
-            project: ${_getProjectMetaData(name, uploadUid, envName)}
+            project: ${_getProjectMetaData(
+              name,
+              uploadUid,
+              envName,
+              launchSubDomain
+            )}
           ) {
             projectType
             name
@@ -355,10 +390,12 @@ const createProject = async (
       }),
     });
 
+    const projectUrl = `${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`;
     console.info("Project created successfully...");
     console.info(
-      `Build and deployment has been initiated. You can checks the logs at ${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`
+      "Build and deployment has been initiated. You can checks the logs at: "
     );
+    openLink(projectUrl);
 
     return {
       project_uid: res?.data?.importProject?.uid,
@@ -402,18 +439,18 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
 
   return {
     ...metaData,
-    deployment_url: `https://${res?.data?.Deployment?.deploymentUrl}/#`,
+    deployment_url: `https://${res?.data?.Deployment?.deploymentUrl}`,
   };
 };
 
-const createApp = async (region, authtoken, orgId, appName) => {
+const createApp = async (region, authtoken, orgId, appName, description) => {
   const res = await makeApiCall({
     url: `${getDeveloperhubBaseUrl(region)}/manifests`,
     method: "POST",
     headers: { authtoken, organization_uid: orgId },
     data: {
       name: appName,
-      description: appManifest?.description || "",
+      description,
       target_type: "stack",
       version: 1,
       group: "user",
@@ -430,30 +467,39 @@ const getOrgStacks = async (baseUrl, authtoken, orgId) =>
     headers: { authtoken },
   });
 
-const updateApp = async (
-  region,
-  authtoken,
-  orgId,
-  appUid,
-  withhosting,
-  appName
-) => {
-  if (withhosting) {
-    return makeApiCall({
-      url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
-      method: "PUT",
-      headers: { authtoken, organization_uid: orgId },
-      data: { hosting: { ...appManifest.hosting }, uid: appUid },
-    });
-  } else {
-    return makeApiCall({
-      url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
-      method: "PUT",
-      headers: { authtoken, organization_uid: orgId },
-      data: { ...appManifest, name: appName },
-    });
-  }
-};
+// const updateApp = async (appEnv, region, authtoken, orgId, appUid,appName) => {
+//   const manifest = fs.readFileSync(
+//     path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
+//     "utf-8"
+//   );
+//   const manifestData = JSON.parse(manifest);
+//   const name = appName? appName :manifestData.appName;
+
+//   console.info({ manifestData });
+//   if (manifestData.hosting.provider === "launch") {
+//     return makeApiCall({
+//       url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
+//       method: "PUT",
+//       headers: { authtoken, organization_uid: orgId },
+//       data: { hosting: { ...manifestData.hosting }, uid: appUid },
+//     });
+//   } else {
+//     return makeApiCall({
+//       url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
+//       method: "PUT",
+//       headers: { authtoken, organization_uid: orgId },
+//       data: { ...manifestData, name },
+//     });
+//   }
+// };
+
+const updateApp = async (manifest, region, authtoken, orgId, appUid) =>
+  makeApiCall({
+    url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
+    method: "PUT",
+    headers: { authtoken, organization_uid: orgId },
+    data: manifest,
+  });
 
 const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
   makeApiCall({
@@ -504,7 +550,23 @@ const updateInstallation = async (
   });
 };
 
+const openLink = (url) => {
+  const cmd =
+    process.platform === "win32"
+      ? `start ${url}`
+      : process.platform === "darwin"
+      ? `open "${url}"`
+      : `xdg-open "${url}"`;
+  exec(cmd, (err) => {
+    if (err) {
+      console.error("Failed to open the link in browser: ", url);
+      return;
+    }
+  });
+};
+
 module.exports = {
+  isEmpty,
   makeApiCall,
   safePromise,
   getBaseUrl,
@@ -525,4 +587,5 @@ module.exports = {
   getOrgStacks,
   getInstalledApps,
   updateInstallation,
+  openLink,
 };
