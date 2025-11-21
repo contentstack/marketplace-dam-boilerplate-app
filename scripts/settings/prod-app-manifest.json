@@ -10,10 +10,10 @@
         "type": "cs.cm.stack.config",
         "meta": [
           {
-            "title": "Configuration",
-            "path": "#/config",
-            "required": true,
-            "signed": false
+            "path": "/#/config",
+						"signed": false,
+						"enabled": true,
+						"required": true
           }
         ]
       },
@@ -23,9 +23,9 @@
           {
             "name": "RTE Field",
             "path": "/dam",
-            "enabled": true,
-            "required": false,
-            "signed": false
+						"signed": false,
+						"enabled": true,
+						"required": false
           }
         ]
       },
@@ -34,12 +34,12 @@
         "meta": [
           {
             "name": "DAM Field",
-            "path": "#/custom-field",
-            "data_type": "json",
-            "enabled": true,
             "multiple": false,
-            "required": false,
-            "signed": false
+						"path": "/#/custom-field",
+						"signed": false,
+						"enabled": true,
+						"data_type": "json",
+						"required": false
           }
         ]
       }

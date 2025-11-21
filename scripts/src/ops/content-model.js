@@ -1,7 +1,10 @@
 const readlineSync = require("readline-sync");
-const { makeApiCall, safePromise } = require("../utils");
-const { getExtension } = require("./extension");
-const { createSampleEntry } = require("./entry");
+const {
+  getExtension,
+  createContentType,
+  createSampleEntry,
+  buildContentTypeSchema,
+} = require("../utils");
 const loginData = require("../../settings/credentials.json");
 const installationData = require("../../settings/app-installation.json");
 
@@ -37,7 +40,6 @@ const installationData = require("../../settings/app-installation.json");
 
     const { stackApiKey, installationUid, fieldType, csBaseUrl } = selectedApp;
 
-    // Fetch extension UID(s)
     const extensionResults = await getExtension(
       csBaseUrl,
       loginData.authtoken,
@@ -46,114 +48,30 @@ const installationData = require("../../settings/app-installation.json");
       fieldType
     );
 
-    // Initialize schema with just title
-    const schema = [
-      {
-        display_name: "Title",
-        uid: "new_title",
-        data_type: "text",
-        mandatory: false,
-        unique: false,
-        multiple: false,
-        non_localizable: false,
-      },
-    ];
-
-    let ctUid = "dam_example";
-    let title = "DAM Example";
-
-    if (fieldType === "RTE") {
-      schema.push({
-        display_name: "DAM RTE Field",
-        plugins: [extensionResults], // uid string
-        field_metadata: {
-          allow_json_rte: true,
-          rich_text_type: "advanced",
-        },
-        uid: "dam_rte_field",
-        data_type: "json",
-        mandatory: false,
-        multiple: false,
-        non_localizable: false,
-        unique: false,
-      });
-      ctUid = "dam_rte_example";
-      title = "DAM RTE Example";
-    } else if (fieldType === "CUSTOM") {
-      schema.push({
-        display_name: "DAM Field",
-        extension_uid: extensionResults, // uid string
-        field_metadata: { extension: true },
-        uid: "dam_field",
-        data_type: "json",
-        mandatory: false,
-        multiple: false,
-        non_localizable: false,
-        unique: false,
-      });
-      ctUid = "dam_custom_example";
-      title = "DAM Custom Field Example";
-    } else if (fieldType === "BOTH") {
-      // extensionResults is an array here
-      const rteExt = extensionResults.find((ext) => ext.type === "RTE");
-      const fieldExt = extensionResults.find((ext) => ext.type === "CUSTOM");
-      if (rteExt) {
-        schema.push({
-          display_name: "DAM RTE Field",
-          plugins: [rteExt.uid],
-          field_metadata: {
-            allow_json_rte: true,
-            rich_text_type: "advanced",
-          },
-          uid: "dam_rte_field",
-          data_type: "json",
-          mandatory: false,
-          multiple: false,
-          non_localizable: false,
-          unique: false,
-        });
-      }
-
-      if (fieldExt) {
-        schema.push({
-          display_name: "DAM Field",
-          extension_uid: fieldExt.uid,
-          field_metadata: { extension: true },
-          uid: "dam_field",
-          data_type: "json",
-          mandatory: false,
-          multiple: false,
-          non_localizable: false,
-          unique: false,
-        });
-      }
-
-      ctUid = "dam_both_example";
-      title = "DAM Both Example";
-    }
-
-    // Create content type
-    const [ctError, ctData] = await safePromise(
-      makeApiCall({
-        url: `${csBaseUrl}/v3/content_types`,
-        method: "POST",
-        headers: { authtoken: loginData.authtoken, api_key: stackApiKey },
-        data: { content_type: { title, uid: ctUid, schema } },
-      }),
-      "Failed to create content type"
-    );
-
-    if (ctError) {
-      console.error(
-        "Error creating content type:",
-        ctError.response?.data || ctError
-      );
+    if (!extensionResults) {
+      console.error("Failed to get extension UIDs");
       return;
     }
 
-    console.info("Content Type created:", ctData.content_type.uid);
+    const { schema, ctUid, title } = buildContentTypeSchema(
+      fieldType,
+      extensionResults
+    );
 
-    // Ask user to create entry
+    try {
+      await createContentType(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        title,
+        ctUid,
+        schema
+      );
+    } catch (error) {
+      console.error("Failed to create content type:", error);
+      return;
+    }
+
     const createEntrySample = readlineSync.keyInSelect(
       ["Yes", "No"],
       "Create Sample Entry for this Content Type?"

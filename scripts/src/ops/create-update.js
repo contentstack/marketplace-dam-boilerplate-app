@@ -90,10 +90,10 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.config",
                 meta: [
                   {
-                    title: "Configuration",
                     path: "/config",
-                    required: true,
                     signed: false,
+                    enabled: true,
+                    required: true,
                   },
                 ],
               },
@@ -101,11 +101,11 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.rte",
                 meta: [
                   {
-                    title: "RTE Field",
+                    name: "RTE Field",
                     path: "/dam.js",
+                    signed: false,
                     enabled: true,
                     required: false,
-                    signed: false,
                   },
                 ],
               },
@@ -125,10 +125,10 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.config",
                 meta: [
                   {
-                    title: "Configuration",
                     path: "/config",
-                    required: true,
                     signed: false,
+                    enabled: true,
+                    required: true,
                   },
                 ],
               },
@@ -136,13 +136,13 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.custom_field",
                 meta: [
                   {
-                    name: "DAM Field",
-                    path: "/custom-field",
-                    data_type: "json",
-                    enabled: true,
                     multiple: false,
-                    required: false,
+                    path: "/custom-field",
                     signed: false,
+                    enabled: true,
+                    data_type: "json",
+                    required: false,
+                    name: "DAM Field",
                   },
                 ],
               },
@@ -161,10 +161,10 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.config",
                 meta: [
                   {
-                    title: "Configuration",
                     path: "/config",
-                    required: true,
                     signed: false,
+                    enabled: true,
+                    required: true,
                   },
                 ],
               },
@@ -172,13 +172,13 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.custom_field",
                 meta: [
                   {
-                    name: "DAM Field",
-                    path: "/custom-field",
-                    data_type: "json",
-                    enabled: true,
                     multiple: false,
-                    required: false,
+                    path: "/custom-field",
                     signed: false,
+                    enabled: true,
+                    data_type: "json",
+                    required: false,
+                    name: "DAM Field",
                   },
                 ],
               },
@@ -188,9 +188,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                   {
                     name: "RTE Field",
                     path: "/dam.js",
+                    signed: false,
                     enabled: true,
                     required: false,
-                    signed: false,
                   },
                 ],
               },
@@ -211,7 +211,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
         appManifest.uid = appData;
         appManifest.name = appName;
-        updateAppManifest(appManifest, appEnv);
 
         const [appUpdateError, appUpdateData] = await safePromise(
           updateApp(
@@ -223,6 +222,8 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           ),
           "Error while creating the app."
         );
+        appManifest.ui_location = appUpdateData?.data?.ui_location;
+        updateAppManifest(appManifest, appEnv);
 
         if (appUpdateError) {
           console.error(JSON.stringify(appError, null, 2));
@@ -261,7 +262,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
           appManifest.uid = appData;
           appManifest.name = appName;
-          updateAppManifest(appManifest, appEnv);
 
           const [appUpdateError, appUpdateData] = await safePromise(
             updateApp(
@@ -273,6 +273,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
             ),
             "Error while creating the app."
           );
+
+          appManifest.ui_location = appUpdateData?.data?.ui_location;
+          updateAppManifest(appManifest, appEnv);
 
           if (appUpdateError) {
             console.error(JSON.stringify(appError, null, 2));
@@ -311,6 +314,8 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
           "Error while updating the app"
         );
+        appManifest.ui_location = appData?.data?.ui_location;
+        updateAppManifest(appManifest, appEnv);
 
         if (appError) {
           console.error(JSON.stringify(appError, null, 2));
