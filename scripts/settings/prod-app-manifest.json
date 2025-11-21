@@ -1,0 +1,55 @@
+{
+  "name": "dam script app 2",
+  "description": "Ecommerce integration app for Contentstack",
+  "target_type": "stack",
+  "ui_location": {
+    "signed": false,
+    "base_url": "https://example.com",
+    "locations": [
+      {
+        "type": "cs.cm.stack.config",
+        "meta": [
+          {
+            "title": "Configuration",
+            "path": "#/config",
+            "required": true,
+            "signed": false
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.rte",
+        "meta": [
+          {
+            "name": "RTE Field",
+            "path": "/dam",
+            "enabled": true,
+            "required": false,
+            "signed": false
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.custom_field",
+        "meta": [
+          {
+            "name": "DAM Field",
+            "path": "#/custom-field",
+            "data_type": "json",
+            "enabled": true,
+            "multiple": false,
+            "required": false,
+            "signed": false
+          }
+        ]
+      }
+    ]
+  },
+  "hosting": {
+    "provider": "launch",
+    "deployment_url": "https://example.com",
+    "environment_uid": "",
+    "project_uid": ""
+  },
+  "uid": "692003d15afee05806d5276e"
+}
