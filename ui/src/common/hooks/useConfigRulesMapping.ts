@@ -3,11 +3,13 @@ import { UnifiedConfigRule } from "../types";
 
 /**
  * useConfigRulesMapping Hook
- * 
+ *
  * Manages state and handlers for config rules mappings (branch + locale + config).
  * Handles both branch-only mappings (locale empty = all locales) and locale-specific mappings.
  */
-export default function useConfigRulesMapping(initial: UnifiedConfigRule[] = []) {
+export default function useConfigRulesMapping(
+  initial: UnifiedConfigRule[] = []
+) {
   const safeInitial = Array.isArray(initial) ? initial : [];
   const [mappings, setMappings] = useState<any>(safeInitial);
   const prevInitialRef = useRef<any>(null);
@@ -48,34 +50,45 @@ export default function useConfigRulesMapping(initial: UnifiedConfigRule[] = [])
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {
       const safePrev = Array.isArray(prev) ? prev : [];
-      return [...safePrev, {
-        id: `mapping-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
-        branch_uid: "",
-        locales_uid: [],
-        config_label: "",
-        ruleType
-      }];
+      return [
+        ...safePrev,
+        {
+          id: `mapping-${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 11)}`,
+          branch_uid: "",
+          locales_uid: [],
+          config_label: "",
+          ruleType,
+        },
+      ];
     });
   }, []);
 
   const onLeftSelect = useCallback((selected: any, index: number) => {
-    if (!selected || selected?.value === undefined || typeof index !== 'number') return;
+    if (!selected || selected?.value === undefined || typeof index !== "number")
+      return;
 
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {
-      if (!Array.isArray(prev) || index < 0 || index >= prev?.length) return prev;
+      if (!Array.isArray(prev) || index < 0 || index >= prev?.length)
+        return prev;
       const newMappings = [...prev];
-      newMappings[index] = { ...newMappings?.[index], branch_uid: selected?.value };
+      newMappings[index] = {
+        ...newMappings?.[index],
+        branch_uid: selected?.value,
+      };
       return newMappings;
     });
   }, []);
 
   const onMiddleSelect = useCallback((selected: any[], index: number) => {
-    if (typeof index !== 'number') return;
+    if (typeof index !== "number") return;
 
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {
-      if (!Array.isArray(prev) || index < 0 || index >= prev?.length) return prev;
+      if (!Array.isArray(prev) || index < 0 || index >= prev?.length)
+        return prev;
       const newMappings = [...prev];
       const values = Array.isArray(selected)
         ? selected.map((o: any) => o?.value).filter(Boolean)
@@ -86,19 +99,24 @@ export default function useConfigRulesMapping(initial: UnifiedConfigRule[] = [])
   }, []);
 
   const onRightSelect = useCallback((option: any, index: number) => {
-    if (!option || option?.value === undefined || typeof index !== 'number') return;
+    if (!option || option?.value === undefined || typeof index !== "number")
+      return;
 
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {
-      if (!Array.isArray(prev) || index < 0 || index >= prev?.length) return prev;
+      if (!Array.isArray(prev) || index < 0 || index >= prev?.length)
+        return prev;
       const newMappings = [...prev];
-      newMappings[index] = { ...newMappings?.[index], config_label: option?.value };
+      newMappings[index] = {
+        ...newMappings?.[index],
+        config_label: option?.value,
+      };
       return newMappings;
     });
   }, []);
 
   const onDelete = useCallback((index: number) => {
-    if (typeof index !== 'number') return;
+    if (typeof index !== "number") return;
 
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {
@@ -107,5 +125,13 @@ export default function useConfigRulesMapping(initial: UnifiedConfigRule[] = [])
     });
   }, []);
 
-  return { mappings, setMappings, addMapping, onLeftSelect, onMiddleSelect, onRightSelect, onDelete };
+  return {
+    mappings,
+    setMappings,
+    addMapping,
+    onLeftSelect,
+    onMiddleSelect,
+    onRightSelect,
+    onDelete,
+  };
 }

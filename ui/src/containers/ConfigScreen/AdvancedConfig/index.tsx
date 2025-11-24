@@ -3,9 +3,17 @@ import ConfigRules from "./ConfigRules";
 import useConfigRulesMapping from "../../../common/hooks/useConfigRulesMapping";
 import { MarketplaceAppContext } from "../../../common/contexts/MarketplaceAppContext";
 import AppConfigContext from "../../../common/contexts/AppConfigContext";
-import { UnifiedRule, ConfigRules as ConfigRulesType } from "../../../common/types";
+import {
+  UnifiedRule,
+  ConfigRules as ConfigRulesType,
+} from "../../../common/types";
 
-function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasIncomplete }: any) {
+function AdvancedConfig({
+  branches,
+  configList,
+  setConfigRulesMapper,
+  setHasIncomplete,
+}: any) {
   const { installationData } = React.useContext(AppConfigContext);
 
   const { locales } = React.useContext(MarketplaceAppContext);
@@ -18,21 +26,24 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
     const localeGroupMap: Map<string, Set<string>> = new Map(); // key: "branch|config", value: Set of locales
 
     const configRules = installationData?.configuration?.config_rules;
-    if (!configRules || typeof configRules !== 'object') {
+    if (!configRules || typeof configRules !== "object") {
       return [];
     }
 
     Object.entries(configRules)?.forEach(([branchUid, branchObj]: any) => {
-      if (!branchUid || !branchObj || typeof branchObj !== 'object') return;
-
+      if (!branchUid || !branchObj || typeof branchObj !== "object") return;
 
       const branchConfigLabel =
-        Array.isArray(branchObj?.config_label) && branchObj?.config_label?.length
+        Array.isArray(branchObj?.config_label) &&
+        branchObj?.config_label?.length
           ? branchObj.config_label[0]
           : null;
 
       // Skip if branch has no valid config_label and no locales
-      const hasLocales = branchObj?.locales && typeof branchObj.locales === 'object' && Object.keys(branchObj.locales).length > 0;
+      const hasLocales =
+        branchObj?.locales &&
+        typeof branchObj.locales === "object" &&
+        Object.keys(branchObj.locales).length > 0;
       if (!branchConfigLabel && !hasLocales) {
         return;
       }
@@ -41,14 +52,14 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
       const localeConfigLabels = new Set<string>();
 
       // Locale-specific mappings - GROUP by branch+config
-      if (branchObj?.locales && typeof branchObj.locales === 'object') {
+      if (branchObj?.locales && typeof branchObj.locales === "object") {
         Object.entries(branchObj.locales)?.forEach(
           ([locale, localeObj]: any) => {
             if (!locale || !localeObj) return;
 
             const localeConfigLabel =
               Array.isArray(localeObj?.config_label) &&
-                localeObj?.config_label?.length
+              localeObj?.config_label?.length
                 ? localeObj.config_label[0]
                 : null;
 
@@ -73,7 +84,11 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
       // Only add branch-level rule if:
       // 1. There's actually a valid config_label at branch level
       // 2. This config is NOT used in any locale-specific mapping
-      if (branchUid && branchConfigLabel && !localeConfigLabels.has(branchConfigLabel)) {
+      if (
+        branchUid &&
+        branchConfigLabel &&
+        !localeConfigLabels.has(branchConfigLabel)
+      ) {
         unifiedRules.push({
           branch_uid: branchUid,
           locales_uid: [],
@@ -84,7 +99,7 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
 
     // Convert grouped locales into unified rules
     localeGroupMap.forEach((localeSet, groupKey) => {
-      const [branchUid, configLabel] = groupKey.split('|');
+      const [branchUid, configLabel] = groupKey.split("|");
       if (branchUid && configLabel && localeSet.size > 0) {
         unifiedRules.push({
           branch_uid: branchUid,
@@ -119,8 +134,6 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
     return set;
   }, [configList]);
 
-
-
   const rightBranchSpecificOptions = React.useMemo(() => {
     if (!Array.isArray(configList)) return [];
     return configList.map((configKey: string) => ({
@@ -149,13 +162,14 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
       }));
   }, [locales]);
 
-
   /**
    * Build config mapper from unified rules
    * Rules with empty locales_uid apply to ALL locales (branch-level)
    * Rules with specific locales_uid apply only to those locales
    */
-  function buildUnifiedMapper(unifiedRulesParam: UnifiedRule[]): ConfigRulesType {
+  function buildUnifiedMapper(
+    unifiedRulesParam: UnifiedRule[]
+  ): ConfigRulesType {
     const result: ConfigRulesType = {};
 
     if (!Array.isArray(unifiedRulesParam) || !unifiedRulesParam?.length) {
@@ -222,32 +236,45 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
     return result;
   }
 
-
   const prevConfigRulesRef = React.useRef<any>(null);
 
   useEffect(() => {
-    const hasIncomplete = Array.isArray(unifiedMappings) && unifiedMappings.some((m: any) => {
-      const branch = m?.branch_uid;
-      const cfgRaw = m?.config_label;
-      const cfg = Array.isArray(cfgRaw) ? cfgRaw[0] : cfgRaw;
-      const selectedLocales = m?.locales_uid;
-      const hasBranch = !!branch;
-      const hasConfig = !!cfg;
-      const hasValidConfig = !!cfg && validConfigsSet.has(cfg);
-      const hasLocales = Array.isArray(selectedLocales) ? selectedLocales.length > 0 : !!selectedLocales;
+    const hasIncomplete =
+      Array.isArray(unifiedMappings) &&
+      unifiedMappings.some((m: any) => {
+        const branch = m?.branch_uid;
+        const cfgRaw = m?.config_label;
+        const cfg = Array.isArray(cfgRaw) ? cfgRaw[0] : cfgRaw;
+        const selectedLocales = m?.locales_uid;
+        const hasBranch = !!branch;
+        const hasConfig = !!cfg;
+        const hasValidConfig = !!cfg && validConfigsSet.has(cfg);
+        const hasLocales = Array.isArray(selectedLocales)
+          ? selectedLocales.length > 0
+          : !!selectedLocales;
 
-      // Valid only when branch + valid config are present. 
-      // If locales are selected, branch must also be present 
-      const isValid = hasBranch && hasValidConfig && (!hasLocales || hasBranch);
+        // Valid only when branch + valid config are present.
+        // If locales are selected, branch must also be present
+        const isValid =
+          hasBranch && hasValidConfig && (!hasLocales || hasBranch);
 
-      // Empty new row OR any partial selection
-      return !isValid && (hasBranch || hasConfig || hasLocales || (!hasBranch && !hasConfig && !hasLocales));
-    });
+        // Empty new row OR any partial selection
+        return (
+          !isValid &&
+          (hasBranch ||
+            hasConfig ||
+            hasLocales ||
+            (!hasBranch && !hasConfig && !hasLocales))
+        );
+      });
     setHasIncomplete?.(Boolean(hasIncomplete));
 
     if (!unifiedMappings || !Array.isArray(unifiedMappings)) {
       const emptyConfig = {};
-      if (JSON.stringify(prevConfigRulesRef.current) !== JSON.stringify(emptyConfig)) {
+      if (
+        JSON.stringify(prevConfigRulesRef.current) !==
+        JSON.stringify(emptyConfig)
+      ) {
         prevConfigRulesRef.current = emptyConfig;
         setConfigRulesMapper?.(emptyConfig);
       }
@@ -256,7 +283,10 @@ function AdvancedConfig({ branches, configList, setConfigRulesMapper, setHasInco
 
     const newConfigRules = buildUnifiedMapper(unifiedMappings);
     // Only update if the config rules actually changed
-    if (JSON.stringify(prevConfigRulesRef.current) !== JSON.stringify(newConfigRules)) {
+    if (
+      JSON.stringify(prevConfigRulesRef.current) !==
+      JSON.stringify(newConfigRules)
+    ) {
       prevConfigRulesRef.current = newConfigRules;
       setConfigRulesMapper?.(newConfigRules);
     }

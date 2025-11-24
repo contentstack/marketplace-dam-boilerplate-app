@@ -40,7 +40,10 @@ const normalizeFileType = (fileType: string | undefined): string => {
 
   const type = fileType.toLowerCase();
 
-  if (type.includes("image") || ["jpeg", "jpg", "png", "gif", "svg", "webp"].includes(type)) {
+  if (
+    type.includes("image") ||
+    ["jpeg", "jpg", "png", "gif", "svg", "webp"].includes(type)
+  ) {
     return "image";
   }
   if (type.includes("video") || ["mp4", "mov", "avi", "webm"].includes(type)) {
@@ -68,9 +71,15 @@ const filterAssetData = (assets: any[]) => {
       id: asset?._id || "",
       type: normalizeFileType(asset?.fileType) || asset?.type || "document",
       name: asset?.assetName || asset?.name || "",
-      width: asset?.dimensions?.width?.toString() || asset?.width?.toString() || "",
-      height: asset?.dimensions?.height?.toString() || asset?.height?.toString() || "",
-      size: asset?.fileSize ? convertSizeToBytes(asset?.fileSize) : (asset?.size?.toString() || "0"),
+      width:
+        asset?.dimensions?.width?.toString() || asset?.width?.toString() || "",
+      height:
+        asset?.dimensions?.height?.toString() ||
+        asset?.height?.toString() ||
+        "",
+      size: asset?.fileSize
+        ? convertSizeToBytes(asset?.fileSize)
+        : asset?.size?.toString() || "0",
       thumbnailUrl: asset?.thumbnail || asset?.thumbnailUrl || "",
       previewUrl: asset?.assetUrl || asset?.previewUrl || "",
       platformUrl: asset?.platformUrl || "",

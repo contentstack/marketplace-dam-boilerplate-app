@@ -32,10 +32,6 @@
     margin: 10px !important;
   }
 
-  .tippy-wrapper {
-    margin-right: 10px;
-  }
-
   .radio-wrapper {
     padding: 20px 10px;
   }
@@ -60,11 +56,11 @@
 
   .InstructionText {
     visibility: visible;
-    margin: calc(.125rem + 1px) 0 0 0 !important;
+    margin: calc(0.125rem + 1px) 0 0 0 !important;
   }
 
   .FieldLabel {
-    margin: 0 0 .5rem !important;
+    margin: 0 0 0.5rem !important;
   }
 
   & .dam-keys {

@@ -81,7 +81,8 @@ const localeTexts = {
     AdvancedConfig: {
       unified: {
         label: "Config Rules",
-        helpText: "Configure branch-specific or locale-specific config rules. Select a branch and optionally a locale to apply different configurations for specific contexts.",
+        helpText:
+          "Configure branch-specific or locale-specific config rules. Select a branch and optionally a locale to apply different configurations for specific contexts.",
         heading: "Choose your default config rules",
         tableTitle: "Config Mapping",
         leftPlaceholder: "Select Branch",
