@@ -1,11 +1,8 @@
-import {
-  Field,
-  Button,
-} from "@contentstack/venus-components";
 import React from "react";
+import { Field, Button } from "@contentstack/venus-components";
 import RuleContainer from "../RuleContainer";
 import localeTexts from "../../../../common/locale/en-us";
-
+import InfoMessage from "../../../../components/InfoMessage";
 
 function ConfigRules({
   mappings,
@@ -37,9 +34,13 @@ function ConfigRules({
       <Field
         className="config-rules-field"
         labelText="Config Rules"
-        helpText="• Branch-Level Rules: Select at least one branch and one config. This applies to all locales for that branch.\n• Locale-Level Rules: Select at least one branch, one locale, and one config for specific locale targeting.\n• Important: Branch selection is always required. You cannot select locales without selecting a branch first."
       />
-
+      <div className="config-rules-info">
+        <InfoMessage
+          content="<b>Branch-Level Rules</b>: You need to select one branch and one config to apply rules across all locales in branch.
+<b>Locale-Level Rules</b>: You need to select one branch, one locale and one config to target rules for specific locales."
+        />
+      </div>
       <div className="config-mapping-section">
         <RuleContainer
           mappings={safeMappings}
@@ -52,9 +53,12 @@ function ConfigRules({
           onLocaleSelect={onLocaleSelect}
           onDelete={onDelete}
           config={{
-            branchPlaceholder: texts?.unified?.leftPlaceholder ?? "Select Branch",
-            configPlaceholder: texts?.unified?.rightPlaceholder ?? "Select Config",
-            localePlaceholder: texts?.unified?.middlePlaceholder ?? "Select Locale (Optional)",
+            branchPlaceholder:
+              texts?.unified?.leftPlaceholder ?? "Select Branch",
+            configPlaceholder:
+              texts?.unified?.rightPlaceholder ?? "Select Config",
+            localePlaceholder:
+              texts?.unified?.middlePlaceholder ?? "Select Locale (Optional)",
             noOptionsMessage: texts?.common?.noOptionsMessage ?? "No options",
             deleteTooltip: texts?.common?.deleteTooltip ?? "Remove mapping",
             separator: texts?.common?.separator ?? "-",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import "../styles.scss";
 import Table from "./Table";
@@ -10,17 +11,13 @@ interface TypeCustomComponent {
   selectedAssetIds: string[];
 }
 
-const CustomSelector: React.FC<TypeCustomComponent> = function (
-  {
-    config,
-    setError,
-    successFn,
-    closeFn,
-    selectedAssetIds,
-  }: TypeCustomComponent) {
-
-  console.log('!!!🚀 config:', config); // eslint-disable-line no-console
-
+const CustomSelector: React.FC<TypeCustomComponent> = function ({
+  config,
+  setError,
+  successFn,
+  closeFn,
+  selectedAssetIds,
+}: TypeCustomComponent) {
   // Mock asset data - developers should replace this with their actual data fetching
   const mockAssetData = [
     {
@@ -36,7 +33,8 @@ const CustomSelector: React.FC<TypeCustomComponent> = function (
     {
       _id: "2",
       assetName: "product-catalog.pdf",
-      assetUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      assetUrl:
+        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
       thumbnail: "https://via.placeholder.com/150x150/ff6b6b/ffffff?text=PDF",
       fileSize: "1.8 MB",
       fileType: "PDF",
@@ -106,7 +104,8 @@ const CustomSelector: React.FC<TypeCustomComponent> = function (
     {
       _id: "9",
       assetName: "brand-guidelines.pdf",
-      assetUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      assetUrl:
+        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
       thumbnail: "https://via.placeholder.com/150x150/5f27cd/ffffff?text=PDF",
       fileSize: "3.4 MB",
       fileType: "PDF",
@@ -156,7 +155,8 @@ const CustomSelector: React.FC<TypeCustomComponent> = function (
     {
       _id: "14",
       assetName: "user-manual.pdf",
-      assetUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      assetUrl:
+        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
       thumbnail: "https://via.placeholder.com/150x150/5f27cd/ffffff?text=PDF",
       fileSize: "4.2 MB",
       fileType: "PDF",
@@ -175,15 +175,14 @@ const CustomSelector: React.FC<TypeCustomComponent> = function (
     },
   ];
 
-
   return (
-      <Table
-        setError={setError}
-        successFn={successFn}
-        closeFn={closeFn}
-        selectedAssetIds={selectedAssetIds}
-        assetData={mockAssetData}
-      />
+    <Table
+      setError={setError}
+      successFn={successFn}
+      closeFn={closeFn}
+      selectedAssetIds={selectedAssetIds}
+      assetData={mockAssetData}
+    />
   );
 };
 

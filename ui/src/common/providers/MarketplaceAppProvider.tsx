@@ -20,8 +20,10 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
         const appSdkConfig: GenericObjectType = await appSDK?.getConfig();
         await setAppConfig(appSdkConfig);
         const stack: any = appSDK?.stack;
-        const localesData = await stack?.getLocales({}, { headers: { branch: "stage" } });
-        console.info('!!!🚀 localesData:', localesData);
+        const localesData = await stack?.getLocales(
+          {},
+          { headers: { branch: "stage" } }
+        );
         await setLocales(localesData?.locales ?? []);
       })
       .catch((error) => {

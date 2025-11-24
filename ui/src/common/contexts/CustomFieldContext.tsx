@@ -17,12 +17,12 @@ export interface TypeCustomFieldContext {
 
 const CustomFieldContext = createContext<TypeCustomFieldContext>({
   renderAssets: [],
-  setRenderAssets: () => { },
+  setRenderAssets: () => {},
   selectedAssets: {},
-  setSelectedAssets: () => { },
-  removeAsset: () => { },
+  setSelectedAssets: () => {},
+  removeAsset: () => {},
   uniqueID: "",
-  setRearrangedAssets: () => { },
+  setRearrangedAssets: () => {},
   state: {
     config: {},
     contentTypeConfig: {},
@@ -30,7 +30,7 @@ const CustomFieldContext = createContext<TypeCustomFieldContext>({
     appSdkInitialized: false,
   },
   currentLocale: "",
-  handleBtnDisable: () => { },
+  handleBtnDisable: () => {},
   isBtnDisable: false,
 });
 

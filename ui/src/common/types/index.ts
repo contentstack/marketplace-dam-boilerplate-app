@@ -195,10 +195,10 @@ type InputFieldType =
 
 export interface TypeBaseFields {
   type:
-  | "textInputField"
-  | "radioInputField"
-  | "selectInputField"
-  | "customInputField";
+    | "textInputField"
+    | "radioInputField"
+    | "selectInputField"
+    | "customInputField";
   labelText: string;
   helpText?: string;
   placeholderText?: string;

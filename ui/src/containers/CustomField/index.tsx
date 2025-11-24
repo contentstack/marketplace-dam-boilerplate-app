@@ -50,35 +50,28 @@ const CustomField: React.FC = function () {
     const locale = contentTypeConfig?.locale;
     // Priority order:
     // 1 : Custom Field Advanced Settings - Locale Specific
-    if (
-      locale?.[currentLocale]?.config_label?.length > 0
-    ) {
+    if (locale?.[currentLocale]?.config_label?.length > 0) {
       return locale[currentLocale].config_label[0];
     }
     // 2 : Custom Field Advanced Settings - Default
-    if (
-      contentTypeConfig?.config_label?.length > 0
-    ) {
+    if (contentTypeConfig?.config_label?.length > 0) {
       return contentTypeConfig.config_label[0];
     }
-    // 3 : Locale-Specific Config 
+    // 3 : Locale-Specific Config
     if (
       branch &&
-      config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label?.length > 0
+      config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label
+        ?.length > 0
     ) {
       return config.config_rules[branch].locales[currentLocale].config_label[0];
     }
     // 4 :  Branch-Specific Config
-    if (
-      branch &&
-      config?.config_rules?.[branch]?.config_label?.length > 0
-    ) {
+    if (branch && config?.config_rules?.[branch]?.config_label?.length > 0) {
       return config.config_rules[branch].config_label[0];
     }
     // 5. Main Default
     return config?.default_multi_config_key;
   };
-
 
   const getConfig = () => {
     const { config, contentTypeConfig } = state;
@@ -118,7 +111,9 @@ const CustomField: React.FC = function () {
       const filteredAssets = rootConfig?.filterAssetData?.(selectedAssets);
       setRenderAssets(filteredAssets);
 
-      const assetIds = (selectedAssets as any[])?.map((item: any) => item?.[uniqueID]);
+      const assetIds = (selectedAssets as any[])?.map(
+        (item: any) => item?.[uniqueID]
+      );
       setSelectedAssetIds(assetIds);
 
       const finalConfig = getConfig();
@@ -229,7 +224,7 @@ const CustomField: React.FC = function () {
         data?.message === "add" &&
         data?.type === rootConfig.damEnv.DAM_APP_NAME &&
         data?.selectedAssets?.length
-      ) { 
+      ) {
         const finalAssets = CustomFieldUtils.advancedFilters(
           data?.selectedAssets,
           state?.contentTypeConfig?.advanced
@@ -296,7 +291,6 @@ const CustomField: React.FC = function () {
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-
     const hasConfig = state?.config && Object.keys(state.config).length > 0;
     if (!hasConfig || !state?.appSdkInitialized) {
       return;
@@ -384,7 +378,9 @@ const CustomField: React.FC = function () {
                       : localeTexts.CustomFields.assetLimit.btnTooltip
                   }
                   position="top"
-                  disabled={!(renderAssets?.length && isBtnDisable) && isConfigReady}
+                  disabled={
+                    !(renderAssets?.length && isBtnDisable) && isConfigReady
+                  }
                   style={constants.constantStyles.addBtnTooltip}
                 >
                   <Button
@@ -393,7 +389,9 @@ const CustomField: React.FC = function () {
                     version="v2"
                     onClick={openDAMSelectorPage}
                     data-testid="add-btn"
-                    disabled={!isConfigReady || (renderAssets?.length && isBtnDisable)}
+                    disabled={
+                      !isConfigReady || (renderAssets?.length && isBtnDisable)
+                    }
                   >
                     {localeTexts.CustomFields.button.btnText}
                   </Button>

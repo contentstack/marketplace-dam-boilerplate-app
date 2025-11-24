@@ -93,7 +93,6 @@ const ConfigScreen: React.FC = function () {
     }
   );
 
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
@@ -139,7 +138,6 @@ const ConfigScreen: React.FC = function () {
       config_rules: configRulesMapper ?? {},
     };
 
-
     setInstallationData({
       ...installationData,
       configuration: updatedConfiguration,
@@ -149,7 +147,6 @@ const ConfigScreen: React.FC = function () {
       configuration: updatedConfiguration,
       serverConfiguration: installationData?.serverConfiguration,
     });
-
   }, [configRulesMapper, installationData?.configuration?.config_rules]);
 
   useEffect(() => {
@@ -333,7 +330,7 @@ const ConfigScreen: React.FC = function () {
 
     handleMultiConfigLimit(
       configInstallationObj?.multi_config_keys ??
-      serverConfigInstallationObj?.multi_config_keys
+        serverConfigInstallationObj?.multi_config_keys
     );
 
     setInstallationData({
@@ -566,7 +563,7 @@ const ConfigScreen: React.FC = function () {
                 </Dropdown>
               </div>
             ),
-            onClick: () => { },
+            onClick: () => {},
           },
         ]}
       >
@@ -587,8 +584,8 @@ const ConfigScreen: React.FC = function () {
   const renderAccFields = (accordianFields: Configurations) => {
     const accordianKeys: string[] = Object.keys(
       installationData?.configuration?.multi_config_keys ??
-      installationData?.serverConfiguration?.multi_config_keys ??
-      {}
+        installationData?.serverConfiguration?.multi_config_keys ??
+        {}
     );
     return (
       <div className="multi-config-accordian-wrapper">
