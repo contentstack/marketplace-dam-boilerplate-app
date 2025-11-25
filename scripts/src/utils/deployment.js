@@ -362,11 +362,9 @@ const createProject = async (
     openLink(projectUrl);
 
     return {
-      project_uid: res?.data?.importProject?.uid,
-      env_uid: res?.data?.importProject?.environments[0]?.uid,
-      deployment_uid:
-        res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node
-          ?.uid,
+      project_uid: project?.uid,
+      env_uid: env?.uid,
+      deployment_uid: deployment?.uid,
     };
   } catch (error) {
     console.error("Error while creating a launch project.");
@@ -470,26 +468,7 @@ const reDeployProject = async (
         "x-project-uid": launchMetaData?.project_uid,
         "content-type": "application/json",
       },
-      data: JSON.stringify({
-        query: `fragment CoreDeploymentFields on Deployment {
-            uid
-            environment
-            status
-            createdAt
-            deploymentNumber
-            deploymentUrl
-            previewUrl
-          }
-
-          mutation createNewFileDeployment {
-            createDeployment(
-              deployment: {environment: "${launchMetaData?.env_uid}", uploadUid: "${uploadUid}"}
-            ) {
-              ...CoreDeploymentFields
-            }
-          }`,
-        variables: {},
-      }),
+      data: JSON.stringify({ query, variables: {} }),
     });
 
     const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${res?.data?.createDeployment?.uid}`;

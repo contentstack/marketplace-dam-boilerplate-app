@@ -20,11 +20,7 @@
         "type": "cs.cm.stack.custom_field",
         "meta": [
           {
-<<<<<<< HEAD
             "name": "DAM DevField",
-=======
-            "name": "DAM Field",
->>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
             "multiple": false,
 						"path": "/custom-field",
 						"signed": false,
