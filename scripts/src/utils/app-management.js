@@ -186,7 +186,7 @@ const createSampleEntry = async (
   type
 ) => {
   let entryData = {
-    new_title: "Sample DAM Entry",
+    title: "DAM boilerplate sample",
     locale: "en-us",
   };
 
@@ -288,17 +288,12 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
   const schema = [
     {
       display_name: "Title",
-      uid: "new_title",
+      uid: "title",
       data_type: "text",
-      mandatory: false,
+      mandatory: true,
       unique: false,
-      multiple: false,
-      non_localizable: false,
     },
   ];
-
-  let ctUid = "dam_example";
-  let title = "DAM Example";
 
   if (fieldType === "RTE") {
     schema.push({
@@ -315,8 +310,6 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
       non_localizable: false,
       unique: false,
     });
-    ctUid = "dam_rte_example";
-    title = "DAM RTE Example";
   } else if (fieldType === "CUSTOM") {
     schema.push({
       display_name: "DAM Field",
@@ -329,8 +322,6 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
       non_localizable: false,
       unique: false,
     });
-    ctUid = "dam_custom_example";
-    title = "DAM Custom Field Example";
   } else if (fieldType === "BOTH") {
     const rteExt = extensionResults.find((ext) => ext.type === "RTE");
     const fieldExt = extensionResults.find((ext) => ext.type === "CUSTOM");
@@ -365,12 +356,9 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
         unique: false,
       });
     }
-
-    ctUid = "dam_both_example";
-    title = "DAM Both Example";
   }
 
-  return { schema, ctUid, title };
+  return schema;
 };
 
 module.exports = {
