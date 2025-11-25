@@ -3,32 +3,26 @@ const path = require("path");
 const FormData = require("form-data");
 const AdmZip = require("adm-zip");
 const constants = require("../constants");
-const { makeApiCall } = require("./helpers");
-const { openLink, runCommand } = require("./helpers");
+const { makeApiCall, openLink, runCommand, safeDelete, updateEnvFile } = require("./helpers");
 
 const getEnvVariables = (launchSubDomain) => {
   try {
-    const envVariables = [];
+    const uiEnvPath = path.join(__dirname, "../../../ui/.env");
+    const uiEnvData = fs.readFileSync(uiEnvPath, "utf-8");
 
-    const uiEnvData = fs.readFileSync(
-      path.join(__dirname, "../../../ui/.env"),
-      "utf-8"
-    );
-
-    uiEnvData.split("\n").forEach((line) => {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#")) return;
-
-      const [key, ...rest] = trimmed.split("=");
-      if (!key || rest.length === 0) return;
-
-      let value = rest.join("=").trim();
-
-      value = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-      if (!constants.EXCLUDED_ENVS.includes(key)) {
-        envVariables.push(`{ key: "${key.trim()}", value: "${value}" }`);
-      }
-    });
+    const envVariables = uiEnvData
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+      .map((line) => {
+        const [key, ...rest] = line.split("=");
+        return { key: key?.trim(), value: rest.join("=").trim() };
+      })
+      .filter(({ key, value }) => key && value && !constants.EXCLUDED_ENVS.includes(key))
+      .map(({ key, value }) => {
+        const escapedValue = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+        return `{ key: "${key}", value: "${escapedValue}" }`;
+      });
 
     const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
     envVariables.push(`{ key: "REACT_APP_CUSTOM_FIELD_URL", value: "${url}" }`);
@@ -55,33 +49,28 @@ const buildAppZip = (projectName) => {
     const pluginUrl = `${deploymentUrl}/plugin.system.js`;
     console.info(`Using plugin URL in functions/dam.js: ${pluginUrl}`);
 
-    // Deleting existing build folder of UI if any
-    if (fs.existsSync(`${uiAppBasePath}/build`))
-      fs.rmSync(`${uiAppBasePath}/build`, { recursive: true, force: true });
+    // Clean up existing build folders
+    safeDelete(path.join(uiAppBasePath, "build"));
+    safeDelete(buildBasePath);
 
-    // Build the RTE plugin with deployment URL as environment variable
-    const buildEnv = {
-      ...process.env,
-      REACT_APP_CUSTOM_FIELD_URL: deploymentUrl,
-    };
-    
-    runCommand("npm install", { cwd: rteAppBasePath, env: buildEnv });
-    runCommand("npm run build", { cwd: rteAppBasePath, env: buildEnv });
-    console.info("RTE plugin bundle ready.");
+    // Temporarily update .env file in RTE directory with deployment URL
+    const rteEnvPath = path.join(rteAppBasePath, ".env");
+    const originalEnvContent = updateEnvFile(rteEnvPath, "REACT_APP_CUSTOM_FIELD_URL", deploymentUrl);
+    console.info(`Updated .env file with REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`);
 
-    // Deleting node_modules folder of UI to reduce zip size
-    if (fs.existsSync(`${uiAppBasePath}/node_modules`))
-      fs.rmSync(`${uiAppBasePath}/node_modules`, {
-        recursive: true,
-        force: true,
-      });
-
-    // Deleting the existing build folder
-    if (fs.existsSync(buildBasePath))
-      fs.rmSync(buildBasePath, {
-        recursive: true,
-        force: true,
-      });
+    try {
+      // Build the RTE plugin
+      runCommand("npm install", { cwd: rteAppBasePath });
+      runCommand("npm run build", { cwd: rteAppBasePath });
+      console.info("RTE plugin bundle ready.");
+    } finally {
+      // Restore original .env file
+      if (originalEnvContent === null) {
+        fs.unlinkSync(rteEnvPath);
+      } else {
+        fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
+      }
+    }
 
     // create a new build folder
     fs.mkdirSync(buildBasePath, { recursive: true });
@@ -93,6 +82,7 @@ const buildAppZip = (projectName) => {
         const skipRTE = src.includes(path.join(uiAppBasePath, "rte"));
         const skipBuild = src.includes(path.join(uiAppBasePath, "build"));
         const skipExample = src.includes(path.join(uiAppBasePath, "example"));
+        const skipNodeModules = src.includes(path.join(uiAppBasePath, "node_modules"));
         return !skipRTE && !skipBuild && !skipExample;
       },
     });
@@ -126,21 +116,10 @@ const buildAppZip = (projectName) => {
 
     fs.writeFileSync(damFunctionPath, damFunctionContent);
 
-    const uiPackageJson = JSON.parse(
-      fs.readFileSync(`${uiAppBasePath}/package.json`, "utf8")
-    );
-
-    const appPackageJson = {
-      ...uiPackageJson,
-      dependencies: {
-        ...uiPackageJson?.dependencies,
-      },
-    };
-
-    fs.writeFileSync(
-      `${buildBasePath}/package.json`,
-      JSON.stringify(appPackageJson, null, 2)
-    );
+    // Copy package.json to build folder
+    const uiPackageJsonPath = path.join(uiAppBasePath, "package.json");
+    const buildPackageJsonPath = path.join(buildBasePath, "package.json");
+    fs.copyFileSync(uiPackageJsonPath, buildPackageJsonPath);
 
     const zip = new AdmZip();
     zip.addLocalFolder(buildBasePath);
@@ -156,19 +135,8 @@ const buildAppZip = (projectName) => {
 };
 
 const getUploadMetaData = async (authtoken, baseUrl, orgId) => {
-  try {
-    const res = await makeApiCall({
-      url: `${baseUrl}/${constants.LAUNCH_BASE_PATH}`,
-      method: "POST",
-      maxBodyLength: Infinity,
-      headers: {
-        authtoken,
-        "content-type": "application/json",
-        organization_uid: orgId,
-      },
-      data: JSON.stringify({
-        query: `mutation CreateSignedUploadUrl {
-      createSignedUploadUrl {
+  const query = `mutation CreateSignedUploadUrl {
+    createSignedUploadUrl {
       expiresIn
       uploadUid
       uploadUrl
@@ -182,9 +150,19 @@ const getUploadMetaData = async (authtoken, baseUrl, orgId) => {
         value
       }
     }
-  }`,
-        variables: {},
-      }),
+  }`;
+
+  try {
+    const res = await makeApiCall({
+      url: `${baseUrl}/${constants.LAUNCH_BASE_PATH}`,
+      method: "POST",
+      maxBodyLength: Infinity,
+      headers: {
+        authtoken,
+        "content-type": "application/json",
+        organization_uid: orgId,
+      },
+      data: JSON.stringify({ query, variables: {} }),
     });
 
     return res?.data?.createSignedUploadUrl;
@@ -207,17 +185,15 @@ const _getUploadFormData = (metaData, filePath) => {
 };
 
 const uploadAppZip = async (metaData, filePath = "") => {
-  try {
-    console.info("Uploading the app zip...");
+  console.info("Uploading the app zip...");
 
+  try {
     const data = _getUploadFormData(metaData, filePath);
     await makeApiCall({
       method: metaData?.method,
       maxBodyLength: Infinity,
       url: metaData?.uploadUrl,
-      headers: {
-        ...data.getHeaders(),
-      },
+      headers: { ...data.getHeaders() },
       data,
     });
 
@@ -240,6 +216,40 @@ const createProject = async (
   envName,
   launchSubDomain
 ) => {
+  const query = `mutation CreateProject {
+    importProject(
+      project: ${_getProjectMetaData(name, uploadUid, envName, launchSubDomain)}
+    ) {
+      projectType
+      name
+      uid
+      cmsStackApiKey
+      environments {
+        uid
+        deployments(first: 1, after: "", sortBy: "createdAt") {
+          edges {
+            node {
+              uid
+            }
+          }
+        }
+      }
+      description
+      repository {
+        repositoryName
+        username
+        gitProviderMetadata {
+          ... on GitHubMetadata {
+            gitProvider
+          }
+          ... on ExternalGitProviderMetadata {
+            gitProvider
+          }
+        }
+      }
+    }
+  }`;
+
   try {
     console.info("Creating a launch project...");
 
@@ -252,58 +262,22 @@ const createProject = async (
         organization_uid: orgId,
         "content-type": "application/json",
       },
-      data: JSON.stringify({
-        query: `mutation CreateProject {
-          importProject(
-            project: ${_getProjectMetaData(name, uploadUid, envName, launchSubDomain)}
-          ) {
-            projectType
-            name
-            uid
-            cmsStackApiKey
-            environments {
-              uid
-              deployments(first: 1, after: "", sortBy: "createdAt") {
-                edges {
-                  node {
-                    uid
-                  }
-                }
-              }
-            }
-            description
-            repository {
-              repositoryName
-              username
-              gitProviderMetadata {
-                ... on GitHubMetadata {
-                  gitProvider
-                }
-                ... on ExternalGitProviderMetadata {
-                  gitProvider
-                }
-              }
-            }
-          }
-        }`,
-        variables: {},
-      }),
+      data: JSON.stringify({ query, variables: {} }),
     });
 
-    const projectUrl = `${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`;
+    const project = res?.data?.importProject;
+    const env = project?.environments[0];
+    const deployment = env?.deployments?.edges[0]?.node;
+    const projectUrl = `${baseUrl}/#!/launch/projects/${project?.uid}/envs/${env?.uid}/deployments/${deployment?.uid}`;
+
     console.info("Project created successfully...");
-    console.info(
-      "Build and deployment has been initiated. You can checks the logs at: " +
-        projectUrl
-    );
+    console.info(`Build and deployment has been initiated. You can check the logs at: ${projectUrl}`);
     openLink(projectUrl);
 
     return {
-      project_uid: res?.data?.importProject?.uid,
-      env_uid: res?.data?.importProject?.environments[0]?.uid,
-      deployment_uid:
-        res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node
-          ?.uid,
+      project_uid: project?.uid,
+      env_uid: env?.uid,
+      deployment_uid: deployment?.uid,
     };
   } catch (error) {
     console.error("Error while creating a launch project.");
@@ -313,6 +287,17 @@ const createProject = async (
 };
 
 const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
+  const query = `query getDeploymentsById {
+    Deployment(
+      query: {uid: "${metaData?.deployment_uid}", environment: "${metaData?.env_uid}"}
+    ) {
+      uid
+      environment
+      status
+      deploymentUrl
+    }
+  }`;
+
   const res = await makeApiCall({
     method: "POST",
     maxBodyLength: Infinity,
@@ -323,19 +308,7 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
       "x-project-uid": metaData?.project_uid,
       "content-type": "application/json",
     },
-    data: JSON.stringify({
-      query: `query getDeploymentsById {
-  Deployment(
-    query: {uid: "${metaData?.deployment_uid}", environment: "${metaData?.env_uid}"}
-  ) {
-    uid
-    environment
-    status
-    deploymentUrl
-  }
-}`,
-      variables: {},
-    }),
+    data: JSON.stringify({ query, variables: {} }),
   });
 
   return {
@@ -351,6 +324,24 @@ const reDeployProject = async (
   uploadUid,
   launchMetaData
 ) => {
+  const query = `fragment CoreDeploymentFields on Deployment {
+    uid
+    environment
+    status
+    createdAt
+    deploymentNumber
+    deploymentUrl
+    previewUrl
+  }
+
+  mutation createNewFileDeployment {
+    createDeployment(
+      deployment: {environment: "${launchMetaData?.env_uid}", uploadUid: "${uploadUid}"}
+    ) {
+      ...CoreDeploymentFields
+    }
+  }`;
+
   try {
     const res = await makeApiCall({
       method: "POST",
@@ -362,37 +353,17 @@ const reDeployProject = async (
         "x-project-uid": launchMetaData?.project_uid,
         "content-type": "application/json",
       },
-      data: JSON.stringify({
-        query: `fragment CoreDeploymentFields on Deployment {
-            uid
-            environment
-            status
-            createdAt
-            deploymentNumber
-            deploymentUrl
-            previewUrl
-          }
-
-          mutation createNewFileDeployment {
-            createDeployment(
-              deployment: {environment: "${launchMetaData?.env_uid}", uploadUid: "${uploadUid}"}
-            ) {
-              ...CoreDeploymentFields
-            }
-          }`,
-        variables: {},
-      }),
+      data: JSON.stringify({ query, variables: {} }),
     });
 
-    const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${res?.data?.createDeployment?.uid}`;
-    console.info("redeployment was successfully...");
-    console.info(
-      "Build and deployment has been initiated. You can checks the logs at: " +
-        projectUrl
-    );
+    const deploymentUid = res?.data?.createDeployment?.uid;
+    const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${deploymentUid}`;
+
+    console.info("Redeployment was successful...");
+    console.info(`Build and deployment has been initiated. You can check the logs at: ${projectUrl}`);
     openLink(projectUrl);
 
-    return res?.data?.createDeployment?.uid;
+    return deploymentUid;
   } catch (error) {
     console.error("Error while redeploying.");
     console.info(JSON.stringify(error, null, 2));

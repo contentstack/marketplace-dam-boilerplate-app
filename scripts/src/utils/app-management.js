@@ -297,7 +297,7 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
 
   if (fieldType === "RTE") {
     schema.push({
-      display_name: "DAM RTE Field",
+      display_name: "DAM RTE DevField",
       plugins: [extensionResults],
       field_metadata: {
         allow_json_rte: true,
@@ -312,7 +312,7 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
     });
   } else if (fieldType === "CUSTOM") {
     schema.push({
-      display_name: "DAM Field",
+      display_name: "DAM DevField",
       extension_uid: extensionResults,
       field_metadata: { extension: true },
       uid: "dam_field",
@@ -328,7 +328,7 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
 
     if (rteExt) {
       schema.push({
-        display_name: "DAM RTE Field",
+        display_name: "DAM RTE DevField",
         plugins: [rteExt.uid],
         field_metadata: {
           allow_json_rte: true,
@@ -345,7 +345,7 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
 
     if (fieldExt) {
       schema.push({
-        display_name: "DAM Field",
+        display_name: "DAM DevField",
         extension_uid: fieldExt.uid,
         field_metadata: { extension: true },
         uid: "dam_field",
