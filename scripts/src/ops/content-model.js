@@ -24,7 +24,7 @@ const installationData = require("../../settings/app-installation.json");
     const appChoices = installationData.map(
       (inst) => inst.appName || inst.appUid
     );
-    
+
     const selectedIndex = readlineSync.keyInSelect(
       appChoices,
       "Select an app for which you want to create a Content Type"
@@ -53,7 +53,13 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
-    const { schema, ctUid, title } = buildContentTypeSchema(
+    const ctTitle = readlineSync.question(
+      "Enter a unique Content-type name: "
+    );
+
+    const ctUid = ctTitle.trim().replace(/ /g, "_");
+
+    const schema = buildContentTypeSchema(
       fieldType,
       extensionResults
     );
@@ -63,7 +69,7 @@ const installationData = require("../../settings/app-installation.json");
         csBaseUrl,
         loginData.authtoken,
         stackApiKey,
-        title,
+        ctTitle,
         ctUid,
         schema
       );
@@ -72,42 +78,33 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
-    const createEntrySample = readlineSync.keyInSelect(
-      ["Yes", "No"],
-      "Create Sample Entry for this Content Type?"
-    );
-
-    if (createEntrySample === 0) {
-      if (fieldType === "RTE") {
-        await createSampleEntry(
-          csBaseUrl,
-          loginData.authtoken,
-          stackApiKey,
-          ctUid,
-          "dam_rte_field",
-          true
-        );
-      } else if (fieldType === "CUSTOM") {
-        await createSampleEntry(
-          csBaseUrl,
-          loginData.authtoken,
-          stackApiKey,
-          ctUid,
-          "dam_field",
-          false
-        );
-      } else if (fieldType === "BOTH") {
-        await createSampleEntry(
-          csBaseUrl,
-          loginData.authtoken,
-          stackApiKey,
-          ctUid,
-          ["dam_rte_field", "dam_field"],
-          "BOTH"
-        );
-      }
-    } else {
-      console.info("Skipped entry creation.");
+    if (fieldType === "RTE") {
+      await createSampleEntry(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        ctUid,
+        "dam_rte_field",
+        true
+      );
+    } else if (fieldType === "CUSTOM") {
+      await createSampleEntry(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        ctUid,
+        "dam_field",
+        false
+      );
+    } else if (fieldType === "BOTH") {
+      await createSampleEntry(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        ctUid,
+        ["dam_rte_field", "dam_field"],
+        "BOTH"
+      );
     }
   } catch (error) {
     console.error("Error:", error.message || error);
