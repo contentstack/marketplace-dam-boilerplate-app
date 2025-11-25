@@ -83,6 +83,7 @@ const install = async (
 
     const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
     openLink(configPage);
+    console.info("Installing app completed successfully");
   }
   // Save installation info locally
   saveInstallation(
