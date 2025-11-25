@@ -36,33 +36,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       launchSubDomain = projectName.replace(/ /g, "-");
     }
 
-<<<<<<< HEAD
     // Build and upload app zip (common for both paths)
     const buildPath = buildAppZip(launchSubDomain, region);
-=======
-    if (!userOrgs.length) {
-      console.info("No organisations found...");
-      return;
-    }
-
-    orgIndex = readlineSync.keyInSelect(
-      userOrgs.map((org) => org.name),
-      "Please select an organization"
-    );
-    if (orgIndex === -1) {
-      console.info("No organization selected...");
-      return;
-    }
-
-    const selectedOrgUid = userOrgs[orgIndex].uid;
-
-    const projectName = readlineSync.question("Enter the project name: ");
-    const envName = readlineSync.question("Enter the environment name: ");
-    const launchSubDomain = projectName.replace(/ /g, "-");
-
-    const buildPath = buildAppZip(projectName);
-
->>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
     const uploadMetaData = await getUploadMetaData(
       authtoken,
       appBaseUrl,
@@ -78,7 +53,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         selectedOrgUid,
         appBaseUrl,
         uploadMetaData?.uploadUid,
-        launchManifest.data
+        launchManifest.data,
+        region
       );
 
       updateLaunchManifest({
