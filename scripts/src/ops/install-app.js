@@ -18,8 +18,7 @@ const install = async (
   baseUrl,
   appBaseUrl,
   authtoken,
-  orgId,
-  fieldType
+  orgId
 ) => {
   if (readlineSync.keyInYN("Do you want to install the app?")) {
     const [stackError, stackData] = await safePromise(
@@ -85,7 +84,6 @@ const install = async (
       stackApiKey,
       installData.data.installation_uid,
       baseUrl,
-      fieldType,
       appEnv
     );
 
