@@ -48,154 +48,61 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       if (appEnv === "dev") {
         const appManifest = { ...devAppManifest };
 
-        if (appManifest.uid) {
-          console.log(
-            "You have already created app named - " + appManifest.name
-          );
-          const url = `${appBaseUrl}/#!/developerhub/app/${appManifest.uid}/ui-locations`;
-          openLink(url);
-          return;
-        }
-
         const appName = readlineSync.question("Enter name of app: ");
-        const selection = readlineSync.keyInSelect(
-          ["RTE Field", "Custom DAM Field", "Both (RTE + Custom DAM)"],
-          "Which type of field do you want to create?"
-        );
-        if (selection === -1)
-          return console.info("No field type selected. Exiting...");
+        
+        // Always create both field types by default
+        console.info("\n⚠️  Note: Both RTE and Custom DAM fields will be created.");
+        console.info("   For local development, only one can work at a time:");
+        console.info("   - RTE Field: http://localhost:1268");
+        console.info("   - Custom DAM Field: http://localhost:4000");
+        console.info("   Start the appropriate server to test each field type.\n");
 
-        console.info(
-          `You selected: ${
-            selection === 0
-              ? "RTE Field"
-              : selection === 1
-              ? "Custom DAM Field"
-              : "Both"
-          }`
-        );
-
-        if (selection === 0) {
-          // RTE Only
-          fieldType = "RTE";
-          appManifest.hosting = {
-            provider: "external",
-            deployment_url: "http://localhost:1268",
-          };
-          appManifest.ui_location = {
-            base_url: "http://localhost:1268",
-            locations: [
-              {
-                type: "cs.cm.stack.config",
-                meta: [
-                  {
-                    path: "/config",
-                    signed: false,
-                    enabled: true,
-                    required: true,
-                  },
-                ],
-              },
-              {
-                type: "cs.cm.stack.rte",
-                meta: [
-                  {
-                    name: "RTE DevField",
-                    path: "/dam.js",
-                    signed: false,
-                    enabled: true,
-                    required: false,
-                  },
-                ],
-              },
-            ],
-          };
-        } else if (selection === 1) {
-          // Custom DAM Only
-          fieldType = "CUSTOM";
-          appManifest.hosting = {
-            provider: "external",
-            deployment_url: "http://localhost:4000/#",
-          };
-          appManifest.ui_location = {
-            base_url: "http://localhost:4000/#",
-            locations: [
-              {
-                type: "cs.cm.stack.config",
-                meta: [
-                  {
-                    path: "/config",
-                    signed: false,
-                    enabled: true,
-                    required: true,
-                  },
-                ],
-              },
-              {
-                type: "cs.cm.stack.custom_field",
-                meta: [
-                  {
-                    multiple: false,
-                    path: "/custom-field",
-                    signed: false,
-                    enabled: true,
-                    data_type: "json",
-                    required: false,
-                    name: "DAM DevField",
-                  },
-                ],
-              },
-            ],
-          };
-        } else {
-          fieldType = "BOTH";
-          appManifest.hosting = {
-            provider: "external",
-            deployment_url: "http://localhost:4000/#",
-          };
-          appManifest.ui_location = {
-            base_url: "http://localhost:4000/#",
-            locations: [
-              {
-                type: "cs.cm.stack.config",
-                meta: [
-                  {
-                    path: "/config",
-                    signed: false,
-                    enabled: true,
-                    required: true,
-                  },
-                ],
-              },
-              {
-                type: "cs.cm.stack.custom_field",
-                meta: [
-                  {
-                    multiple: false,
-                    path: "/custom-field",
-                    signed: false,
-                    enabled: true,
-                    data_type: "json",
-                    required: false,
-                    name: "DAM DevField",
-                  },
-                ],
-              },
-              {
-                type: "cs.cm.stack.rte",
-                meta: [
-                  {
-                    name: "RTE DevField",
-                    path: "/dam.js",
-                    signed: false,
-                    enabled: true,
-                    required: false,
-                  },
-                ],
-              },
-            ],
-          };
-        }
+        appManifest.hosting = {
+          provider: "external",
+          deployment_url: "http://localhost:4000/#",
+        };
+        appManifest.ui_location = {
+          base_url: "http://localhost:4000/#",
+          locations: [
+            {
+              type: "cs.cm.stack.config",
+              meta: [
+                {
+                  path: "/config",
+                  signed: false,
+                  enabled: true,
+                  required: true,
+                },
+              ],
+            },
+            {
+              type: "cs.cm.stack.custom_field",
+              meta: [
+                {
+                  multiple: false,
+                  path: "/custom-field",
+                  signed: false,
+                  enabled: true,
+                  data_type: "json",
+                  required: false,
+                  name: "DAM DevField",
+                },
+              ],
+            },
+            {
+              type: "cs.cm.stack.rte",
+              meta: [
+                {
+                  name: "RTE DevField",
+                  path: "/dam.js",
+                  signed: false,
+                  enabled: true,
+                  required: false,
+                },
+              ],
+            },
+          ],
+        };
 
         const [appError, appData] = await safePromise(
           createApp(
@@ -240,8 +147,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           csBaseUrl,
           appBaseUrl,
           authtoken,
-          selectedOrgUid,
-          fieldType
+          selectedOrgUid
         );
       } else {
         const appName = readlineSync.question("Enter name of app: ");

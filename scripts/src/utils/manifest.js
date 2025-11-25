@@ -9,7 +9,6 @@ const saveInstallation = (
   stackApiKey,
   installationUid,
   csBaseUrl,
-  fieldType,
   appEnv
 ) => {
   let installations = [];
@@ -38,7 +37,6 @@ const saveInstallation = (
       stackApiKey,
       installationUid,
       csBaseUrl,
-      fieldType,
       appEnv,
     });
     fs.writeFileSync(
