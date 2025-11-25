@@ -6,7 +6,7 @@ const constants = require("../constants");
 const { makeApiCall } = require("./helpers");
 const { openLink, runCommand } = require("./helpers");
 
-const getEnvVariables = () => {
+const getEnvVariables = (launchSubDomain) => {
   try {
     const envVariables = [];
 
@@ -25,9 +25,13 @@ const getEnvVariables = () => {
       let value = rest.join("=").trim();
 
       value = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-
-      envVariables.push(`{ key: "${key.trim()}", value: "${value}" }`);
+      if (!constants.EXCLUDED_ENVS.includes(key)) {
+        envVariables.push(`{ key: "${key.trim()}", value: "${value}" }`);
+      }
     });
+
+    const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
+    envVariables.push(`{ key: "REACT_APP_CUSTOM_FIELD_URL", value: "${url}" }`);
 
     return `[${envVariables.join(",")}]`;
   } catch (e) {
@@ -43,8 +47,10 @@ const buildAppZip = (projectName) => {
     const rteAppBasePath = path.join(uiAppBasePath, "rte");
     const buildBasePath = path.join(__dirname, "../build");
     const buildPath = `${buildBasePath}/app.zip`;
-    const deploymentUrl = `https://${projectName.replace(/ /g, "-")}.contentstackapps.com`;
-
+    const deploymentUrl = `https://${projectName.replace(
+      / /g,
+      "-"
+    )}.contentstackapps.com`;
 
     const pluginUrl = `${deploymentUrl}/plugin.system.js`;
     console.info(`Using plugin URL in functions/dam.js: ${pluginUrl}`);
@@ -53,59 +59,15 @@ const buildAppZip = (projectName) => {
     if (fs.existsSync(`${uiAppBasePath}/build`))
       fs.rmSync(`${uiAppBasePath}/build`, { recursive: true, force: true });
 
-    // Update RTE .env file with deployment URL before building
-    const rteEnvPath = path.join(rteAppBasePath, ".env");
-    if (fs.existsSync(rteEnvPath)) {
-      let rteEnvContent = fs.readFileSync(rteEnvPath, "utf-8");
-      const lines = rteEnvContent.split("\n");
-
-      const updatedLines = lines.map((line) => {
-        const trimmed = line.trim();
-        if (
-          trimmed.startsWith("REACT_APP_CUSTOM_FIELD_URL") &&
-          trimmed.includes("=")
-        ) {
-          const parts = trimmed.split("=");
-          const currentUrl = parts.slice(1).join("=").trim();
-          if (currentUrl !== deploymentUrl) {
-            return `REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`;
-          }
-        }
-        return line;
-      });
-
-      fs.writeFileSync(rteEnvPath, updatedLines.join("\n"));
-
-    }
-
-    // Build the RTE plugin so the latest bundle ships with the app.
-    runCommand("npm install", { cwd: rteAppBasePath });
-    runCommand("npm run build", { cwd: rteAppBasePath });
+    // Build the RTE plugin with deployment URL as environment variable
+    const buildEnv = {
+      ...process.env,
+      REACT_APP_CUSTOM_FIELD_URL: deploymentUrl,
+    };
+    
+    runCommand("npm install", { cwd: rteAppBasePath, env: buildEnv });
+    runCommand("npm run build", { cwd: rteAppBasePath, env: buildEnv });
     console.info("RTE plugin bundle ready.");
-
-    // Update UI .env file with deployment URL before building
-    const uiEnvPath = path.join(uiAppBasePath, ".env");
-    if (fs.existsSync(uiEnvPath)) {
-      let uiEnvContent = fs.readFileSync(uiEnvPath, "utf-8");
-      const lines = uiEnvContent.split("\n");
-
-      const updatedLines = lines.map((line) => {
-        const trimmed = line.trim();
-        if (
-          trimmed.startsWith("REACT_APP_CUSTOM_FIELD_URL") &&
-          trimmed.includes("=")
-        ) {
-          const parts = trimmed.split("=");
-          const currentUrl = parts.slice(1).join("=").trim();
-          if (currentUrl !== deploymentUrl) {
-            updated = true;
-            return `REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`;
-          }
-        }
-        return line;
-      });
-      fs.writeFileSync(uiEnvPath, updatedLines.join("\n"));
-    }
 
     // Deleting node_modules folder of UI to reduce zip size
     if (fs.existsSync(`${uiAppBasePath}/node_modules`))
@@ -152,54 +114,15 @@ const buildAppZip = (projectName) => {
     fs.mkdirSync(path.dirname(pluginDestinationPath), { recursive: true });
     fs.copyFileSync(damBundlePath, pluginDestinationPath);
 
-    // Create functions/dam.js file in build directory
+    // Create functions/dam.js file in build directory using template
     const functionsDir = path.join(buildBasePath, "functions");
     const damFunctionPath = path.join(functionsDir, "dam.js");
     fs.mkdirSync(functionsDir, { recursive: true });
 
-    const damFunctionContent = `function allowCors(req, res) {
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-  );
-  if (req.method === "OPTIONS") {
-    res.status(200).end();
-  }
-}
-
-async function getFile() {
-  try {
-    const response = await fetch(
-      "${pluginUrl}"
-    );
-    if (!response.ok) {
-      throw new Error(\`Failed to fetch file: \${response.statusText}\`);
-    }
-    const fileRes = await response.text();
-    return fileRes;
-  } catch (error) {
-    console.error("Error fetching file:", error);
-    throw error;
-  }
-}
-
-export default async function handler(req, res) {
-  allowCors(req, res);
-
-  try {
-    const file = await getFile();
-    res.status(200).send(file);
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
-}
-`;
+    // Read template file and replace placeholder with actual plugin URL
+    const templatePath = path.join(__dirname, "templates", "dam-function.template.js");
+    let damFunctionContent = fs.readFileSync(templatePath, "utf-8");
+    damFunctionContent = damFunctionContent.replace("{{PLUGIN_URL}}", pluginUrl);
 
     fs.writeFileSync(damFunctionPath, damFunctionContent);
 
@@ -305,8 +228,8 @@ const uploadAppZip = async (metaData, filePath = "") => {
   }
 };
 
-const _getProjectMetaData = (name, uploadUid, envName) =>
-  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables()}}}`;
+const _getProjectMetaData = (name, uploadUid, envName, launchSubDomain) =>
+  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(launchSubDomain)}}}`;
 
 const createProject = async (
   authtoken,
@@ -314,7 +237,8 @@ const createProject = async (
   baseUrl,
   name,
   uploadUid,
-  envName
+  envName,
+  launchSubDomain
 ) => {
   try {
     console.info("Creating a launch project...");
@@ -331,11 +255,7 @@ const createProject = async (
       data: JSON.stringify({
         query: `mutation CreateProject {
           importProject(
-            project: ${_getProjectMetaData(
-              name,
-              uploadUid,
-              envName
-            )}
+            project: ${_getProjectMetaData(name, uploadUid, envName, launchSubDomain)}
           ) {
             projectType
             name
