@@ -45,22 +45,25 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     const selectedOrgUid = userOrgs[orgIndex].uid;
 
-    const projectName = readlineSync.question("Enter the project name: ");
-    const envName = readlineSync.question("Enter the environment name: ");
-    const launchSubDomain = projectName.replace(/ /g, "-");
-
-    const buildPath = buildAppZip(projectName);
-
-    const uploadMetaData = await getUploadMetaData(
-      authtoken,
-      appBaseUrl,
-      selectedOrgUid
-    );
-
-    await uploadAppZip(uploadMetaData, buildPath);
+    let projectName, envName, launchSubDomain;
 
     if (launchManifest.created) {
-      console.info("Launch deployment details found, redeploying the app now.");
+      console.info("Launch deployment details found, using existing project details.");
+      projectName = launchManifest.data.project_name;
+      envName = launchManifest.data.env_name;
+      launchSubDomain = launchManifest.data.subdomain;
+
+      const buildPath = buildAppZip(projectName);
+
+      const uploadMetaData = await getUploadMetaData(
+        authtoken,
+        appBaseUrl,
+        selectedOrgUid
+      );
+
+      await uploadAppZip(uploadMetaData, buildPath);
+
+      console.info("Redeploying the app now.");
 
       const deploymentId = await reDeployProject(
         authtoken,
@@ -75,6 +78,20 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         deployment_uid: deploymentId,
       });
     } else {
+      projectName = readlineSync.question("Enter the project name: ");
+      envName = readlineSync.question("Enter the environment name: ");
+      launchSubDomain = projectName.replace(/ /g, "-");
+
+      const buildPath = buildAppZip(projectName);
+
+      const uploadMetaData = await getUploadMetaData(
+        authtoken,
+        appBaseUrl,
+        selectedOrgUid
+      );
+
+      await uploadAppZip(uploadMetaData, buildPath);
+
       const launchMetaData = await createProject(
         authtoken,
         selectedOrgUid,

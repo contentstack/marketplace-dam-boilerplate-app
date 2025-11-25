@@ -20,7 +20,6 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
-    // Show user list of apps
     const appChoices = installationData.map(
       (inst) => inst.appName || inst.appUid
     );
@@ -38,14 +37,13 @@ const installationData = require("../../settings/app-installation.json");
     const selectedApp = installationData[selectedIndex];
     console.info("You selected:", selectedApp);
 
-    const { stackApiKey, installationUid, fieldType, csBaseUrl } = selectedApp;
+    const { stackApiKey, installationUid, csBaseUrl } = selectedApp;
 
     const extensionResults = await getExtension(
       csBaseUrl,
       loginData.authtoken,
       stackApiKey,
-      installationUid,
-      fieldType
+      installationUid
     );
 
     if (!extensionResults) {
@@ -53,60 +51,29 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
-    const ctTitle = readlineSync.question(
-      "Enter a unique Content-type name: "
-    );
+    const ctTitle = readlineSync.question("Enter a unique Content-type name: ");
 
     const ctUid = ctTitle.trim().replace(/ /g, "_");
 
-    const schema = buildContentTypeSchema(
-      fieldType,
-      extensionResults
+    const schema = buildContentTypeSchema(extensionResults);
+
+    await createContentType(
+      csBaseUrl,
+      loginData.authtoken,
+      stackApiKey,
+      ctTitle,
+      ctUid,
+      schema
     );
 
-    try {
-      await createContentType(
-        csBaseUrl,
-        loginData.authtoken,
-        stackApiKey,
-        ctTitle,
-        ctUid,
-        schema
-      );
-    } catch (error) {
-      console.error("Failed to create content type:", error);
-      return;
-    }
-
-    if (fieldType === "RTE") {
-      await createSampleEntry(
-        csBaseUrl,
-        loginData.authtoken,
-        stackApiKey,
-        ctUid,
-        "dam_rte_field",
-        true
-      );
-    } else if (fieldType === "CUSTOM") {
-      await createSampleEntry(
-        csBaseUrl,
-        loginData.authtoken,
-        stackApiKey,
-        ctUid,
-        "dam_field",
-        false
-      );
-    } else if (fieldType === "BOTH") {
-      await createSampleEntry(
-        csBaseUrl,
-        loginData.authtoken,
-        stackApiKey,
-        ctUid,
-        ["dam_rte_field", "dam_field"],
-        "BOTH"
-      );
-    }
+    await createSampleEntry(
+      csBaseUrl,
+      loginData.authtoken,
+      stackApiKey,
+      ctUid,
+      ["dam_rte_field", "dam_field"]
+    );
   } catch (error) {
-    console.error("Error:", error.message || error);
+    console.error("Failed in content-model:", error.message || error);
   }
 })();

@@ -90,8 +90,7 @@ const getExtension = async (
   csBaseUrl,
   authtoken,
   stackApiKey,
-  installationUid,
-  fieldType
+  installationUid
 ) => {
   try {
     const [extErr, extensions] = await safePromise(
@@ -116,28 +115,14 @@ const getExtension = async (
       return null;
     }
 
-    if (fieldType === "RTE") {
-      const rteExt = appExtensions.find((ext) => ext.type === "rte_plugin");
-      return rteExt ? rteExt.uid : null;
-    }
+    const rteExt = appExtensions.find((ext) => ext.type === "rte_plugin");
+    const fieldExt = appExtensions.find((ext) => ext.type === "field");
 
-    if (fieldType === "CUSTOM") {
-      const fieldExt = appExtensions.find((ext) => ext.type === "field");
-      return fieldExt ? fieldExt.uid : null;
-    }
+    const result = [];
+    if (rteExt) result.push({ type: "RTE", uid: rteExt.uid });
+    if (fieldExt) result.push({ type: "CUSTOM", uid: fieldExt.uid });
 
-    if (fieldType === "BOTH") {
-      const rteExt = appExtensions.find((ext) => ext.type === "rte_plugin");
-      const fieldExt = appExtensions.find((ext) => ext.type === "field");
-
-      const result = [];
-      if (rteExt) result.push({ type: "RTE", uid: rteExt.uid });
-      if (fieldExt) result.push({ type: "CUSTOM", uid: fieldExt.uid });
-
-      return result.length ? result : null;
-    }
-
-    return null;
+    return result.length ? result : null;
   } catch (err) {
     console.error(
       "Failed to fetch extensions for content type creation:",
@@ -182,81 +167,44 @@ const createSampleEntry = async (
   authtoken,
   stackApiKey,
   contentTypeUid,
-  fieldUid,
-  type
+  fieldUid
 ) => {
   let entryData = {
     title: "DAM boilerplate sample",
     locale: "en-us",
   };
 
-  if (type === true) {
-    // RTE entry
-    entryData[fieldUid] = {
-      type: "doc",
-      attrs: {},
-      children: [
-        {
-          type: "DAM",
-          attrs: {
-            _id: 1,
-            assetName: "Colosseum, Rome",
-            width: 100,
-            height: 100,
-            size: 1000,
-            assetUrl:
-              "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
-          },
-          children: [{ text: "" }],
-        },
-      ],
-    };
-  } else if (type === false) {
-    // Custom field entry
-    entryData[fieldUid] = [
-      {
-        _id: 1,
-        assetName: "Colosseum, Rome",
-        width: 500,
-        height: 500,
-        size: 1000,
-        assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
-      },
-    ];
-  } else if (type === "BOTH" && Array.isArray(fieldUid)) {
-    // Both field + RTE
-    const [rteFieldUid, damFieldUid] = fieldUid;
+  const [rteFieldUid, damFieldUid] = fieldUid;
 
-    entryData[rteFieldUid] = {
-      type: "doc",
-      attrs: {},
-      children: [
-        {
-          type: "DAM",
-          attrs: {
-            _id: 1,
-            assetName: "Colosseum, Rome",
-            width: 100,
-            height: 100,
-            size: 1000,
-            assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
-          },
-          children: [{ text: "" }],
-        },
-      ],
-    };
-
-    entryData[damFieldUid] = [
+  entryData[rteFieldUid] = {
+    type: "doc",
+    attrs: {},
+    children: [
       {
-        _id: 2,
-        assetName: "Colosseum, Rome",
-        width: 600,
-        height: 800,
-        size: 2000,
-        assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+        type: "DAM",
+        attrs: {
+          _id: 1,
+          assetName: "Colosseum, Rome",
+          width: 100,
+          height: 100,
+          size: 1000,
+          assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+        },
+        children: [{ text: "" }],
       },
-    ];
-  }
+    ],
+  };
+
+  entryData[damFieldUid] = [
+    {
+      _id: 2,
+      assetName: "Colosseum, Rome",
+      width: 600,
+      height: 800,
+      size: 2000,
+      assetUrl: "/static/media/Colosseum_Rome.8b9e6781cbd3d63bc669.jpeg",
+    },
+  ];
 
   const [entryErr, entryRes] = await safePromise(
     makeApiCall({
@@ -284,7 +232,7 @@ const createSampleEntry = async (
   return entryRes.entry.uid;
 };
 
-const buildContentTypeSchema = (fieldType, extensionResults) => {
+const buildContentTypeSchema = (extensionResults) => {
   const schema = [
     {
       display_name: "Title",
@@ -295,10 +243,21 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
     },
   ];
 
-  if (fieldType === "RTE") {
+  // Always build both field types - extensionResults is an array with both extensions
+  const extensions = Array.isArray(extensionResults)
+    ? extensionResults
+    : [extensionResults];
+  const rteExt = extensions.find(
+    (ext) => ext.type === "RTE" || ext.type === "rte_plugin"
+  );
+  const fieldExt = extensions.find(
+    (ext) => ext.type === "CUSTOM" || ext.type === "field"
+  );
+
+  if (rteExt) {
     schema.push({
       display_name: "DAM RTE DevField",
-      plugins: [extensionResults],
+      plugins: [rteExt.uid],
       field_metadata: {
         allow_json_rte: true,
         rich_text_type: "advanced",
@@ -310,10 +269,12 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
       non_localizable: false,
       unique: false,
     });
-  } else if (fieldType === "CUSTOM") {
+  }
+
+  if (fieldExt) {
     schema.push({
       display_name: "DAM DevField",
-      extension_uid: extensionResults,
+      extension_uid: fieldExt.uid,
       field_metadata: { extension: true },
       uid: "dam_field",
       data_type: "json",
@@ -322,40 +283,6 @@ const buildContentTypeSchema = (fieldType, extensionResults) => {
       non_localizable: false,
       unique: false,
     });
-  } else if (fieldType === "BOTH") {
-    const rteExt = extensionResults.find((ext) => ext.type === "RTE");
-    const fieldExt = extensionResults.find((ext) => ext.type === "CUSTOM");
-
-    if (rteExt) {
-      schema.push({
-        display_name: "DAM RTE DevField",
-        plugins: [rteExt.uid],
-        field_metadata: {
-          allow_json_rte: true,
-          rich_text_type: "advanced",
-        },
-        uid: "dam_rte_field",
-        data_type: "json",
-        mandatory: false,
-        multiple: false,
-        non_localizable: false,
-        unique: false,
-      });
-    }
-
-    if (fieldExt) {
-      schema.push({
-        display_name: "DAM DevField",
-        extension_uid: fieldExt.uid,
-        field_metadata: { extension: true },
-        uid: "dam_field",
-        data_type: "json",
-        mandatory: false,
-        multiple: false,
-        non_localizable: false,
-        unique: false,
-      });
-    }
   }
 
   return schema;
