@@ -75,16 +75,13 @@ const buildAppZip = (projectName) => {
     // create a new build folder
     fs.mkdirSync(buildBasePath, { recursive: true });
 
-    // Copy the UI app to build folder except the rte, example, build
+    // Copy the UI app to build folder except the rte, example, build and node_modules
+    const pathsToSkip = ["rte", "build", "example", "node_modules"].map((dir) =>
+      path.join(uiAppBasePath, dir)
+    );
     fs.cpSync(uiAppBasePath, buildBasePath, {
       recursive: true,
-      filter: (src) => {
-        const skipRTE = src.includes(path.join(uiAppBasePath, "rte"));
-        const skipBuild = src.includes(path.join(uiAppBasePath, "build"));
-        const skipExample = src.includes(path.join(uiAppBasePath, "example"));
-        const skipNodeModules = src.includes(path.join(uiAppBasePath, "node_modules"));
-        return !skipRTE && !skipBuild && !skipExample;
-      },
+      filter: (src) => !pathsToSkip.some((skipPath) => src.includes(skipPath)),
     });
 
     // Upload the dam.js plugin file build in rte into public directory
