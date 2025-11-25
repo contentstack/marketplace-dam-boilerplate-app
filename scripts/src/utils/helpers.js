@@ -1,4 +1,5 @@
 const { exec, execSync } = require("child_process");
+const fs = require("fs");
 const axios = require("axios");
 const constants = require("../constants");
 
@@ -70,6 +71,28 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
   }
 };
 
+// File system helper functions
+const safeDelete = (filePath) => {
+  if (fs.existsSync(filePath)) {
+    fs.rmSync(filePath, { recursive: true, force: true });
+  }
+};
+
+const readFileSafe = (filePath) => {
+  return fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : null;
+};
+
+const updateEnvFile = (filePath, key, value) => {
+  const originalContent = readFileSafe(filePath);
+  const regex = new RegExp(`^${key}=.*$`, "m");
+  const updatedContent = regex.test(originalContent || "")
+    ? (originalContent || "").replace(regex, `${key}=${value}`)
+    : `${originalContent || ""}${originalContent && !originalContent.endsWith("\n") ? "\n" : ""}${key}=${value}\n`;
+  
+  fs.writeFileSync(filePath, updatedContent, "utf-8");
+  return originalContent;
+};
+
 module.exports = {
   openLink,
   runCommand,
@@ -78,4 +101,7 @@ module.exports = {
   getDeveloperhubBaseUrl,
   safePromise,
   makeApiCall,
+  safeDelete,
+  readFileSafe,
+  updateEnvFile,
 };
