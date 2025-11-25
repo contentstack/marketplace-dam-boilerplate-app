@@ -81,7 +81,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         appBaseUrl,
         projectName,
         uploadMetaData?.uploadUid,
-        envName
+        envName,
+        launchSubDomain
       );
 
       const launchProjectDetails = await getProjectDetails(
@@ -98,8 +99,10 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         ...launchProjectDetails,
       });
 
-      prodAppManifest.ui_location.base_url =
-        launchProjectDetails?.deployment_url;
+      prodAppManifest.ui_location = {
+        ...prodAppManifest.ui_location,
+        base_url: launchProjectDetails?.deployment_url,
+      };
       prodAppManifest.hosting = {
         provider: "launch",
         deployment_url: launchProjectDetails?.deployment_url || "",

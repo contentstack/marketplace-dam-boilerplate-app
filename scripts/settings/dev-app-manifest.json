@@ -20,7 +20,7 @@
         "type": "cs.cm.stack.custom_field",
         "meta": [
           {
-            "name": "DAM Field",
+            "name": "DAM DevField",
             "multiple": false,
 						"path": "/custom-field",
 						"signed": false,
@@ -34,7 +34,7 @@
         "type": "cs.cm.stack.rte",
         "meta": [
           {
-            "name": "RTE Field",
+            "name": "RTE DevField",
             "path": "/dam.js",
 						"signed": false,
 						"enabled": true,
