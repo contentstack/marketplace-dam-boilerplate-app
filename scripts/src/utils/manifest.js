@@ -3,6 +3,54 @@ const path = require("path");
 
 const INSTALLATIONS_FILE = "app-installation.json";
 
+<<<<<<< HEAD
+=======
+const saveInstallation = (
+  appName,
+  appUid,
+  stackApiKey,
+  installationUid,
+  csBaseUrl,
+  fieldType,
+  appEnv
+) => {
+  let installations = [];
+  const installationsPath = path.join(
+    __dirname,
+    `../../settings/${INSTALLATIONS_FILE}`
+  );
+
+  if (fs.existsSync(installationsPath)) {
+    try {
+      const installationData = fs.readFileSync(installationsPath, "utf-8");
+      installations = JSON.parse(installationData);
+    } catch (e) {
+      console.error("Failed to parse installations.json, resetting file.");
+    }
+  }
+
+  const exists = installations.find(
+    (i) => i.appUid === appUid && i.stackApiKey === stackApiKey
+  );
+
+  if (!exists) {
+    installations.push({
+      appName,
+      appUid,
+      stackApiKey,
+      installationUid,
+      csBaseUrl,
+      fieldType,
+      appEnv,
+    });
+    fs.writeFileSync(
+      installationsPath,
+      JSON.stringify(installations, null, 2)
+    );
+  }
+};
+
+>>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
 const updateAppManifest = (manifest, appEnv) => {
   fs.writeFileSync(
     path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
@@ -41,6 +89,7 @@ const getLaunchManifest = () => {
   }
 };
 
+<<<<<<< HEAD
 const saveInstallation = (
   appName,
   appUid,
@@ -83,9 +132,15 @@ const saveInstallation = (
   }
 };
 
+=======
+>>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
 module.exports = {
   saveInstallation,
   updateAppManifest,
   updateLaunchManifest,
   getLaunchManifest,
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)

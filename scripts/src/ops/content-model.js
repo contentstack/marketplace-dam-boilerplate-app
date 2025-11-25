@@ -50,6 +50,11 @@ const installationData = require("../../settings/app-installation.json");
 
     const { stackApiKey, installationUid, csBaseUrl } = selectedApp;
 
+<<<<<<< HEAD
+=======
+    const { stackApiKey, installationUid, fieldType, csBaseUrl } = selectedApp;
+
+>>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
     const extensionResults = await getExtension(
       csBaseUrl,
       loginData.authtoken,
@@ -62,6 +67,7 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
+<<<<<<< HEAD
     const ctTitle = readlineSync.question("Enter a unique Content-type name: ");
 
     const ctUid = ctTitle.trim().replace(/ /g, "_");
@@ -75,6 +81,30 @@ const installationData = require("../../settings/app-installation.json");
       ctTitle,
       ctUid,
       schema
+=======
+    const { schema, ctUid, title } = buildContentTypeSchema(
+      fieldType,
+      extensionResults
+    );
+
+    try {
+      await createContentType(
+        csBaseUrl,
+        loginData.authtoken,
+        stackApiKey,
+        title,
+        ctUid,
+        schema
+      );
+    } catch (error) {
+      console.error("Failed to create content type:", error);
+      return;
+    }
+
+    const createEntrySample = readlineSync.keyInSelect(
+      ["Yes", "No"],
+      "Create Sample Entry for this Content Type?"
+>>>>>>> 2aea1c5 (updated the scripts for deployment and did the code splitting)
     );
 
     await createSampleEntry(
