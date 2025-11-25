@@ -44,7 +44,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
     }
 
     const selectedOrgUid = userOrgs[orgIndex].uid;
-
     if (op === "create-app") {
       if (appEnv === "dev") {
         const appManifest = { ...devAppManifest };
@@ -101,7 +100,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.rte",
                 meta: [
                   {
-                    name: "RTE Field",
+                    name: "RTE DevField",
                     path: "/dam.js",
                     signed: false,
                     enabled: true,
@@ -142,7 +141,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                     enabled: true,
                     data_type: "json",
                     required: false,
-                    name: "DAM Field",
+                    name: "DAM DevField",
                   },
                 ],
               },
@@ -178,7 +177,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                     enabled: true,
                     data_type: "json",
                     required: false,
-                    name: "DAM Field",
+                    name: "DAM DevField",
                   },
                 ],
               },
@@ -186,7 +185,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
                 type: "cs.cm.stack.rte",
                 meta: [
                   {
-                    name: "RTE Field",
+                    name: "RTE DevField",
                     path: "/dam.js",
                     signed: false,
                     enabled: true,
@@ -259,10 +258,8 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
             ),
             "Error while creating the app."
           );
-
           appManifest.uid = appData;
           appManifest.name = appName;
-
           const [appUpdateError, appUpdateData] = await safePromise(
             updateApp(
               appManifest,
@@ -271,9 +268,8 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
               selectedOrgUid,
               appManifest.uid
             ),
-            "Error while creating the app."
+            "Error while updating the app."
           );
-
           appManifest.ui_location = appUpdateData?.data?.ui_location;
           updateAppManifest(appManifest, appEnv);
 
