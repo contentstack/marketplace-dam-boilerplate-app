@@ -1,8 +1,6 @@
 const readlineSync = require("readline-sync");
 const {
-  getBaseUrl,
   getUploadMetaData,
-  getAppBaseUrl,
   buildAppZip,
   uploadAppZip,
   createProject,
@@ -11,39 +9,17 @@ const {
   updateAppManifest,
   getLaunchManifest,
   reDeployProject,
+  authenticateUser,
 } = require("../utils");
-const loginData = require("../../settings/credentials.json");
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
 (async () => {
   try {
-    const authtoken = loginData?.authtoken;
-    const userOrgs = loginData?.userOrgs;
-    const region = loginData?.region;
-    const appBaseUrl = getAppBaseUrl(region);
+    const context = authenticateUser();
+    if (!context) return;
 
+    const { authtoken, selectedOrgUid, appBaseUrl } = context;
     const launchManifest = getLaunchManifest();
-
-    if (!authtoken) {
-      console.info("Login credentials not found. Please login.");
-      return;
-    }
-
-    if (!userOrgs.length) {
-      console.info("No organisations found...");
-      return;
-    }
-
-    orgIndex = readlineSync.keyInSelect(
-      userOrgs.map((org) => org.name),
-      "Please select an organization"
-    );
-    if (orgIndex === -1) {
-      console.info("No organization selected...");
-      return;
-    }
-
-    const selectedOrgUid = userOrgs[orgIndex].uid;
 
     let projectName, envName, launchSubDomain;
 
@@ -52,17 +28,22 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       projectName = launchManifest.data.project_name;
       envName = launchManifest.data.env_name;
       launchSubDomain = launchManifest.data.subdomain;
+    } else {
+      projectName = readlineSync.question("Enter the project name: ");
+      envName = readlineSync.question("Enter the environment name: ");
+      launchSubDomain = projectName.replace(/ /g, "-");
+    }
 
-      const buildPath = buildAppZip(projectName);
+    // Build and upload app zip (common for both paths)
+    const buildPath = buildAppZip(projectName);
+    const uploadMetaData = await getUploadMetaData(
+      authtoken,
+      appBaseUrl,
+      selectedOrgUid
+    );
+    await uploadAppZip(uploadMetaData, buildPath);
 
-      const uploadMetaData = await getUploadMetaData(
-        authtoken,
-        appBaseUrl,
-        selectedOrgUid
-      );
-
-      await uploadAppZip(uploadMetaData, buildPath);
-
+    if (launchManifest.created) {
       console.info("Redeploying the app now.");
 
       const deploymentId = await reDeployProject(
@@ -78,20 +59,6 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         deployment_uid: deploymentId,
       });
     } else {
-      projectName = readlineSync.question("Enter the project name: ");
-      envName = readlineSync.question("Enter the environment name: ");
-      launchSubDomain = projectName.replace(/ /g, "-");
-
-      const buildPath = buildAppZip(projectName);
-
-      const uploadMetaData = await getUploadMetaData(
-        authtoken,
-        appBaseUrl,
-        selectedOrgUid
-      );
-
-      await uploadAppZip(uploadMetaData, buildPath);
-
       const launchMetaData = await createProject(
         authtoken,
         selectedOrgUid,

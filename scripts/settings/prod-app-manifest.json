@@ -1,6 +1,6 @@
 {
   "name": "dam-prod-app",
-  "description": "Ecommerce integration app for Contentstack",
+  "description": "Dam integration app for Contentstack",
   "target_type": "stack",
   "ui_location": {
     "signed": false,
