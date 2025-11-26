@@ -1,15 +1,13 @@
 const readlineSync = require("readline-sync");
 const {
   safePromise,
-  getBaseUrl,
-  getAppBaseUrl,
   updateAppManifest,
   createApp,
   updateApp,
   openLink,
+  authenticateUser,
 } = require("../utils");
 const installApp = require("./install-app.js");
-const loginData = require("../../settings/credentials.json");
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
 const devAppManifest = require("../../settings/dev-app-manifest.json");
 
@@ -17,33 +15,11 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
   try {
     const op = process.argv[2];
     const appEnv = process.argv[3];
-    const authtoken = loginData?.authtoken;
-    const userOrgs = loginData?.userOrgs;
-    const region = loginData?.region;
-    const csBaseUrl = getBaseUrl(region);
-    const appBaseUrl = getAppBaseUrl(region);
+    
+    const context = authenticateUser();
+    if (!context) return;
 
-    if (!authtoken) {
-      console.info("Login credentials not found. Please login.");
-      return;
-    }
-
-    if (!userOrgs.length) {
-      console.info("No organisations found...");
-      return;
-    }
-
-    orgIndex = readlineSync.keyInSelect(
-      userOrgs.map((org) => org.name),
-      "Please select an organization"
-    );
-
-    if (orgIndex === -1) {
-      console.info("No organization selected...");
-      return;
-    }
-
-    const selectedOrgUid = userOrgs[orgIndex].uid;
+    const { authtoken, selectedOrgUid, region, csBaseUrl, appBaseUrl } = context;
 
     const createAndDeployApp = async (appManifest) => {
       const appName = readlineSync.question("Enter name of app: ");
@@ -103,7 +79,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     if (op === "create-app") {
       if (appEnv === "dev") {
-        // Always create both field types by default
         console.info("\n⚠️  Note: Both RTE and Custom DAM fields will be created.");
         console.info("   For local development, only one can work at a time:");
         console.info("   - RTE Field: http://localhost:1268");
@@ -135,13 +110,14 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
           "Error while updating the app"
         );
-        appManifest.ui_location = appData?.data?.ui_location;
-        updateAppManifest(appManifest, appEnv);
 
         if (appError) {
           console.error(JSON.stringify(appError, null, 2));
           return;
         }
+
+        appManifest.ui_location = appData?.data?.ui_location;
+        updateAppManifest(appManifest, appEnv);
 
         console.info("App updated successfully");
         const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
