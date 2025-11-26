@@ -1,6 +1,8 @@
 const { exec, execSync } = require("child_process");
 const fs = require("fs");
 const axios = require("axios");
+const readlineSync = require("readline-sync");
+const path = require("path");
 const constants = require("../constants");
 
 const openLink = (url) => {
@@ -93,6 +95,46 @@ const updateEnvFile = (filePath, key, value) => {
   return originalContent;
 };
 
+const authenticateUser = () => {
+  let loginData;
+  try {
+    loginData = require(path.join(__dirname, "../../settings/credentials.json"));
+  } catch (error) {
+    loginData = null;
+  }
+  
+  if (!loginData?.authtoken) {
+    console.info("Login credentials not found. Please login.");
+    return null;
+  }
+
+  if (!loginData?.userOrgs?.length) {
+    console.info("No organisations found...");
+    return null;
+  }
+
+  const orgIndex = readlineSync.keyInSelect(
+    loginData.userOrgs.map((org) => org.name),
+    "Please select an organization"
+  );
+
+  if (orgIndex === -1) {
+    console.info("No organization selected...");
+    return null;
+  }
+
+  const selectedOrgUid = loginData.userOrgs[orgIndex].uid;
+
+  return {
+    authtoken: loginData.authtoken,
+    userOrgs: loginData.userOrgs,
+    region: loginData.region,
+    selectedOrgUid,
+    csBaseUrl: getBaseUrl(loginData.region),
+    appBaseUrl: getAppBaseUrl(loginData.region),
+  };
+};
+
 module.exports = {
   openLink,
   runCommand,
@@ -104,4 +146,5 @@ module.exports = {
   safeDelete,
   readFileSafe,
   updateEnvFile,
+  authenticateUser,
 };
