@@ -170,7 +170,7 @@ const createSampleEntry = async (
   fieldUid
 ) => {
   let entryData = {
-    title: "DAM boilerplate sample",
+    title: "Dam boilerplate sample",
     locale: "en-us",
   };
 
