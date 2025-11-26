@@ -6,6 +6,7 @@ const {
   getBaseUrl,
   getAppBaseUrl,
   getDeveloperhubBaseUrl,
+  authenticateUser,
 } = require("./helpers");
 
 const {
@@ -46,6 +47,7 @@ module.exports = {
   getBaseUrl,
   getAppBaseUrl,
   getDeveloperhubBaseUrl,
+  authenticateUser,
   saveInstallation,
   updateAppManifest,
   updateLaunchManifest,
