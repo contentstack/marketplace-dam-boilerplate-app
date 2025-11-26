@@ -110,8 +110,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
           "Error while updating the app"
         );
-        appManifest.ui_location = appData?.data?.ui_location;
-        updateAppManifest(appManifest, appEnv);
 
         if (appError) {
           console.error(JSON.stringify(appError, null, 2));
