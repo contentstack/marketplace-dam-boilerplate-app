@@ -1,7 +1,7 @@
 {
-  "name": "marketplace-ecommerce-boilerplate-scripts",
+  "name": "marketplace-Dam-boilerplate-scripts",
   "version": "1.0.0",
-  "description": "Contentstack Ecommerce Boilerplate Marketplace App's scripts package",
+  "description": "Contentstack Dam Boilerplate Marketplace App's scripts package",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -12,7 +12,9 @@
     "update-prod-app": "node src/ops/create-update.js update-app prod",
     "create-dev-app": "node src/ops/create-update.js create-app dev",
     "update-dev-app": "node src/ops/create-update.js update-app dev",
-    "deploy-prod-app": "node src/ops/deploy.js"
+    "deploy-prod-app": "node src/ops/deploy.js",
+    "dev-app-initial-setup": "sh ./src/dev-setup.sh",
+    "prod-app-initial-setup": "sh ./src/prod-setup.sh"
   },
   "keywords": [],
   "author": "",
