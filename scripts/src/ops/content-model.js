@@ -20,22 +20,30 @@ const installationData = require("../../settings/app-installation.json");
       return;
     }
 
-    const appChoices = installationData.map(
-      (inst) => inst.appName || inst.appUid
-    );
+    const useLatest = process.argv[2];
+    let selectedApp;
 
-    const selectedIndex = readlineSync.keyInSelect(
-      appChoices,
-      "Select an app for which you want to create a Content Type"
-    );
+    if (useLatest) {
+      selectedApp = installationData[installationData.length - 1];
+      console.info("Using the latest app:", selectedApp.appName || selectedApp.appUid);
+    } else {
+      const appChoices = installationData.map(
+        (inst) => inst.appName || inst.appUid
+      );
 
-    if (selectedIndex === -1) {
-      console.info("No app selected. Exiting...");
-      return;
+      const selectedIndex = readlineSync.keyInSelect(
+        appChoices,
+        "Select an app for which you want to create a Content Type"
+      );
+
+      if (selectedIndex === -1) {
+        console.info("No app selected. Exiting...");
+        return;
+      }
+
+      selectedApp = installationData[selectedIndex];
+      console.info("You selected:", selectedApp.appName || selectedApp.appUid);
     }
-
-    const selectedApp = installationData[selectedIndex];
-    console.info("You selected:", selectedApp);
 
     const { stackApiKey, installationUid, csBaseUrl } = selectedApp;
 
