@@ -18,5 +18,7 @@ echo "Setting up an initial development app."
 cd ../scripts
 npm run create-dev-app
 
-echo "Please run 'npm run create-content-model' to create the content model and its entry"
+echo "Creating content model and its entry for the latest app."
+npm run create-content-model -- latest
+
 echo "Please run 'cd ../ui' and 'npm run start' or 'npm run startWin' to start the UI app."
