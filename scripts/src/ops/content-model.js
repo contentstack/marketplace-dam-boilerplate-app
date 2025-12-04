@@ -25,7 +25,7 @@ const installationData = require("../../settings/app-installation.json");
 
     if (useLatest) {
       selectedApp = installationData[installationData.length - 1];
-      console.info("Using the latest app:", selectedApp.appName || selectedApp.appUid);
+      console.info("Creating content model for the latest app:", selectedApp.appName || selectedApp.appUid);
     } else {
       const appChoices = installationData.map(
         (inst) => inst.appName || inst.appUid
