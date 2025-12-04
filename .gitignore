@@ -36,4 +36,3 @@ coverage/
 scripts/*/build
 scripts/settings/app-installation.json
 scripts/settings/credentials.json
-/ui/rte/dist
