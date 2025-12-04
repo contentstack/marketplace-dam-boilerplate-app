@@ -85,7 +85,7 @@ export default async function handler(req, res) {
   const corsAllowed = allowCors(req, res);
   
   if (corsAllowed === false) {
-    res.status(403).send("Forbidden: Origin not allowed");
+    res.status(403).send("Access denied");
     return;
   }
 

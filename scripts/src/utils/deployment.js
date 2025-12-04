@@ -3,7 +3,13 @@ const path = require("path");
 const FormData = require("form-data");
 const AdmZip = require("adm-zip");
 const constants = require("../constants");
-const { makeApiCall, openLink, runCommand, safeDelete, updateEnvFile } = require("./helpers");
+const {
+  makeApiCall,
+  openLink,
+  runCommand,
+  safeDelete,
+  updateEnvFile,
+} = require("./helpers");
 
 const getEnvVariables = (launchSubDomain) => {
   try {
@@ -18,7 +24,10 @@ const getEnvVariables = (launchSubDomain) => {
         const [key, ...rest] = line.split("=");
         return { key: key?.trim(), value: rest.join("=").trim() };
       })
-      .filter(({ key, value }) => key && value && !constants.EXCLUDED_ENVS.includes(key))
+      .filter(
+        ({ key, value }) =>
+          key && value && !constants.EXCLUDED_ENVS.includes(key)
+      )
       .map(({ key, value }) => {
         const escapedValue = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
         return `{ key: "${key}", value: "${escapedValue}" }`;
@@ -55,8 +64,15 @@ const buildAppZip = (projectName) => {
 
     // Temporarily update .env file in RTE directory with deployment URL
     const rteEnvPath = path.join(rteAppBasePath, ".env");
-    const originalEnvContent = updateEnvFile(rteEnvPath, "REACT_APP_CUSTOM_FIELD_URL", deploymentUrl);
-    console.info(`Updated .env file with REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`);
+    const fileExistedBefore = fs.existsSync(rteEnvPath);
+    const originalEnvContent = updateEnvFile(
+      rteEnvPath,
+      "REACT_APP_CUSTOM_FIELD_URL",
+      deploymentUrl
+    );
+    console.info(
+      `Updated .env file with REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`
+    );
 
     try {
       // Build the RTE plugin
@@ -64,11 +80,13 @@ const buildAppZip = (projectName) => {
       runCommand("npm run build", { cwd: rteAppBasePath });
       console.info("RTE plugin bundle ready.");
     } finally {
-      // Restore original .env file
-      if (originalEnvContent === null) {
-        fs.unlinkSync(rteEnvPath);
-      } else {
-        fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
+      if (fileExistedBefore) {
+        if (originalEnvContent === null) {
+          // File existed but had no content, restore empty file
+          fs.writeFileSync(rteEnvPath, "", "utf-8");
+        } else {
+          fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
+        }
       }
     }
 
@@ -107,9 +125,16 @@ const buildAppZip = (projectName) => {
     fs.mkdirSync(functionsDir, { recursive: true });
 
     // Read template file and replace placeholder with actual plugin URL
-    const templatePath = path.join(__dirname, "templates", "dam-function.template.js");
+    const templatePath = path.join(
+      __dirname,
+      "templates",
+      "dam-function.template.js"
+    );
     let damFunctionContent = fs.readFileSync(templatePath, "utf-8");
-    damFunctionContent = damFunctionContent.replace("{{PLUGIN_URL}}", pluginUrl);
+    damFunctionContent = damFunctionContent.replace(
+      "{{PLUGIN_URL}}",
+      pluginUrl
+    );
 
     fs.writeFileSync(damFunctionPath, damFunctionContent);
 
@@ -202,7 +227,9 @@ const uploadAppZip = async (metaData, filePath = "") => {
 };
 
 const _getProjectMetaData = (name, uploadUid, envName, launchSubDomain) =>
-  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(launchSubDomain)}}}`;
+  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
+    launchSubDomain
+  )}}}`;
 
 const createProject = async (
   authtoken,
@@ -268,7 +295,9 @@ const createProject = async (
     const projectUrl = `${baseUrl}/#!/launch/projects/${project?.uid}/envs/${env?.uid}/deployments/${deployment?.uid}`;
 
     console.info("Project created successfully...");
-    console.info(`Build and deployment has been initiated. You can check the logs at: ${projectUrl}`);
+    console.info(
+      `Build and deployment has been initiated. You can check the logs at: ${projectUrl}`
+    );
     openLink(projectUrl);
 
     return {
@@ -357,7 +386,9 @@ const reDeployProject = async (
     const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${deploymentUid}`;
 
     console.info("Redeployment was successful...");
-    console.info(`Build and deployment has been initiated. You can check the logs at: ${projectUrl}`);
+    console.info(
+      `Build and deployment has been initiated. You can check the logs at: ${projectUrl}`
+    );
     openLink(projectUrl);
 
     return deploymentUid;

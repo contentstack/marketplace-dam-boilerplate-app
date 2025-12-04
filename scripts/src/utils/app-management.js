@@ -197,7 +197,7 @@ const createSampleEntry = async (
 
   entryData[damFieldUid] = [
     {
-      _id: 2,
+      _id: 1,
       assetName: "Colosseum, Rome",
       width: 600,
       height: 800,
