@@ -284,8 +284,8 @@ export const ModalComponent = function ({
         });
       }
     }
-      handleModalValue(selectOptions, action, updatedValue);
-      closeModal();
+    handleModalValue(selectOptions, action, updatedValue);
+    closeModal();
   };
 
   return (
