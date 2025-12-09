@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { isEqual } from "lodash";
 import { UnifiedConfigRule } from "../types";
 
 /**
@@ -12,39 +13,57 @@ export default function useConfigRulesMapping(
 ) {
   const safeInitial = Array.isArray(initial) ? initial : [];
   const [mappings, setMappings] = useState<any>(safeInitial);
+
+  // Initialize prevInitialRef to track the previous initial value
+  // Using null as sentinel to detect first mount (handles React Strict Mode)
   const prevInitialRef = useRef<any>(null);
-  const isMountedRef = useRef<boolean>(false);
+  const mappingsRef = useRef<any>(safeInitial);
   const hasUserChangesRef = useRef<boolean>(false);
+
+  // Keep mappingsRef in sync with mappings state
+  useEffect(() => {
+    mappingsRef.current = mappings;
+  }, [mappings]);
 
   // Only sync initial on mount or when initial data truly changes AND user hasn't made changes
   useEffect(() => {
-    const initialStr = JSON.stringify(safeInitial);
-    const prevInitialStr = JSON.stringify(prevInitialRef.current);
-    const hasChanged = initialStr !== prevInitialStr;
-
-    // On first mount, always sync
-    if (!isMountedRef.current) {
-      isMountedRef.current = true;
+    // On first mount, initialize refs
+    // State is already initialized via useState(safeInitial), so no need to set it
+    if (prevInitialRef.current === null) {
       prevInitialRef.current = safeInitial;
-      setMappings(safeInitial);
+      // mappingsRef is already initialized to safeInitial, and will be kept in sync
+      // by the separate effect that watches mappings state
       return;
     }
 
+    // Use deep equality to check if safeInitial actually changed
+    const hasChanged = !isEqual(prevInitialRef.current, safeInitial);
+
     // After mount, only sync if:
-    // 1. Initial data actually changed (different content, not just reference)
+    // 1. Initial data actually changed
     // 2. AND user hasn't made any changes (hasUserChangesRef is false)
     // 3. AND current mappings match previous initial (meaning no user edits)
     if (hasChanged && !hasUserChangesRef.current) {
-      const currentMappingsStr = JSON.stringify(mappings);
-      const prevMappingsMatchInitial = currentMappingsStr === prevInitialStr;
+      // Validate that current mappings haven't been edited by user
+      const mappingsMatchPreviousInitial = isEqual(
+        mappingsRef.current,
+        prevInitialRef.current
+      );
 
       // Only sync if current mappings still match previous initial (no user edits)
-      if (prevMappingsMatchInitial) {
-        prevInitialRef.current = safeInitial;
-        setMappings(safeInitial);
+      // This makes the effect idempotent - won't overwrite if values are already the same
+      if (mappingsMatchPreviousInitial) {
+        // Update refs and state only if actually different (idempotent)
+        if (!isEqual(mappingsRef.current, safeInitial)) {
+          prevInitialRef.current = safeInitial;
+          setMappings(safeInitial);
+        } else {
+          // Even if we don't update state, update the ref to track the new initial
+          prevInitialRef.current = safeInitial;
+        }
       }
     }
-  }, [safeInitial, mappings]);
+  }, [safeInitial]);
 
   const addMapping = useCallback((ruleType: string = "branch") => {
     hasUserChangesRef.current = true;
@@ -53,9 +72,7 @@ export default function useConfigRulesMapping(
       return [
         ...safePrev,
         {
-          id: `mapping-${Date.now()}-${Math.random()
-            .toString(36)
-            .substring(2, 11)}`,
+          id: `mapping-${crypto.randomUUID()}`,
           branch_uid: "",
           locales_uid: [],
           config_label: "",
@@ -66,7 +83,7 @@ export default function useConfigRulesMapping(
   }, []);
 
   const onLeftSelect = useCallback((selected: any, index: number) => {
-    if (!selected || selected?.value === undefined || typeof index !== "number")
+    if (!selected || selected?.value == null || typeof index !== "number")
       return;
 
     hasUserChangesRef.current = true;
@@ -99,8 +116,7 @@ export default function useConfigRulesMapping(
   }, []);
 
   const onRightSelect = useCallback((option: any, index: number) => {
-    if (!option || option?.value === undefined || typeof index !== "number")
-      return;
+    if (!option || option?.value == null || typeof index !== "number") return;
 
     hasUserChangesRef.current = true;
     setMappings((prev: any) => {

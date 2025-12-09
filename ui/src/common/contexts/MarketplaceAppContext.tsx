@@ -1,12 +1,16 @@
 import React from "react";
 import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
 import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
+import { LocaleType } from "../types";
 
 export type MarketplaceAppContextType = {
   appSdk: UiLocation | null;
   appConfig: GenericObjectType;
   appFailed: boolean;
-  locales: any[];
+  localesByBranch: Record<string, LocaleType[]>; // Branch-specific locales
+  getDataFromAPI: (data?: any) => Promise<any>;
+  fetchLocalesForBranch: (branch: string) => Promise<void>;
+  getLocalesForBranch: (branch: string) => LocaleType[]; // function to fetch branch specific locales
 };
 
 export const MarketplaceAppContext =
@@ -14,5 +18,8 @@ export const MarketplaceAppContext =
     appSdk: null,
     appConfig: {},
     appFailed: false,
-    locales: [],
+    localesByBranch: {},
+    getDataFromAPI: async () => ({} as Response),
+    fetchLocalesForBranch: async () => {},
+    getLocalesForBranch: () => [],
   });

@@ -1,21 +1,19 @@
 import React, { useMemo } from "react";
 import { Icon, Select, Tooltip } from "@contentstack/venus-components";
 import {
-  RuleContainerOption,
   RuleContainerMapping,
-  RuleContainerConfig,
+  RuleContainerProps,
 } from "../../../../common/types/index";
+import constants from "../../../../common/constants";
+import localeTexts from "../../../../common/locale/en-us";
 import "./styles.scss";
 
-// Move styles outside component to prevent recreation
 const customSelectStyles = {
   menuPortal: (base: any) => ({ ...base, zIndex: 99999 }),
   singleValue: (base: any) => ({
     ...base,
     maxWidth: "100%",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    ...constants.textOverflowStyles,
   }),
   multiValue: (base: any) => ({
     ...base,
@@ -24,62 +22,17 @@ const customSelectStyles = {
   multiValueLabel: (base: any) => ({
     ...base,
     maxWidth: "100%",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    ...constants.textOverflowStyles,
   }),
   option: (base: any) => ({
     ...base,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    ...constants.textOverflowStyles,
   }),
 };
 
-interface RuleContainerProps {
-  mappings: RuleContainerMapping[];
-  branchOptions: RuleContainerOption[];
-  configOptions: RuleContainerOption[];
-  localeOptions?: RuleContainerOption[];
-  validConfigs?: Set<string>;
-
-  onBranchSelect: (data: any, index: number) => void;
-  onConfigSelect: (data: any, index: number) => void;
-  onLocaleSelect?: (data: any, index: number) => void;
-  onDelete: (index: number) => void;
-
-  config?:
-    | RuleContainerConfig
-    | {
-        branchPlaceholder?: string;
-        configPlaceholder?: string;
-        localePlaceholder?: string;
-        noOptionsMessage?: string;
-        deleteTooltip?: string;
-        separator?: string;
-        containerClass?: string;
-        selectWidth?: string;
-        separatorClass?: string;
-        iconClass?: string;
-        showTooltip?: boolean;
-        showDeleteIcon?: boolean;
-        isLocaleDisabled?: boolean;
-        isSearchable?: boolean;
-        multiDisplayLimit?: number;
-        isMultiBranch?: boolean;
-        isMultiConfig?: boolean;
-        isMultiLocale?: boolean;
-        isBranchExhaustive?: boolean;
-        isConfigExhaustive?: boolean;
-        isLocaleExhaustive?: boolean;
-        maxCharacters?: number;
-        ruleType?: string;
-      };
-}
-
 // Small helpers to make intent clear without changing structure
-function isBranchLevel(locales: unknown): boolean {
-  return !locales || (Array.isArray(locales) && locales.length === 0);
+function isBranchLevel(locales: string | string[] | null | undefined): boolean {
+  return Array.isArray(locales) ? !locales?.length : !locales;
 }
 
 function sameBranch(
@@ -128,7 +81,7 @@ function RuleContainer({
   mappings,
   branchOptions,
   configOptions,
-  localeOptions = [],
+  getLocaleOptionsForBranch,
   validConfigs,
   onBranchSelect,
   onConfigSelect,
@@ -137,34 +90,33 @@ function RuleContainer({
   config = {},
 }: RuleContainerProps) {
   const {
-    branchPlaceholder = "Select branch",
-    configPlaceholder = "Select config",
-    localePlaceholder = "Select locale",
-    noOptionsMessage = "No options available",
-    deleteTooltip = "Delete mapping",
-    separator = "→",
-    containerClass = "rule-container-row",
-    selectWidth = "270px",
-    separatorClass = "separator",
-    iconClass = "delete-icon",
-    showTooltip = true,
-    showDeleteIcon = true,
-    isLocaleDisabled = false,
-    isSearchable = true,
-    multiDisplayLimit = 1,
-    isMultiBranch = false,
-    isMultiConfig = false,
-    isMultiLocale = false,
-    isBranchExhaustive = true,
-    isConfigExhaustive = true,
-    isLocaleExhaustive = true,
+    branchPlaceholder = constants.ruleContainerDefaults.branchPlaceholder,
+    configPlaceholder = constants.ruleContainerDefaults.configPlaceholder,
+    localePlaceholder = constants.ruleContainerDefaults.localePlaceholder,
+    noOptionsMessage = constants.ruleContainerDefaults.noOptionsMessage,
+    deleteTooltip = constants.ruleContainerDefaults.deleteTooltip,
+    separator = constants.ruleContainerDefaults.separator,
+    containerClass = constants.ruleContainerDefaults.containerClass,
+    selectWidth = constants.ruleContainerDefaults.selectWidth,
+    separatorClass = constants.ruleContainerDefaults.separatorClass,
+    iconClass = constants.ruleContainerDefaults.iconClass,
+    showTooltip = constants.ruleContainerDefaults.showTooltip,
+    showDeleteIcon = constants.ruleContainerDefaults.showDeleteIcon,
+    isLocaleDisabled = constants.ruleContainerDefaults.isLocaleDisabled,
+    isSearchable = constants.ruleContainerDefaults.isSearchable,
+    multiDisplayLimit = constants.ruleContainerDefaults.multiDisplayLimit,
+    isMultiBranch = constants.ruleContainerDefaults.isMultiBranch,
+    isMultiConfig = constants.ruleContainerDefaults.isMultiConfig,
+    isMultiLocale = constants.ruleContainerDefaults.isMultiLocale,
+    isBranchExhaustive = constants.ruleContainerDefaults.isBranchExhaustive,
+    isConfigExhaustive = constants.ruleContainerDefaults.isConfigExhaustive,
+    isLocaleExhaustive = constants.ruleContainerDefaults.isLocaleExhaustive,
   } = config;
 
-  // Memoize selected values to prevent recalculation on every render
   const selectedValues = useMemo(() => {
-    const selectedBranchValues: any[] = [];
-    const selectedConfigValues: any[] = [];
-    const selectedLocaleValues: any[] = [];
+    const selectedBranchValues: string[] = [];
+    const selectedConfigValues: string[] = [];
+    const selectedLocaleValues: string[] = [];
 
     mappings?.forEach((mapping) => {
       const branchValue =
@@ -207,29 +159,36 @@ function RuleContainer({
 
   const renderRow = (mapping: RuleContainerMapping, index: number) => {
     const branchValue = mapping?.left ?? mapping?.branch_uid ?? null;
+
+    // Get branch-specific locale options
+    const branchLocaleOptions = branchValue && getLocaleOptionsForBranch
+      ? getLocaleOptionsForBranch(
+        Array.isArray(branchValue) ? branchValue[0] : branchValue
+      )
+      : [];
     const configValue = mapping?.right ?? mapping?.config_label ?? null;
     const localeValues = mapping?.middle ?? mapping?.locales_uid ?? null;
 
     const branchSelectValue = isMultiBranch
       ? branchOptions.filter(
-          (opt) =>
-            Array.isArray(branchValue) && branchValue?.includes(opt.value)
-        )
-      : branchOptions?.find((opt) => opt.value === branchValue) ?? null;
+        (opt) =>
+          Array.isArray(branchValue) && branchValue?.includes(opt?.value)
+      )
+      : branchOptions?.find((opt) => opt?.value === branchValue) ?? null;
 
     const configSelectValue = isMultiConfig
       ? configOptions?.filter(
-          (opt) =>
-            Array.isArray(configValue) && configValue?.includes(opt.value)
-        )
-      : configOptions?.find((opt) => opt.value === configValue) ?? null;
+        (opt) =>
+          Array.isArray(configValue) && configValue?.includes(opt?.value)
+      )
+      : configOptions?.find((opt) => opt?.value === configValue) ?? null;
 
     const localeSelectValue = isMultiLocale
-      ? localeOptions?.filter(
-          (opt) =>
-            Array.isArray(localeValues) && localeValues?.includes(opt.value)
-        )
-      : localeOptions?.find((opt) => opt.value === localeValues) ?? null;
+      ? branchLocaleOptions?.filter(
+        (opt) =>
+          Array.isArray(localeValues) && localeValues?.includes(opt?.value)
+      )
+      : branchLocaleOptions?.find((opt) => opt?.value === localeValues) ?? null;
 
     // Determine if this row's config is invalid (deleted or missing from available configs)
     let rowConfig: string | undefined;
@@ -278,136 +237,140 @@ function RuleContainer({
     }
     const disabledLocalesSet = new Set(disabledLocales);
 
-    // Locale filtering
+    // Locale filtering - use branch-specific locales
     const filteredLocaleOptions = isLocaleExhaustive
-      ? localeOptions?.filter((opt) => {
-          // Always allow currently selected locales for this row
-          if (Array.isArray(localeValues) && localeValues.includes(opt.value)) {
-            return true;
-          }
+      ? branchLocaleOptions?.filter((opt) => {
+        // Always allow currently selected locales for this row
+        if (Array.isArray(localeValues) && localeValues.includes(opt.value)) {
+          return true;
+        }
 
-          // Check if this locale is already used for the same branch
-          const isLocaleUsedForSameBranch = mappings?.some(
-            (otherMapping, otherIndex) => {
-              if (otherIndex === index) return false; // Skip current row
+        // Check if this locale is already used for the same branch
+        const isLocaleUsedForSameBranch = mappings?.some(
+          (otherMapping, otherIndex) => {
+            if (otherIndex === index) return false; // Skip current row
 
-              const otherBranch =
-                otherMapping?.left ?? otherMapping?.branch_uid;
-              const otherLocales =
-                otherMapping?.locales_uid ?? otherMapping?.middle;
+            const otherBranch =
+              otherMapping?.left ?? otherMapping?.branch_uid;
+            const otherLocales =
+              otherMapping?.locales_uid ?? otherMapping?.middle;
 
-              const isSameBranch = Array.isArray(branchValue)
-                ? branchValue.includes(otherBranch)
-                : branchValue === otherBranch;
+            const isSameBranch = Array.isArray(branchValue)
+              ? branchValue.includes(otherBranch)
+              : branchValue === otherBranch;
 
-              if (!isSameBranch) return false;
+            if (!isSameBranch) return false;
 
-              // Check if this locale is in the other mapping's locales
-              if (Array.isArray(otherLocales)) {
-                return otherLocales.includes(opt.value);
-              }
-              return otherLocales === opt.value;
+            // Check if this locale is in the other mapping's locales
+            if (Array.isArray(otherLocales)) {
+              return otherLocales.includes(opt.value);
             }
-          );
+            return otherLocales === opt.value;
+          }
+        );
 
-          return !isLocaleUsedForSameBranch;
-        })
-      : localeOptions?.filter((opt) => !disabledLocalesSet?.has(opt.value));
+        return !isLocaleUsedForSameBranch;
+      })
+      : branchLocaleOptions?.filter((opt) => !disabledLocalesSet?.has(opt?.value));
 
     const filteredBranchOptions = isBranchExhaustive
       ? branchOptions.filter(
-          (opt) =>
-            !selectedBranchValues?.includes(opt.value) ||
-            (isMultiBranch &&
-              Array.isArray(branchValue) &&
-              branchValue?.includes(opt.value)) ||
-            (!isMultiBranch && opt?.value === branchValue)
-        )
+        (opt) =>
+          !selectedBranchValues?.includes(opt?.value) ||
+          (isMultiBranch &&
+            Array.isArray(branchValue) &&
+            branchValue?.includes(opt?.value)) ||
+          (!isMultiBranch && opt?.value === branchValue)
+      )
       : branchOptions;
 
     // Config filtering
     const filteredConfigOptions = isConfigExhaustive
       ? configOptions?.filter((opt) => {
-          // Always allow the currently selected config for this row
-          if (opt?.value === configValue) return true;
+        // Always allow the currently selected config for this row
+        if (opt?.value === configValue) return true;
 
-          // Check if user is trying to create a branch-level rule (no locales selected)
-          const isCurrentBranchLevel = isBranchLevel(localeValues);
+        // Check if user is trying to create a branch-level rule (no locales selected)
+        const isCurrentBranchLevel = isBranchLevel(localeValues);
 
-          // Prevent multiple branch-level rules for same branch
-          if (
-            isCurrentBranchLevel &&
-            branchValue &&
-            hasBranchLevelRule(mappings, branchValue, index)
-          ) {
-            return false;
+        // Prevent multiple branch-level rules for same branch
+        if (
+          isCurrentBranchLevel &&
+          branchValue &&
+          hasBranchLevelRule(mappings, branchValue, index)
+        ) {
+          return false;
+        }
+
+        // Check if this config is already used at branch level for the same branch
+        const isConfigUsedAtBranchLevelFlag = isConfigUsedAtBranchLevel(
+          mappings,
+          branchValue,
+          opt?.value,
+          index
+        );
+
+        // If config is used at branch level, don't allow it for ANY other rules on same branch
+        if (isConfigUsedAtBranchLevelFlag) {
+          return false; // Block the config completely for this branch
+        }
+
+        // Check if this would create a duplicate branch-level config
+        const isDuplicateBranchLevelConfig = mappings?.some(
+          (otherMapping, otherIndex) => {
+            if (otherIndex === index) return false; // Skip current row
+
+            const otherBranch =
+              otherMapping?.left ?? otherMapping?.branch_uid;
+            const otherLocales =
+              otherMapping?.locales_uid ?? otherMapping?.middle;
+            const otherConfig =
+              otherMapping?.config_label ?? otherMapping?.right;
+
+            const isSameBranch = sameBranch(branchValue, otherBranch);
+            const isSameConfig = otherConfig === opt?.value;
+            const isOtherBranchLevel = isBranchLevel(otherLocales);
+
+            // Block if same branch, same config, and both are branch-level
+            return (
+              isSameBranch &&
+              isSameConfig &&
+              isCurrentBranchLevel &&
+              isOtherBranchLevel
+            );
           }
+        );
 
-          // Check if this config is already used at branch level for the same branch
-          const isConfigUsedAtBranchLevelFlag = isConfigUsedAtBranchLevel(
-            mappings,
-            branchValue,
-            opt?.value,
-            index
-          );
+        if (isDuplicateBranchLevelConfig) {
+          return false; // Block duplicate branch-level configs (same config)
+        }
 
-          // If config is used at branch level, don't allow it for ANY other rules on same branch
-          if (isConfigUsedAtBranchLevelFlag) {
-            return false; // Block the config completely for this branch
+        // Only block config if it's already used for the same branch
+        const isConfigUsedForSameBranch = mappings?.some(
+          (otherMapping, otherIndex) => {
+            if (otherIndex === index) return false; // Skip current row
+
+            const otherBranch =
+              otherMapping?.left ?? otherMapping?.branch_uid;
+            const otherConfig =
+              otherMapping?.config_label ?? otherMapping?.right;
+
+            const isSame = sameBranch(branchValue, otherBranch);
+            return isSame && otherConfig === opt?.value;
           }
+        );
 
-          // Check if this would create a duplicate branch-level config
-          const isDuplicateBranchLevelConfig = mappings?.some(
-            (otherMapping, otherIndex) => {
-              if (otherIndex === index) return false; // Skip current row
-
-              const otherBranch =
-                otherMapping?.left ?? otherMapping?.branch_uid;
-              const otherLocales =
-                otherMapping?.locales_uid ?? otherMapping?.middle;
-              const otherConfig =
-                otherMapping?.config_label ?? otherMapping?.right;
-
-              const isSameBranch = sameBranch(branchValue, otherBranch);
-              const isSameConfig = otherConfig === opt?.value;
-              const isOtherBranchLevel = isBranchLevel(otherLocales);
-
-              // Block if same branch, same config, and both are branch-level
-              return (
-                isSameBranch &&
-                isSameConfig &&
-                isCurrentBranchLevel &&
-                isOtherBranchLevel
-              );
-            }
-          );
-
-          if (isDuplicateBranchLevelConfig) {
-            return false; // Block duplicate branch-level configs (same config)
-          }
-
-          // Only block config if it's already used for the same branch
-          const isConfigUsedForSameBranch = mappings?.some(
-            (otherMapping, otherIndex) => {
-              if (otherIndex === index) return false; // Skip current row
-
-              const otherBranch =
-                otherMapping?.left ?? otherMapping?.branch_uid;
-              const otherConfig =
-                otherMapping?.config_label ?? otherMapping?.right;
-
-              const isSame = sameBranch(branchValue, otherBranch);
-              return isSame && otherConfig === opt?.value;
-            }
-          );
-
-          return !isConfigUsedForSameBranch;
-        })
+        return !isConfigUsedForSameBranch;
+      })
       : configOptions;
 
     return (
-      <div key={`pair-${index}`} className={containerClass}>
-        <div className="select-wrapper" style={{ width: selectWidth }}>
+      <div
+        key={`pair-${index}`}
+        className={containerClass}
+        style={{ "--select-width": selectWidth } as React.CSSProperties}
+      >
+        <div className="select-wrapper">
           <Select
             value={branchSelectValue}
             onChange={(option: any) => onBranchSelect(option, index)}
@@ -427,7 +390,7 @@ function RuleContainer({
 
         <span className={separatorClass}>{separator}</span>
 
-        <div className="select-wrapper" style={{ width: selectWidth }}>
+        <div className="select-wrapper">
           <Select
             value={configSelectValue}
             onChange={(option: any) => onConfigSelect!(option, index)}
@@ -448,10 +411,7 @@ function RuleContainer({
         {onLocaleSelect && (
           <>
             <span className={separatorClass}>{separator}</span>
-            <div
-              className="select-wrapper middle-select-wrapper"
-              style={{ width: selectWidth }}
-            >
+            <div className="select-wrapper middle-select-wrapper">
               <Select
                 value={localeSelectValue}
                 onChange={(option: any) => onLocaleSelect!(option, index)}
@@ -463,11 +423,11 @@ function RuleContainer({
                 width={selectWidth}
                 isMulti={isMultiLocale}
                 version="v2"
-                isSelectAll
+                isSelectAll={filteredLocaleOptions?.length > 0}
                 noOptionsMessage={() => noOptionsMessage}
                 menuPortalTarget={document.body}
                 isDisabled={
-                  !branchValue || !localeOptions || localeOptions.length === 0
+                  !branchValue || !branchLocaleOptions || branchLocaleOptions?.length === 0
                 }
               />
             </div>
@@ -501,7 +461,7 @@ function RuleContainer({
             )}
             {isInvalidConfig ? (
               <Tooltip
-                content="This configuration was removed. This rule will not work."
+                content={localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigTooltip}
                 position="top"
                 showArrow={false}
               >
@@ -524,19 +484,27 @@ function RuleContainer({
   return (
     <div className="rule-container">
       <div className="rule-header">
-        <div className="header-cell">Branch</div>
-        <div className="header-cell">Config</div>
-        {onLocaleSelect && <div className="header-cell">Locale</div>}
+        <div className="header-cell">
+          {localeTexts?.ConfigFields?.AdvancedConfig?.common?.branchHeader}
+        </div>
+        <div className="header-cell">
+          {localeTexts?.ConfigFields?.AdvancedConfig?.common?.configHeader}
+        </div>
+        {onLocaleSelect && (
+          <div className="header-cell">
+            {localeTexts?.ConfigFields?.AdvancedConfig?.common?.localeHeader}
+          </div>
+        )}
         {showDeleteIcon && <div className="header-cell delete-header" />}
       </div>
 
-      {mappings.map(renderRow)}
+      {mappings?.map(renderRow)}
     </div>
   );
 }
 
 RuleContainer.defaultProps = {
-  localeOptions: [],
+  getLocaleOptionsForBranch: undefined,
   validConfigs: undefined,
   onLocaleSelect: undefined,
   config: {},

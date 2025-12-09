@@ -64,7 +64,7 @@ export default ContentstackSDK.init()
         savedSelection,
         config,
         advancedConfig,
-        // currentLocale
+        currentLocale,
       });
     });
 

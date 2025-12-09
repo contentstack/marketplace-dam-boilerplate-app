@@ -1,10 +1,10 @@
-import rootConfig from "../../../root_config";
+import DamEnvVariables from "../../../root_config/DamEnv";
 
 const localeTexts = {
   ConfigFields: {
     AccordianConfig: {
       mainName: "Configuration",
-      multiConfigLabel: `Configure your ${rootConfig?.damEnv?.DAM_APP_NAME} credentials`,
+      multiConfigLabel: `Configure your ${DamEnvVariables?.DAM_APP_NAME} credentials`,
       accActions: {
         default: "Set as Default",
         delete: "Delete Configuration",
@@ -34,7 +34,7 @@ const localeTexts = {
     },
     entrySaveRadioButton: {
       label: "Save In Entry",
-      help: `Choose how to save data retrieved from ${rootConfig.damEnv.DAM_APP_NAME}.`,
+      help: `Choose how to save data retrieved from ${DamEnvVariables.DAM_APP_NAME}.`,
       placeholder: "Enter the data structure to save in the entry",
       all_field_instruction:
         "Select 'All Fields' to add a limited number of assets based on the asset's JSON data.",
@@ -46,7 +46,7 @@ const localeTexts = {
       customJson: "Custom Fields",
     },
     keysField: {
-      label: `${rootConfig.damEnv.DAM_APP_NAME} Keys`,
+      label: `${DamEnvVariables.DAM_APP_NAME} Keys`,
       help: "Select the keys you want to save",
       placeholder: "Select keys",
       instruction: "Select the keys you want to save",
@@ -78,6 +78,11 @@ const localeTexts = {
     emptyValue: "Field value missing",
     noSelectedDefault: "Select at least one default configuration",
     noConfiguration: "Add at least one configuration",
+    validationError: "Validation error",
+    tabs: {
+      basic: "Basic",
+      advanced: "Advanced",
+    },
     AdvancedConfig: {
       unified: {
         label: "Config Rules",
@@ -90,11 +95,17 @@ const localeTexts = {
         rightPlaceholder: "Select Config",
         addMoreBtn: "Add Rule",
         localeHelperText: "Leave empty to apply to all locales",
+        infoMessage:
+          "<b>Branch-Level Rules</b>: You need to select one branch and one config to apply rules across all locales in branch. <b>Locale-Level Rules</b>: You need to select one branch, one locale and one config to target rules for specific locales.",
       },
       common: {
         noOptionsMessage: "No options",
         deleteTooltip: "Remove",
         separator: "-",
+        invalidConfigTooltip: "This configuration was removed. This rule will not work.",
+        branchHeader: "Branch",
+        configHeader: "Config",
+        localeHeader: "Locale",
       },
     },
   },
@@ -116,7 +127,7 @@ const localeTexts = {
     assetCard: {
       hoverActions: {
         preview: "Preview",
-        platformRedirect: `Open In ${rootConfig?.damEnv?.DAM_APP_NAME}`,
+        platformRedirect: `Open In ${DamEnvVariables?.DAM_APP_NAME}`,
         remove: "Remove",
         drag: "Reorder",
       },
@@ -151,10 +162,35 @@ const localeTexts = {
     AssetNotAddedText: "No assets have been added",
   },
   SelectorPage: {
-    title: rootConfig?.damEnv?.DAM_APP_NAME,
+    title: DamEnvVariables?.DAM_APP_NAME,
+    table: {
+      headers: {
+        image: "Image",
+        name: "Name",
+        fileType: "File Type",
+        size: "Size",
+        width: "Width",
+        height: "Height",
+        createdDate: "Created Date",
+      },
+      errors: {
+        failedToLoadAssets: "Failed to load assets",
+      },
+      searchPlaceholder: "Search assets...",
+      emptyState: {
+        heading: "No assets found",
+        description: "Try adjusting your search criteria",
+      },
+      buttons: {
+        cancel: "Cancel",
+        add: "Add",
+        addAsset: "Asset",
+        addAssets: "Assets",
+      },
+    },
   },
   Warnings: {
-    incorrectConfig: `The credentials for "${rootConfig?.damEnv?.DAM_APP_NAME}" are invalid or missing. Update the configuration and try again.`,
+    incorrectConfig: `The credentials for "${DamEnvVariables?.DAM_APP_NAME}" are invalid or missing. Update the configuration and try again.`,
   },
   AppFailed: {
     Message1: "App location iniailization failed.",

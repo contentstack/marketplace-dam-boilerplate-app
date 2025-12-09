@@ -211,6 +211,115 @@ const getModifiedConditionalOptions = (
   return modifiedOptions;
 };
 
+/**
+ * Validates config rules (branch and locale level configurations)
+ * This should be executed before checkConfigValidity in AppConfigProvider
+ */
+const validateConfigRules = (config: Props, serverConfig: Props) => {
+  const configRules = config?.config_rules;
+
+  // List of valid config keys from serverConfig
+  const validConfigKeys = new Set<string>(
+    Object.keys(serverConfig?.multi_config_keys ?? {})
+  );
+
+  if (configRules && typeof configRules === "object") {
+    const errors: string[] = [];
+
+    const branchLevelRules: Map<string, string[]> = new Map();
+
+    Object.entries(configRules).forEach(
+      ([branchUid, branchObj]: [string, any], index) => {
+        if (!branchUid || !branchObj) {
+          // eslint-disable-next-line
+          errors.push(`Rule ${index + 1}: Branch is required`);
+          return;
+        }
+
+        const hasBranchLevelConfig =
+          branchObj?.config_label &&
+          Array.isArray(branchObj?.config_label) &&
+          branchObj?.config_label?.length;
+
+        const hasLocaleSpecificRules =
+          branchObj?.locales &&
+          typeof branchObj?.locales === "object" &&
+          Object.keys(branchObj?.locales)?.length;
+
+        // Validate branch-level config labels against available configs
+        if (hasBranchLevelConfig && !hasLocaleSpecificRules) {
+          const invalidConfigs = branchObj?.config_label?.filter(
+            (cfg: string) => !validConfigKeys?.has(cfg)
+          );
+          if (invalidConfigs.length > 0) {
+            errors.push(
+              `Branch "${branchUid}" has invalid or deleted config(s): [${invalidConfigs?.join(
+                ", "
+              )}]. Please remove or update these config rules.`
+            );
+          }
+
+          // Check if more than one config in branch-level array (invalid - should only be one)
+          if (branchObj.config_label.length > 1) {
+            errors.push(
+              `Branch "${branchUid}" cannot have multiple branch-level configs. ` +
+              `Found: [${branchObj?.config_label?.join(", ")}]. ` +
+              `Only one branch-level config per branch is allowed.`
+            );
+          } else if (branchLevelRules?.has(branchUid)) {
+            // This shouldn't happen with proper UI prevention, but validate anyway
+            const existingConfigs = branchLevelRules?.get(branchUid) || [];
+            errors.push(
+              `Branch "${branchUid}" cannot have multiple branch-level configs. ` +
+              `Existing: [${existingConfigs?.join(
+                ", "
+              )}], Attempted: [${branchObj?.config_label?.join(", ")}]`
+            );
+          } else {
+            // Valid branch-level rule - store it
+            branchLevelRules?.set(branchUid, branchObj?.config_label);
+          }
+        }
+
+        // If locales exist, check that all locale entries have config_label
+        if (hasLocaleSpecificRules) {
+          Object.entries(branchObj.locales).forEach(
+            ([locale, localeObj]: [string, any]) => {
+              if (
+                !localeObj?.config_label ||
+                !Array.isArray(localeObj?.config_label) ||
+                localeObj?.config_label?.length === 0
+              ) {
+                errors.push(
+                  `Locale "${locale}" in branch "${branchUid}" requires a config selection`
+                );
+              } else {
+                // Validate locale config labels
+                const invalidLocaleConfigs = localeObj?.config_label?.filter(
+                  (cfg: string) => !validConfigKeys?.has(cfg)
+                );
+                if (invalidLocaleConfigs?.length) {
+                  errors.push(
+                    `Locale "${locale}" in branch "${branchUid}" has invalid or deleted config(s): [${invalidLocaleConfigs.join(
+                      ", "
+                    )}]. Please remove or update this config rule.`
+                  );
+                }
+              }
+            }
+          );
+        }
+      }
+    );
+
+    if (errors.length > 0) {
+      return { disableSave: true, message: errors[0] };
+    }
+  }
+
+  return { disableSave: false, message: "" };
+};
+
 const ConfigScreenUtils = {
   mergeObjects,
   getOptions,
@@ -220,6 +329,7 @@ const ConfigScreenUtils = {
   getSaveConfigOptions,
   getModifiedConditionalOptions,
   mergeOptions,
+  validateConfigRules,
 };
 
 export default ConfigScreenUtils;

@@ -19,6 +19,23 @@ import "./styles.scss";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
+/* If need to get any data from API then use getDataFromAPI function.
+  Access it via MarketplaceAppContext:
+  
+  const { getDataFromAPI } = useContext(MarketplaceAppContext);
+  
+  Example usage:
+  const response = await getDataFromAPI({
+    queryParams: "param=value",
+    headers: { "Content-Type": "application/json" },
+    method: "GET",
+    body: {}
+  });
+  const data = await response.json();
+  
+  Refer services/index.ts for more details and update 
+  the API call there as per requirement. */
+
 const CustomField: React.FC = function () {
   const { appFailed, appSdk } = useContext(MarketplaceAppContext);
   const {
@@ -208,6 +225,8 @@ const CustomField: React.FC = function () {
   // function called on postmessage from selector page. used in "novalue" and "authWindow" option
   const saveData = useCallback(
     (event: any) => {
+      if (event?.origin !== process.env.REACT_APP_CUSTOM_FIELD_URL) return;
+
       const { data } = event;
 
       if (data?.message === "openedReady") {
@@ -291,7 +310,7 @@ const CustomField: React.FC = function () {
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-    const hasConfig = state?.config && Object.keys(state.config).length > 0;
+    const hasConfig = state?.config && Object.keys(state?.config)?.length;
     if (!hasConfig || !state?.appSdkInitialized) {
       return;
     }
@@ -350,7 +369,7 @@ const CustomField: React.FC = function () {
   const [isConfigReady, setIsConfigReady] = useState(false);
 
   useEffect(() => {
-    const hasConfig = state?.config && Object.keys(state.config).length > 0;
+    const hasConfig = state?.config && Object.keys(state?.config)?.length;
     const isReady = hasConfig && state?.appSdkInitialized;
     setIsConfigReady(isReady);
   }, [state?.config, state?.appSdkInitialized]);

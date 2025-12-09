@@ -10,36 +10,10 @@ import {
     Button,
     Icon,
 } from "@contentstack/venus-components";
-import { AssetData } from "../../common/types";
+import { AssetData, TableProps } from "../../common/types";
+import { getAssetType, getAssetIcon } from "../../common/utils/TableUtils";
+import localeTexts from "../../common/locale/en-us";
 import "./Table.scss";
-
-interface TableProps {
-    setError: (errObj: any) => void;
-    successFn: (assets: any[]) => void;
-    closeFn: () => void;
-    selectedAssetIds: string[];
-    assetData: any[];
-}
-
-const THUMBNAIL_SIZE = 50;
-const FADE_TRANSITION = "opacity 0.1s ease-in-out";
-
-const iconBaseStyle: React.CSSProperties = {
-    width: THUMBNAIL_SIZE,
-    height: THUMBNAIL_SIZE,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "4px",
-    border: "1px solid #e1e5e9",
-};
-
-const containerStyle: React.CSSProperties = {
-    position: "relative",
-    width: THUMBNAIL_SIZE,
-    height: THUMBNAIL_SIZE,
-};
 
 
 type ImageLoadStatus = "idle" | "loading" | "loaded" | "error";
@@ -100,7 +74,7 @@ const ImageWithFallback = React.memo<ImageWithFallbackProps>(
         // Early return for error or missing src
         if (status === "error" || !src) {
             return (
-                <div className="asset-icon" style={iconBaseStyle} role="img" aria-label={alt}>
+                <div className="asset-icon" role="img" aria-label={alt}>
                     <Icon icon="Document" size="small" version="v2" />
                 </div>
             );
@@ -110,19 +84,10 @@ const ImageWithFallback = React.memo<ImageWithFallbackProps>(
         const shouldAnimate = !wasCached;
 
         return (
-            <div style={containerStyle}>
+            <div className="image-container">
                 {/* Fallback icon - fades out when image loads */}
                 <div
-                    className="asset-icon"
-                    style={{
-                        ...iconBaseStyle,
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        zIndex: 1,
-                        opacity: isLoaded ? 0 : 1,
-                        transition: shouldAnimate ? FADE_TRANSITION : undefined,
-                    }}
+                    className={`asset-icon fallback-icon ${isLoaded ? "image-loaded" : ""} ${shouldAnimate ? "with-transition" : ""}`}
                     aria-hidden="true"
                 >
                     <Icon icon="Document" size="small" version="v2" />
@@ -132,18 +97,7 @@ const ImageWithFallback = React.memo<ImageWithFallbackProps>(
                     ref={handleImageRef}
                     src={src}
                     alt={alt}
-                    className="asset-thumbnail"
-                    style={{
-                        width: THUMBNAIL_SIZE,
-                        height: THUMBNAIL_SIZE,
-                        objectFit: "cover",
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        zIndex: 2,
-                        opacity: isLoaded ? 1 : 0,
-                        transition: shouldAnimate ? FADE_TRANSITION : undefined,
-                    }}
+                    className={`asset-thumbnail ${isLoaded ? "image-loaded" : ""} ${shouldAnimate ? "with-transition" : ""}`}
                     onError={handleError}
                     onLoad={handleLoad}
                     loading="lazy"
@@ -187,101 +141,6 @@ function Table({
         return selectedRows;
     };
 
-    // Function to get asset type based on file extension
-    const getAssetType = (fileType: string | undefined) => {
-        if (!fileType) return "document";
-
-        const extension = fileType.toLowerCase();
-        const audioExtensions = ["mp3", "m4a", "flac", "wav", "wma", "aac"];
-        const videoExtensions = [
-            "mp4",
-            "mov",
-            "wmv",
-            "avi",
-            "avchd",
-            "flv",
-            "f4v",
-            "swf",
-            "ogg",
-            "webm",
-        ];
-        const imageExtensions = [
-            "jpeg",
-            "jpg",
-            "png",
-            "gif",
-            "bmp",
-            "apng",
-            "avif",
-            "jfif",
-            "pjpeg",
-            "pjp",
-            "svg",
-            "webp",
-            "ico",
-            "cur",
-            "tif",
-            "tiff",
-        ];
-        const excelExtensions = [
-            "xlsx",
-            "xlsm",
-            "xlsb",
-            "xltx",
-            "xltm",
-            "xls",
-            "xlt",
-            "xml",
-            "xlam",
-            "xla",
-            "xlw",
-            "xlr",
-        ];
-        const presentationExtensions = [
-            "pptx",
-            "ppt",
-            "pptm",
-            "potx",
-            "pot",
-            "potm",
-            "ppsx",
-            "pps",
-            "ppsm",
-        ];
-
-        if (videoExtensions.includes(extension)) {
-            return "video";
-        }
-        if (audioExtensions.includes(extension)) {
-            return "audio";
-        }
-        if (imageExtensions.includes(extension)) {
-            return "image";
-        }
-        if (excelExtensions.includes(extension)) {
-            return "excel";
-        }
-        if (presentationExtensions.includes(extension)) {
-            return "presentation";
-        }
-        if (extension === "pdf") {
-            return "pdf";
-        }
-        if (extension === "zip" || extension === "rar" || extension === "7z") {
-            return "zip";
-        }
-        if (extension === "json") {
-            return "json";
-        }
-        if (extension === "docx" || extension === "doc") {
-            return "document";
-        }
-        if (extension === "html" || extension === "htm") {
-            return "code";
-        }
-        return "document";
-    };
-
     const renderAssetIcon = (asset: AssetData) => {
         const assetType = getAssetType(asset?.type);
 
@@ -291,34 +150,11 @@ function Table({
             );
         }
 
-        const iconMap = {
-            pdf: "PDF2",
-            video: "MP4",
-            audio: "MP3",
-            excel: "XLS",
-            presentation: "PPT",
-            zip: "ZIP",
-            json: "JSON",
-            document: "DOC2",
-            code: "DOC2",
-            image: "File",
-        };
+        const iconName = getAssetIcon(assetType);
 
         return (
-            <div
-                className="asset-icon"
-                style={{
-                    width: 50,
-                    height: 50,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "4px",
-                    border: "1px solid #e1e5e9",
-                }}
-            >
-                <Icon icon={iconMap[assetType] || "Document"} size="small" />
+            <div className="asset-icon">
+                <Icon icon={iconName || "Document"} size="small" />
             </div>
         );
     };
@@ -333,45 +169,45 @@ function Table({
     // get Default from root_config/customfield/index.tsx
     const columns = [
         {
-            Header: "Image",
+            Header: localeTexts.SelectorPage.table.headers.image,
             id: "image",
             accessor: (asset: any) => renderAssetIcon(asset),
             disableSortBy: true,
             columnWidthMultiplier: 1,
         },
         {
-            Header: "Name",
+            Header: localeTexts.SelectorPage.table.headers.name,
             id: "name",
             accessor: renderAssetName,
             columnWidthMultiplier: 2,
         },
         {
-            Header: "File Type",
+            Header: localeTexts.SelectorPage.table.headers.fileType,
             id: "type",
             accessor: "type",
             columnWidthMultiplier: 1,
         },
         {
-            Header: "Size",
+            Header: localeTexts.SelectorPage.table.headers.size,
             accessor: "size",
             columnWidthMultiplier: 1,
         },
         {
-            Header: "Width",
+            Header: localeTexts.SelectorPage.table.headers.width,
             id: "width",
             accessor: "width",
             disableSortBy: true,
             columnWidthMultiplier: 1,
         },
         {
-            Header: "Height",
+            Header: localeTexts.SelectorPage.table.headers.height,
             id: "height",
             accessor: "height",
             disableSortBy: true,
             columnWidthMultiplier: 1,
         },
         {
-            Header: "Created Date",
+            Header: localeTexts.SelectorPage.table.headers.createdDate,
             id: "createdDate",
             accessor: "createdDate",
             columnWidthMultiplier: 1.5,
@@ -399,7 +235,7 @@ function Table({
             // Filter data based on search
             let filteredData = assetData;
             if (searchText) {
-                filteredData = assetData.filter((asset) =>
+                filteredData = assetData?.filter((asset) =>
                     asset.name?.toLowerCase().includes(searchText.toLowerCase())
                 );
             }
@@ -407,64 +243,64 @@ function Table({
             // Apply sorting if needed
             if (sortBy) {
                 // Replace sorting with query params in an API call
-                filteredData = [...filteredData].sort((a, b) => {
-                    const aVal = a[sortBy.id] || "";
-                    const bVal = b[sortBy.id] || "";
+                filteredData = [...filteredData]?.sort((a: any, b: any) => {
+                    const aVal = a[sortBy?.id] ?? "";
+                    const bVal = b[sortBy?.id] ?? "";
 
                     // Handle different column types
 
-                    if (sortBy.id === "name") {
+                    if (sortBy?.id === "name") {
                         // String sorting for asset names
-                        return sortBy.sortingDirection === "asc"
-                            ? aVal.localeCompare(bVal)
-                            : bVal.localeCompare(aVal);
+                        return sortBy?.sortingDirection === "asc"
+                            ? aVal?.localeCompare(bVal)
+                            : bVal?.localeCompare(aVal);
                     }
-                    if (sortBy.id === "fileType") {
+                    if (sortBy?.id === "fileType") {
                         // String sorting for file types
-                        return sortBy.sortingDirection === "asc"
-                            ? aVal.localeCompare(bVal)
-                            : bVal.localeCompare(aVal);
+                        return sortBy?.sortingDirection === "asc"
+                            ? aVal?.localeCompare(bVal)
+                            : bVal?.localeCompare(aVal);
                     }
-                    if (sortBy.id === "createdDate") {
+                    if (sortBy?.id === "createdDate") {
                         // Date sorting
                         const aDate = new Date(aVal);
                         const bDate = new Date(bVal);
-                        return sortBy.sortingDirection === "asc"
-                            ? aDate.getTime() - bDate.getTime()
-                            : bDate.getTime() - aDate.getTime();
+                        return sortBy?.sortingDirection === "asc"
+                            ? aDate?.getTime() - bDate?.getTime()
+                            : bDate?.getTime() - aDate?.getTime();
                     }
                     // Default string sorting for other columns
-                    return sortBy.sortingDirection === "asc"
-                        ? aVal.localeCompare(bVal)
-                        : bVal.localeCompare(aVal);
+                    return sortBy?.sortingDirection === "asc"
+                        ? aVal?.localeCompare(bVal)
+                        : bVal?.localeCompare(aVal);
                 });
             }
 
             // Update pagination state
-            const currentSkip = skip || 0;
-            const currentLimit = limit || pageSize;
+            const currentSkip = skip ?? 0;
+            const currentLimit = limit ?? pageSize;
 
             setPageSize(currentLimit);
 
             // Paginate the data
-            const paginatedData = filteredData.slice(
+            const paginatedData = filteredData?.slice(
                 currentSkip,
                 currentSkip + currentLimit
             );
 
             updateData(paginatedData);
-            updateTotalCounts(filteredData.length);
+            updateTotalCounts(filteredData?.length);
             updateLoading(false);
         } catch (error) {
-            setError({ isErr: true, errorText: "Failed to load assets" });
+            setError({ isErr: true, errorText: localeTexts.SelectorPage.table.errors.failedToLoadAssets });
             updateLoading(false);
         }
     };
 
     // Pagination change handler
     const onChangePagination = (pageArgs: any) => {
-        if (pageArgs && pageArgs.pageSize) {
-            setPageSize(pageArgs.pageSize);
+        if (pageArgs && pageArgs?.pageSize) {
+            setPageSize(pageArgs?.pageSize);
         }
     };
 
@@ -521,7 +357,7 @@ function Table({
             // Find assets from assetData that match the selected IDs
             const preselectedAssets = assetData?.filter((asset: any) => selectedAssetIds?.includes(asset?.id)) || [];
 
-            if (preselectedAssets.length > 0) {
+            if (preselectedAssets?.length) {
                 setSelectedAssets(preselectedAssets);
             }
         } else {
@@ -555,7 +391,7 @@ function Table({
                 getSelectedRow={getSelectedRow}
                 initialSelectedRowIds={selectedRows}
                 canSearch
-                searchPlaceholder="Search assets..."
+                searchPlaceholder={localeTexts.SelectorPage.table.searchPlaceholder}
                 isRowSelect
                 fullRowSelect
                 columnSelector
@@ -570,8 +406,8 @@ function Table({
                     pagination: true,
                 }}
                 emptyObj={{
-                    heading: "No assets found",
-                    description: "Try adjusting your search criteria",
+                    heading: localeTexts.SelectorPage.table.emptyState.heading,
+                    description: localeTexts.SelectorPage.table.emptyState.description,
                 }}
             />
 
@@ -583,7 +419,7 @@ function Table({
                     data-testid="close-btn"
                     className="margin-right-20"
                 >
-                    Cancel
+                    {localeTexts.SelectorPage.table.buttons.cancel}
                 </Button>
                 <Button
                     buttonType="primary"
@@ -595,12 +431,12 @@ function Table({
                         // This ensures all selected assets are returned, not just those on the current page
                         successFn(selectedAssets);
                     }}
-                    disabled={selectedAssets.length === 0}
+                    disabled={!selectedAssets?.length}
                     style={{
                         backgroundColor:
-                            selectedAssets.length === 0 ? "#ccc" : "#6366f1",
+                            !selectedAssets?.length ? "#ccc" : "#6366f1",
                         cursor:
-                            selectedAssets.length === 0
+                            !selectedAssets?.length
                                 ? "not-allowed"
                                 : "pointer",
                     }}
@@ -617,8 +453,7 @@ function Table({
                     >
                         <path d="M6 0v12M12 6H0" stroke="#fff" strokeWidth="2" />
                     </svg>
-                    {`Add ${selectedAssets.length} Asset${selectedAssets.length !== 1 ? "s" : ""
-                        }`}
+                    {`${localeTexts.SelectorPage.table.buttons.add} ${selectedAssets?.length} ${selectedAssets?.length !== 1 ? localeTexts.SelectorPage.table.buttons.addAssets : localeTexts.SelectorPage.table.buttons.addAsset}`}
                 </Button>
             </div>
         </div>
@@ -626,3 +461,4 @@ function Table({
 }
 
 export default Table;
+
