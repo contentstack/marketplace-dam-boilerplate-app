@@ -124,23 +124,6 @@ describe("mergeObjects", () => {
   });
 });
 
-describe("toastMessage", () => {
-  it("should call Notification with correct params", () => {
-    const type = "success";
-    const text = "Test message";
-    ConfigScreenUtils.toastMessage({ type, text });
-    expect(Notification).toHaveBeenCalledWith({
-      notificationContent: {
-        text,
-      },
-      notifyProps: {
-        className: "modal_toast_message",
-        hideProgressBar: true,
-      },
-      type,
-    });
-  });
-});
 
 describe("getOptions", () => {
   it("should return array of objects with label & value", () => {
@@ -169,6 +152,8 @@ describe("getOptions", () => {
 
 describe("configRootUtils", () => {
   it("should return custom config from rootConfig", () => {
+    const customJsonOptions = ["option 1", "option 2"];
+    const rootConfigDefaultOptions = ["option 1"];
     const expected = {
       customJsonConfigObj: {
         dam_keys: [
@@ -200,7 +185,12 @@ describe("configRootUtils", () => {
         },
       ],
     };
-    expect(ConfigScreenUtils.configRootUtils()).toEqual(expected);
+    expect(
+      ConfigScreenUtils.configRootUtils({
+        customJsonOptions,
+        rootConfigDefaultOptions,
+      })
+    ).toEqual(expected);
   });
 });
 

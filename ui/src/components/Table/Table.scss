@@ -8,16 +8,59 @@
   .asset-thumbnail {
     border-radius: 4px;
     border: 1px solid #e1e5e9;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0;
+
+    &.image-loaded {
+      opacity: 1;
+    }
+
+    &.with-transition {
+      transition: opacity 0.1s ease-in-out;
+    }
   }
 
   .asset-icon {
     border-radius: 4px;
     border: 1px solid #e1e5e9;
     background-color: #f8f9fa;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .cs-icon {
       color: #6c757d;
     }
+
+    &.fallback-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      opacity: 1;
+
+      &.image-loaded {
+        opacity: 0;
+      }
+
+      &.with-transition {
+        transition: opacity 0.1s ease-in-out;
+      }
+    }
+  }
+
+  .image-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
   }
 
   .asset-name {
@@ -48,3 +91,4 @@
     }
   }
 }
+

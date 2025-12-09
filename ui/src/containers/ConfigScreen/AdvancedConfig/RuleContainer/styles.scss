@@ -95,6 +95,7 @@
     min-width: 120px;
     max-width: 200px;
     flex-shrink: 1;
+    width: var(--select-width, 270px);
 
     .Select {
       width: 100% !important;
@@ -116,6 +117,7 @@
       min-width: 220px;
       max-width: 350px;
       flex-shrink: 1;
+      width: var(--select-width, 270px);
 
       .Select {
         min-width: 220px;

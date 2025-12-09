@@ -5,6 +5,12 @@ const constantStyles = {
   addBtnTooltip: { marginTop: "20px" },
 };
 
+const textOverflowStyles = {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
 const limitationsDocUrl =
   "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/";
 
@@ -31,11 +37,126 @@ const NoConfigImg = `<svg width="159" height="200" viewBox="0 0 159 200" fill="n
   <path d="M80.0067 96.0814C80.6597 96.0814 81.1891 95.5332 81.1891 94.8569C81.1891 94.1806 80.6597 93.6324 80.0067 93.6324C79.3536 93.6324 78.8242 94.1806 78.8242 94.8569C78.8242 95.5332 79.3536 96.0814 80.0067 96.0814Z" fill="#475161"/>
   </svg>
   `;
+
+const ruleContainerDefaults = {
+  branchPlaceholder: "Select branch",
+  configPlaceholder: "Select config",
+  localePlaceholder: "Select locale",
+  noOptionsMessage: "No options available",
+  deleteTooltip: "Delete mapping",
+  separator: "→",
+  containerClass: "rule-container-row",
+  selectWidth: "270px",
+  separatorClass: "separator",
+  iconClass: "delete-icon",
+  showTooltip: true,
+  showDeleteIcon: true,
+  isLocaleDisabled: false,
+  isSearchable: true,
+  multiDisplayLimit: 1,
+  isMultiBranch: false,
+  isMultiConfig: false,
+  isMultiLocale: false,
+  isBranchExhaustive: true,
+  isConfigExhaustive: true,
+  isLocaleExhaustive: true,
+};
+
+const fileExtensions = {
+  audioExtensions: ["mp3", "m4a", "flac", "wav", "wma", "aac"],
+  videoExtensions: [
+    "mp4",
+    "mov",
+    "wmv",
+    "avi",
+    "avchd",
+    "flv",
+    "f4v",
+    "swf",
+    "ogg",
+    "webm",
+  ],
+  imageExtensions: [
+    "jpeg",
+    "jpg",
+    "png",
+    "gif",
+    "bmp",
+    "apng",
+    "avif",
+    "jfif",
+    "pjpeg",
+    "pjp",
+    "svg",
+    "webp",
+    "ico",
+    "cur",
+    "tif",
+    "tiff",
+  ],
+  excelExtensions: [
+    "xlsx",
+    "xlsm",
+    "xlsb",
+    "xltx",
+    "xltm",
+    "xls",
+    "xlt",
+    "xml",
+    "xlam",
+    "xla",
+    "xlw",
+    "xlr",
+  ],
+  presentationExtensions: [
+    "pptx",
+    "ppt",
+    "pptm",
+    "potx",
+    "pot",
+    "potm",
+    "ppsx",
+    "pps",
+    "ppsm",
+  ],
+};
+
+const assetIconMap: Record<string, string> = {
+  pdf: "PDF2",
+  video: "MP4",
+  audio: "MP3",
+  excel: "XLS",
+  presentation: "PPT",
+  zip: "ZIP",
+  json: "JSON",
+  document: "DOC2",
+  code: "DOC2",
+  image: "File",
+};
+
+const tableConstants = {
+  THUMBNAIL_SIZE: 50,
+  FADE_TRANSITION: "opacity 0.1s ease-in-out",
+  iconBaseStyle: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "4px",
+    border: "1px solid #e1e5e9",
+  },
+  assetIconMap,
+};
+
 const constants = {
   constantStyles,
+  textOverflowStyles,
   limitationsDocUrl,
   NoImg,
   NoConfigImg,
+  ruleContainerDefaults,
+  tableConstants,
+  fileExtensions,
 };
 
 export default constants;

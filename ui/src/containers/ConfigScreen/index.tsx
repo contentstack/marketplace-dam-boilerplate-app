@@ -17,6 +17,7 @@ import {
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
 import "@contentstack/venus-components/build/main.css";
+import { isEqual } from "lodash";
 /* Import our modules */
 import {
   JsonComponent,
@@ -39,6 +40,7 @@ import {
   TypeUpdateTrigger,
   Props,
   TypeOption,
+  ConfigRules,
 } from "../../common/types";
 
 import "./styles.scss";
@@ -96,8 +98,8 @@ const ConfigScreen: React.FC = function () {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
-  const [configRulesMapper, setConfigRulesMapper] = useState<any>(undefined);
-  const isConfigRulesMapperInitializedRef = React.useRef<boolean>(false);
+  const [configRulesMapper, setConfigRulesMapper] = useState<ConfigRules>();
+  const prevConfigRulesMapperRef = React.useRef<ConfigRules | undefined>(undefined);
 
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
@@ -115,39 +117,50 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
+  // Effect to update installationData when configRulesMapper changes
   useEffect(() => {
-    if (configRulesMapper === undefined) {
+    if (configRulesMapper === undefined || configRulesMapper === null) {
       return;
     }
 
-    if (!isConfigRulesMapperInitializedRef.current) {
-      isConfigRulesMapperInitializedRef.current = true;
-    }
-
-    const currentConfigRules = installationData?.configuration?.config_rules;
-    const configRulesMapperStr = JSON.stringify(configRulesMapper ?? {});
-    const currentConfigRulesStr = JSON.stringify(currentConfigRules ?? {});
-
-    // if no changes, return early
-    if (configRulesMapperStr === currentConfigRulesStr) {
+    if (!installationData?.configuration) {
       return;
     }
+
+    // Skip if configRulesMapper hasn't actually changed (using ref to avoid unnecessary updates)
+    if (isEqual(configRulesMapper, prevConfigRulesMapperRef.current)) {
+      return;
+    }
+
+    const currentConfigRules = installationData.configuration.config_rules;
+
+    // Use isEqual for proper deep comparison instead of JSON.stringify
+    if (isEqual(configRulesMapper, currentConfigRules)) {
+      prevConfigRulesMapperRef.current = configRulesMapper;
+      return; // No changes, skip update
+    }
+
+    console.log(" $$$ configRulesMapper", configRulesMapper); // eslint-disable-line no-console
 
     const updatedConfiguration = {
-      ...installationData?.configuration,
-      config_rules: configRulesMapper ?? {},
+      ...installationData.configuration,
+      config_rules: configRulesMapper,
     };
 
-    setInstallationData({
+    const updatedInstallationData = {
       ...installationData,
       configuration: updatedConfiguration,
-    });
+    };
+
+    prevConfigRulesMapperRef.current = configRulesMapper;
+    setInstallationData(updatedInstallationData);
 
     checkConfigFields({
       configuration: updatedConfiguration,
-      serverConfiguration: installationData?.serverConfiguration,
+      serverConfiguration: installationData.serverConfiguration,
     });
-  }, [configRulesMapper, installationData?.configuration?.config_rules]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configRulesMapper]);
 
   useEffect(() => {
     const multiConfigKeys = installationData?.configuration?.multi_config_keys;
@@ -330,7 +343,7 @@ const ConfigScreen: React.FC = function () {
 
     handleMultiConfigLimit(
       configInstallationObj?.multi_config_keys ??
-        serverConfigInstallationObj?.multi_config_keys
+      serverConfigInstallationObj?.multi_config_keys
     );
 
     setInstallationData({
@@ -563,7 +576,7 @@ const ConfigScreen: React.FC = function () {
                 </Dropdown>
               </div>
             ),
-            onClick: () => {},
+            onClick: () => { },
           },
         ]}
       >
@@ -584,8 +597,8 @@ const ConfigScreen: React.FC = function () {
   const renderAccFields = (accordianFields: Configurations) => {
     const accordianKeys: string[] = Object.keys(
       installationData?.configuration?.multi_config_keys ??
-        installationData?.serverConfiguration?.multi_config_keys ??
-        {}
+      installationData?.serverConfiguration?.multi_config_keys ??
+      {}
     );
     return (
       <div className="multi-config-accordian-wrapper">
@@ -661,8 +674,20 @@ const ConfigScreen: React.FC = function () {
     return renderValue;
   };
 
-  /* If need to get any data from API then use,
-  getDataFromAPI({queryParams, headers, method, body}) function.
+  /* If need to get any data from API then use getDataFromAPI function.
+  Access it via MarketplaceAppContext:
+  
+  const { getDataFromAPI } = useContext(MarketplaceAppContext);
+  
+  Example usage:
+  const response = await getDataFromAPI({
+    queryParams: "param=value",
+    headers: { "Content-Type": "application/json" },
+    method: "GET",
+    body: {}
+  });
+  const data = await response.json();
+  
   Refer services/index.ts for more details and update 
   the API call there as per requirement. */
 
@@ -680,7 +705,7 @@ const ConfigScreen: React.FC = function () {
                     {
                       componentData: renderConfig(),
                       id: "config",
-                      title: "Configuration",
+                      title: localeTexts.ConfigFields.tabs.basic,
                     },
                     {
                       componentData: (
@@ -695,7 +720,7 @@ const ConfigScreen: React.FC = function () {
                         />
                       ),
                       id: "advanced-config",
-                      title: "Advanced Configuration",
+                      title: localeTexts.ConfigFields.tabs.advanced,
                     },
                   ]}
                   tabSize="small"

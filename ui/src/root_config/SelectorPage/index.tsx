@@ -28,12 +28,17 @@ const openComptactView = (
 ) => {
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
-  use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]  */
+  use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]
+  Note: If you need to fetch data from API, use getDataFromAPI via MarketplaceAppContext
+  in the SelectorPage component. */
 };
 
 // If there is no script then provide a custom component here
+// Note: If you need to fetch data from API in CustomSelector component, 
+// use getDataFromAPI via MarketplaceAppContext in the SelectorPage component
+// and pass it as a prop to CustomSelector.
 const customSelectorComponent = (
-  config: any,
+  config: Props,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
   closeFn: () => void,

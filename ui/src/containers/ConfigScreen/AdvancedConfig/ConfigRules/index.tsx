@@ -8,15 +8,13 @@ function ConfigRules({
   mappings,
   branchOptions,
   configOptions,
-  localeOptions,
+  getLocaleOptionsForBranch,
   validConfigs,
   onAddMapping,
   onBranchSelect,
   onConfigSelect,
   onLocaleSelect,
-  onDelete = () => {
-    console.warn("handleDelete function not implemented");
-  },
+  onDelete,
 }: any) {
   const texts = localeTexts?.ConfigFields?.AdvancedConfig;
 
@@ -26,7 +24,6 @@ function ConfigRules({
 
   const safeBranchOptions = Array.isArray(branchOptions) ? branchOptions : [];
   const safeConfigOptions = Array.isArray(configOptions) ? configOptions : [];
-  const safeLocaleOptions = Array.isArray(localeOptions) ? localeOptions : [];
   const safeMappings = Array.isArray(mappings) ? mappings : [];
 
   return (
@@ -37,8 +34,7 @@ function ConfigRules({
       />
       <div className="config-rules-info">
         <InfoMessage
-          content="<b>Branch-Level Rules</b>: You need to select one branch and one config to apply rules across all locales in branch.
-<b>Locale-Level Rules</b>: You need to select one branch, one locale and one config to target rules for specific locales."
+          content={texts?.unified?.infoMessage ?? ""}
         />
       </div>
       <div className="config-mapping-section">
@@ -46,7 +42,7 @@ function ConfigRules({
           mappings={safeMappings}
           branchOptions={safeBranchOptions}
           configOptions={safeConfigOptions}
-          localeOptions={safeLocaleOptions}
+          getLocaleOptionsForBranch={getLocaleOptionsForBranch}
           validConfigs={validConfigs}
           onBranchSelect={onBranchSelect}
           onConfigSelect={onConfigSelect}
@@ -54,14 +50,14 @@ function ConfigRules({
           onDelete={onDelete}
           config={{
             branchPlaceholder:
-              texts?.unified?.leftPlaceholder ?? "Select Branch",
+              texts?.unified?.leftPlaceholder,
             configPlaceholder:
-              texts?.unified?.rightPlaceholder ?? "Select Config",
+              texts?.unified?.rightPlaceholder,
             localePlaceholder:
-              texts?.unified?.middlePlaceholder ?? "Select Locale (Optional)",
-            noOptionsMessage: texts?.common?.noOptionsMessage ?? "No options",
-            deleteTooltip: texts?.common?.deleteTooltip ?? "Remove mapping",
-            separator: texts?.common?.separator ?? "-",
+              texts?.unified?.middlePlaceholder,
+            noOptionsMessage: texts?.common?.noOptionsMessage,
+            deleteTooltip: texts?.common?.deleteTooltip,
+            separator: texts?.common?.separator,
             containerClass: "custom-rule-container-row",
             selectWidth: "180px",
             separatorClass: "custom-separator",
@@ -89,7 +85,7 @@ function ConfigRules({
             icon="Plus"
             iconAlignment="left"
           >
-            {texts?.unified?.addMoreBtn ?? "add more"}
+            {texts?.unified?.addMoreBtn}
           </Button>
         </div>
       </div>

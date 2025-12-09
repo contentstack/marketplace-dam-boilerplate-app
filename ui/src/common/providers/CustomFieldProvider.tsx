@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { isEmpty } from "lodash";
 import CustomFieldContext from "../contexts/CustomFieldContext";
 import { TypeAsset, TypeSDKData } from "../types";
 import rootConfig from "../../root_config";
@@ -63,10 +64,8 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
 
-      const hasConfig = appConfig && Object.keys(appConfig).length > 0;
-
       await setState({
-        config: hasConfig ? appConfig : {},
+        config: isEmpty(appConfig) ? {} : appConfig,
         contentTypeConfig: contenttypeConfig,
         location,
         appSdkInitialized: true,
@@ -89,7 +88,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
         handleBtnDisable(finalAssets);
       }
     },
-    [selectedAssets, handleBtnDisable]
+    [selectedAssets, handleBtnDisable, uniqueID]
   );
 
   // rearrange the order of assets

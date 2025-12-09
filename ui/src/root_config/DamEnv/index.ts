@@ -3,7 +3,7 @@ import { TypeRootDamEnv } from "../../common/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
   DAM_APP_NAME: "DAM",
-  ASSET_UNIQUE_ID: "_id",
+  ASSET_UNIQUE_ID: "id",
   SELECTOR_PAGE_LOGO: Logo,
   IS_DAM_SCRIPT: false,
   DAM_SCRIPT_URL: "",

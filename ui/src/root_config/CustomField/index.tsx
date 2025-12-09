@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable arrow-body-style */
 
-/* NOTE: Remove Functions which are not used */
-
 import {
   Props,
   TypeAsset,
@@ -10,83 +8,23 @@ import {
   TypeRootCustomField,
 } from "../../common/types";
 
-const convertSizeToBytes = (fileSize: string | undefined): string => {
-  if (!fileSize) return "0";
 
-  const sizeStr = fileSize.toString().trim();
-  const match = sizeStr.match(/^([\d.]+)\s*(KB|MB|GB|TB|BYTES?)?$/i);
-
-  if (!match) return "0";
-
-  const value = parseFloat(match[1]);
-  const unit = (match[2] || "BYTES").toUpperCase();
-
-  const multipliers: { [key: string]: number } = {
-    BYTES: 1,
-    BYTE: 1,
-    KB: 1024,
-    MB: 1024 * 1024,
-    GB: 1024 * 1024 * 1024,
-    TB: 1024 * 1024 * 1024 * 1024,
-  };
-
-  const bytes = Math.round(value * (multipliers[unit] || 1));
-  return bytes.toString();
-};
-
-// Helper function to normalize file type
-const normalizeFileType = (fileType: string | undefined): string => {
-  if (!fileType) return "document";
-
-  const type = fileType.toLowerCase();
-
-  if (
-    type.includes("image") ||
-    ["jpeg", "jpg", "png", "gif", "svg", "webp"].includes(type)
-  ) {
-    return "image";
-  }
-  if (type.includes("video") || ["mp4", "mov", "avi", "webm"].includes(type)) {
-    return "video";
-  }
-  if (type.includes("audio") || ["mp3", "wav", "m4a"].includes(type)) {
-    return "audio";
-  }
-  if (type === "pdf") return "pdf";
-  if (["xlsx", "xls", "xlsm"].includes(type)) return "excel";
-  if (["pptx", "ppt", "pptm"].includes(type)) return "presentation";
-  if (["docx", "doc"].includes(type)) return "document";
-  if (type === "json") return "json";
-  if (["zip", "rar", "7z"].includes(type)) return "zip";
-  if (["html", "htm"].includes(type)) return "code";
-
-  return "document";
-};
-
-const filterAssetData = (assets: any[]) => {
-  const filterAssetArray: TypeAsset[] = assets?.map((asset) => {
-    // Asset is in raw Table format, transform it to TypeAsset format
-    return {
-      // eslint-disable-next-line no-underscore-dangle
-      id: asset?._id || "",
-      type: normalizeFileType(asset?.fileType) || asset?.type || "document",
-      name: asset?.assetName || asset?.name || "",
-      width:
-        asset?.dimensions?.width?.toString() || asset?.width?.toString() || "",
-      height:
-        asset?.dimensions?.height?.toString() ||
-        asset?.height?.toString() ||
-        "",
-      size: asset?.fileSize
-        ? convertSizeToBytes(asset?.fileSize)
-        : asset?.size?.toString() || "0",
-      thumbnailUrl: asset?.thumbnail || asset?.thumbnailUrl || "",
-      previewUrl: asset?.assetUrl || asset?.previewUrl || "",
-      platformUrl: asset?.platformUrl || "",
-      cs_metadata: asset?.cs_metadata,
-    };
-  });
-
+const filterAssetData = (assets: any[]): TypeAsset[] => {
+  const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
+  // Enter your code for filteration of assets to the specified format
+  ({
+    id: asset?.id || "",
+    type: asset?.type || "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
+    name: asset?.name || "",
+    width: asset?.width || "",
+    height: asset?.height || "",
+    size: asset?.size || "", // add size in bytes as string eg.'416246'
+    thumbnailUrl: asset?.thumbnailUrl || "",
+    previewUrl: asset?.previewUrl || "", // add this parameter if you want "Preview" in tooltip action items
+    platformUrl: asset?.platformUrl || "", // add this parameter if you want "Open In DAM" in tooltip action items
+    cs_metadata: asset?.cs_metadata,
+  })
+  );
   return filterAssetArray;
 };
 
@@ -95,12 +33,17 @@ const handleConfigtoSelectorPage = (
   contentTypeConfig: Props,
   currentLocale: string
 ) => {
-  /* Return Config to be used on selector page */
+  /* Return Config to be used on selector page 
+  Note: If you need to fetch data from API, use getDataFromAPI via MarketplaceAppContext
+  in the CustomField component and pass the data as needed. */
   return {};
 };
 
-const getSelectorWindowUrl = (config: Props, contentTypeConfig: Props) => {
-  return ""; // return url to be opened as selector page
+const getSelectorWindowUrl = (
+  config: Props,
+  contentTypeConfig: Props
+) => {
+  return "";
 };
 
 const handleSelectorPageData = (event: MessageEvent) => {
@@ -122,7 +65,10 @@ const handleAuthWindow = (
   resolve: Function,
   reject: Function
 ) => {
-  /* code logic to open the DAM auth window */
+  /* code logic to open the DAM auth window 
+  Note: If you need to fetch data from API for authentication, use getDataFromAPI 
+  via MarketplaceAppContext in the CustomField component.
+  if authentication is success, call resolve() | if failed, call reject(error) with error */
   resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
 };
 
@@ -131,7 +77,7 @@ const modifyAssetsToSave = (
   contentTypeConfig: Props,
   assets: any[]
 ) => {
-  return filterAssetData(assets);
+  return assets;
 };
 
 const rootCustomField: TypeRootCustomField = {

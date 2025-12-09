@@ -69,16 +69,28 @@ const AppConfigProvider: React.FC = function ({ children }) {
       }
     );
 
+    // Validate config rules first (before user-defined checkConfigValidity)
+    const configRulesValidation = ConfigScreenUtils?.validateConfigRules?.(
+      configuration,
+      serverConfiguration
+    );
+
+    // Then check user-defined config validity
     const { disableSave: isConfigValid, message: disableMsg } =
       (await rootConfig?.checkConfigValidity?.(
         configuration,
         serverConfiguration
       )) ?? { disableSave: false, message: "" };
 
-    if (isConfigValid || missingValues?.length)
+    // Use config rules validation result if it fails, otherwise use user-defined validation
+    const finalValidation = configRulesValidation?.disableSave
+      ? configRulesValidation
+      : { disableSave: isConfigValid, message: disableMsg };
+
+    if (finalValidation?.disableSave || missingValues?.length)
       appConfig?.current?.setValidity(false, {
-        message: isConfigValid
-          ? disableMsg ?? "Validation error"
+        message: finalValidation.disableSave
+          ? finalValidation.message ?? localeTexts.ConfigFields.validationError
           : localeTexts.ConfigFields.missingCredentials,
       });
     else if (
@@ -304,6 +316,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
               rootConfigDefaultOptions
             );
             setModifiedOptions(modOptions);
+            // Ensure configuration exists before setting dam_keys
+            if (!initialState.configuration) {
+              initialState.configuration = {} as TypeAppSdkConfigState["configuration"];
+            }
             initialState.configuration.dam_keys = modOptions;
             await setInstallation(initialState);
 
@@ -324,8 +340,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
     async (data: TypeAppSdkConfigState) => {
       const updatedInstallationData: TypeAppSdkConfigState = {
         ...installation,
-        configuration: data?.configuration,
-        serverConfiguration: data?.serverConfiguration,
+        configuration: data?.configuration || {},
+        serverConfiguration: data?.serverConfiguration || {},
       };
 
       const modOptions = ConfigScreenUtils.getModifiedConditionalOptions(
@@ -334,6 +350,10 @@ const AppConfigProvider: React.FC = function ({ children }) {
         rootConfigDefaultOptions
       );
       setModifiedOptions(modOptions);
+      // Ensure configuration exists before setting dam_keys
+      if (!updatedInstallationData.configuration) {
+        updatedInstallationData.configuration = {} as TypeAppSdkConfigState["configuration"];
+      }
       updatedInstallationData.configuration.dam_keys = modOptions;
       await setInstallation(updatedInstallationData);
       await location?.installation?.setInstallationData(

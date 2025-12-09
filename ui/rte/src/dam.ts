@@ -9,20 +9,43 @@ let savedSelection: any;
 let config: any;
 let advancedConfig: any;
 let currentLocale: string;
+let appSdk: any;
 
 const getCurrentConfigLabel = () => {
-  const { config_label: configLabel, locale } = advancedConfig;
-  let finalConfigLabel = configLabel?.[0] ?? config?.default_multi_config_key;
-  if (locale?.[currentLocale]?.config_label?.length) {
-    finalConfigLabel = locale?.[currentLocale]?.config_label?.[0];
+  const branch = appSdk?.stack?.getCurrentBranch()?.uid;
+  console.log("JSON RTE : !!!🚀 branch:", branch); // eslint-disable-line no-console
+  const locale = advancedConfig?.locale;
+  console.log("JSON RTE : !!!🚀 locale:", locale); // eslint-disable-line no-console
+  // Priority order:
+  // 1 : Custom Field Advanced Settings - Locale Specific
+  if (locale?.[currentLocale]?.config_label?.length > 0) {
+    return locale[currentLocale].config_label[0];
   }
-  return finalConfigLabel;
+  // 2 : Custom Field Advanced Settings - Default
+  if (advancedConfig?.config_label?.length > 0) {
+    return advancedConfig.config_label[0];
+  }
+  // 3 : Locale-Specific Config
+  if (
+    branch &&
+    config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label
+      ?.length > 0
+  ) {
+    return config.config_rules[branch].locales[currentLocale].config_label[0];
+  }
+  // 4 :  Branch-Specific Config
+  if (branch && config?.config_rules?.[branch]?.config_label?.length > 0) {
+    return config.config_rules[branch].config_label[0];
+  }
+  // 5. Main Default
+  return config?.default_multi_config_key;
 };
 
 const getConfig = () => {
   const { multi_config_keys, default_multi_config_key } = config;
   if (Object.keys(multi_config_keys ?? {})?.length) {
     const finalConfigLabel = getCurrentConfigLabel();
+    console.log("JSON RTE : !!!🚀 finalConfigLabel:", finalConfigLabel); // eslint-disable-line no-console
     const multiConfig = multi_config_keys?.[finalConfigLabel] ?? {};
 
     let finalConfig = { ...config };
@@ -38,6 +61,8 @@ const getConfig = () => {
     }
 
     const finalContentTypeConfig = { ...advancedConfig };
+    if (finalContentTypeConfig?.advanced)
+      delete finalContentTypeConfig.advanced;
     if (finalContentTypeConfig?.config_label)
       delete finalContentTypeConfig.config_label;
     if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;
@@ -243,6 +268,7 @@ export const onClickHandler = async (props) => {
   config = props?.config;
   advancedConfig = props?.advancedConfig;
   currentLocale = props?.currentLocale;
+  appSdk = props?.extension;
 
   const finalConfig = getConfig();
 
