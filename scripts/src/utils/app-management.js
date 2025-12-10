@@ -3,6 +3,7 @@ const {
   getDeveloperhubBaseUrl,
   openLink,
   safePromise,
+  getAppBaseUrl,
 } = require("./helpers");
 
 const createApp = async (region, authtoken, orgId, appName, description) => {
@@ -87,14 +88,14 @@ const updateInstallation = async (
 };
 
 const getExtension = async (
-  csBaseUrl,
+  baseUrl,
   authtoken,
   stackApiKey,
   installationUid
 ) => {
   try {
     const [extErr, extensions] = await safePromise(
-      getInstalledApps(csBaseUrl, authtoken, stackApiKey),
+      getInstalledApps(baseUrl, authtoken, stackApiKey),
       "Failed to fetch installed apps!"
     );
 
@@ -133,7 +134,7 @@ const getExtension = async (
 };
 
 const createContentType = async (
-  csBaseUrl,
+  baseUrl,
   authtoken,
   stackApiKey,
   title,
@@ -142,7 +143,7 @@ const createContentType = async (
 ) => {
   const [ctError, ctData] = await safePromise(
     makeApiCall({
-      url: `${csBaseUrl}/v3/content_types`,
+      url: `${baseUrl}/v3/content_types`,
       method: "POST",
       headers: { authtoken, api_key: stackApiKey },
       data: { content_type: { title, uid, schema } },
@@ -163,11 +164,12 @@ const createContentType = async (
 };
 
 const createSampleEntry = async (
-  csBaseUrl,
+  baseUrl,
   authtoken,
   stackApiKey,
   contentTypeUid,
-  fieldUid
+  fieldUid,
+  region
 ) => {
   let entryData = {
     title: "Dam boilerplate sample",
@@ -175,7 +177,7 @@ const createSampleEntry = async (
   };
 
   const [rteFieldUid, damFieldUid] = fieldUid;
-
+  const appBaseUrl = getAppBaseUrl(region);
   entryData[rteFieldUid] = {
     type: "doc",
     attrs: {},
@@ -208,7 +210,7 @@ const createSampleEntry = async (
 
   const [entryErr, entryRes] = await safePromise(
     makeApiCall({
-      url: `${csBaseUrl}/v3/content_types/${contentTypeUid}/entries`,
+      url: `${baseUrl}/v3/content_types/${contentTypeUid}/entries`,
       method: "POST",
       headers: { authtoken, api_key: stackApiKey },
       data: { entry: entryData },
@@ -226,7 +228,12 @@ const createSampleEntry = async (
 
   console.info("Entry created:", entryRes.entry.uid);
 
-  const entryUrl = `https://app.contentstack.com/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/en-us/entry/${entryRes.entry.uid}/edit?branch=main`;
+  const ctUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/content-type-builder`;
+  const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/en-us/entry/${entryRes?.entry.uid}/edit`;
+
+  console.info("Content type url: " + ctUrl);
+  openLink(ctUrl);
+  console.info("Entry url: " + entryUrl);
   openLink(entryUrl);
 
   return entryRes.entry.uid;
