@@ -18,13 +18,15 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     const context = authenticateUser();
     if (!context) return;
 
-    const { authtoken, selectedOrgUid, appBaseUrl } = context;
+    const { authtoken, selectedOrgUid, appBaseUrl, region } = context;
     const launchManifest = getLaunchManifest();
 
     let projectName, envName, launchSubDomain;
 
     if (launchManifest.created) {
-      console.info("Launch deployment details found, using existing project details.");
+      console.info(
+        "Launch deployment details found, using existing project details."
+      );
       projectName = launchManifest.data.project_name;
       envName = launchManifest.data.env_name;
       launchSubDomain = launchManifest.data.subdomain;
@@ -35,13 +37,13 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     }
 
     // Build and upload app zip (common for both paths)
-    const buildPath = buildAppZip(projectName);
+    const buildPath = buildAppZip(launchSubDomain, region);
     const uploadMetaData = await getUploadMetaData(
       authtoken,
       appBaseUrl,
       selectedOrgUid
     );
-    await uploadAppZip(uploadMetaData, buildPath);
+    await uploadAppZip(region, uploadMetaData, buildPath);
 
     if (launchManifest.created) {
       console.info("Redeploying the app now.");
@@ -60,6 +62,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       });
     } else {
       const launchMetaData = await createProject(
+        region,
         authtoken,
         selectedOrgUid,
         appBaseUrl,

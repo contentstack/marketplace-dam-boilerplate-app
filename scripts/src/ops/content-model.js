@@ -25,7 +25,10 @@ const installationData = require("../../settings/app-installation.json");
 
     if (useLatest) {
       selectedApp = installationData[installationData.length - 1];
-      console.info("Creating content model for the latest app:", selectedApp.appName || selectedApp.appUid);
+      console.info(
+        "Creating content model for the latest app:",
+        selectedApp.appName || selectedApp.appUid
+      );
     } else {
       const appChoices = installationData.map(
         (inst) => inst.appName || inst.appUid
@@ -79,7 +82,8 @@ const installationData = require("../../settings/app-installation.json");
       loginData.authtoken,
       stackApiKey,
       ctUid,
-      ["dam_rte_field", "dam_field"]
+      ["dam_rte_field", "dam_field"],
+      selectedApp.region
     );
   } catch (error) {
     console.error("Failed in content-model:", error.message || error);

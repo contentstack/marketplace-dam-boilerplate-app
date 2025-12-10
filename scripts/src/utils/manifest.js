@@ -3,49 +3,6 @@ const path = require("path");
 
 const INSTALLATIONS_FILE = "app-installation.json";
 
-const saveInstallation = (
-  appName,
-  appUid,
-  stackApiKey,
-  installationUid,
-  csBaseUrl,
-  appEnv
-) => {
-  let installations = [];
-  const installationsPath = path.join(
-    __dirname,
-    `../../settings/${INSTALLATIONS_FILE}`
-  );
-
-  if (fs.existsSync(installationsPath)) {
-    try {
-      const installationData = fs.readFileSync(installationsPath, "utf-8");
-      installations = JSON.parse(installationData);
-    } catch (e) {
-      console.error("Failed to parse installations.json, resetting file.");
-    }
-  }
-
-  const exists = installations.find(
-    (i) => i.appUid === appUid && i.stackApiKey === stackApiKey
-  );
-
-  if (!exists) {
-    installations.push({
-      appName,
-      appUid,
-      stackApiKey,
-      installationUid,
-      csBaseUrl,
-      appEnv,
-    });
-    fs.writeFileSync(
-      installationsPath,
-      JSON.stringify(installations, null, 2)
-    );
-  }
-};
-
 const updateAppManifest = (manifest, appEnv) => {
   fs.writeFileSync(
     path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
@@ -84,10 +41,51 @@ const getLaunchManifest = () => {
   }
 };
 
+const saveInstallation = (
+  appName,
+  appUid,
+  stackApiKey,
+  installationUid,
+  csBaseUrl,
+  appEnv,
+  region
+) => {
+  let installations = [];
+  const installationsPath = path.join(
+    __dirname,
+    `../../settings/${INSTALLATIONS_FILE}`
+  );
+
+  if (fs.existsSync(installationsPath)) {
+    try {
+      const installationData = fs.readFileSync(installationsPath, "utf-8");
+      installations = JSON.parse(installationData);
+    } catch (e) {
+      console.error("Failed to parse installations.json, resetting file.");
+    }
+  }
+
+  const exists = installations.find(
+    (i) => i.appUid === appUid && i.stackApiKey === stackApiKey
+  );
+
+  if (!exists) {
+    installations.push({
+      appName,
+      appUid,
+      stackApiKey,
+      installationUid,
+      csBaseUrl,
+      appEnv,
+      region,
+    });
+    fs.writeFileSync(installationsPath, JSON.stringify(installations, null, 2));
+  }
+};
+
 module.exports = {
   saveInstallation,
   updateAppManifest,
   updateLaunchManifest,
   getLaunchManifest,
 };
-
