@@ -73,18 +73,18 @@ const install = async (
 
       if (installError) return;
       installData = newInstallData;
-
-      const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
-      openLink(configPage);
-      console.info("Installing app completed successfully");
     }
+    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+    openLink(configPage);
+    console.info("Installing app completed successfully");
     saveInstallation(
       manifestData.name,
       appUid,
       stackApiKey,
       installData.data.installation_uid,
       baseUrl,
-      appEnv
+      appEnv,
+      region
     );
 
     return installData;

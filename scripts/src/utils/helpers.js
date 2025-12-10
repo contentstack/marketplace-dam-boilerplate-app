@@ -5,6 +5,50 @@ const readlineSync = require("readline-sync");
 const path = require("path");
 const constants = require("../constants");
 
+const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
+  try {
+    const res = await axios({
+      url,
+      method,
+      timeout: 60 * 1000,
+      headers,
+      ...(maxBodyLength ? { maxBodyLength } : {}),
+      ...(["PUT", "POST", "DELETE", "PATCH"].includes(method) && {
+        data,
+      }),
+    });
+
+    return res?.data;
+  } catch (error) {
+    console.error(error);
+    throw error.response?.data || error.message || error;
+  }
+};
+
+const safePromise = (promise, errorText) =>
+  promise
+    .then((res) => [null, res])
+    .catch((err) => {
+      console.error(errorText);
+      return [err];
+    });
+
+const getBaseUrl = (region) => {
+  const baseUrl = constants.BASE_URLS.find((item) => item.region === region);
+  return baseUrl ? baseUrl.url : constants.BASE_URLS[0].url;
+};
+
+const getAppBaseUrl = (region) => {
+  const baseUrl = constants.APP_BASE_URLS.find(
+    (item) => item.region === region
+  );
+  return baseUrl ? baseUrl.url : constants.APP_BASE_URLS[0].url;
+};
+
+const getDeveloperhubBaseUrl = (region) =>
+  constants.DEVELOPERHUB_BASE_URLS.find((url) => url.region === region)?.url ||
+  constants.DEVELOPERHUB_BASE_URLS[0].url;
+
 const openLink = (url) => {
   const cmd =
     process.platform === "win32"
@@ -29,50 +73,6 @@ const runCommand = (command, options = {}) => {
   });
 };
 
-const getBaseUrl = (region) => {
-  const baseUrl = constants.BASE_URLS.find((item) => item.region === region);
-  return baseUrl ? baseUrl.url : constants.BASE_URLS[0].url;
-};
-
-const getAppBaseUrl = (region) => {
-  const baseUrl = constants.APP_BASE_URLS.find(
-    (item) => item.region === region
-  );
-  return baseUrl ? baseUrl.url : constants.APP_BASE_URLS[0].url;
-};
-
-const getDeveloperhubBaseUrl = (region) =>
-  constants.DEVELOPERHUB_BASE_URLS.find((url) => url.region === region)?.url ||
-  constants.DEVELOPERHUB_BASE_URLS[0].url;
-
-const safePromise = (promise, errorText) =>
-  promise
-    .then((res) => [null, res])
-    .catch((err) => {
-      console.error(errorText);
-      return [err];
-    });
-
-const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
-  try {
-    const res = await axios({
-      url,
-      method,
-      timeout: 60 * 1000,
-      headers,
-      ...(maxBodyLength ? { maxBodyLength } : {}),
-      ...(["PUT", "POST", "DELETE", "PATCH"].includes(method) && {
-        data,
-      }),
-    });
-
-    return res?.data;
-  } catch (error) {
-    console.error(error);
-    throw error.response?.data || error.message || error;
-  }
-};
-
 // File system helper functions
 const safeDelete = (filePath) => {
   if (fs.existsSync(filePath)) {
@@ -89,8 +89,10 @@ const updateEnvFile = (filePath, key, value) => {
   const regex = new RegExp(`^${key}=.*$`, "m");
   const updatedContent = regex.test(originalContent || "")
     ? (originalContent || "").replace(regex, `${key}=${value}`)
-    : `${originalContent || ""}${originalContent && !originalContent.endsWith("\n") ? "\n" : ""}${key}=${value}\n`;
-  
+    : `${originalContent || ""}${
+        originalContent && !originalContent.endsWith("\n") ? "\n" : ""
+      }${key}=${value}\n`;
+
   fs.writeFileSync(filePath, updatedContent, "utf-8");
   return originalContent;
 };
@@ -98,11 +100,14 @@ const updateEnvFile = (filePath, key, value) => {
 const authenticateUser = () => {
   let loginData;
   try {
-    loginData = require(path.join(__dirname, "../../settings/credentials.json"));
+    loginData = require(path.join(
+      __dirname,
+      "../../settings/credentials.json"
+    ));
   } catch (error) {
     loginData = null;
   }
-  
+
   if (!loginData?.authtoken) {
     console.info("Login credentials not found. Please login.");
     return null;
