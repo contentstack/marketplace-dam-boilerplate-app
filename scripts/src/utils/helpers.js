@@ -49,6 +49,22 @@ const getDeveloperhubBaseUrl = (region) =>
   constants.DEVELOPERHUB_BASE_URLS.find((url) => url.region === region)?.url ||
   constants.DEVELOPERHUB_BASE_URLS[0].url;
 
+const buildDeploymentUrl = (launchSubDomain, region, deploymentUrl = null) => {
+  if (deploymentUrl) {
+    return deploymentUrl;
+  }
+
+  let url = `https://${launchSubDomain}.`;
+  if (region === "" || region === "eu") {
+    url += `${region === "" ? "" : `${region}-`}contentstackapps.com`;
+  } else if (region === "azure-na" || region === "azure-eu") {
+    url = `${region === "azure-na" ? "" : "eu-"}azcontentstackapps.com`;
+  } else {
+    url += "gcpcontentstackapps.com";
+  }
+  return url;
+};
+
 const openLink = (url) => {
   const cmd =
     process.platform === "win32"
@@ -146,6 +162,7 @@ module.exports = {
   getBaseUrl,
   getAppBaseUrl,
   getDeveloperhubBaseUrl,
+  buildDeploymentUrl,
   safePromise,
   makeApiCall,
   safeDelete,
