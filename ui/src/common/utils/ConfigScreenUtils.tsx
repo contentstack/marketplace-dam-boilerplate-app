@@ -1,4 +1,6 @@
 import { Configurations, Props, TypeOption } from "../types";
+import constants from "../constants";
+import localeTexts from "../locale/en-us";
 
 const isObject = (value: any) =>
   value !== null && typeof value === "object" && !Array.isArray(value);
@@ -320,6 +322,49 @@ const validateConfigRules = (config: Props, serverConfig: Props) => {
   return { disableSave: false, message: "" };
 };
 
+// Select component styles for RuleContainer
+const customSelectStyles = {
+  menuPortal: (base: any) => ({ ...base, zIndex: 99999 }),
+  singleValue: (base: any) => ({
+    ...base,
+    maxWidth: "100%",
+    ...constants.textOverflowStyles,
+  }),
+  multiValue: (base: any) => ({
+    ...base,
+    maxWidth: "100%",
+  }),
+  multiValueLabel: (base: any) => ({
+    ...base,
+    maxWidth: "100%",
+    ...constants.textOverflowStyles,
+  }),
+  option: (base: any) => ({
+    ...base,
+    ...constants.textOverflowStyles,
+  }),
+};
+
+// Helper function to get select styles for invalid config
+const getInvalidConfigSelectStyles = (isInvalid: boolean) => {
+  if (!isInvalid) return customSelectStyles;
+
+  const colors = localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigColors;
+
+  return {
+    ...customSelectStyles,
+    control: (base: any, state: any) => ({
+      ...base,
+      borderColor: state?.isFocused ? colors?.borderFocused : colors?.borderUnfocused,
+      borderWidth: "1px",
+      boxShadow: state?.isFocused ? `0 0 0 2px ${colors?.boxShadow}` : "none",
+      "&:hover": {
+        borderColor: colors?.borderHover,
+      },
+    }),
+  };
+};
+
 const ConfigScreenUtils = {
   mergeObjects,
   getOptions,
@@ -330,6 +375,8 @@ const ConfigScreenUtils = {
   getModifiedConditionalOptions,
   mergeOptions,
   validateConfigRules,
+  customSelectStyles,
+  getInvalidConfigSelectStyles,
 };
 
 export default ConfigScreenUtils;

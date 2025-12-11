@@ -12,7 +12,6 @@ import { isNull } from "lodash";
 import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 import getDataFromAPI from "../../services";
 import { LocaleType } from "../types";
-import { getCachedLocales, setCachedLocales } from "../utils/localeCache";
 
 const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [failed, setFailed] = useState<boolean>(false);
@@ -21,42 +20,33 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
   const [localesByBranch, setLocalesByBranch] = useState<
     Record<string, LocaleType[]>
   >({});
+  const [loadingBranches, setLoadingBranches] = useState<Set<string>>(
+    new Set()
+  );
 
-  // Track in-flight requests to prevent duplicate API calls
+  // prevent duplicate API calls
   const inFlightRequestsRef = useRef<Map<string, Promise<LocaleType[]>>>(
     new Map()
   );
 
-  // Function to fetch locales for a specific branch with caching
+  // Function to fetch locales for a specific branch
   const fetchLocalesForBranch = useCallback(
     async (branch: string) => {
       if (!appSdk || !branch) return;
 
-      // Check if request is already in flight
-      if (inFlightRequestsRef.current.has(branch)) {
-        console.info(
-          `!!!🚀 Request already in flight for branch "${branch}", waiting...`
-        );
-        await inFlightRequestsRef.current.get(branch);
+      if (inFlightRequestsRef?.current?.has(branch)) {
+        await inFlightRequestsRef?.current?.get(branch);
         return;
       }
 
-      // Check if already in state (in-memory cache) - fastest check first
-      if (localesByBranch[branch]) {
+      // Check if already in cache state
+      if (localesByBranch?.[branch]) {
         return;
       }
 
-      // Check cache second
-      const cachedLocales = getCachedLocales(branch);
-      if (cachedLocales) {
-        setLocalesByBranch((prev) => ({
-          ...prev,
-          [branch]: cachedLocales,
-        }));
-        return;
-      }
+      setLoadingBranches((prev) => new Set(prev)?.add(branch));
 
-      // Create new request
+      // New request
       const fetchPromise = (async () => {
         try {
           const stack: any = appSdk?.stack;
@@ -66,10 +56,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
           );
           const fetchedLocales = localesData?.locales ?? [];
 
-          // Update cache
-          setCachedLocales(branch, fetchedLocales);
-
-          // Update state
+          // Update cache state
           setLocalesByBranch((prev) => ({
             ...prev,
             [branch]: fetchedLocales,
@@ -83,15 +70,18 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
           );
           throw error;
         } finally {
-          // Remove from in-flight requests
-          inFlightRequestsRef.current.delete(branch);
+          // Remove from requests queue 
+          inFlightRequestsRef?.current?.delete(branch);
+          setLoadingBranches((prev) => {
+            const next = new Set(prev);
+            next?.delete(branch);
+            return next;
+          });
         }
       })();
 
-      // Store the promise
-      inFlightRequestsRef.current.set(branch, fetchPromise);
+      inFlightRequestsRef?.current?.set(branch, fetchPromise);
 
-      // Wait for the request
       await fetchPromise;
     },
     [appSdk, localesByBranch]
@@ -99,8 +89,14 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
 
   // Helper function to get locales for a specific branch
   const getLocalesForBranch = useCallback(
-    (branch: string): LocaleType[] => localesByBranch[branch] ?? [],
+    (branch: string): LocaleType[] => localesByBranch?.[branch] ?? [],
     [localesByBranch]
+  );
+
+  // Helper function to check if a branch is loading
+  const isBranchLoading = useCallback(
+    (branch: string): boolean => loadingBranches?.has(branch),
+    [loadingBranches]
   );
 
   // Initialize the SDK
@@ -129,6 +125,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
       getDataFromAPI: getDataFromAPI as (data?: any) => Promise<any>,
       fetchLocalesForBranch,
       getLocalesForBranch,
+      isBranchLoading,
     }),
     [
       appSdk,
@@ -137,6 +134,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
       localesByBranch,
       fetchLocalesForBranch,
       getLocalesForBranch,
+      isBranchLoading,
     ]
   );
 

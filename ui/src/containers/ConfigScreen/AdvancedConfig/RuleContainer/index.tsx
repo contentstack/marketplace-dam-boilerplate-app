@@ -1,34 +1,15 @@
 import React, { useMemo } from "react";
-import { Icon, Select, Tooltip } from "@contentstack/venus-components";
+import { Icon, Select, Tooltip, AsyncLoader } from "@contentstack/venus-components";
 import {
   RuleContainerMapping,
   RuleContainerProps,
 } from "../../../../common/types/index";
 import constants from "../../../../common/constants";
 import localeTexts from "../../../../common/locale/en-us";
+import ConfigScreenUtils from "../../../../common/utils/ConfigScreenUtils";
 import "./styles.scss";
 
-const customSelectStyles = {
-  menuPortal: (base: any) => ({ ...base, zIndex: 99999 }),
-  singleValue: (base: any) => ({
-    ...base,
-    maxWidth: "100%",
-    ...constants.textOverflowStyles,
-  }),
-  multiValue: (base: any) => ({
-    ...base,
-    maxWidth: "100%",
-  }),
-  multiValueLabel: (base: any) => ({
-    ...base,
-    maxWidth: "100%",
-    ...constants.textOverflowStyles,
-  }),
-  option: (base: any) => ({
-    ...base,
-    ...constants.textOverflowStyles,
-  }),
-};
+const { customSelectStyles, getInvalidConfigSelectStyles } = ConfigScreenUtils;
 
 // Small helpers to make intent clear without changing structure
 function isBranchLevel(locales: string | string[] | null | undefined): boolean {
@@ -83,6 +64,7 @@ function RuleContainer({
   configOptions,
   getLocaleOptionsForBranch,
   validConfigs,
+  isBranchLoading,
   onBranchSelect,
   onConfigSelect,
   onLocaleSelect,
@@ -160,17 +142,26 @@ function RuleContainer({
   const renderRow = (mapping: RuleContainerMapping, index: number) => {
     const branchValue = mapping?.left ?? mapping?.branch_uid ?? null;
 
+    // access current branch
+    let branchString: string | null = null;
+    if (branchValue) {
+      branchString = Array.isArray(branchValue) ? branchValue[0] : branchValue;
+    }
+
+    // Check loading status for this branch
+    const isLoadingLocales = branchString && isBranchLoading
+      ? isBranchLoading(branchString)
+      : false;
+
     // Get branch-specific locale options
-    const branchLocaleOptions = branchValue && getLocaleOptionsForBranch
-      ? getLocaleOptionsForBranch(
-        Array.isArray(branchValue) ? branchValue[0] : branchValue
-      )
+    const branchLocaleOptions = branchString && getLocaleOptionsForBranch
+      ? getLocaleOptionsForBranch(branchString)
       : [];
     const configValue = mapping?.right ?? mapping?.config_label ?? null;
     const localeValues = mapping?.middle ?? mapping?.locales_uid ?? null;
 
     const branchSelectValue = isMultiBranch
-      ? branchOptions.filter(
+      ? branchOptions?.filter(
         (opt) =>
           Array.isArray(branchValue) && branchValue?.includes(opt?.value)
       )
@@ -190,7 +181,7 @@ function RuleContainer({
       )
       : branchLocaleOptions?.find((opt) => opt?.value === localeValues) ?? null;
 
-    // Determine if this row's config is invalid (deleted or missing from available configs)
+    // Check if this row's config is invalid (deleted or missing from available configs)
     let rowConfig: string | undefined;
     if (typeof configValue === "string") {
       rowConfig = configValue;
@@ -201,11 +192,10 @@ function RuleContainer({
     const isInvalidConfig =
       Boolean(rowConfig) &&
       validConfigs instanceof Set &&
-      !validConfigs.has(rowConfig as string);
+      !validConfigs?.has(rowConfig as string);
 
     let disabledLocales: any[] = [];
     if (branchValue) {
-      // Normalize possible array of branches
       const branches = Array.isArray(branchValue) ? branchValue : [branchValue];
       branches?.forEach((branch) => {
         mappings?.forEach((otherMapping, otherIndex) => {
@@ -237,11 +227,11 @@ function RuleContainer({
     }
     const disabledLocalesSet = new Set(disabledLocales);
 
-    // Locale filtering - use branch-specific locales
+    // Locale filtering 
     const filteredLocaleOptions = isLocaleExhaustive
       ? branchLocaleOptions?.filter((opt) => {
         // Always allow currently selected locales for this row
-        if (Array.isArray(localeValues) && localeValues.includes(opt.value)) {
+        if (Array.isArray(localeValues) && localeValues?.includes(opt?.value)) {
           return true;
         }
 
@@ -256,16 +246,16 @@ function RuleContainer({
               otherMapping?.locales_uid ?? otherMapping?.middle;
 
             const isSameBranch = Array.isArray(branchValue)
-              ? branchValue.includes(otherBranch)
+              ? branchValue?.includes(otherBranch)
               : branchValue === otherBranch;
 
             if (!isSameBranch) return false;
 
             // Check if this locale is in the other mapping's locales
             if (Array.isArray(otherLocales)) {
-              return otherLocales.includes(opt.value);
+              return otherLocales?.includes(opt?.value);
             }
-            return otherLocales === opt.value;
+            return otherLocales === opt?.value;
           }
         );
 
@@ -274,7 +264,7 @@ function RuleContainer({
       : branchLocaleOptions?.filter((opt) => !disabledLocalesSet?.has(opt?.value));
 
     const filteredBranchOptions = isBranchExhaustive
-      ? branchOptions.filter(
+      ? branchOptions?.filter(
         (opt) =>
           !selectedBranchValues?.includes(opt?.value) ||
           (isMultiBranch &&
@@ -290,7 +280,7 @@ function RuleContainer({
         // Always allow the currently selected config for this row
         if (opt?.value === configValue) return true;
 
-        // Check if user is trying to create a branch-level rule (no locales selected)
+        // Check if user is trying to create a branch-level rule 
         const isCurrentBranchLevel = isBranchLevel(localeValues);
 
         // Prevent multiple branch-level rules for same branch
@@ -312,7 +302,7 @@ function RuleContainer({
 
         // If config is used at branch level, don't allow it for ANY other rules on same branch
         if (isConfigUsedAtBranchLevelFlag) {
-          return false; // Block the config completely for this branch
+          return false;
         }
 
         // Check if this would create a duplicate branch-level config
@@ -342,7 +332,7 @@ function RuleContainer({
         );
 
         if (isDuplicateBranchLevelConfig) {
-          return false; // Block duplicate branch-level configs (same config)
+          return false; // Block duplicate branch-level configs
         }
 
         // Only block config if it's already used for the same branch
@@ -364,10 +354,12 @@ function RuleContainer({
       })
       : configOptions;
 
+    const selectStyles = getInvalidConfigSelectStyles(isInvalidConfig);
+
     return (
       <div
         key={`pair-${index}`}
-        className={containerClass}
+        className={`${containerClass} ${isInvalidConfig ? "invalid-config-row" : ""}`}
         style={{ "--select-width": selectWidth } as React.CSSProperties}
       >
         <div className="select-wrapper">
@@ -390,7 +382,7 @@ function RuleContainer({
 
         <span className={separatorClass}>{separator}</span>
 
-        <div className="select-wrapper">
+        <div className={`select-wrapper ${isInvalidConfig ? "invalid-config-select-wrapper" : ""}`}>
           <Select
             value={configSelectValue}
             onChange={(option: any) => onConfigSelect!(option, index)}
@@ -404,32 +396,51 @@ function RuleContainer({
             multiDisplayLimit={multiDisplayLimit}
             noOptionsMessage={() => noOptionsMessage}
             menuPortalTarget={document.body}
-            styles={customSelectStyles}
+            styles={selectStyles}
           />
+          {isInvalidConfig && rowConfig && (
+            <div className="config-error-hint">
+              <Icon
+                icon="WarningBold"
+                size="mini"
+                version="v2"
+                className="error-hint-icon"
+              />
+              <span className="error-hint-text">
+                <strong>&quot;{rowConfig}&quot;</strong> was removed. Please select a new config.
+              </span>
+            </div>
+          )}
         </div>
 
         {onLocaleSelect && (
           <>
             <span className={separatorClass}>{separator}</span>
             <div className="select-wrapper middle-select-wrapper">
-              <Select
-                value={localeSelectValue}
-                onChange={(option: any) => onLocaleSelect!(option, index)}
-                options={filteredLocaleOptions ?? []}
-                placeholder={localePlaceholder}
-                isSearchable={isSearchable}
-                menuShouldScrollIntoView={false}
-                multiDisplayLimit={multiDisplayLimit}
-                width={selectWidth}
-                isMulti={isMultiLocale}
-                version="v2"
-                isSelectAll={filteredLocaleOptions?.length > 0}
-                noOptionsMessage={() => noOptionsMessage}
-                menuPortalTarget={document.body}
-                isDisabled={
-                  !branchValue || !branchLocaleOptions || branchLocaleOptions?.length === 0
-                }
-              />
+              {isLoadingLocales ? (
+                <div className="locale-select-loading-wrapper">
+                  <AsyncLoader color={constants.constantStyles.loaderColor} />
+                </div>
+              ) : (
+                <Select
+                  value={localeSelectValue}
+                  onChange={(option: any) => onLocaleSelect!(option, index)}
+                  options={filteredLocaleOptions ?? []}
+                  placeholder={localePlaceholder}
+                  isSearchable={isSearchable}
+                  menuShouldScrollIntoView={false}
+                  multiDisplayLimit={multiDisplayLimit}
+                  width={selectWidth}
+                  isMulti={isMultiLocale}
+                  version="v2"
+                  isSelectAll={filteredLocaleOptions?.length > 0}
+                  noOptionsMessage={() => noOptionsMessage}
+                  menuPortalTarget={document.body}
+                  isDisabled={
+                    !branchValue || !branchLocaleOptions || branchLocaleOptions?.length === 0
+                  }
+                />
+              )}
             </div>
           </>
         )}
@@ -459,22 +470,7 @@ function RuleContainer({
                 shadow="medium"
               />
             )}
-            {isInvalidConfig ? (
-              <Tooltip
-                content={localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigTooltip}
-                position="top"
-                showArrow={false}
-              >
-                <Icon
-                  icon="WarningBold"
-                  size="small"
-                  version="v2"
-                  className="warning-icon"
-                />
-              </Tooltip>
-            ) : (
-              <div className="warning-icon-placeholder" />
-            )}
+            <div className="warning-icon-placeholder" />
           </div>
         )}
       </div>

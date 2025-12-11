@@ -595,12 +595,12 @@ function Table({
                         // This ensures all selected assets are returned, not just those on the current page
                         successFn(selectedAssets);
                     }}
-                    disabled={selectedAssets.length === 0}
+                    disabled={!selectedAssets?.length}
                     style={{
                         backgroundColor:
-                            selectedAssets.length === 0 ? "#ccc" : "#6366f1",
+                            !selectedAssets?.length ? "#ccc" : "#6366f1",
                         cursor:
-                            selectedAssets.length === 0
+                            !selectedAssets?.length
                                 ? "not-allowed"
                                 : "pointer",
                     }}
@@ -617,7 +617,7 @@ function Table({
                     >
                         <path d="M6 0v12M12 6H0" stroke="#fff" strokeWidth="2" />
                     </svg>
-                    {`Add ${selectedAssets.length} Asset${selectedAssets.length !== 1 ? "s" : ""
+                    {`Add ${selectedAssets?.length} Asset${selectedAssets?.length > 1 ? "s" : ""
                         }`}
                 </Button>
             </div>
