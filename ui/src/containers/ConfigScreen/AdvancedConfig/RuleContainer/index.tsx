@@ -406,9 +406,15 @@ function RuleContainer({
                 version="v2"
                 className="error-hint-icon"
               />
-              <span className="error-hint-text">
-                <strong>&quot;{rowConfig}&quot;</strong> was removed. Please select a new config.
-              </span>
+              <span
+                className="error-hint-text"
+                dangerouslySetInnerHTML={{
+                  __html: localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigErrorMessage?.replace(
+                    "{configName}",
+                    rowConfig
+                  ) || `"${rowConfig}" was removed. Please select a new config.`
+                }}
+              />
             </div>
           )}
         </div>

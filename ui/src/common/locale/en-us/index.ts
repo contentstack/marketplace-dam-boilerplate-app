@@ -103,6 +103,7 @@ const localeTexts = {
         deleteTooltip: "Remove",
         separator: "-",
         invalidConfigTooltip: "This configuration was removed. This rule will not work.",
+        invalidConfigErrorMessage: "<strong>\"{configName}\"</strong> was removed. Please select a new config.",
         branchHeader: "Branch",
         configHeader: "Config",
         localeHeader: "Locale",
