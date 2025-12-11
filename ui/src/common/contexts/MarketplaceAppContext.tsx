@@ -10,7 +10,8 @@ export type MarketplaceAppContextType = {
   localesByBranch: Record<string, LocaleType[]>; // Branch-specific locales
   getDataFromAPI: (data?: any) => Promise<any>;
   fetchLocalesForBranch: (branch: string) => Promise<void>;
-  getLocalesForBranch: (branch: string) => LocaleType[]; // function to fetch branch specific locales
+  getLocalesForBranch: (branch: string) => LocaleType[]; 
+  isBranchLoading: (branch: string) => boolean; 
 };
 
 export const MarketplaceAppContext =
@@ -22,4 +23,5 @@ export const MarketplaceAppContext =
     getDataFromAPI: async () => ({} as Response),
     fetchLocalesForBranch: async () => {},
     getLocalesForBranch: () => [],
+    isBranchLoading: () => false,
   });

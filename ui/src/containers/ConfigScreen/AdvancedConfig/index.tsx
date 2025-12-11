@@ -20,6 +20,7 @@ function AdvancedConfig({
     fetchLocalesForBranch,
     getLocalesForBranch,
     appSdk,
+    isBranchLoading,
   } = React.useContext(MarketplaceAppContext);
 
   const defaultKey =
@@ -365,6 +366,7 @@ function AdvancedConfig({
       configOptions={rightBranchSpecificOptions}
       getLocaleOptionsForBranch={getLocaleOptionsForBranch}
       validConfigs={validConfigsSet}
+      isBranchLoading={isBranchLoading}
       onBranchSelect={onBranchSelect}
       onConfigSelect={onConfigSelect}
       onLocaleSelect={onLocalesSelect}

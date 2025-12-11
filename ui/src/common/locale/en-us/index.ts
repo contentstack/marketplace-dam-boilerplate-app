@@ -106,6 +106,12 @@ const localeTexts = {
         branchHeader: "Branch",
         configHeader: "Config",
         localeHeader: "Locale",
+        invalidConfigColors: {
+          borderFocused: "#ef4444",
+          borderUnfocused: "#f87171",
+          borderHover: "#ef4444",
+          boxShadow: "rgba(239, 68, 68, 0.1)",
+        },
       },
     },
   },

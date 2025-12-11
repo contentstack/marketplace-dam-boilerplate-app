@@ -10,6 +10,7 @@ function ConfigRules({
   configOptions,
   getLocaleOptionsForBranch,
   validConfigs,
+  isBranchLoading,
   onAddMapping,
   onBranchSelect,
   onConfigSelect,
@@ -44,6 +45,7 @@ function ConfigRules({
           configOptions={safeConfigOptions}
           getLocaleOptionsForBranch={getLocaleOptionsForBranch}
           validConfigs={validConfigs}
+          isBranchLoading={isBranchLoading}
           onBranchSelect={onBranchSelect}
           onConfigSelect={onConfigSelect}
           onLocaleSelect={onLocaleSelect}
