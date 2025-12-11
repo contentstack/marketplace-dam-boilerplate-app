@@ -9,7 +9,44 @@ const {
   runCommand,
   safeDelete,
   updateEnvFile,
+  buildDeploymentUrl,
 } = require("./helpers");
+
+const buildRtePlugin = (rteAppBasePath, deploymentUrl) => {
+  // Temporarily update .env file in RTE directory with deployment URL
+  const rteEnvPath = path.join(rteAppBasePath, ".env");
+  const fileExistedBefore = fs.existsSync(rteEnvPath);
+  const originalEnvContent = updateEnvFile(
+    rteEnvPath,
+    "REACT_APP_CUSTOM_FIELD_URL",
+    deploymentUrl
+  );
+  console.info(
+    `Updated .env file with REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`
+  );
+
+  try {
+    // Build the RTE plugin
+    runCommand("npm install", { cwd: rteAppBasePath });
+    runCommand("npm run build", { cwd: rteAppBasePath });
+    console.info("RTE plugin bundle ready.");
+  } finally {
+    // Restore original .env file content
+    if (fileExistedBefore) {
+      if (originalEnvContent === null) {
+        // File existed but had no content, restore empty file
+        fs.writeFileSync(rteEnvPath, "", "utf-8");
+      } else {
+        fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
+      }
+    } else {
+      // File didn't exist before, remove it if it was created
+      if (fs.existsSync(rteEnvPath)) {
+        fs.unlinkSync(rteEnvPath);
+      }
+    }
+  }
+};
 
 const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
   try {
@@ -33,17 +70,7 @@ const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
         return `{ key: "${key}", value: "${escapedValue}" }`;
       });
 
-    let url = "";
-    if (deploymentUrl) {
-      url = deploymentUrl;
-    } else {
-      url = `https://${launchSubDomain}.`;
-      if (region === "" || region === "eu")
-        url += `${region === "" ? "" : `${region}-`}contentstackapps.com`;
-      else if (region === "azure-na" || region === "azure-eu")
-        url = `${region === "azure-na" ? "" : "eu-"}azcontentstackapps.com`;
-      else url += "gcpcontentstackapps.com";
-    }
+    const url = buildDeploymentUrl(launchSubDomain, region, deploymentUrl);
 
     envVariables.push(`{ key: "REACT_APP_CUSTOM_FIELD_URL", value: "${url}" }`);
 
@@ -62,17 +89,7 @@ const buildAppZip = (launchSubDomain, region) => {
     const buildBasePath = path.join(__dirname, "../build");
     const buildPath = `${buildBasePath}/app.zip`;
 
-    let deploymentUrl = `https://${launchSubDomain}.`;
-    if (region === "" || region === "eu")
-      deploymentUrl += `${
-        region === "" ? "" : `${region}-`
-      }contentstackapps.com`;
-    else if (region === "azure-na" || region === "azure-eu")
-      deploymentUrl = `${
-        region === "azure-na" ? "" : "eu-"
-      }azcontentstackapps.com`;
-    else deploymentUrl += "gcpcontentstackapps.com";
-
+    const deploymentUrl = buildDeploymentUrl(launchSubDomain, region);
     const pluginUrl = `${deploymentUrl}/plugin.system.js`;
     console.info(`Using plugin URL in functions/dam.js: ${pluginUrl}`);
 
@@ -80,33 +97,8 @@ const buildAppZip = (launchSubDomain, region) => {
     safeDelete(path.join(uiAppBasePath, "build"));
     safeDelete(buildBasePath);
 
-    // Temporarily update .env file in RTE directory with deployment URL
-    const rteEnvPath = path.join(rteAppBasePath, ".env");
-    const fileExistedBefore = fs.existsSync(rteEnvPath);
-    const originalEnvContent = updateEnvFile(
-      rteEnvPath,
-      "REACT_APP_CUSTOM_FIELD_URL",
-      deploymentUrl
-    );
-    console.info(
-      `Updated .env file with REACT_APP_CUSTOM_FIELD_URL=${deploymentUrl}`
-    );
-
-    try {
-      // Build the RTE plugin
-      runCommand("npm install", { cwd: rteAppBasePath });
-      runCommand("npm run build", { cwd: rteAppBasePath });
-      console.info("RTE plugin bundle ready.");
-    } finally {
-      if (fileExistedBefore) {
-        if (originalEnvContent === null) {
-          // File existed but had no content, restore empty file
-          fs.writeFileSync(rteEnvPath, "", "utf-8");
-        } else {
-          fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
-        }
-      }
-    }
+    // Build the RTE plugin
+    buildRtePlugin(rteAppBasePath, deploymentUrl);
 
     // create a new build folder
     fs.mkdirSync(buildBasePath, { recursive: true });
@@ -492,7 +484,8 @@ const reDeployProject = async (
       }),
     });
 
-    const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${res?.data?.createDeployment?.uid}`;
+    const deploymentUid = res?.data?.createDeployment?.uid;
+    const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${deploymentUid}`;
     console.info("Redeployment was successful...");
     console.info(
       `Build and deployment has been initiated. You can check the logs at: ${projectUrl}`

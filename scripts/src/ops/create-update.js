@@ -79,11 +79,21 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     if (op === "create-app") {
       if (appEnv === "dev") {
-        console.info("\n⚠️  Note: Both RTE and Custom DAM fields will be created.");
-        console.info("   For local development, only one can work at a time:");
-        console.info("   - RTE Field: http://localhost:1268");
-        console.info("   - Custom DAM Field: http://localhost:4000");
-        console.info("   Start the appropriate server to test each field type.\n");
+        console.info("\n Note: Both RTE and Custom DAM fields will be created.");
+        console.info("   For local development, only one can work at a time.");
+        console.info("\n   Currently we have setup for Custom DAM Field in dev-app-manifest.json");
+        console.info("\n   To test the RTE Field:");
+        console.info("   1. Update dev-app-manifest.json with the new app URL:");
+        console.info("      {");
+        console.info("        \"ui_location\": {");
+        console.info("          \"base_url\": \"http://localhost:1268\"");
+        console.info("        },");
+        console.info("        \"hosting\": {");
+        console.info("          \"deployment_url\": \"http://localhost:1268\"");
+        console.info("        }");
+        console.info("      }\n");
+        console.info("   2. Start the RTE server by running 'npm run start' in the rte folder");
+
 
         const appManifest = { ...devAppManifest };
         await createAndDeployApp(appManifest);
