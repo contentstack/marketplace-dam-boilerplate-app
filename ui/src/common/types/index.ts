@@ -387,9 +387,9 @@ export interface RuleContainerProps {
   mappings: RuleContainerMapping[];
   branchOptions: RuleContainerOption[];
   configOptions: RuleContainerOption[];
-  getLocaleOptionsForBranch?: (branch: string) => RuleContainerOption[]; 
+  getLocaleOptionsForBranch?: (branch: string) => RuleContainerOption[];
   validConfigs?: Set<string>;
-  isBranchLoading?: (branch: string) => boolean; 
+  isBranchLoading?: (branch: string) => boolean;
 
   onBranchSelect: (data: any, index: number) => void;
   onConfigSelect: (data: any, index: number) => void;
