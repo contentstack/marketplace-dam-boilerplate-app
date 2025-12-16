@@ -53,7 +53,7 @@ const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
 const getInstalledApps = async (baseUrl, authtoken, stackApiKey) => {
   return makeApiCall({
     method: "GET",
-    url: `${baseUrl}/v3/extensions?include_marketplace_extensions=true`,
+    url: `${baseUrl}/v3/extensions?include_marketplace_extensions=true&desc=updated_at`,
     headers: {
       authtoken,
       api_key: stackApiKey,
@@ -136,40 +136,30 @@ const getExtension = async (
 const createContentType = async (
   baseUrl,
   authtoken,
+  orgId,
   stackApiKey,
-  title,
-  uid,
+  ctName,
   schema
-) => {
-  const [ctError, ctData] = await safePromise(
-    makeApiCall({
-      url: `${baseUrl}/v3/content_types`,
-      method: "POST",
-      headers: { authtoken, api_key: stackApiKey },
-      data: { content_type: { title, uid, schema } },
-    }),
-    "Failed to create content type"
-  );
-
-  if (ctError) {
-    console.error(
-      "Error creating content type:",
-      ctError.response?.data || ctError
-    );
-    throw ctError;
-  }
-
-  console.info("Content Type created:", ctData.content_type.uid);
-  return ctData;
-};
+) =>
+  makeApiCall({
+    url: `${baseUrl}/v3/content_types?organization_uid=${orgId}`,
+    method: "POST",
+    headers: { authtoken, api_key: stackApiKey },
+    data: {
+      content_type: {
+        title: ctName,
+        uid: ctName.trim().replace(/ /g, "_"),
+        schema,
+      },
+    },
+  });
 
 const createSampleEntry = async (
   baseUrl,
   authtoken,
   stackApiKey,
-  contentTypeUid,
-  fieldUid,
-  region
+  contentTypeId,
+  fieldUid
 ) => {
   let entryData = {
     title: "Dam boilerplate sample",
@@ -177,7 +167,6 @@ const createSampleEntry = async (
   };
 
   const [rteFieldUid, damFieldUid] = fieldUid;
-  const appBaseUrl = getAppBaseUrl(region);
   entryData[rteFieldUid] = {
     type: "doc",
     attrs: {},
@@ -208,35 +197,12 @@ const createSampleEntry = async (
     },
   ];
 
-  const [entryErr, entryRes] = await safePromise(
-    makeApiCall({
-      url: `${baseUrl}/v3/content_types/${contentTypeUid}/entries`,
+ return makeApiCall({
+      url: `${baseUrl}/v3/content_types/${contentTypeId}/entries?form_uid=${contentTypeId}&locale=en-us`,
       method: "POST",
       headers: { authtoken, api_key: stackApiKey },
       data: { entry: entryData },
-    }),
-    "Failed to create entry"
-  );
-
-  if (entryErr) {
-    console.error(
-      "Error creating entry:",
-      entryErr.response?.data || entryErr.message
-    );
-    return null;
-  }
-
-  console.info("Entry created:", entryRes.entry.uid);
-
-  const ctUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/content-type-builder`;
-  const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeUid}/en-us/entry/${entryRes?.entry.uid}/edit`;
-
-  console.info("Content type url: " + ctUrl);
-  openLink(ctUrl);
-  console.info("Entry url: " + entryUrl);
-  openLink(entryUrl);
-
-  return entryRes.entry.uid;
+    })
 };
 
 const buildContentTypeSchema = (extensionResults) => {
@@ -250,7 +216,6 @@ const buildContentTypeSchema = (extensionResults) => {
     },
   ];
 
-  // Always build both field types - extensionResults is an array with both extensions
   const extensions = Array.isArray(extensionResults)
     ? extensionResults
     : [extensionResults];
