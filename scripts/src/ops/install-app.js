@@ -6,10 +6,11 @@ const {
   safePromise,
   installApp,
   updateInstallation,
-  saveInstallation,
+  updateAppInstallation,
   getInstalledApps,
+  openLink
 } = require("../utils");
-const { openLink } = require("../utils");
+const appInstallationData = require("../../settings/app-installations.json");
 
 const install = async (
   appEnv,
@@ -34,6 +35,7 @@ const install = async (
     );
     if (stackIndex === -1) throw new Error("No stack selected!");
     const stackApiKey = stackData.stacks[stackIndex].api_key;
+    const stackName = stackData.stacks[stackIndex].name;
 
     const [installedError, installedAppsData] = await safePromise(
       getInstalledApps(baseUrl, authtoken, stackApiKey),
@@ -74,20 +76,41 @@ const install = async (
       if (installError) return;
       installData = newInstallData;
     }
+
+    const existingAppIndex = appInstallationData.apps.findIndex(
+      (app) => app.env === appEnv
+    );
+
+    const newInstallationEntry = {
+      env: appEnv,
+      region,
+      org_uid: orgId,
+      app_uid: appUid,
+      app_name: manifestData.app_name,
+      stack_api_key: stackApiKey,
+      stack_name: stackName,
+      status: installData?.data?.status || "",
+      installation_uid: installData?.data?.installation_uid,
+    };
+
+    let appInstallationManifest;
+    if (existingAppIndex >= 0) {
+      appInstallationManifest = {
+        apps: appInstallationData.apps.map((app, index) =>
+          index === existingAppIndex ? newInstallationEntry : app
+        ),
+      };
+    } else {
+      appInstallationManifest = {
+        apps: [...appInstallationData.apps, newInstallationEntry],
+      };
+    }
+
+    updateAppInstallation(appInstallationManifest);
+
     const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
     openLink(configPage);
     console.info("Installing app completed successfully");
-    saveInstallation(
-      manifestData.name,
-      appUid,
-      stackApiKey,
-      installData.data.installation_uid,
-      baseUrl,
-      appEnv,
-      region
-    );
-
-    return installData;
   }
 };
 
