@@ -11,7 +11,7 @@ const {
 } = require("./helpers");
 
 const {
-  saveInstallation,
+  updateAppInstallation,
   updateAppManifest,
   updateLaunchManifest,
   getLaunchManifest,
@@ -50,7 +50,7 @@ module.exports = {
   getDeveloperhubBaseUrl,
   buildDeploymentUrl,
   authenticateUser,
-  saveInstallation,
+  updateAppInstallation,
   updateAppManifest,
   updateLaunchManifest,
   getLaunchManifest,

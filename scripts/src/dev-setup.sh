@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# 16-byte random hex string
+set -e 
+
 echo "installing UI dependencies."
 cd ../ui
 npm i
@@ -19,6 +20,6 @@ cd ../scripts
 npm run create-dev-app
 
 echo "Creating content model and its entry for the latest app."
-npm run create-content-model -- latest
+npm run create-dev-content-model
 
 echo "Please run 'cd ../ui' and 'npm run start' or 'npm run startWin' to start the UI app."
