@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Creating a new launch project."
 npm run deploy-prod-app
 
@@ -7,4 +9,4 @@ echo "Creating a new production marketplace app."
 npm run create-prod-app
 
 echo "Creating content model and its entry for the latest app."
-npm run create-content-model -- latest
+npm run create-prod-content-model

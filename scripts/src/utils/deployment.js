@@ -13,7 +13,6 @@ const {
 } = require("./helpers");
 
 const buildRtePlugin = (rteAppBasePath, deploymentUrl) => {
-  // Temporarily update .env file in RTE directory with deployment URL
   const rteEnvPath = path.join(rteAppBasePath, ".env");
   const fileExistedBefore = fs.existsSync(rteEnvPath);
   const originalEnvContent = updateEnvFile(
@@ -26,21 +25,17 @@ const buildRtePlugin = (rteAppBasePath, deploymentUrl) => {
   );
 
   try {
-    // Build the RTE plugin
     runCommand("npm install", { cwd: rteAppBasePath });
     runCommand("npm run build", { cwd: rteAppBasePath });
     console.info("RTE plugin bundle ready.");
   } finally {
-    // Restore original .env file content
     if (fileExistedBefore) {
       if (originalEnvContent === null) {
-        // File existed but had no content, restore empty file
         fs.writeFileSync(rteEnvPath, "", "utf-8");
       } else {
         fs.writeFileSync(rteEnvPath, originalEnvContent, "utf-8");
       }
     } else {
-      // File didn't exist before, remove it if it was created
       if (fs.existsSync(rteEnvPath)) {
         fs.unlinkSync(rteEnvPath);
       }
@@ -93,17 +88,13 @@ const buildAppZip = (launchSubDomain, region) => {
     const pluginUrl = `${deploymentUrl}/plugin.system.js`;
     console.info(`Using plugin URL in functions/dam.js: ${pluginUrl}`);
 
-    // Clean up existing build folders
     safeDelete(path.join(uiAppBasePath, "build"));
     safeDelete(buildBasePath);
 
-    // Build the RTE plugin
     buildRtePlugin(rteAppBasePath, deploymentUrl);
 
-    // create a new build folder
     fs.mkdirSync(buildBasePath, { recursive: true });
 
-    // Copy the UI app to build folder except the rte, example, build and node_modules
     const pathsToSkip = ["rte", "build", "example", "node_modules"].map((dir) =>
       path.join(uiAppBasePath, dir)
     );
@@ -112,7 +103,6 @@ const buildAppZip = (launchSubDomain, region) => {
       filter: (src) => !pathsToSkip.some((skipPath) => src.includes(skipPath)),
     });
 
-    // Upload the dam.js plugin file build in rte into public directory
     const damBundlePath = path.join(uiAppBasePath, "build", "dist", "dam.js");
     const pluginDestinationPath = path.join(
       buildBasePath,
@@ -129,12 +119,10 @@ const buildAppZip = (launchSubDomain, region) => {
     fs.mkdirSync(path.dirname(pluginDestinationPath), { recursive: true });
     fs.copyFileSync(damBundlePath, pluginDestinationPath);
 
-    // Create functions/dam.js file in build directory using template
     const functionsDir = path.join(buildBasePath, "functions");
     const damFunctionPath = path.join(functionsDir, "dam.js");
     fs.mkdirSync(functionsDir, { recursive: true });
 
-    // Read template file and replace placeholder with actual plugin URL
     const templatePath = path.join(
       __dirname,
       "templates",
@@ -148,7 +136,6 @@ const buildAppZip = (launchSubDomain, region) => {
 
     fs.writeFileSync(damFunctionPath, damFunctionContent);
 
-    // Copy package.json to build folder
     const uiPackageJsonPath = path.join(uiAppBasePath, "package.json");
     const buildPackageJsonPath = path.join(buildBasePath, "package.json");
     fs.copyFileSync(uiPackageJsonPath, buildPackageJsonPath);
@@ -226,7 +213,7 @@ const _getAzureUploadHeaders = (metaData) => {
 };
 
 const uploadAppZip = async (region, metaData, filePath = "") => {
-  console.info("Uploading the app zip...", metaData);
+  console.info("Uploading the app zip...");
 
   try {
     if (region === "azure-na" || region === "azure-eu") {
@@ -238,7 +225,6 @@ const uploadAppZip = async (region, metaData, filePath = "") => {
         data: fs.readFileSync(filePath),
       });
     } else if (region === "" || region === "eu") {
-      //AWS cloud service provider
       const data = _getAwsUploadFormData(metaData, filePath);
       await makeApiCall({
         method: metaData?.method,
@@ -250,7 +236,6 @@ const uploadAppZip = async (region, metaData, filePath = "") => {
         data,
       });
     } else {
-      //Google cloud service provider
       await makeApiCall({
         method: metaData?.method,
         url: metaData?.uploadUrl,

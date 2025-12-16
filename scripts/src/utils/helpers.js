@@ -29,7 +29,7 @@ const safePromise = (promise, errorText) =>
   promise
     .then((res) => [null, res])
     .catch((err) => {
-      console.error(errorText);
+      console.error( err.response?.data || err.message || err);
       return [err];
     });
 
@@ -151,7 +151,7 @@ const authenticateUser = () => {
     userOrgs: loginData.userOrgs,
     region: loginData.region,
     selectedOrgUid,
-    csBaseUrl: getBaseUrl(loginData.region),
+    baseUrl: getBaseUrl(loginData.region),
     appBaseUrl: getAppBaseUrl(loginData.region),
   };
 };

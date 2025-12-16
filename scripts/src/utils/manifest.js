@@ -41,50 +41,15 @@ const getLaunchManifest = () => {
   }
 };
 
-const saveInstallation = (
-  appName,
-  appUid,
-  stackApiKey,
-  installationUid,
-  csBaseUrl,
-  appEnv,
-  region
-) => {
-  let installations = [];
-  const installationsPath = path.join(
-    __dirname,
-    `../../settings/${INSTALLATIONS_FILE}`
+const updateAppInstallation = (installationData) => {
+  fs.writeFileSync(
+    path.join(__dirname, `../../settings/app-installations.json`),
+    JSON.stringify(installationData, null, 2)
   );
-
-  if (fs.existsSync(installationsPath)) {
-    try {
-      const installationData = fs.readFileSync(installationsPath, "utf-8");
-      installations = JSON.parse(installationData);
-    } catch (e) {
-      console.error("Failed to parse installations.json, resetting file.");
-    }
-  }
-
-  const exists = installations.find(
-    (i) => i.appUid === appUid && i.stackApiKey === stackApiKey
-  );
-
-  if (!exists) {
-    installations.push({
-      appName,
-      appUid,
-      stackApiKey,
-      installationUid,
-      csBaseUrl,
-      appEnv,
-      region,
-    });
-    fs.writeFileSync(installationsPath, JSON.stringify(installations, null, 2));
-  }
 };
 
 module.exports = {
-  saveInstallation,
+  updateAppInstallation,
   updateAppManifest,
   updateLaunchManifest,
   getLaunchManifest,
