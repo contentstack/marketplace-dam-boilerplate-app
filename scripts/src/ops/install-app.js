@@ -86,7 +86,7 @@ const install = async (
       region,
       org_uid: orgId,
       app_uid: appUid,
-      app_name: manifestData.app_name,
+      app_name: manifestData.name,
       stack_api_key: stackApiKey,
       stack_name: stackName,
       status: installData?.data?.status || "",

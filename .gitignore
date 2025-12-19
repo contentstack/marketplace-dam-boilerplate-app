@@ -34,5 +34,4 @@ ui/.npmrc
 coverage/
 
 scripts/*/build
-scripts/settings/app-installation.json
-scripts/settings/credentials.json
+scripts/*/credentials.json
