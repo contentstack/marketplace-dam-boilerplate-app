@@ -53,7 +53,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         selectedOrgUid,
         appBaseUrl,
         uploadMetaData?.uploadUid,
-        launchManifest.data
+        launchManifest.data,
+        region
       );
 
       updateLaunchManifest({
