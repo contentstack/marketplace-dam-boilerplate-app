@@ -383,7 +383,7 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
   };
 };
 
-const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId) =>
+const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId, region = null) =>
   makeApiCall({
     method: "POST",
     maxBodyLength: Infinity,
@@ -399,7 +399,7 @@ const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId) =>
   updateEnvironment(
     environment: {uid: "${
       metaData?.env_uid
-    }", environmentVariables: ${getEnvVariables(metaData.deployment_url)}}
+    }", environmentVariables: ${getEnvVariables(metaData.deployment_url, metaData?.subdomain, region)}}
   ) {
     name
     uid
@@ -432,9 +432,10 @@ const reDeployProject = async (
   orgId,
   baseUrl,
   uploadUid,
-  launchMetaData
+  launchMetaData,
+  region = null
 ) => {
-  await updateProjectEnvs(baseUrl, launchMetaData, authtoken, orgId);
+  await updateProjectEnvs(baseUrl, launchMetaData, authtoken, orgId, region);
 
   try {
     const res = await makeApiCall({

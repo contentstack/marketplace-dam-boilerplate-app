@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const INSTALLATIONS_FILE = "app-installation.json";
-
 const updateAppManifest = (manifest, appEnv) => {
   fs.writeFileSync(
     path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
