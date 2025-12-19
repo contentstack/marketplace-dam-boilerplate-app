@@ -58,7 +58,7 @@ const buildDeploymentUrl = (launchSubDomain, region, deploymentUrl = null) => {
   if (region === "" || region === "eu") {
     url += `${region === "" ? "" : `${region}-`}contentstackapps.com`;
   } else if (region === "azure-na" || region === "azure-eu") {
-    url = `${region === "azure-na" ? "" : "eu-"}azcontentstackapps.com`;
+    url += `${region === "azure-na" ? "" : "eu-"}azcontentstackapps.com`;
   } else {
     url += "gcpcontentstackapps.com";
   }
