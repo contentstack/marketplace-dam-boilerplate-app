@@ -607,7 +607,7 @@ function Table({
                     {(() => {
                         // Use selectedRowIdsMap as source of truth for count (includes all pages)
                         const mapCount = Object.keys(selectedRowIdsMap || {}).length;
-                        const count = mapCount; 
+                        const count = mapCount;
                         return `${localeTexts.SelectorPage.table.buttons.add} ${count} ${count !== 1 ? localeTexts.SelectorPage.table.buttons.addAssets : localeTexts.SelectorPage.table.buttons.addAsset}`;
                     })()}
                 </Button>
