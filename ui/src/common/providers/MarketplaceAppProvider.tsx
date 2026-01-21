@@ -10,7 +10,7 @@ import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
 import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 import { isNull } from "lodash";
 import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
-import getDataFromAPI from "../../services";
+import makeAPIRequest from "../../services";
 import { LocaleType } from "../types";
 
 const MarketplaceAppProvider: React.FC = function ({ children }) {
@@ -122,7 +122,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
       appConfig,
       appFailed: failed,
       localesByBranch,
-      getDataFromAPI: getDataFromAPI as (data?: any) => Promise<any>,
+      makeAPIRequest: makeAPIRequest as (data?: any) => Promise<any>,
       fetchLocalesForBranch,
       getLocalesForBranch,
       isBranchLoading,

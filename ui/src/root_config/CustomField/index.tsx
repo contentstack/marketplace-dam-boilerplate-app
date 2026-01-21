@@ -34,7 +34,7 @@ const handleConfigtoSelectorPage = (
   currentLocale: string
 ) => {
   /* Return Config to be used on selector page 
-  Note: If you need to fetch data from API, use getDataFromAPI via MarketplaceAppContext
+  Note: If you need to fetch data from API, use makeAPIRequest via MarketplaceAppContext
   in the CustomField component and pass the data as needed. */
   return {};
 };
@@ -66,7 +66,7 @@ const handleAuthWindow = (
   reject: Function
 ) => {
   /* code logic to open the DAM auth window 
-  Note: If you need to fetch data from API for authentication, use getDataFromAPI 
+  Note: If you need to fetch data from API for authentication, use makeAPIRequest 
   via MarketplaceAppContext in the CustomField component.
   if authentication is success, call resolve() | if failed, call reject(error) with error */
   resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error

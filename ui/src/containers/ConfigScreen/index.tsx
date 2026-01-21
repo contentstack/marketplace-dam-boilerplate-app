@@ -674,13 +674,13 @@ const ConfigScreen: React.FC = function () {
     return renderValue;
   };
 
-  /* If need to get any data from API then use getDataFromAPI function.
+  /* If need to get any data from API then use makeAPIRequest function.
   Access it via MarketplaceAppContext:
   
-  const { getDataFromAPI } = useContext(MarketplaceAppContext);
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
   
   Example usage:
-  const response = await getDataFromAPI({
+  const response = await makeAPIRequest({
     queryParams: "param=value",
     headers: { "Content-Type": "application/json" },
     method: "GET",

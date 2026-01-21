@@ -4,6 +4,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  useContext,
 } from "react";
 import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.types";
 import { isEmpty } from "lodash";
@@ -14,6 +15,8 @@ import useAppLocation from "../hooks/useAppLocation";
 import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import CustomFieldUtils from "../utils/CustomFieldUtils";
+import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
+import { UI_LOCATIONS } from "../constants";
 
 const AppConfigProvider: React.FC = function ({ children }) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
@@ -336,6 +339,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
     }
   }, [location]);
 
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
+
   const setInstallationData = useCallback(
     async (data: TypeAppSdkConfigState) => {
       const updatedInstallationData: TypeAppSdkConfigState = {
@@ -359,8 +364,23 @@ const AppConfigProvider: React.FC = function ({ children }) {
       await location?.installation?.setInstallationData(
         updatedInstallationData
       );
+
+      // Call saveCredentials API after saving to SDK
+      makeAPIRequest({
+        queryParams: `mode=saveCredentials&location=${UI_LOCATIONS.CONFIG_SCREEN}`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: {
+          credentials: updatedInstallationData?.configuration,
+          serverConfiguration: updatedInstallationData?.serverConfiguration,
+          config: updatedInstallationData?.configuration,
+        },
+      }).catch((error) => {
+        console.error("Error saving credentials to API:", error);
+        // Don't block the save flow if API call fails
+      });
     },
-    [location]
+    [location, installation, makeAPIRequest]
   );
 
   const StateContext = useMemo(

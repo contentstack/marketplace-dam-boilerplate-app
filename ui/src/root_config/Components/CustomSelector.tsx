@@ -2,7 +2,6 @@
 import React from "react";
 import "../styles.scss";
 import Table from "../../components/Table";
-import mockAssetData from "../mockData/selectorMockData";
 import { TypeCustomComponent } from "../../common/types";
 
 const CustomSelector: React.FC<TypeCustomComponent> = function ({
@@ -12,14 +11,13 @@ const CustomSelector: React.FC<TypeCustomComponent> = function ({
   closeFn,
   selectedAssetIds,
 }: TypeCustomComponent) {
-
   return (
     <Table
+      config={config}
       setError={setError}
       successFn={successFn}
       closeFn={closeFn}
       selectedAssetIds={selectedAssetIds}
-      assetData={mockAssetData}
     />
   );
 };

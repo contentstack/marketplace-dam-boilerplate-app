@@ -13,17 +13,15 @@ let appSdk: any;
 
 const getCurrentConfigLabel = () => {
   const branch = appSdk?.stack?.getCurrentBranch()?.uid;
-  console.log("JSON RTE : !!!🚀 branch:", branch); // eslint-disable-line no-console
   const locale = advancedConfig?.locale;
-  console.log("JSON RTE : !!!🚀 locale:", locale); // eslint-disable-line no-console
   // Priority order:
   // 1 : Custom Field Advanced Settings - Locale Specific
   if (locale?.[currentLocale]?.config_label?.length > 0) {
-    return locale[currentLocale].config_label[0];
+    return locale?.[currentLocale]?.config_label?.[0];
   }
   // 2 : Custom Field Advanced Settings - Default
   if (advancedConfig?.config_label?.length > 0) {
-    return advancedConfig.config_label[0];
+    return advancedConfig?.config_label?.[0];
   }
   // 3 : Locale-Specific Config
   if (
@@ -31,7 +29,7 @@ const getCurrentConfigLabel = () => {
     config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label
       ?.length > 0
   ) {
-    return config.config_rules[branch].locales[currentLocale].config_label[0];
+    return config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label?.[0];
   }
   // 4 :  Branch-Specific Config
   if (branch && config?.config_rules?.[branch]?.config_label?.length > 0) {
@@ -56,20 +54,26 @@ const getConfig = () => {
           ...multiConfig,
         },
       };
-      delete finalConfig.default_multi_config_key;
-      delete finalConfig.multi_config_keys;
+      delete finalConfig?.default_multi_config_key;
+      delete finalConfig?.multi_config_keys;
     }
+    // Delete config_rules before sending to selector page
+    delete finalConfig?.config_rules;
 
     const finalContentTypeConfig = { ...advancedConfig };
     if (finalContentTypeConfig?.advanced)
-      delete finalContentTypeConfig.advanced;
+      delete finalContentTypeConfig?.advanced;
     if (finalContentTypeConfig?.config_label)
-      delete finalContentTypeConfig.config_label;
-    if (finalContentTypeConfig?.locale) delete finalContentTypeConfig.locale;
+      delete finalContentTypeConfig?.config_label;
+    if (finalContentTypeConfig?.locale) delete finalContentTypeConfig?.locale;
+    if (finalContentTypeConfig?.config_rules) delete finalContentTypeConfig?.config_rules;
 
     return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
   }
-  return { config, contentTypeConfig: advancedConfig };
+  // Delete config_rules before sending to selector page (fallback case)
+  const configWithoutRules = { ...config };
+  delete configWithoutRules?.config_rules;
+  return { config: configWithoutRules, contentTypeConfig: advancedConfig };
 };
 
 // returns final config values from app_config and custom_field_config

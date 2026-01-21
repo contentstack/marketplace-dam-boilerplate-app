@@ -20,4 +20,10 @@ fileignoreconfig:
   checksum: 22a5495bd03b4209b677f72d2d9269b45833644f58ba5be1d50a293b45aa04ba
 - filename: ui/src/containers/ConfigScreen/AdvancedConfig/RuleContainer.tsx
   checksum: 9f87d2536ac7e24b342c71b429daf2173dc09b616876b36b102007e21e3a9326
+- filename: api/.env.example
+  checksum: 8a8125077434e92558d89069a20213018b517263c724af25d0e0e1f38c3b99cd
+- filename: api/package-lock.json
+  checksum: a3bf805ee00891a4326e6b26e35f3ab8350d7cb0a385e1fdf6508210a87e0d3b
+- filename: api/README.md
+  checksum: 3ecd1e9e47f5bbc01e0c70de24c996db2284b32691cbd96ea3b0b2684b31f2f1
 version: "1.0"
