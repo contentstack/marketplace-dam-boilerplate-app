@@ -26,4 +26,6 @@ fileignoreconfig:
   checksum: a3bf805ee00891a4326e6b26e35f3ab8350d7cb0a385e1fdf6508210a87e0d3b
 - filename: api/README.md
   checksum: 3ecd1e9e47f5bbc01e0c70de24c996db2284b32691cbd96ea3b0b2684b31f2f1
+- filename: ui/package-lock.json
+  checksum: 71c77f988a911e690782097e62c041b1fd97e6a732a46119ac8e9f8bfea074a9
 version: "1.0"
