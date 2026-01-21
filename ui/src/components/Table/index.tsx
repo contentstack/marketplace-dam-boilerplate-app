@@ -4,6 +4,7 @@ import React, {
     useEffect,
     useLayoutEffect,
     useCallback,
+    useContext,
 } from "react";
 import {
     InfiniteScrollTable,
@@ -13,6 +14,8 @@ import {
 import { AssetData, TableProps } from "../../common/types";
 import { getAssetType, getAssetIcon } from "../../common/utils/TableUtils";
 import localeTexts from "../../common/locale/en-us";
+import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
+import { UI_LOCATIONS } from "../../common/constants";
 import "./Table.scss";
 
 
@@ -111,20 +114,21 @@ const ImageWithFallback = React.memo<ImageWithFallbackProps>(
 ImageWithFallback.displayName = "ImageWithFallback";
 
 function Table({
+    config,
     setError,
     successFn,
     closeFn,
     selectedAssetIds,
-    assetData,
 }: TableProps) {
+    const { makeAPIRequest } = useContext(MarketplaceAppContext);
+
     const rowPerPageOptions = [10, 20, 50];
     const initialPageSize = rowPerPageOptions[0];
-
     const [data, updateData] = useState<AssetData[]>([]);
     const [loading, updateLoading] = useState(false);
     const [totalCounts, updateTotalCounts] = useState<number>(0);
     const [selectedAssets, setSelectedAssets] = useState<any[]>([]); // currently selected assets
-    const [selectedRows, setSelectedRows] = useState<any>({}); // initially selected rows - change variable name
+    const [selectedRowIdsMap, setSelectedRowIdsMap] = useState<Record<string, boolean>>({}); // map of selected row IDs for table component
     const [tableHeight, setTableHeight] = useState(window.innerHeight - 275);
     const [pageSize, setPageSize] = useState(10);
 
@@ -134,11 +138,11 @@ function Table({
     const getSelectedData = async (assetIds: string[] = []) => {
         if (assetIds?.length) {
             assetIds?.forEach((id: string) => {
-                selectedRows[id] = true;
+                selectedRowIdsMap[id] = true;
             });
         }
-        setSelectedRows({ ...selectedRows });
-        return selectedRows;
+        setSelectedRowIdsMap({ ...selectedRowIdsMap });
+        return selectedRowIdsMap;
     };
 
     const renderAssetIcon = (asset: AssetData) => {
@@ -166,7 +170,6 @@ function Table({
     );
 
     // Define table columns for DAM assets
-    // get Default from root_config/customfield/index.tsx
     const columns = [
         {
             Header: localeTexts.SelectorPage.table.headers.image,
@@ -226,29 +229,98 @@ function Table({
                 tableRef?.current?.setTablePage(1);
             }
 
+            if (!config) return;
+
+            // if searchText, then client-side search on existing data
+            if (searchText) {
+                updateLoading(true);
+
+                // use current data for search to filter the data
+                const dataToSearch = data;
+
+                // apply client-side search
+                let filteredData = dataToSearch?.filter((asset: any) =>
+                    asset.name?.toLowerCase().includes(searchText.toLowerCase())
+                );
+
+                // Apply client-side sorting
+                if (sortBy) {
+                    filteredData = [...filteredData].sort((a: any, b: any) => {
+                        const aVal = a[sortBy?.id] ?? "";
+                        const bVal = b[sortBy?.id] ?? "";
+
+                        if (sortBy?.id === "name") {
+                            return sortBy?.sortingDirection === "asc"
+                                ? aVal?.localeCompare(bVal)
+                                : bVal?.localeCompare(aVal);
+                        }
+                        if (sortBy?.id === "fileType") {
+                            return sortBy?.sortingDirection === "asc"
+                                ? aVal?.localeCompare(bVal)
+                                : bVal?.localeCompare(aVal);
+                        }
+                        if (sortBy?.id === "createdDate") {
+                            const aDate = new Date(aVal);
+                            const bDate = new Date(bVal);
+                            return sortBy?.sortingDirection === "asc"
+                                ? aDate.getTime() - bDate.getTime()
+                                : bDate.getTime() - aDate.getTime();
+                        }
+                        return sortBy?.sortingDirection === "asc"
+                            ? aVal?.localeCompare(bVal)
+                            : bVal?.localeCompare(aVal);
+                    });
+                }
+
+                // Apply client-side pagination to search results
+                const currentSkip = skip ?? 0;
+                const currentLimit = limit ?? pageSize;
+                const paginatedData = filteredData?.slice(currentSkip, currentSkip + currentLimit);
+
+                updateData(paginatedData);
+                updateTotalCounts(filteredData?.length);
+                updateLoading(false);
+                return;
+            }
+
+            // No searchText - proceed with normal API call for pagination
             updateLoading(true);
 
-            await new Promise((resolve) => {
-                setTimeout(resolve, 500);
+            // Update pagination state
+            const currentSkip = skip ?? 0;
+            const currentLimit = limit ?? pageSize;
+            setPageSize(currentLimit);
+
+            // Build query params for API call (only pagination, no search/sort)
+            const queryParams = `mode=getAllAssets&location=${UI_LOCATIONS.SELECTOR_PAGE}&limit=${currentLimit}&skip=${currentSkip}&config=${encodeURIComponent(JSON.stringify(config))}`;
+
+            // Fetch paginated data from API
+            const response = await makeAPIRequest({
+                queryParams,
+                method: "GET",
             });
 
-            // Filter data based on search
-            let filteredData = assetData;
+            const apiData = await response?.json();
+
+            // Handle different response structures
+            const assets = apiData?.assets || apiData?.data || apiData || [];
+            const total = apiData?.total || 0;
+
+            // Apply client-side search
+            let filteredData = Array.isArray(assets) ? assets : [];
             if (searchText) {
-                filteredData = assetData?.filter((asset) =>
+                filteredData = filteredData?.filter((asset: any) =>
                     asset.name?.toLowerCase().includes(searchText.toLowerCase())
                 );
             }
 
-            // Apply sorting if needed
+            // Apply client-side sorting
             if (sortBy) {
-                // Replace sorting with query params in an API call
                 filteredData = [...filteredData]?.sort((a: any, b: any) => {
                     const aVal = a[sortBy?.id] ?? "";
                     const bVal = b[sortBy?.id] ?? "";
 
                     // Handle different column types
-
                     if (sortBy?.id === "name") {
                         // String sorting for asset names
                         return sortBy?.sortingDirection === "asc"
@@ -276,22 +348,11 @@ function Table({
                 });
             }
 
-            // Update pagination state
-            const currentSkip = skip ?? 0;
-            const currentLimit = limit ?? pageSize;
-
-            setPageSize(currentLimit);
-
-            // Paginate the data
-            const paginatedData = filteredData?.slice(
-                currentSkip,
-                currentSkip + currentLimit
-            );
-
-            updateData(paginatedData);
-            updateTotalCounts(filteredData?.length);
+            updateData(filteredData);
+            updateTotalCounts(total || filteredData?.length);
             updateLoading(false);
         } catch (error) {
+            console.error("Error fetching assets:", error);
             setError({ isErr: true, errorText: localeTexts.SelectorPage.table.errors.failedToLoadAssets });
             updateLoading(false);
         }
@@ -308,66 +369,156 @@ function Table({
         singleSelectedRowIds: string[],
         selectedDataAssets: any
     ) => {
-        const obj: any = {};
-        const sel: any = [...singleSelectedRowIds];
-        sel?.forEach((element: any) => {
-            obj[element] = true;
-        });
-        setSelectedRows({ ...obj });
-
         const getAssetId = (asset: any) => asset?.id || "";
 
+        const currentPageAssetIds = data?.map((asset: any) => getAssetId(asset)) || [];
+
+        const newMap = { ...selectedRowIdsMap };
+
+        // Removal of selections for assets on current page 
+        currentPageAssetIds?.forEach((assetId: string) => {
+            if (!singleSelectedRowIds?.includes(assetId)) {
+                delete newMap?.[assetId];
+            }
+        });
+
+        // Add new selections for current page
+        singleSelectedRowIds?.forEach((id: string) => {
+            newMap[id] = true;
+        });
+
+        // Update selectedRowIdsMap
+        setSelectedRowIdsMap(newMap);
+
+        // Get IDs of newly selected assets from current page
+        const newSelectedIds = singleSelectedRowIds?.filter(
+            (id: string) => !selectedAssets?.some(
+                (existingAsset: any) => getAssetId(existingAsset) === id
+            )
+        ) || [];
+
+        // Get new asset objects that were just selected
         const newAssets = selectedDataAssets?.filter(
             (newAsset: any) => {
                 const newAssetId = getAssetId(newAsset);
-                return !selectedAssets?.some(
-                    (existingAsset: any) => getAssetId(existingAsset) === newAssetId
-                );
+                return newSelectedIds?.includes(newAssetId);
             }
         ) || [];
 
-        let updatedAssets: any[] = [];
+        // Start with existing selected assets
+        let updatedAssets: any[] = [...(selectedAssets || [])];
 
-        if (!selectedAssets || selectedAssets?.length === 0) {
-            updatedAssets = [...newAssets];
-        } else {
-            updatedAssets = [...selectedAssets, ...newAssets];
-        }
-
-        // Filter to only keep assets that are in the current selection
         updatedAssets = updatedAssets?.filter((existingAsset: any) => {
             const assetId = getAssetId(existingAsset);
-            return singleSelectedRowIds?.includes(assetId);
+            const isInMap = newMap[assetId] === true;
+            // Keep if asset is in the map (selected across any page)
+            return isInMap;
+        });
+
+        // Add newly selected assets
+        updatedAssets = [...updatedAssets, ...newAssets];
+
+        // IMPORTANT: Ensure all assets in the map are in the array
+        const allSelectedIds = Object.keys(newMap);
+        allSelectedIds?.forEach((assetId: string) => {
+            // Check if this asset is already in the array
+            const existsInArray = updatedAssets?.some((asset: any) => getAssetId(asset) === assetId);
+            if (!existsInArray) {
+                // Try to find it in current page data first
+                const assetFromCurrentPage = data?.find((asset: any) => getAssetId(asset) === assetId);
+                if (assetFromCurrentPage) {
+                    updatedAssets?.push(assetFromCurrentPage);
+                } else {
+                    // Asset is on another page - check if we have it in selectedAssets from before
+                    const assetFromPreviousSelection = selectedAssets?.find((asset: any) => getAssetId(asset) === assetId);
+                    if (assetFromPreviousSelection) {
+                        updatedAssets?.push(assetFromPreviousSelection);
+                    }
+                }
+            }
         });
 
         setSelectedAssets(updatedAssets);
     };
 
-    // Load initial data when component mounts - only when API call
     useEffect(() => {
-        fetchData({});
-    }, []);
+        if (config) {
+            fetchData({ skip: 0, limit: initialPageSize });
+        }
+    }, [config]);
 
-    // Initialize selected assets from props like S3
+    const prevSelectedAssetIdsRef = useRef<string[] | undefined>(undefined);
+
     useEffect(() => {
+        const prevSelectedAssetIds = prevSelectedAssetIdsRef.current;
+        const selectedAssetIdsChanged = JSON.stringify(prevSelectedAssetIds) !== JSON.stringify(selectedAssetIds);
+
+        if (!selectedAssetIdsChanged && prevSelectedAssetIds !== undefined) {
+            return;
+        }
+
         if (selectedAssetIds?.length) {
             getSelectedData(selectedAssetIds);
 
             // Also populate selectedAssets with actual asset objects
-            // Find assets from assetData that match the selected IDs
-            const preselectedAssets = assetData?.filter((asset: any) => selectedAssetIds?.includes(asset?.id)) || [];
+            // Find assets from current data that match the selected IDs
+            const preselectedAssets = data?.filter((asset: any) => selectedAssetIds?.includes(asset?.id)) || [];
 
             if (preselectedAssets?.length) {
-                setSelectedAssets(preselectedAssets);
+                setSelectedAssets((prevAssets) => {
+                    const existingIds = prevAssets?.map((a: any) => a?.id || "") || [];
+                    const newAssets = preselectedAssets?.filter(
+                        (asset: any) => !existingIds?.includes(asset?.id || "")
+                    );
+                    return [...(prevAssets || []), ...newAssets];
+                });
             }
-        } else {
-            // Reset if no selected IDs
+        } else if (selectedAssetIdsChanged && selectedAssetIds !== undefined && selectedAssetIds?.length === 0) {
+            // Only reset if selectedAssetIds actually changed to empty (not just when data changes)
             setSelectedAssets([]);
-            setSelectedRows({});
+            setSelectedRowIdsMap({});
         }
-    }, [selectedAssetIds, assetData]);
 
-    // Handle window resize to adjust table height
+        // Update ref for next comparison
+        prevSelectedAssetIdsRef.current = selectedAssetIds;
+    }, [selectedAssetIds, data]); // Keep data to find preselected assets, but only reset when selectedAssetIds actually changes
+
+    // Sync selectedAssets with selectedRowIdsMap when data changes
+    useEffect(() => {
+        if (!data?.length || !selectedRowIdsMap) return;
+
+        const getAssetId = (asset: any) => asset?.id || "";
+        const currentAssetIds = selectedAssets?.map((a: any) => getAssetId(a)) || [];
+
+        // Find assets in the map that are on the current page but not in the array
+        const missingAssets = data.filter((asset: any) => {
+            const assetId = getAssetId(asset);
+            return selectedRowIdsMap?.[assetId] === true && !currentAssetIds?.includes(assetId);
+        });
+
+        if (missingAssets?.length > 0) {
+            setSelectedAssets((prevAssets) => {
+                const existingIds = prevAssets?.map((a: any) => getAssetId(a)) || [];
+                const newAssets = missingAssets?.filter((asset: any) => !existingIds?.includes(getAssetId(asset)));
+                return [...(prevAssets || []), ...newAssets];
+            });
+        }
+
+        // Also remove assets that are no longer in the map
+        const assetsToRemove = selectedAssets?.filter((asset: any) => {
+            const assetId = getAssetId(asset);
+            return !selectedRowIdsMap?.[assetId];
+        }) || [];
+
+        if (assetsToRemove?.length > 0) {
+            setSelectedAssets((prevAssets) => prevAssets?.filter((asset: any) => {
+                const assetId = getAssetId(asset);
+                return selectedRowIdsMap[assetId] === true;
+            }) || []);
+        }
+    }, [data, selectedRowIdsMap]);
+
+
     useEffect(() => {
         const handleResize = () => {
             const availableHeight = window.innerHeight - 275;
@@ -389,7 +540,7 @@ function Table({
                 totalCounts={totalCounts}
                 minBatchSizeToFetch={10}
                 getSelectedRow={getSelectedRow}
-                initialSelectedRowIds={selectedRows}
+                initialSelectedRowIds={selectedRowIdsMap}
                 canSearch
                 searchPlaceholder={localeTexts.SelectorPage.table.searchPlaceholder}
                 isRowSelect
@@ -431,7 +582,7 @@ function Table({
                         // This ensures all selected assets are returned, not just those on the current page
                         successFn(selectedAssets);
                     }}
-                    disabled={!selectedAssets?.length}
+                    disabled={Object.keys(selectedRowIdsMap || {}).length === 0}
                     style={{
                         backgroundColor:
                             !selectedAssets?.length ? "#ccc" : "#6366f1",
@@ -453,7 +604,12 @@ function Table({
                     >
                         <path d="M6 0v12M12 6H0" stroke="#fff" strokeWidth="2" />
                     </svg>
-                    {`${localeTexts.SelectorPage.table.buttons.add} ${selectedAssets?.length} ${selectedAssets?.length !== 1 ? localeTexts.SelectorPage.table.buttons.addAssets : localeTexts.SelectorPage.table.buttons.addAsset}`}
+                    {(() => {
+                        // Use selectedRowIdsMap as source of truth for count (includes all pages)
+                        const mapCount = Object.keys(selectedRowIdsMap || {}).length;
+                        const count = mapCount; 
+                        return `${localeTexts.SelectorPage.table.buttons.add} ${count} ${count !== 1 ? localeTexts.SelectorPage.table.buttons.addAssets : localeTexts.SelectorPage.table.buttons.addAsset}`;
+                    })()}
                 </Button>
             </div>
         </div>

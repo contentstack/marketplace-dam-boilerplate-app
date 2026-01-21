@@ -8,7 +8,7 @@ export type MarketplaceAppContextType = {
   appConfig: GenericObjectType;
   appFailed: boolean;
   localesByBranch: Record<string, LocaleType[]>; // Branch-specific locales
-  getDataFromAPI: (data?: any) => Promise<any>;
+  makeAPIRequest: (data?: any) => Promise<any>;
   fetchLocalesForBranch: (branch: string) => Promise<void>;
   getLocalesForBranch: (branch: string) => LocaleType[];
   isBranchLoading: (branch: string) => boolean;
@@ -20,7 +20,7 @@ export const MarketplaceAppContext =
     appConfig: {},
     appFailed: false,
     localesByBranch: {},
-    getDataFromAPI: async () => ({} as Response),
+    makeAPIRequest: async () => ({} as Response),
     fetchLocalesForBranch: async () => { },
     getLocalesForBranch: () => [],
     isBranchLoading: () => false,

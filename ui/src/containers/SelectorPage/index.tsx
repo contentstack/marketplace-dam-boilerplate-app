@@ -6,13 +6,13 @@ import InfoMessage from "../../components/InfoMessage";
 import { TypeErrorFn, Props } from "../../common/types";
 import "./style.scss";
 
-/* If need to get any data from API then use getDataFromAPI function.
+/* If need to get any data from API then use makeAPIRequest function.
   Access it via MarketplaceAppContext:
   
-  const { getDataFromAPI } = useContext(MarketplaceAppContext);
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
   
   For regular API calls:
-  const response = await getDataFromAPI({
+  const response = await makeAPIRequest({
     queryParams: "param=value",
     headers: { "Content-Type": "application/json" },
     method: "GET",
@@ -112,7 +112,7 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  const handleMessage = (event: MessageEvent) => {
+  const handleMessage = async (event: MessageEvent) => {
     const allowedOrigin = [process.env.REACT_APP_CUSTOM_FIELD_URL, url];
     if (!allowedOrigin?.includes(event?.origin)) return;
     const { data } = event;
@@ -122,8 +122,8 @@ const SelectorPage: React.FC = function () {
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
         setConfig(data?.config);
-        compactViewImplementation(data?.config, data?.selectedIds);
         setSelectedAssetIds(data?.selectedIds);
+        compactViewImplementation(data?.config, data?.selectedIds);
       }
     }
   };

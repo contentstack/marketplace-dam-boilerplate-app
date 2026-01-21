@@ -148,6 +148,12 @@ const tableConstants = {
   assetIconMap,
 };
 
+export const UI_LOCATIONS = {
+  CONFIG_SCREEN: "configScreen",
+  SELECTOR_PAGE: "selectorPage",
+  CUSTOM_FIELD: "customField",
+} as const;
+
 const constants = {
   constantStyles,
   textOverflowStyles,

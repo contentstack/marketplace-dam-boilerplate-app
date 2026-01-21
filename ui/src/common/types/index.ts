@@ -323,11 +323,11 @@ export interface TableSelectorProps {
 }
 
 export interface TableProps {
+  config: any;
   setError: (errObj: any) => void;
   successFn: (assets: any[]) => void;
   closeFn: () => void;
   selectedAssetIds: string[];
-  assetData: any[];
 }
 
 export interface TypeCustomComponent {

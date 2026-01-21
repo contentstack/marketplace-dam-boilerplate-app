@@ -12,20 +12,20 @@ import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types";
-import constants from "../../common/constants";
+import constants, { UI_LOCATIONS } from "../../common/constants";
 import utils from "../../common/utils";
 /* Import our CSS */
 import "./styles.scss";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-/* If need to get any data from API then use getDataFromAPI function.
+/* If need to get any data from API then use makeAPIRequest function.
   Access it via MarketplaceAppContext:
   
-  const { getDataFromAPI } = useContext(MarketplaceAppContext);
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
   
   Example usage:
-  const response = await getDataFromAPI({
+  const response = await makeAPIRequest({
     queryParams: "param=value",
     headers: { "Content-Type": "application/json" },
     method: "GET",
@@ -37,7 +37,7 @@ import "./styles.scss";
   the API call there as per requirement. */
 
 const CustomField: React.FC = function () {
-  const { appFailed, appSdk } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk, makeAPIRequest } = useContext(MarketplaceAppContext);
   const {
     renderAssets,
     setRenderAssets,
@@ -109,6 +109,8 @@ const CustomField: React.FC = function () {
         delete finalConfig.default_multi_config_key;
         delete finalConfig.multi_config_keys;
       }
+      // Delete config_rules before sending to selector page
+      delete finalConfig.config_rules;
 
       const finalContentTypeConfig = { ...contentTypeConfig };
       if (finalContentTypeConfig?.advanced)
@@ -119,32 +121,68 @@ const CustomField: React.FC = function () {
 
       return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
     }
-    return { config, contentTypeConfig };
+    // Delete config_rules before sending to selector page (fallback case)
+    const configWithoutRules = { ...config };
+    delete configWithoutRules.config_rules;
+    return { config: configWithoutRules, contentTypeConfig };
   };
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
-    if (Array.isArray(selectedAssets)) {
-      const filteredAssets = rootConfig?.filterAssetData?.(selectedAssets);
-      setRenderAssets(filteredAssets);
+    if (Array.isArray(selectedAssets) && selectedAssets.length > 0) {
+      // Fetch asset details from API for each selected asset
+      const fetchAssetDetails = async () => {
+        const finalConfig = getConfig();
+        const assetPromises = selectedAssets.map(async (asset) => {
+          try {
+            const assetId = asset?.[uniqueID];
+            if (!assetId) return asset;
 
-      const assetIds = (selectedAssets as any[])?.map(
-        (item: any) => item?.[uniqueID]
-      );
-      setSelectedAssetIds(assetIds);
+            const response = await makeAPIRequest({
+              queryParams: `mode=getAssetById&location=${UI_LOCATIONS.CUSTOM_FIELD}&assetId=${assetId}&config=${encodeURIComponent(JSON.stringify(finalConfig?.config))}`,
+              method: "GET",
+            });
+            const assetData = await response.json();
+            // Merge API data with existing asset data
+            return { ...asset, ...assetData };
+          } catch (error) {
+            console.error(`Error fetching asset ${asset?.[uniqueID]}:`, error);
+            // Return original asset if API call fails
+            return asset;
+          }
+        });
 
-      const finalConfig = getConfig();
-      const assetsToSave =
-        rootConfig?.modifyAssetsToSave?.(
-          finalConfig?.config,
-          finalConfig?.contentTypeConfig,
-          selectedAssets
-        ) ?? selectedAssets;
+        const assetsWithDetails = await Promise.all(assetPromises);
+        const filteredAssets = rootConfig?.filterAssetData?.(assetsWithDetails);
+        setRenderAssets(filteredAssets);
 
+        const assetIds = assetsWithDetails?.map(
+          (item: any) => item?.[uniqueID]
+        );
+        setSelectedAssetIds(assetIds);
+
+        const assetsToSave =
+          rootConfig?.modifyAssetsToSave?.(
+            finalConfig?.config,
+            finalConfig?.contentTypeConfig,
+            assetsWithDetails
+          ) ?? assetsWithDetails;
+
+        if (state?.location?.field) {
+          state.location.field.setData(assetsToSave);
+        }
+      };
+
+      fetchAssetDetails();
+    } else if (Array.isArray(selectedAssets) && selectedAssets.length === 0) {
+      // Handle empty assets
+      setRenderAssets([]);
+      setSelectedAssetIds([]);
       if (state?.location?.field) {
-        state.location.field.setData(assetsToSave);
+        state.location.field.setData([]);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAssets]);
 
   const handleUniqueSelectedData = (dataArr: any[]) => {
@@ -350,8 +388,8 @@ const CustomField: React.FC = function () {
           selectorPageWindow = CustomFieldUtils.popupWindow({
             url,
             title: `${localeTexts.SelectorPage.title}`,
-            w: 1500, // You Change These According To Your App
-            h: 800, // You Change These According To Your App
+            w: 1500,
+            h: 800,
           });
         }
         window.addEventListener("message", handleMessage, false);
