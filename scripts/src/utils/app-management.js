@@ -1,9 +1,7 @@
 const {
   makeApiCall,
   getDeveloperhubBaseUrl,
-  openLink,
   safePromise,
-  getAppBaseUrl,
 } = require("./helpers");
 
 const createApp = async (region, authtoken, orgId, appName, description) => {
@@ -197,12 +195,12 @@ const createSampleEntry = async (
     },
   ];
 
- return makeApiCall({
-      url: `${baseUrl}/v3/content_types/${contentTypeId}/entries?form_uid=${contentTypeId}&locale=en-us`,
-      method: "POST",
-      headers: { authtoken, api_key: stackApiKey },
-      data: { entry: entryData },
-    })
+  return makeApiCall({
+    url: `${baseUrl}/v3/content_types/${contentTypeId}/entries?form_uid=${contentTypeId}&locale=en-us`,
+    method: "POST",
+    headers: { authtoken, api_key: stackApiKey },
+    data: { entry: entryData },
+  });
 };
 
 const buildContentTypeSchema = (extensionResults) => {

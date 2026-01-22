@@ -8,7 +8,7 @@ const {
   updateInstallation,
   updateAppInstallation,
   getInstalledApps,
-  openLink
+  openLink,
 } = require("../utils");
 const appInstallationData = require("../../settings/app-installations.json");
 
@@ -108,9 +108,11 @@ const install = async (
 
     updateAppInstallation(appInstallationManifest);
 
-    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
-    openLink(configPage);
     console.info("Installing app completed successfully");
+  } else {
+    const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
+    console.info("App created successfully");
+    openLink(url);
   }
 };
 
