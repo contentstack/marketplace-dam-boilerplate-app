@@ -20,7 +20,6 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
 
     return res?.data;
   } catch (error) {
-    console.error(error);
     throw error.response?.data || error.message || error;
   }
 };
@@ -29,7 +28,7 @@ const safePromise = (promise, errorText) =>
   promise
     .then((res) => [null, res])
     .catch((err) => {
-      console.error( err.response?.data || err.message || err);
+      console.error(err.response?.data || err.message || err);
       return [err];
     });
 
