@@ -17,7 +17,6 @@ const appInstallations = require("../../settings/app-installations.json");
     let appUid;
     const op = process.argv[2];
     const appEnv = process.argv[3];
-    
     const context = authenticateUser();
     if (!context) return;
 
@@ -40,7 +39,9 @@ const appInstallations = require("../../settings/app-installations.json");
 
       if (appError) {
         console.error(JSON.stringify(appError, null, 2));
-        console.error("App creation failed. Content model creation will be skipped.");
+        console.error(
+          "App creation failed. Content model creation will be skipped."
+        );
         process.exit(1);
       }
 
@@ -59,16 +60,14 @@ const appInstallations = require("../../settings/app-installations.json");
 
       if (appUpdateError) {
         console.error(JSON.stringify(appUpdateError, null, 2));
-        console.error("App update failed. Content model creation will be skipped.");
+        console.error(
+          "App update failed. Content model creation will be skipped."
+        );
         process.exit(1);
       }
 
       appManifest.ui_location = appUpdateData?.data?.ui_location;
       updateAppManifest(appManifest, appEnv);
-
-      const url = `${appBaseUrl}/#!/developerhub/app/${appManifest.uid}/ui-locations`;
-      console.info("App created successfully");
-      openLink(url);
 
       await installApp(
         appEnv,
@@ -102,18 +101,30 @@ const appInstallations = require("../../settings/app-installations.json");
         console.info(
           `   To view installed apps, check: scripts/settings/app-installations.json`
         );
-        console.error("\nApp creation skipped. Content model creation will be skipped.\n");
+        console.error(
+          "\nApp creation skipped. Content model creation will be skipped.\n"
+        );
+
+        const url = `${appBaseUrl}/#!/developerhub/app/${appManifest?.uid}/ui-locations`;
+        openLink(url);
         process.exit(1);
       }
 
       if (appEnv === "dev") {
-        console.info("\n Note: Both RTE and Custom DAM fields will be created.");
+        console.info(
+          "\n Note: Both RTE and Custom DAM fields will be created."
+        );
         console.info("   For local development, only one can work at a time.");
-        console.info("\n   Currently we have setup for Custom DAM Field in dev-app-manifest.json");
+        console.info(
+          "\n   Currently we have setup for Custom DAM Field in dev-app-manifest.json"
+        );
         console.info("\n   To test the RTE Field:");
-        console.info("\n  Update dev-app-manifest.json with the URL: \"http://localhost:1268\"");
-        console.info("\n  Start the RTE server by running 'npm run start' in the rte folder");
-
+        console.info(
+          '\n  Update dev-app-manifest.json with the URL: "http://localhost:1268"'
+        );
+        console.info(
+          "\n  Start the RTE server by running 'npm run start' in the rte folder"
+        );
 
         const appManifest = { ...devAppManifest };
         await createAndDeployApp(appManifest);
@@ -124,7 +135,9 @@ const appInstallations = require("../../settings/app-installations.json");
           await createAndDeployApp(appManifest);
         } else {
           console.info("Launch project is not yet linked");
-          console.error("App creation skipped. Content model creation will be skipped.");
+          console.error(
+            "App creation skipped. Content model creation will be skipped."
+          );
           process.exit(1);
         }
       }
@@ -134,8 +147,7 @@ const appInstallations = require("../../settings/app-installations.json");
           `Have you updated the settings/${appEnv}-app-manifest.json?`
         )
       ) {
-        appUid =
-          appEnv === "dev" ? devAppManifest.uid : prodAppManifest.uid;
+        appUid = appEnv === "dev" ? devAppManifest.uid : prodAppManifest.uid;
         const appManifest = appEnv === "dev" ? devAppManifest : prodAppManifest;
 
         const [appError, appData] = await safePromise(
@@ -152,8 +164,6 @@ const appInstallations = require("../../settings/app-installations.json");
         updateAppManifest(appManifest, appEnv);
 
         console.info("App updated successfully");
-        const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
-        openLink(url);
 
         await installApp(
           appEnv,
