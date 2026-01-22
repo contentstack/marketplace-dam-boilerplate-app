@@ -84,7 +84,7 @@ const path = require("path");
     userOrgs = retryData.user.organizations;
   } else {
     if (!loginData) {
-      return "Looks like your email or password is invalid. Please try again or reset your password.";
+      return;
     } else {
       authtoken = loginData.user.authtoken;
       userOrgs = loginData.user.organizations;
