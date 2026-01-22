@@ -32,16 +32,10 @@ const path = require("path");
     "Looks like your email or password is invalid. Please try again or reset your password."
   );
 
-  if (loginError) return;
-
   let authtoken, userOrgs;
-  if (loginData.user) {
-    authtoken = loginData.user.authtoken;
-    userOrgs = loginData.user.organizations;
-  }
 
   // Step 2: If 2FA required
-  if (loginData.statusCode === 294) {
+  if (loginError.error_code === 294) {
     authIndex = readlineSync.keyInSelect(
       constants.AUTHENTICATORS.map((auth) => auth.name),
       "Please select an authenticator"
@@ -88,6 +82,13 @@ const path = require("path");
 
     authtoken = retryData.user.authtoken;
     userOrgs = retryData.user.organizations;
+  } else {
+    if (!loginData) {
+      return "Looks like your email or password is invalid. Please try again or reset your password.";
+    } else {
+      authtoken = loginData.user.authtoken;
+      userOrgs = loginData.user.organizations;
+    }
   }
 
   fs.writeFileSync(
