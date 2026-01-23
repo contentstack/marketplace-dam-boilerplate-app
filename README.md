@@ -276,6 +276,8 @@ cd <APP_DIRECTORY>
 npm i
 ```
 
+> Note: For Linux/MacOS users, if you encounter permission errors, you may need to use `sudo` before the npm commands (e.g., `sudo npm i`).
+
 * To install the necessary packages for scripts, navigate to the `scripts` folder:
 
 ```
@@ -289,7 +291,7 @@ npm i
 npm run login
 ```
 
-* To setup a development app, please run the following command in the scripts folder. This will create, install a marketplace app, and creates a sample content-type & entry for the same. Please follow all the prompts after executing the command. The app's manifest will be stored in `scripts/settings/dev-app-manifest.json` and its installation details in `scripts/settings/app-installations.json`. It will also generate all the required environment variables of both UI & RTE, so no need to add them explicitly.
+* To setup a development app, please run the following command in the scripts folder. This will create, install a marketplace app, and creates a sample content-type & entry for the same. Please follow all the prompts after executing the command. You will be asked to select the organization in which you want to create the dev app. The app's manifest will be stored in `scripts/settings/dev-app-manifest.json` and its installation details in `scripts/settings/app-installations.json`. It will also generate all the required environment variables of both UI & RTE, so no need to add them explicitly.
 
 ```
 npm run dev-app-initial-setup 
@@ -301,6 +303,8 @@ npm run dev-app-initial-setup
 cd <APP_DIRECTORY>/ui
 npm i
 ```
+
+> Note: For Linux/MacOS users, if you encounter permission errors, you may need to use `sudo` before the npm commands (e.g., `sudo npm i`).
 
 * Run the following command in the `ui` folder to get started on all the Operation System(except Windows):
 
@@ -322,6 +326,8 @@ The UI server will start at port 4000.
 cd <APP_DIRECTORY>/ui/rte
 npm i
 ```
+
+> Note: For Linux/MacOS users, if you encounter permission errors, you may need to use `sudo` before the npm commands (e.g., `sudo npm i`).
 
 * After you install the dependencies, run the following command in the rte folder to start the webpack server:
 
@@ -449,7 +455,7 @@ cd <APP_DIRECTORY>/scripts
 npm run prod-app-initial-setup 
 ```
 
-The above command will build the UI & RTE and deploys the apps on Launch, creates a marketplace app and links it to the deployed app. Asks you to install the app, and create a sample content-type & entry linking to the installed app. Please make sure you've enough permissions for the marketplace & launch for the above command to work without any errors. In order for the custom fields to fetch assets to work, you will need to save app's configuration in the config page.
+The above command will build the UI & RTE and deploys the apps on Launch, creates a marketplace app and links it to the deployed app. Asks you to select the organization in which you want to create the production app, install the app, and create a sample content-type & entry linking to the installed app. Please make sure you've enough permissions for the marketplace & launch for the above command to work without any errors. In order for the custom fields to fetch assets to work, you will need to save app's configuration in the config page.
 
 * In case, if you want to create a sample content-type & entries again, run the following command and follow the prompts:
 

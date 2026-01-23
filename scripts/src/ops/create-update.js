@@ -23,6 +23,7 @@ const appInstallations = require("../../settings/app-installations.json");
     const { authtoken, selectedOrgUid, region, baseUrl, appBaseUrl } = context;
 
     const createAndDeployApp = async (appManifest) => {
+      console.info("\nNote: This will be your app on Developer Hub in the region you are logged into.\n");
       const appName = readlineSync.question("Enter name of app: ");
       appManifest.name = appName;
 
