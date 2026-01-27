@@ -33,9 +33,6 @@ const appInstallations = require("../../settings/app-installations.json");
         return;
       }
 
-      console.info(appEnv);
-      console.info(appInstallations);
-
       const appInstallationData = appInstallations.apps.find(
         (app) => app.env === appEnv
       );
