@@ -28,14 +28,20 @@ const path = require("path");
       url: `${csBaseUrl}/v3/user-session`,
       method: "POST",
       data: { user: { email, password } },
+      printError: false,
     }),
-    "Looks like your email or password is invalid. Please try again or reset your password."
+    "Login failed."
   );
 
   let authtoken, userOrgs;
 
+  if (loginData?.user) {
+    authtoken = loginData.user.authtoken;
+    userOrgs = loginData.user.organizations;
+  }
+
   // Step 2: If 2FA required
-  if (loginError.error_code === 294) {
+  if (loginError?.error_code === 294) {
     authIndex = readlineSync.keyInSelect(
       constants.AUTHENTICATORS.map((auth) => auth.name),
       "Please select an authenticator"
@@ -83,12 +89,10 @@ const path = require("path");
     authtoken = retryData.user.authtoken;
     userOrgs = retryData.user.organizations;
   } else {
-    if (!loginData) {
-      return;
-    } else {
-      authtoken = loginData.user.authtoken;
-      userOrgs = loginData.user.organizations;
-    }
+    console.error(
+      "Looks like your email or password is invalid. Please try again or reset your password.",
+    );
+    return;
   }
 
   fs.writeFileSync(
