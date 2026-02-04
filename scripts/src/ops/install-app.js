@@ -19,7 +19,8 @@ const install = async (
   baseUrl,
   appBaseUrl,
   authtoken,
-  orgId
+  orgId,
+  appUrl
 ) => {
   if (readlineSync.keyInYN("Do you want to install the app?")) {
     const [stackError, stackData] = await safePromise(
@@ -108,11 +109,15 @@ const install = async (
 
     updateAppInstallation(appInstallationManifest);
 
-    console.info("Installing app completed successfully");
+    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+    console.info("Opening the app's manifest in the developerHub: ");
+    openLink(appUrl);
+    console.info("Opening the app's configuration page: ");
+    openLink(configPage);
+
   } else {
-    const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
-    console.info("App created successfully");
-    openLink(url);
+    console.info("Opening the app's manifest in the developerHub: ");
+    openLink(appUrl);
   }
 };
 
