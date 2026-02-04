@@ -5,7 +5,7 @@ const readlineSync = require("readline-sync");
 const path = require("path");
 const constants = require("../constants");
 
-const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
+const makeApiCall = async ({ url, method, headers, data, maxBodyLength,printError = true}) => {
   try {
     const res = await axios({
       url,
@@ -15,20 +15,21 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
       ...(maxBodyLength ? { maxBodyLength } : {}),
       ...(["PUT", "POST", "DELETE", "PATCH"].includes(method) && {
         data,
-      }),
+      })
     });
 
     return res?.data;
   } catch (error) {
+    if (printError) console.info(JSON.stringify(error));
     throw error.response?.data || error.message || error;
   }
 };
 
-const safePromise = (promise, errorText) =>
+const safePromise = (promise, errorText,printError = true) =>
   promise
     .then((res) => [null, res])
     .catch((err) => {
-      console.error(err.response?.data || err.message || err);
+      if (printError) console.error(errorText);
       return [err];
     });
 

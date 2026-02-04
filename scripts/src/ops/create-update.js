@@ -70,6 +70,10 @@ const appInstallations = require("../../settings/app-installations.json");
       appManifest.ui_location = appUpdateData?.data?.ui_location;
       updateAppManifest(appManifest, appEnv);
 
+      const url = `${appBaseUrl}/#!/developerhub/app/${appManifest.uid}/ui-locations`;
+
+      console.info("App created successfully");
+
       await installApp(
         appEnv,
         region,
@@ -77,7 +81,8 @@ const appInstallations = require("../../settings/app-installations.json");
         baseUrl,
         appBaseUrl,
         authtoken,
-        selectedOrgUid
+        selectedOrgUid,
+        url,
       );
     };
 
@@ -165,6 +170,7 @@ const appInstallations = require("../../settings/app-installations.json");
         updateAppManifest(appManifest, appEnv);
 
         console.info("App updated successfully");
+        const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
 
         await installApp(
           appEnv,
@@ -173,11 +179,13 @@ const appInstallations = require("../../settings/app-installations.json");
           baseUrl,
           appBaseUrl,
           authtoken,
-          selectedOrgUid
+          selectedOrgUid,
+          url,
         );
       }
     }
   } catch (error) {
+    console.info(error);
     console.error("Error:", error.message || error);
   }
 })();
