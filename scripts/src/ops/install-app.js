@@ -111,13 +111,12 @@ const install = async (
 
     const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
     console.info("Opening the app's manifest in the developerHub: ");
-    openLink(appUrl);
+    openLink(appUrl, "install-app-manifest");
     console.info("Opening the app's configuration page: ");
-    openLink(configPage);
-
+    openLink(configPage, "install-app-config");
   } else {
     console.info("Opening the app's manifest in the developerHub: ");
-    openLink(appUrl);
+    openLink(appUrl, "install-app-manifest");
   }
 };
 

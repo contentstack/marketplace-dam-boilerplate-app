@@ -5,7 +5,14 @@ const readlineSync = require("readline-sync");
 const path = require("path");
 const constants = require("../constants");
 
-const makeApiCall = async ({ url, method, headers, data, maxBodyLength,printError = true}) => {
+const makeApiCall = async ({
+  url,
+  method,
+  headers,
+  data,
+  maxBodyLength,
+  printError = true,
+}) => {
   try {
     const res = await axios({
       url,
@@ -15,7 +22,7 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength,printErro
       ...(maxBodyLength ? { maxBodyLength } : {}),
       ...(["PUT", "POST", "DELETE", "PATCH"].includes(method) && {
         data,
-      })
+      }),
     });
 
     return res?.data;
@@ -25,7 +32,7 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength,printErro
   }
 };
 
-const safePromise = (promise, errorText,printError = true) =>
+const safePromise = (promise, errorText, printError = true) =>
   promise
     .then((res) => [null, res])
     .catch((err) => {
@@ -65,7 +72,41 @@ const buildDeploymentUrl = (launchSubDomain, region, deploymentUrl = null) => {
   return url;
 };
 
-const openLink = (url) => {
+const COLLECTED_LINKS_FILE = path.join(
+  __dirname,
+  "../../settings/collected-links.json"
+);
+
+const addLinkToCollection = (url, source = "unknown") => {
+  try {
+    let linksData = { links: [] };
+
+    // Read existing links if file exists
+    if (fs.existsSync(COLLECTED_LINKS_FILE)) {
+      const fileContent = fs.readFileSync(COLLECTED_LINKS_FILE, "utf8");
+      linksData = JSON.parse(fileContent);
+    }
+
+    // Add new link with metadata
+    linksData.links.push({
+      url,
+      source,
+      timestamp: new Date().toISOString(),
+      opened: false,
+    });
+
+    // Write back to file
+    fs.writeFileSync(COLLECTED_LINKS_FILE, JSON.stringify(linksData, null, 2));
+    console.info(`Link collected: ${url}`);
+  } catch (error) {
+    console.error("Error collecting link:", error.message);
+    // Fallback to immediate opening if collection fails
+    openLinkImmediate(url);
+  }
+};
+
+const openLinkImmediate = (url) => {
+  console.info(url);
   const cmd =
     process.platform === "win32"
       ? `start ${url}`
@@ -78,6 +119,64 @@ const openLink = (url) => {
       return;
     }
   });
+};
+
+const openLink = (url, source = "unknown") => {
+  // Check if we should collect links (when COLLECT_LINKS environment variable is set)
+  if (process.env.COLLECT_LINKS === "true") {
+    addLinkToCollection(url, source);
+  } else {
+    openLinkImmediate(url);
+  }
+};
+
+const openAllCollectedLinks = () => {
+  try {
+    if (!fs.existsSync(COLLECTED_LINKS_FILE)) {
+      console.info("No collected links found.");
+      return;
+    }
+
+    const fileContent = fs.readFileSync(COLLECTED_LINKS_FILE, "utf8");
+    const linksData = JSON.parse(fileContent);
+
+    if (!linksData.links || linksData.links.length === 0) {
+      console.info("No links to open.");
+      return;
+    }
+
+    console.info(`Opening ${linksData.links.length} collected links...`);
+
+    linksData.links.forEach((linkItem, index) => {
+      if (!linkItem.opened) {
+        console.info(
+          `${index + 1}. Opening: ${linkItem.url} (from: ${linkItem.source})`
+        );
+        openLinkImmediate(linkItem.url);
+        linkItem.opened = true;
+
+        // Add a small delay between opening links to prevent overwhelming the system
+        if (index < linksData.links.length - 1) {
+          setTimeout(() => {}, 500);
+        }
+      }
+    });
+
+    // Update the file to mark links as opened
+    fs.writeFileSync(COLLECTED_LINKS_FILE, JSON.stringify(linksData, null, 2));
+  } catch (error) {
+    console.error("Error opening collected links:", error.message);
+  }
+};
+
+const clearCollectedLinks = () => {
+  try {
+    if (fs.existsSync(COLLECTED_LINKS_FILE)) {
+      fs.unlinkSync(COLLECTED_LINKS_FILE);
+    }
+  } catch (error) {
+    console.error("Error clearing collected links:", error.message);
+  }
 };
 
 const runCommand = (command, options = {}) => {
@@ -157,6 +256,8 @@ const authenticateUser = () => {
 };
 
 module.exports = {
+  openAllCollectedLinks,
+  clearCollectedLinks,
   openLink,
   runCommand,
   getBaseUrl,
