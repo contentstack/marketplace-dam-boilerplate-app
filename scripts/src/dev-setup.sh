@@ -83,57 +83,12 @@ EOF
 
 echo "Created ui/rte/.env file."
 
-echo "Starting the UI server..."
-open_terminal "$PROJECT_ROOT/ui" "npm run start" "UI Server (Port 4000)"
-
-echo "Waiting for UI server to be ready..."
-# Wait for the server to be ready by checking if port 4000 is responding
-max_attempts=30
-attempt=0
-
-# Check if we have tools to verify server readiness
-if command -v curl > /dev/null 2>&1; then
-  CHECK_CMD="curl"
-elif command -v nc > /dev/null 2>&1; then
-  CHECK_CMD="nc"
-else
-  CHECK_CMD="none"
-  echo "Note: curl or nc not found, using fixed wait time (15 seconds)..."
-  sleep 15
-  echo "Proceeding with app setup..."
-fi
-
-if [ "$CHECK_CMD" != "none" ]; then
-  while [ $attempt -lt $max_attempts ]; do
-    # Try to connect to the server (works on macOS, Linux, and Windows with WSL)
-    if [ "$CHECK_CMD" = "curl" ]; then
-      if curl -s http://localhost:4000 > /dev/null 2>&1; then
-        echo "UI server is ready!"
-        break
-      fi
-    elif [ "$CHECK_CMD" = "nc" ]; then
-      if nc -z localhost 4000 2>/dev/null; then
-        echo "UI server is ready!"
-        break
-      fi
-    fi
-    
-    attempt=$((attempt + 1))
-    if [ $attempt -lt $max_attempts ]; then
-      echo "Waiting for UI server... ($attempt/$max_attempts)"
-      sleep 2
-    fi
-  done
-
-  if [ $attempt -eq $max_attempts ]; then
-    echo "Warning: UI server may not be ready yet, but proceeding anyway..."
-    echo "The server is starting in a separate terminal. You may need to wait a bit longer."
-  fi
-fi
-
 echo "Setting up an initial development app."
 cd "$PROJECT_ROOT/scripts"
 npm run create-dev-app
+
+echo "Starting the frontend app..."
+open_terminal "../ui" "npm run start" "Frontend App(UI)"
 
 echo "Creating content model and its entry for the latest app."
 npm run create-dev-content-model
