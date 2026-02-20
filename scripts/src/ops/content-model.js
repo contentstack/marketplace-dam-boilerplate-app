@@ -87,12 +87,16 @@ const appInstallations = require("../../settings/app-installations.json");
         "Error while creating an entry."
       );
       if (EntryError) return;
-      const ctUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/content-type-builder`;
-      const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/en-us/entry/${EntryData?.entry.uid}/edit`;
+
       console.info("Entry created.");
 
-      openLink(ctUrl);
-      openLink(entryUrl);
+      const ctUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/content-type-builder`;
+      const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/en-us/entry/${EntryData?.entry.uid}/edit`;
+
+      console.info("Content type url: ");
+      openLink(ctUrl, "content-model-type");
+      console.info("Entry url: ");
+      openLink(entryUrl, "content-model-entry");
     }
   } catch (err) {
     console.info(err);

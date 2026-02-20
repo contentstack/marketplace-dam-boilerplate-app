@@ -336,7 +336,7 @@ const createProject = async (
     console.info(
       `Build and deployment has been initiated. You can check the logs at: ${projectUrl}`
     );
-    openLink(projectUrl);
+    openLink(projectUrl, "deploy-create-project");
 
     return {
       project_uid: res?.data?.importProject?.uid,
@@ -383,7 +383,13 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
   };
 };
 
-const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId, region = null) =>
+const updateProjectEnvs = async (
+  baseUrl,
+  metaData,
+  authtoken,
+  orgId,
+  region = null
+) =>
   makeApiCall({
     method: "POST",
     maxBodyLength: Infinity,
@@ -399,7 +405,11 @@ const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId, region = n
   updateEnvironment(
     environment: {uid: "${
       metaData?.env_uid
-    }", environmentVariables: ${getEnvVariables(metaData.deployment_url, metaData?.subdomain, region)}}
+    }", environmentVariables: ${getEnvVariables(
+        metaData.deployment_url,
+        metaData?.subdomain,
+        region
+      )}}
   ) {
     name
     uid
@@ -476,7 +486,7 @@ const reDeployProject = async (
     console.info(
       `Build and deployment has been initiated. You can check the logs at: ${projectUrl}`
     );
-    openLink(projectUrl);
+    openLink(projectUrl, "deploy-create-project");
 
     return deploymentUid;
   } catch (error) {
