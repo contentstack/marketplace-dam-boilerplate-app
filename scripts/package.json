@@ -15,7 +15,8 @@
     "create-dev-content-model": "node src/ops/content-model.js dev",
     "deploy-prod-app": "node src/ops/deploy.js",
     "dev-app-initial-setup": "sh ./src/dev-setup.sh",
-    "prod-app-initial-setup": "sh ./src/prod-setup.sh"
+    "prod-app-initial-setup": "sh ./src/prod-setup.sh",
+    "open-collected-links": "node src/ops/open-collected-links.js"
   },
   "keywords": [],
   "author": "",
