@@ -284,12 +284,8 @@ export const ModalComponent = function ({
         });
       }
     }
-    if (action === "create") {
-      setModalValue("");
-    } else {
-      handleModalValue(selectOptions, action, updatedValue);
-      closeModal();
-    }
+    handleModalValue(selectOptions, action, updatedValue);
+    closeModal();
   };
 
   return (
@@ -343,16 +339,6 @@ export const ModalComponent = function ({
                 }}
               >
                 {localeTexts.ConfigFields.customWholeJson.modal.btn.cancel}
-              </Button>
-              <Button
-                onClick={() => handleValueCreate("create")}
-                buttonType="secondary"
-                size="small"
-                disabled={!modalValue?.length || isEmptySpace}
-                version="v2"
-              >
-                <Icon icon={localeTexts.Icons.checkedPurple} />
-                {localeTexts.ConfigFields.customWholeJson.modal.btn.create}
               </Button>
               <Button
                 version="v2"
