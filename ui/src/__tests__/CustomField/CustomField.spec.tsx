@@ -101,7 +101,15 @@ beforeEach(() => {
     },
     currentLocale: "",
   };
-  let appcontextValue = { appSdk: null, appConfig: {}, appFailed: false };
+  let appcontextValue = {
+    appSdk: null,
+    appConfig: {},
+    appFailed: false,
+    localesByBranch: {},
+    makeAPIRequest: jest.fn(async () => ({} as Response)),
+    fetchLocalesForBranch: jest.fn(async () => {}),
+    getLocalesForBranch: jest.fn(() => []),
+  };
 
   if (testName?.includes("**")) {
     jest
@@ -150,7 +158,15 @@ beforeEach(() => {
   }
 
   if (testName?.includes("AppFailed")) {
-    appcontextValue = { appSdk: null, appConfig: {}, appFailed: true };
+    appcontextValue = {
+      appSdk: null,
+      appConfig: {},
+      appFailed: true,
+      localesByBranch: {},
+      makeAPIRequest: jest.fn(async () => ({} as Response)),
+      fetchLocalesForBranch: jest.fn(async () => {}),
+      getLocalesForBranch: jest.fn(() => []),
+    };
   }
 
   if (testName?.includes("AssetList")) {

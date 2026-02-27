@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@contentstack/app-sdk": "^2.3.1",
-    "@contentstack/venus-components": "^3.0.2",
+    "@contentstack/venus-components": "^3.0.0",
     "@dnd-kit/core": "^6.0.5",
     "@dnd-kit/sortable": "^7.0.1",
     "@dnd-kit/utilities": "^3.2.0",
@@ -22,7 +22,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "export PORT=4000 && react-scripts start",
+    "start": "BROWSER=none export PORT=4000 && react-scripts start",
     "winStart": "set PORT=4000 && react-scripts start",
     "test": "jest",
     "eject": "react-scripts eject",

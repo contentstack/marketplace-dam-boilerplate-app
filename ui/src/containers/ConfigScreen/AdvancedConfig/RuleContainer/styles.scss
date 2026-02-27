@@ -1,0 +1,482 @@
+// RuleContainer Component Styles
+
+.rule-container {
+  width: 98%;
+}
+
+.rule-header {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 5px 0 0 0;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.6px;
+  color: #151414;
+  min-width: 100%;
+  width: 100%;
+  margin-left: 10px;
+
+  .header-cell {
+    width: 180px !important;
+
+    &.delete-header {
+      flex: 0 0 44px;
+      min-width: 44px;
+      max-width: 44px;
+      text-align: center;
+    }
+  }
+
+  .separator {
+    font-size: 18px;
+    font-weight: 600;
+    color: #6c757d;
+    user-select: none;
+    min-width: 24px;
+    max-width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+    padding: 0 8px;
+  }
+}
+
+.custom-rule-container-row {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center; // Center align items including separators
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 0.4rem 0;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+  min-width: 100%;
+  width: 100%;
+
+  &.invalid-config-row {
+    min-height: 70px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+
+  .Select {
+    min-width: auto !important;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &:has(.Select__menu) {
+    z-index: 1000;
+  }
+
+  .Select__single-value,
+  .Select__multi-value__label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .truncated-label {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  .select-wrapper {
+    display: inline-flex;
+    cursor: help;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    min-width: 120px;
+    max-width: 200px;
+    flex-shrink: 1;
+    width: var(--select-width, 270px);
+
+    .Select {
+      width: 100% !important;
+      min-width: 180px;
+      max-width: 200px;
+    }
+
+    .select-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6c757d;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    &.middle-select-wrapper {
+      flex: 1.8;
+      min-width: 220px;
+      max-width: 350px;
+      flex-shrink: 1;
+      width: var(--select-width, 270px);
+
+      .Select {
+        min-width: 220px;
+        max-width: 350px;
+        width: 100% !important;
+      }
+    }
+
+    &.invalid-config-select-wrapper {
+      position: relative;
+      border-left: 2px solid #ef4444;
+      padding-left: 0.3rem;
+      margin-left: -0.3rem;
+      align-self: center;
+    }
+
+    // Error hint below config field
+    .config-error-hint {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+
+      .error-hint-icon {
+        color: #ef4444;
+        flex-shrink: 0;
+        width: 12px;
+        height: 12px;
+        margin-top: 1px;
+      }
+
+      .error-hint-text {
+        font-size: 11px;
+        color: #991b1b; // red-800
+        line-height: 1.4;
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+
+        strong {
+          font-weight: 600;
+          color: #7f1d1d;
+        }
+      }
+    }
+
+    .Select__single-value {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .Select__multi-value {
+      max-width: 100%;
+    }
+
+    .Select__multi-value__label {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .Select__menu {
+      z-index: 10000 !important;
+    }
+  }
+}
+
+.separator {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6c757d;
+  user-select: none;
+  min-width: 24px;
+  max-width: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+
+  &:hover {
+    color: #6c5ce7;
+    transform: scale(1.1);
+  }
+}
+
+.delete-icon {
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+
+  &:hover {
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    transition: all 0.2s ease;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.warning-icon {
+  color: #f59e0b; // amber-500
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: help;
+}
+
+.warning-icon-placeholder {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.locale-select-loading-wrapper {
+  width: 100%;
+  min-width: 220px;
+  max-width: 350px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background: #ffffff;
+
+  :global {
+    .AsyncLoader {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.action-icons {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 72px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding-top: 2px;
+}
+
+.tippy-wrapper-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+
+  .delete-icon {
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+      transform: none;
+    }
+  }
+}
+
+// Empty State
+.rule-container-empty {
+  text-align: center;
+  padding: 48px 24px;
+  border-radius: 8px;
+  margin: 16px 0;
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .empty-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+// Responsiveness
+@media (max-width: 768px) {
+  .rule-container-row {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 12px;
+
+    &::before {
+      width: 100%;
+      height: 3px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: auto;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .separator {
+      transform: rotate(90deg);
+      font-size: 14px;
+    }
+
+    .venus-select {
+      width: 100%;
+    }
+  }
+
+  .rule-container-empty {
+    padding: 32px 16px;
+
+    .empty-icon {
+      font-size: 36px;
+    }
+
+    .empty-title {
+      font-size: 14px;
+    }
+
+    .empty-description {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .rule-container-row {
+    margin-bottom: 12px;
+    padding: 12px;
+    gap: 8px;
+
+    .separator {
+      font-size: 12px;
+    }
+
+    .delete-icon {
+      padding: 4px;
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}
+
+.rule-container-row-enter {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+}
+
+.rule-container-row-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.3s ease;
+}
+
+.rule-container-row-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.rule-container-row-exit-active {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+  transition: all 0.3s ease;
+}
+
+.field-content__content {
+  height: auto;
+  min-height: auto;
+}
+
+// Config Mapping Section Styles
+.config-mapping-section {
+  padding-left: calc(1.75rem + 2px);
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+
+  .add-more-btn {
+    margin-top: 24px;
+    padding: 0;
+    text-align: left;
+
+    .Button {
+      justify-content: flex-start !important;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .Select__v2 .Portal__control .Portal__value-container .Portal__placeholder {
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+  }
+}
+
+// Global Styles
+.contentMapWrapper-tags-label {
+  text-align: left;
+}
+
+.config-rules-field {
+  padding: 30px 30px 16px !important;
+  margin: calc(0.125rem + 1px) 0 0 0 !important;
+}
+
+.Select .Select__indicators {
+  align-items: center;
+}
+
+.config-rules-info {
+  margin: 0 30px 30px 30px;
+}

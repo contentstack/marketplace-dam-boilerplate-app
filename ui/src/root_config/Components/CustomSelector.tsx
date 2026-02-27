@@ -1,14 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import "../styles.scss";
+import Table from "../../components/Table";
+import { TypeCustomComponent } from "../../common/types";
 
-interface TypeCustomComponent {}
-
-const CustomSelector: React.FC<TypeCustomComponent> = function () {
+const CustomSelector: React.FC<TypeCustomComponent> = function ({
+  config,
+  setError,
+  successFn,
+  closeFn,
+  selectedAssetIds,
+}: TypeCustomComponent) {
   return (
-    <div className="config-custom-component">
-      Custom Component - This is a custom component and can be modified using
-      root_config
-    </div>
+    <Table
+      config={config}
+      setError={setError}
+      successFn={successFn}
+      closeFn={closeFn}
+      selectedAssetIds={selectedAssetIds}
+    />
   );
 };
 

@@ -37,7 +37,7 @@ export interface TypeAsset {
   id: string;
   type: string;
   name: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   size?: any;
   height?: any;
   width?: any;
@@ -275,4 +275,184 @@ export interface TypeIconElement {
 export interface TypedefaultOp {
   operation: "add" | "remove";
   options: string[];
+}
+
+export interface BranchRule {
+  branch_uid: string[];
+  config_label: string;
+}
+export interface UnifiedConfigRule {
+  branch_uid: string;
+  locales_uid: string[];
+  config_label: string;
+}
+
+export interface AssetData {
+  _id: string;
+  assetName: string;
+  assetUrl?: string;
+  thumbnail?: string;
+  fileSize?: string;
+  fileType?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
+  createdDate?: string;
+  [key: string]: any;
+}
+
+export interface TableColumn {
+  Header: string;
+  id?: string;
+  accessor: string | any;
+  disableSortBy?: boolean;
+  columnWidthMultiplier?: number;
+  default?: boolean;
+  addToColumnSelector?: boolean;
+  cssClass?: string;
+}
+
+export interface TableSelectorProps {
+  config: any;
+  setError: (errObj: any) => void;
+  successFn: (assets: any[]) => void;
+  closeFn: () => void;
+  selectedAssetIds: string[];
+  assetData: AssetData[];
+}
+
+export interface TableProps {
+  config: any;
+  setError: (errObj: any) => void;
+  successFn: (assets: any[]) => void;
+  closeFn: () => void;
+  selectedAssetIds: string[];
+}
+
+export interface TypeCustomComponent {
+  config: any;
+  setError: (errObj: any) => void;
+  successFn: (assets: any[]) => void;
+  closeFn: () => void;
+  selectedAssetIds: string[];
+}
+
+export interface RuleContainerOption {
+  label: string;
+  value: any;
+}
+
+export interface RuleContainerMapping {
+  [key: string]: any;
+}
+
+export interface RuleContainerConfig {
+  branchPlaceholder?: string;
+  configPlaceholder?: string;
+  localePlaceholder?: string;
+  isMultiBranch?: boolean;
+  isMultiConfig?: boolean;
+  isMultiLocale?: boolean;
+  isBranchExhaustive?: boolean;
+  isConfigExhaustive?: boolean;
+  isLocaleExhaustive?: boolean;
+  isLocaleDisabled?: boolean;
+  // Legacy support - will be removed
+  leftPlaceholder?: string;
+  middlePlaceholder?: string;
+  rightPlaceholder?: string;
+  isMultiLeft?: boolean;
+  isMultiMiddle?: boolean;
+  isMultiRight?: boolean;
+  isLeftExhaustive?: boolean;
+  isMiddleExhaustive?: boolean;
+  isRightExhaustive?: boolean;
+  isRightDisabled?: boolean;
+  noOptionsMessage?: string;
+  deleteTooltip?: string;
+  separator?: string;
+  containerClass?: string;
+  selectWidth?: string;
+  separatorClass?: string;
+  iconClass?: string;
+  showTooltip?: boolean;
+  showDeleteIcon?: boolean;
+  isSearchable?: boolean;
+  multiDisplayLimit?: number;
+  maxCharacters?: number;
+}
+
+export interface RuleContainerProps {
+  mappings: RuleContainerMapping[];
+  branchOptions: RuleContainerOption[];
+  configOptions: RuleContainerOption[];
+  getLocaleOptionsForBranch?: (branch: string) => RuleContainerOption[];
+  validConfigs?: Set<string>;
+  isBranchLoading?: (branch: string) => boolean;
+
+  onBranchSelect: (data: any, index: number) => void;
+  onConfigSelect: (data: any, index: number) => void;
+  onLocaleSelect?: (data: any, index: number) => void;
+  onDelete: (index: number) => void;
+
+  config?:
+    | RuleContainerConfig
+    | {
+        branchPlaceholder?: string;
+        configPlaceholder?: string;
+        localePlaceholder?: string;
+        noOptionsMessage?: string;
+        deleteTooltip?: string;
+        separator?: string;
+        containerClass?: string;
+        selectWidth?: string;
+        separatorClass?: string;
+        iconClass?: string;
+        showTooltip?: boolean;
+        showDeleteIcon?: boolean;
+        isLocaleDisabled?: boolean;
+        isSearchable?: boolean;
+        multiDisplayLimit?: number;
+        isMultiBranch?: boolean;
+        isMultiConfig?: boolean;
+        isMultiLocale?: boolean;
+        isBranchExhaustive?: boolean;
+        isConfigExhaustive?: boolean;
+        isLocaleExhaustive?: boolean;
+        maxCharacters?: number;
+        ruleType?: string;
+      };
+}
+
+export interface UnifiedRule {
+  branch_uid: string | string[];
+  locales_uid: string[];
+  config_label: string | string[];
+}
+
+export interface ConfigRule {
+  config_label: string[];
+  locales?: {
+    [localeCode: string]: {
+      config_label: string[];
+    };
+  };
+}
+
+export interface ConfigRules {
+  [branchId: string]: ConfigRule;
+}
+
+export interface LocaleType {
+  code: string;
+  name: string;
+  fallback_locale: string | null;
+  uid: string;
+  created_by: string;
+  updated_by: string;
+  created_at: string;
+  updated_at: string;
+  ACL: any[];
+  _version: number;
 }

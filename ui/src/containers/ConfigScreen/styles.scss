@@ -1,5 +1,5 @@
 .config-wrapper {
-  margin: 0 0 10px 0;
+  margin: 0 0 50px 0;
 
   & .TextInput__input {
     width: 97% !important;
@@ -32,10 +32,6 @@
     margin: 10px !important;
   }
 
-  .tippy-wrapper {
-    margin-right: 10px;
-  }
-
   .radio-wrapper {
     padding: 20px 10px;
   }
@@ -60,6 +56,11 @@
 
   .InstructionText {
     visibility: visible;
+    margin: calc(0.125rem + 1px) 0 0 0 !important;
+  }
+
+  .FieldLabel {
+    margin: 0 0 0.5rem !important;
   }
 
   & .dam-keys {
@@ -118,6 +119,20 @@
       margin: 0 15px;
     }
   }
+
+  & .config-tabs {
+    width: 93%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto auto auto;
+  }
+}
+
+.TabWrapper .Tab.Tab--v2.Tab--small {
+  height: 2.063rem;
+  width: fit-content;
+  margin: 20px;
 }
 
 .note-p {
@@ -284,7 +299,6 @@
     margin: 10px;
 
     & .config-rule__select--flex {
-      // border: 0.1px solid black;
       display: flex;
       flex-wrap: wrap;
       margin: 0;
@@ -292,7 +306,6 @@
 
       & .Select {
         min-width: 230px !important;
-        // margin: 5px 0;
       }
 
       & .config-rule__seperator {
