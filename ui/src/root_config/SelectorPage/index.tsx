@@ -34,7 +34,7 @@ const openComptactView = (
 };
 
 // If there is no script then provide a custom component here
-// Note: If you need to fetch data from API in CustomSelector component, 
+// Note: If you need to fetch data from API in CustomSelector component,
 // use makeAPIRequest via MarketplaceAppContext in the SelectorPage component
 // and pass it as a prop to CustomSelector.
 const customSelectorComponent = (

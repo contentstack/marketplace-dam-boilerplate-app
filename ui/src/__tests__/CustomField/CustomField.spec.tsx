@@ -107,7 +107,7 @@ beforeEach(() => {
     appFailed: false,
     localesByBranch: {},
     makeAPIRequest: jest.fn(async () => ({} as Response)),
-    fetchLocalesForBranch: jest.fn(async () => { }),
+    fetchLocalesForBranch: jest.fn(async () => {}),
     getLocalesForBranch: jest.fn(() => []),
   };
 
@@ -164,7 +164,7 @@ beforeEach(() => {
       appFailed: true,
       localesByBranch: {},
       makeAPIRequest: jest.fn(async () => ({} as Response)),
-      fetchLocalesForBranch: jest.fn(async () => { }),
+      fetchLocalesForBranch: jest.fn(async () => {}),
       getLocalesForBranch: jest.fn(() => []),
     };
   }

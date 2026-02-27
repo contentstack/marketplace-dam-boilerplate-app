@@ -37,7 +37,9 @@ import "./styles.scss";
   the API call there as per requirement. */
 
 const CustomField: React.FC = function () {
-  const { appFailed, appSdk, makeAPIRequest } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk, makeAPIRequest } = useContext(
+    MarketplaceAppContext
+  );
   const {
     renderAssets,
     setRenderAssets,
@@ -139,7 +141,11 @@ const CustomField: React.FC = function () {
             if (!assetId) return asset;
 
             const response = await makeAPIRequest({
-              queryParams: `mode=getAssetById&location=${UI_LOCATIONS.CUSTOM_FIELD}&assetId=${assetId}&config=${encodeURIComponent(JSON.stringify(finalConfig?.config))}`,
+              queryParams: `mode=getAssetById&location=${
+                UI_LOCATIONS.CUSTOM_FIELD
+              }&assetId=${assetId}&config=${encodeURIComponent(
+                JSON.stringify(finalConfig?.config)
+              )}`,
               method: "GET",
             });
             const assetData = await response.json();

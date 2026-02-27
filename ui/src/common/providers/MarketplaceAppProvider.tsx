@@ -70,7 +70,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }) {
           );
           throw error;
         } finally {
-          // Remove from requests queue 
+          // Remove from requests queue
           inFlightRequestsRef?.current?.delete(branch);
           setLoadingBranches((prev) => {
             const next = new Set(prev);

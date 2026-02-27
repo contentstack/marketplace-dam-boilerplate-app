@@ -265,17 +265,17 @@ const validateConfigRules = (config: Props, serverConfig: Props) => {
           if (branchObj.config_label.length > 1) {
             errors.push(
               `Branch "${branchUid}" cannot have multiple branch-level configs. ` +
-              `Found: [${branchObj?.config_label?.join(", ")}]. ` +
-              `Only one branch-level config per branch is allowed.`
+                `Found: [${branchObj?.config_label?.join(", ")}]. ` +
+                `Only one branch-level config per branch is allowed.`
             );
           } else if (branchLevelRules?.has(branchUid)) {
             // This shouldn't happen with proper UI prevention, but validate anyway
             const existingConfigs = branchLevelRules?.get(branchUid) || [];
             errors.push(
               `Branch "${branchUid}" cannot have multiple branch-level configs. ` +
-              `Existing: [${existingConfigs?.join(
-                ", "
-              )}], Attempted: [${branchObj?.config_label?.join(", ")}]`
+                `Existing: [${existingConfigs?.join(
+                  ", "
+                )}], Attempted: [${branchObj?.config_label?.join(", ")}]`
             );
           } else {
             // Valid branch-level rule - store it
@@ -349,13 +349,16 @@ const customSelectStyles = {
 const getInvalidConfigSelectStyles = (isInvalid: boolean) => {
   if (!isInvalid) return customSelectStyles;
 
-  const colors = localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigColors;
+  const colors =
+    localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigColors;
 
   return {
     ...customSelectStyles,
     control: (base: any, state: any) => ({
       ...base,
-      borderColor: state?.isFocused ? colors?.borderFocused : colors?.borderUnfocused,
+      borderColor: state?.isFocused
+        ? colors?.borderFocused
+        : colors?.borderUnfocused,
       borderWidth: "1px",
       boxShadow: state?.isFocused ? `0 0 0 2px ${colors?.boxShadow}` : "none",
       "&:hover": {
