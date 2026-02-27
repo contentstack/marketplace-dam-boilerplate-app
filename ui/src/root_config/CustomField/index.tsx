@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable arrow-body-style */
 
-/* NOTE: Remove Functions which are not used */
-
 import {
   Props,
   TypeAsset,
@@ -10,19 +8,19 @@ import {
   TypeRootCustomField,
 } from "../../common/types";
 
-const filterAssetData = (assets: any[]) => {
+const filterAssetData = (assets: any[]): TypeAsset[] => {
   const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
     // Enter your code for filteration of assets to the specified format
     ({
-      id: "",
-      type: "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
-      name: "",
-      width: "",
-      height: "",
-      size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: "",
-      previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
-      platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
+      id: asset?.id || "",
+      type: asset?.type || "", // supported types: 'image' | 'code' | 'pdf' | 'excel' | 'presentation' | 'document' | 'json' | 'text/plain' | 'zip' | 'video' | 'audio' | 'image/tiff';
+      name: asset?.name || "",
+      width: asset?.width || "",
+      height: asset?.height || "",
+      size: asset?.size || "", // add size in bytes as string eg.'416246'
+      thumbnailUrl: asset?.thumbnailUrl || "",
+      previewUrl: asset?.previewUrl || "", // add this parameter if you want "Preview" in tooltip action items
+      platformUrl: asset?.platformUrl || "", // add this parameter if you want "Open In DAM" in tooltip action items
       cs_metadata: asset?.cs_metadata,
     })
   );
@@ -34,12 +32,14 @@ const handleConfigtoSelectorPage = (
   contentTypeConfig: Props,
   currentLocale: string
 ) => {
-  /* Return Config to be used on selector page */
+  /* Return Config to be used on selector page 
+  Note: If you need to fetch data from API, use makeAPIRequest via MarketplaceAppContext
+  in the CustomField component and pass the data as needed. */
   return {};
 };
 
 const getSelectorWindowUrl = (config: Props, contentTypeConfig: Props) => {
-  return ""; // return url to be opened as selector page
+  return "";
 };
 
 const handleSelectorPageData = (event: MessageEvent) => {
@@ -61,7 +61,10 @@ const handleAuthWindow = (
   resolve: Function,
   reject: Function
 ) => {
-  /* code logic to open the DAM auth window */
+  /* code logic to open the DAM auth window 
+  Note: If you need to fetch data from API for authentication, use makeAPIRequest 
+  via MarketplaceAppContext in the CustomField component.
+  if authentication is success, call resolve() | if failed, call reject(error) with error */
   resolve(); // if authentication is success, call resolve() | if failed, call reject(error) with error
 };
 
@@ -70,7 +73,6 @@ const modifyAssetsToSave = (
   contentTypeConfig: Props,
   assets: any[]
 ) => {
-  /* code logic to modify the assets to save in Custom Field */
   return assets;
 };
 

@@ -128,6 +128,9 @@ const customWholeJson = () => {
 
 const checkConfigValidity = async (config: Props, serverConfig: Props) => {
   // return value of the function is object which takes disableSave[type=boolean] and message[type=string]. Assigning "true" to disableSave will disable the button and "false" will enable to button.
+  // TODO: Implement your custom validation logic here
+  // Note: Config rules validation is handled separately in ConfigScreenUtils.validateConfigRules
+  // and executed before this function in AppConfigProvider
   return { disableSave: false, message: "Enter a Valid Config" };
 };
 

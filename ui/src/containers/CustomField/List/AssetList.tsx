@@ -25,7 +25,7 @@ const AssetList: React.FC<TypeAssetList> = function ({ id }) {
   if (asset) {
     name = asset?.name;
     type = asset?.type;
-    thumbnailUrl = asset?.thumbnailUrl;
+    thumbnailUrl = asset?.thumbnailUrl ?? "";
     previewUrl = asset?.previewUrl ?? "";
     platformUrl = asset?.platformUrl ?? "";
   }

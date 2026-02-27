@@ -6,7 +6,7 @@
 
 /* Below is just an example function which can be called
 from any of the app container pages. */
-const getDataFromAPI: Function = (data?: any): Promise<any> =>
+const makeAPIRequest: Function = (data?: any): Promise<any> =>
   fetch(`${process.env.REACT_APP_API_URL ?? ""}?${data?.queryParams}`, {
     headers: {
       ...data?.headers,
@@ -16,4 +16,4 @@ const getDataFromAPI: Function = (data?: any): Promise<any> =>
     body: JSON.stringify(data?.body),
   });
 
-export default getDataFromAPI;
+export default makeAPIRequest;
