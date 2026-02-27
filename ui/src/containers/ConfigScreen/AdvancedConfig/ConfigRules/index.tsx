@@ -29,14 +29,9 @@ function ConfigRules({
 
   return (
     <div>
-      <Field
-        className="config-rules-field"
-        labelText="Config Rules"
-      />
+      <Field className="config-rules-field" labelText="Config Rules" />
       <div className="config-rules-info">
-        <InfoMessage
-          content={texts?.unified?.infoMessage ?? ""}
-        />
+        <InfoMessage content={texts?.unified?.infoMessage ?? ""} />
       </div>
       <div className="config-mapping-section">
         <RuleContainer
@@ -51,12 +46,9 @@ function ConfigRules({
           onLocaleSelect={onLocaleSelect}
           onDelete={onDelete}
           config={{
-            branchPlaceholder:
-              texts?.unified?.leftPlaceholder,
-            configPlaceholder:
-              texts?.unified?.rightPlaceholder,
-            localePlaceholder:
-              texts?.unified?.middlePlaceholder,
+            branchPlaceholder: texts?.unified?.leftPlaceholder,
+            configPlaceholder: texts?.unified?.rightPlaceholder,
+            localePlaceholder: texts?.unified?.middlePlaceholder,
             noOptionsMessage: texts?.common?.noOptionsMessage,
             deleteTooltip: texts?.common?.deleteTooltip,
             separator: texts?.common?.separator,

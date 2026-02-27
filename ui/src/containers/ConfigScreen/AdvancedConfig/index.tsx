@@ -23,8 +23,7 @@ function AdvancedConfig({
     isBranchLoading,
   } = React.useContext(MarketplaceAppContext);
 
-  const defaultKey =
-    installationData?.configuration?.default_multi_config_key;
+  const defaultKey = installationData?.configuration?.default_multi_config_key;
 
   const extractUnifiedMappings = useCallback(() => {
     const unifiedRules: any[] = [];
@@ -40,7 +39,7 @@ function AdvancedConfig({
 
       const branchConfigLabel =
         Array.isArray(branchObj?.config_label) &&
-          branchObj?.config_label?.length
+        branchObj?.config_label?.length
           ? branchObj.config_label[0]
           : null;
 
@@ -64,7 +63,7 @@ function AdvancedConfig({
 
             const localeConfigLabel =
               Array.isArray(localeObj?.config_label) &&
-                localeObj?.config_label?.length
+              localeObj?.config_label?.length
                 ? localeObj?.config_label?.[0]
                 : null;
 
@@ -186,7 +185,6 @@ function AdvancedConfig({
     [getLocalesForBranch]
   );
 
-
   /**
    * Build config mapper from unified rules
    * Rules with empty locales_uid apply to ALL locales (branch-level)
@@ -290,7 +288,9 @@ function AdvancedConfig({
     // Fetch locales for all unique branches in parallel (only new ones)
     if (branchesToFetch.length > 0) {
       // Mark branches as fetched
-      branchesToFetch.forEach((branch) => fetchedBranchesRef.current.add(branch));
+      branchesToFetch.forEach((branch) =>
+        fetchedBranchesRef.current.add(branch)
+      );
 
       console.info(
         `!!!🚀 Fetching locales for ${branchesToFetch.length} branches on initial load:`,

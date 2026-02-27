@@ -29,7 +29,8 @@ const getCurrentConfigLabel = () => {
     config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label
       ?.length > 0
   ) {
-    return config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label?.[0];
+    return config?.config_rules?.[branch]?.locales?.[currentLocale]
+      ?.config_label?.[0];
   }
   // 4 :  Branch-Specific Config
   if (branch && config?.config_rules?.[branch]?.config_label?.length > 0) {
@@ -66,7 +67,8 @@ const getConfig = () => {
     if (finalContentTypeConfig?.config_label)
       delete finalContentTypeConfig?.config_label;
     if (finalContentTypeConfig?.locale) delete finalContentTypeConfig?.locale;
-    if (finalContentTypeConfig?.config_rules) delete finalContentTypeConfig?.config_rules;
+    if (finalContentTypeConfig?.config_rules)
+      delete finalContentTypeConfig?.config_rules;
 
     return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
   }

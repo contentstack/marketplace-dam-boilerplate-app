@@ -99,7 +99,9 @@ const ConfigScreen: React.FC = function () {
   const [defaultKey, setDefaultKey] = React.useState<string>();
 
   const [configRulesMapper, setConfigRulesMapper] = useState<ConfigRules>();
-  const prevConfigRulesMapperRef = React.useRef<ConfigRules | undefined>(undefined);
+  const prevConfigRulesMapperRef = React.useRef<ConfigRules | undefined>(
+    undefined
+  );
 
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
@@ -343,7 +345,7 @@ const ConfigScreen: React.FC = function () {
 
     handleMultiConfigLimit(
       configInstallationObj?.multi_config_keys ??
-      serverConfigInstallationObj?.multi_config_keys
+        serverConfigInstallationObj?.multi_config_keys
     );
 
     setInstallationData({
@@ -576,7 +578,7 @@ const ConfigScreen: React.FC = function () {
                 </Dropdown>
               </div>
             ),
-            onClick: () => { },
+            onClick: () => {},
           },
         ]}
       >
@@ -597,8 +599,8 @@ const ConfigScreen: React.FC = function () {
   const renderAccFields = (accordianFields: Configurations) => {
     const accordianKeys: string[] = Object.keys(
       installationData?.configuration?.multi_config_keys ??
-      installationData?.serverConfiguration?.multi_config_keys ??
-      {}
+        installationData?.serverConfiguration?.multi_config_keys ??
+        {}
     );
     return (
       <div className="multi-config-accordian-wrapper">

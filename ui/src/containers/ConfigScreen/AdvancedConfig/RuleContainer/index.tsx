@@ -1,5 +1,10 @@
 import React, { useMemo } from "react";
-import { Icon, Select, Tooltip, AsyncLoader } from "@contentstack/venus-components";
+import {
+  Icon,
+  Select,
+  Tooltip,
+  AsyncLoader,
+} from "@contentstack/venus-components";
 import {
   RuleContainerMapping,
   RuleContainerProps,
@@ -149,36 +154,36 @@ function RuleContainer({
     }
 
     // Check loading status for this branch
-    const isLoadingLocales = branchString && isBranchLoading
-      ? isBranchLoading(branchString)
-      : false;
+    const isLoadingLocales =
+      branchString && isBranchLoading ? isBranchLoading(branchString) : false;
 
     // Get branch-specific locale options
-    const branchLocaleOptions = branchString && getLocaleOptionsForBranch
-      ? getLocaleOptionsForBranch(branchString)
-      : [];
+    const branchLocaleOptions =
+      branchString && getLocaleOptionsForBranch
+        ? getLocaleOptionsForBranch(branchString)
+        : [];
     const configValue = mapping?.right ?? mapping?.config_label ?? null;
     const localeValues = mapping?.middle ?? mapping?.locales_uid ?? null;
 
     const branchSelectValue = isMultiBranch
       ? branchOptions?.filter(
-        (opt) =>
-          Array.isArray(branchValue) && branchValue?.includes(opt?.value)
-      )
+          (opt) =>
+            Array.isArray(branchValue) && branchValue?.includes(opt?.value)
+        )
       : branchOptions?.find((opt) => opt?.value === branchValue) ?? null;
 
     const configSelectValue = isMultiConfig
       ? configOptions?.filter(
-        (opt) =>
-          Array.isArray(configValue) && configValue?.includes(opt?.value)
-      )
+          (opt) =>
+            Array.isArray(configValue) && configValue?.includes(opt?.value)
+        )
       : configOptions?.find((opt) => opt?.value === configValue) ?? null;
 
     const localeSelectValue = isMultiLocale
       ? branchLocaleOptions?.filter(
-        (opt) =>
-          Array.isArray(localeValues) && localeValues?.includes(opt?.value)
-      )
+          (opt) =>
+            Array.isArray(localeValues) && localeValues?.includes(opt?.value)
+        )
       : branchLocaleOptions?.find((opt) => opt?.value === localeValues) ?? null;
 
     // Check if this row's config is invalid (deleted or missing from available configs)
@@ -227,131 +232,136 @@ function RuleContainer({
     }
     const disabledLocalesSet = new Set(disabledLocales);
 
-    // Locale filtering 
+    // Locale filtering
     const filteredLocaleOptions = isLocaleExhaustive
       ? branchLocaleOptions?.filter((opt) => {
-        // Always allow currently selected locales for this row
-        if (Array.isArray(localeValues) && localeValues?.includes(opt?.value)) {
-          return true;
-        }
-
-        // Check if this locale is already used for the same branch
-        const isLocaleUsedForSameBranch = mappings?.some(
-          (otherMapping, otherIndex) => {
-            if (otherIndex === index) return false; // Skip current row
-
-            const otherBranch =
-              otherMapping?.left ?? otherMapping?.branch_uid;
-            const otherLocales =
-              otherMapping?.locales_uid ?? otherMapping?.middle;
-
-            const isSameBranch = Array.isArray(branchValue)
-              ? branchValue?.includes(otherBranch)
-              : branchValue === otherBranch;
-
-            if (!isSameBranch) return false;
-
-            // Check if this locale is in the other mapping's locales
-            if (Array.isArray(otherLocales)) {
-              return otherLocales?.includes(opt?.value);
-            }
-            return otherLocales === opt?.value;
+          // Always allow currently selected locales for this row
+          if (
+            Array.isArray(localeValues) &&
+            localeValues?.includes(opt?.value)
+          ) {
+            return true;
           }
-        );
 
-        return !isLocaleUsedForSameBranch;
-      })
-      : branchLocaleOptions?.filter((opt) => !disabledLocalesSet?.has(opt?.value));
+          // Check if this locale is already used for the same branch
+          const isLocaleUsedForSameBranch = mappings?.some(
+            (otherMapping, otherIndex) => {
+              if (otherIndex === index) return false; // Skip current row
+
+              const otherBranch =
+                otherMapping?.left ?? otherMapping?.branch_uid;
+              const otherLocales =
+                otherMapping?.locales_uid ?? otherMapping?.middle;
+
+              const isSameBranch = Array.isArray(branchValue)
+                ? branchValue?.includes(otherBranch)
+                : branchValue === otherBranch;
+
+              if (!isSameBranch) return false;
+
+              // Check if this locale is in the other mapping's locales
+              if (Array.isArray(otherLocales)) {
+                return otherLocales?.includes(opt?.value);
+              }
+              return otherLocales === opt?.value;
+            }
+          );
+
+          return !isLocaleUsedForSameBranch;
+        })
+      : branchLocaleOptions?.filter(
+          (opt) => !disabledLocalesSet?.has(opt?.value)
+        );
 
     const filteredBranchOptions = isBranchExhaustive
       ? branchOptions?.filter(
-        (opt) =>
-          !selectedBranchValues?.includes(opt?.value) ||
-          (isMultiBranch &&
-            Array.isArray(branchValue) &&
-            branchValue?.includes(opt?.value)) ||
-          (!isMultiBranch && opt?.value === branchValue)
-      )
+          (opt) =>
+            !selectedBranchValues?.includes(opt?.value) ||
+            (isMultiBranch &&
+              Array.isArray(branchValue) &&
+              branchValue?.includes(opt?.value)) ||
+            (!isMultiBranch && opt?.value === branchValue)
+        )
       : branchOptions;
 
     // Config filtering
     const filteredConfigOptions = isConfigExhaustive
       ? configOptions?.filter((opt) => {
-        // Always allow the currently selected config for this row
-        if (opt?.value === configValue) return true;
+          // Always allow the currently selected config for this row
+          if (opt?.value === configValue) return true;
 
-        // Check if user is trying to create a branch-level rule 
-        const isCurrentBranchLevel = isBranchLevel(localeValues);
+          // Check if user is trying to create a branch-level rule
+          const isCurrentBranchLevel = isBranchLevel(localeValues);
 
-        // Prevent multiple branch-level rules for same branch
-        if (
-          isCurrentBranchLevel &&
-          branchValue &&
-          hasBranchLevelRule(mappings, branchValue, index)
-        ) {
-          return false;
-        }
-
-        // Check if this config is already used at branch level for the same branch
-        const isConfigUsedAtBranchLevelFlag = isConfigUsedAtBranchLevel(
-          mappings,
-          branchValue,
-          opt?.value,
-          index
-        );
-
-        // If config is used at branch level, don't allow it for ANY other rules on same branch
-        if (isConfigUsedAtBranchLevelFlag) {
-          return false;
-        }
-
-        // Check if this would create a duplicate branch-level config
-        const isDuplicateBranchLevelConfig = mappings?.some(
-          (otherMapping, otherIndex) => {
-            if (otherIndex === index) return false; // Skip current row
-
-            const otherBranch =
-              otherMapping?.left ?? otherMapping?.branch_uid;
-            const otherLocales =
-              otherMapping?.locales_uid ?? otherMapping?.middle;
-            const otherConfig =
-              otherMapping?.config_label ?? otherMapping?.right;
-
-            const isSameBranch = sameBranch(branchValue, otherBranch);
-            const isSameConfig = otherConfig === opt?.value;
-            const isOtherBranchLevel = isBranchLevel(otherLocales);
-
-            // Block if same branch, same config, and both are branch-level
-            return (
-              isSameBranch &&
-              isSameConfig &&
-              isCurrentBranchLevel &&
-              isOtherBranchLevel
-            );
+          // Prevent multiple branch-level rules for same branch
+          if (
+            isCurrentBranchLevel &&
+            branchValue &&
+            hasBranchLevelRule(mappings, branchValue, index)
+          ) {
+            return false;
           }
-        );
 
-        if (isDuplicateBranchLevelConfig) {
-          return false; // Block duplicate branch-level configs
-        }
+          // Check if this config is already used at branch level for the same branch
+          const isConfigUsedAtBranchLevelFlag = isConfigUsedAtBranchLevel(
+            mappings,
+            branchValue,
+            opt?.value,
+            index
+          );
 
-        // Only block config if it's already used for the same branch
-        const isConfigUsedForSameBranch = mappings?.some(
-          (otherMapping, otherIndex) => {
-            if (otherIndex === index) return false; // Skip current row
-
-            const otherBranch =
-              otherMapping?.left ?? otherMapping?.branch_uid;
-            const otherConfig =
-              otherMapping?.config_label ?? otherMapping?.right;
-
-            const isSame = sameBranch(branchValue, otherBranch);
-            return isSame && otherConfig === opt?.value;
+          // If config is used at branch level, don't allow it for ANY other rules on same branch
+          if (isConfigUsedAtBranchLevelFlag) {
+            return false;
           }
-        );
 
-        return !isConfigUsedForSameBranch;
-      })
+          // Check if this would create a duplicate branch-level config
+          const isDuplicateBranchLevelConfig = mappings?.some(
+            (otherMapping, otherIndex) => {
+              if (otherIndex === index) return false; // Skip current row
+
+              const otherBranch =
+                otherMapping?.left ?? otherMapping?.branch_uid;
+              const otherLocales =
+                otherMapping?.locales_uid ?? otherMapping?.middle;
+              const otherConfig =
+                otherMapping?.config_label ?? otherMapping?.right;
+
+              const isSameBranch = sameBranch(branchValue, otherBranch);
+              const isSameConfig = otherConfig === opt?.value;
+              const isOtherBranchLevel = isBranchLevel(otherLocales);
+
+              // Block if same branch, same config, and both are branch-level
+              return (
+                isSameBranch &&
+                isSameConfig &&
+                isCurrentBranchLevel &&
+                isOtherBranchLevel
+              );
+            }
+          );
+
+          if (isDuplicateBranchLevelConfig) {
+            return false; // Block duplicate branch-level configs
+          }
+
+          // Only block config if it's already used for the same branch
+          const isConfigUsedForSameBranch = mappings?.some(
+            (otherMapping, otherIndex) => {
+              if (otherIndex === index) return false; // Skip current row
+
+              const otherBranch =
+                otherMapping?.left ?? otherMapping?.branch_uid;
+              const otherConfig =
+                otherMapping?.config_label ?? otherMapping?.right;
+
+              const isSame = sameBranch(branchValue, otherBranch);
+              return isSame && otherConfig === opt?.value;
+            }
+          );
+
+          return !isConfigUsedForSameBranch;
+        })
       : configOptions;
 
     const selectStyles = getInvalidConfigSelectStyles(isInvalidConfig);
@@ -359,7 +369,9 @@ function RuleContainer({
     return (
       <div
         key={`pair-${index}`}
-        className={`${containerClass} ${isInvalidConfig ? "invalid-config-row" : ""}`}
+        className={`${containerClass} ${
+          isInvalidConfig ? "invalid-config-row" : ""
+        }`}
         style={{ "--select-width": selectWidth } as React.CSSProperties}
       >
         <div className="select-wrapper">
@@ -382,7 +394,11 @@ function RuleContainer({
 
         <span className={separatorClass}>{separator}</span>
 
-        <div className={`select-wrapper ${isInvalidConfig ? "invalid-config-select-wrapper" : ""}`}>
+        <div
+          className={`select-wrapper ${
+            isInvalidConfig ? "invalid-config-select-wrapper" : ""
+          }`}
+        >
           <Select
             value={configSelectValue}
             onChange={(option: any) => onConfigSelect!(option, index)}
@@ -409,10 +425,12 @@ function RuleContainer({
               <span
                 className="error-hint-text"
                 dangerouslySetInnerHTML={{
-                  __html: localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigErrorMessage?.replace(
-                    "{configName}",
-                    rowConfig
-                  ) || `"${rowConfig}" was removed. Please select a new config.`
+                  __html:
+                    localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigErrorMessage?.replace(
+                      "{configName}",
+                      rowConfig
+                    ) ||
+                    `"${rowConfig}" was removed. Please select a new config.`,
                 }}
               />
             </div>
@@ -443,7 +461,9 @@ function RuleContainer({
                   noOptionsMessage={() => noOptionsMessage}
                   menuPortalTarget={document.body}
                   isDisabled={
-                    !branchValue || !branchLocaleOptions || branchLocaleOptions?.length === 0
+                    !branchValue ||
+                    !branchLocaleOptions ||
+                    branchLocaleOptions?.length === 0
                   }
                 />
               )}

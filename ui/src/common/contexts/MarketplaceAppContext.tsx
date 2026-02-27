@@ -21,7 +21,7 @@ export const MarketplaceAppContext =
     appFailed: false,
     localesByBranch: {},
     makeAPIRequest: async () => ({} as Response),
-    fetchLocalesForBranch: async () => { },
+    fetchLocalesForBranch: async () => {},
     getLocalesForBranch: () => [],
     isBranchLoading: () => false,
   });

@@ -59,7 +59,7 @@
 
   &.invalid-config-row {
     min-height: 70px;
-    padding-bottom: 20px; 
+    padding-bottom: 20px;
     margin-bottom: 20px;
   }
 
@@ -134,10 +134,10 @@
 
     &.invalid-config-select-wrapper {
       position: relative;
-      border-left: 2px solid #ef4444; 
+      border-left: 2px solid #ef4444;
       padding-left: 0.3rem;
-      margin-left: -0.3rem; 
-      align-self: center; 
+      margin-left: -0.3rem;
+      align-self: center;
     }
 
     // Error hint below config field
@@ -151,7 +151,7 @@
       gap: 5px;
       padding: 0;
       width: 100%;
-      max-width: 100%; 
+      max-width: 100%;
       box-sizing: border-box;
 
       .error-hint-icon {
@@ -159,7 +159,7 @@
         flex-shrink: 0;
         width: 12px;
         height: 12px;
-        margin-top: 1px; 
+        margin-top: 1px;
       }
 
       .error-hint-text {
@@ -167,13 +167,13 @@
         color: #991b1b; // red-800
         line-height: 1.4;
         flex: 1;
-        min-width: 0; 
+        min-width: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
 
         strong {
           font-weight: 600;
-          color: #7f1d1d; 
+          color: #7f1d1d;
         }
       }
     }
@@ -218,7 +218,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center; 
+  align-self: center;
 
   &:hover {
     color: #6c5ce7;
@@ -284,7 +284,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   background: #ffffff;
-  
+
   :global {
     .AsyncLoader {
       display: flex !important;
@@ -298,12 +298,12 @@
 
 .action-icons {
   display: inline-flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   gap: 8px;
-  width: 72px; 
+  width: 72px;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding-top: 2px; 
+  padding-top: 2px;
 }
 
 .tippy-wrapper-disabled {

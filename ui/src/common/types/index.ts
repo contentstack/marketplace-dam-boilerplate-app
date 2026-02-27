@@ -195,10 +195,10 @@ type InputFieldType =
 
 export interface TypeBaseFields {
   type:
-  | "textInputField"
-  | "radioInputField"
-  | "selectInputField"
-  | "customInputField";
+    | "textInputField"
+    | "radioInputField"
+    | "selectInputField"
+    | "customInputField";
   labelText: string;
   helpText?: string;
   placeholderText?: string;
@@ -397,32 +397,32 @@ export interface RuleContainerProps {
   onDelete: (index: number) => void;
 
   config?:
-  | RuleContainerConfig
-  | {
-    branchPlaceholder?: string;
-    configPlaceholder?: string;
-    localePlaceholder?: string;
-    noOptionsMessage?: string;
-    deleteTooltip?: string;
-    separator?: string;
-    containerClass?: string;
-    selectWidth?: string;
-    separatorClass?: string;
-    iconClass?: string;
-    showTooltip?: boolean;
-    showDeleteIcon?: boolean;
-    isLocaleDisabled?: boolean;
-    isSearchable?: boolean;
-    multiDisplayLimit?: number;
-    isMultiBranch?: boolean;
-    isMultiConfig?: boolean;
-    isMultiLocale?: boolean;
-    isBranchExhaustive?: boolean;
-    isConfigExhaustive?: boolean;
-    isLocaleExhaustive?: boolean;
-    maxCharacters?: number;
-    ruleType?: string;
-  };
+    | RuleContainerConfig
+    | {
+        branchPlaceholder?: string;
+        configPlaceholder?: string;
+        localePlaceholder?: string;
+        noOptionsMessage?: string;
+        deleteTooltip?: string;
+        separator?: string;
+        containerClass?: string;
+        selectWidth?: string;
+        separatorClass?: string;
+        iconClass?: string;
+        showTooltip?: boolean;
+        showDeleteIcon?: boolean;
+        isLocaleDisabled?: boolean;
+        isSearchable?: boolean;
+        multiDisplayLimit?: number;
+        isMultiBranch?: boolean;
+        isMultiConfig?: boolean;
+        isMultiLocale?: boolean;
+        isBranchExhaustive?: boolean;
+        isConfigExhaustive?: boolean;
+        isLocaleExhaustive?: boolean;
+        maxCharacters?: number;
+        ruleType?: string;
+      };
 }
 
 export interface UnifiedRule {

@@ -1,4 +1,3 @@
-import { Notification } from "@contentstack/venus-components";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
 import { Configurations } from "../../common/types";
 
@@ -123,7 +122,6 @@ describe("mergeObjects", () => {
     });
   });
 });
-
 
 describe("getOptions", () => {
   it("should return array of objects with label & value", () => {

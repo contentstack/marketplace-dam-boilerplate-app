@@ -321,7 +321,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
             setModifiedOptions(modOptions);
             // Ensure configuration exists before setting dam_keys
             if (!initialState.configuration) {
-              initialState.configuration = {} as TypeAppSdkConfigState["configuration"];
+              initialState.configuration =
+                {} as TypeAppSdkConfigState["configuration"];
             }
             initialState.configuration.dam_keys = modOptions;
             await setInstallation(initialState);
@@ -357,7 +358,8 @@ const AppConfigProvider: React.FC = function ({ children }) {
       setModifiedOptions(modOptions);
       // Ensure configuration exists before setting dam_keys
       if (!updatedInstallationData.configuration) {
-        updatedInstallationData.configuration = {} as TypeAppSdkConfigState["configuration"];
+        updatedInstallationData.configuration =
+          {} as TypeAppSdkConfigState["configuration"];
       }
       updatedInstallationData.configuration.dam_keys = modOptions;
       await setInstallation(updatedInstallationData);
