@@ -23,7 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "axios": "^1.11.0",
+    "axios": "^1.13.5",
     "readline-sync": "^1.4.10"
   }
 }
