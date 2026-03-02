@@ -51,7 +51,7 @@
     "sass": "^1.94.0",
     "sass-loader": "^16.0.6",
     "uuid": "^8.3.2",
-    "webpack": "^5.65.0",
+    "webpack": "^5.104.1",
     "webpack-merge": "^5.8.0"
   },
   "keywords": [
