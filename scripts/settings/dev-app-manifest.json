@@ -1,0 +1,52 @@
+{
+  "name": "dam-dev-app",
+  "description": "Dam integration app for Contentstack changed",
+  "target_type": "stack",
+  "ui_location": {
+    "base_url": "http://localhost:4000/#",
+    "locations": [
+      {
+        "type": "cs.cm.stack.config",
+        "meta": [
+          {
+            "path": "/config",
+						"signed": false,
+						"enabled": true,
+						"required": true
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.custom_field",
+        "meta": [
+          {
+            "name": "DAM DevField",
+            "multiple": false,
+						"path": "/custom-field",
+						"signed": false,
+						"enabled": true,
+						"data_type": "json",
+						"required": false
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.rte",
+        "meta": [
+          {
+            "name": "RTE DevField",
+            "path": "/dam.js",
+						"signed": false,
+						"enabled": true,
+						"required": false
+          }
+        ]
+      }
+    ]
+  },
+  "hosting": {
+    "provider": "external",
+    "deployment_url": "http://localhost:4000/#"
+  },
+  "uid": ""
+}

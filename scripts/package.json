@@ -1,0 +1,29 @@
+{
+  "name": "marketplace-dam-boilerplate-scripts",
+  "version": "1.0.0",
+  "description": "Contentstack Dam Boilerplate Marketplace App's scripts package",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "login": "node src/ops/login.js",
+    "create-prod-app": "node src/ops/create-update.js create-app prod",
+    "update-prod-app": "node src/ops/create-update.js update-app prod",
+    "create-prod-content-model": "node src/ops/content-model.js prod",
+    "create-dev-app": "node src/ops/create-update.js create-app dev",
+    "update-dev-app": "node src/ops/create-update.js update-app dev",
+    "create-dev-content-model": "node src/ops/content-model.js dev",
+    "deploy-prod-app": "node src/ops/deploy.js",
+    "dev-app-initial-setup": "sh ./src/dev-setup.sh",
+    "prod-app-initial-setup": "sh ./src/prod-setup.sh",
+    "open-collected-links": "node src/ops/open-collected-links.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "axios": "^1.13.5",
+    "readline-sync": "^1.4.10"
+  }
+}
