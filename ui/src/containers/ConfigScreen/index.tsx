@@ -1,4 +1,5 @@
 /* Import React modules */
+/* eslint-disable no-underscore-dangle */
 import React, { useCallback, useContext, useEffect, useState } from "react";
 /* ContentStack Modules */
 import {
@@ -11,10 +12,12 @@ import {
   cbModal,
   Line,
   Tooltip,
+  Tabs,
 } from "@contentstack/venus-components";
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
 import "@contentstack/venus-components/build/main.css";
+import { isEqual } from "lodash";
 /* Import our modules */
 import {
   JsonComponent,
@@ -37,9 +40,11 @@ import {
   TypeUpdateTrigger,
   Props,
   TypeOption,
+  ConfigRules,
 } from "../../common/types";
-/* Import our CSS */
+
 import "./styles.scss";
+import AdvancedConfig from "./AdvancedConfig";
 
 const ConfigScreen: React.FC = function () {
   // default limit for Multi-Config
@@ -47,11 +52,15 @@ const ConfigScreen: React.FC = function () {
     process.env.REACT_APP_MULTI_CONFIG_LIMIT ?? "10",
     10
   );
-  // failed state received from MarketplaceAppContext
+
   const { appFailed } = useContext(MarketplaceAppContext);
-  // context usage for global states thorughout the component
-  const { installationData, setInstallationData, checkConfigFields } =
-    useContext(AppConfigContext);
+
+  const {
+    installationData,
+    setInstallationData,
+    checkConfigFields,
+    appConfig,
+  } = useContext(AppConfigContext);
   const [customUpdateTrigger, setCustomUpdateTrigger] =
     useState<TypeUpdateTrigger>({} as TypeUpdateTrigger);
   // state for disabling multi-config Add Btn
@@ -86,10 +95,13 @@ const ConfigScreen: React.FC = function () {
     }
   );
 
-  // state for rendering multi-config name modal
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  // default multiconfig key
   const [defaultKey, setDefaultKey] = React.useState<string>();
+
+  const [configRulesMapper, setConfigRulesMapper] = useState<ConfigRules>();
+  const prevConfigRulesMapperRef = React.useRef<ConfigRules | undefined>(
+    undefined
+  );
 
   const handleDefaultConfigFn = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { checked: boolean } },
@@ -106,6 +118,51 @@ const ConfigScreen: React.FC = function () {
       });
     }
   };
+
+  // Effect to update installationData when configRulesMapper changes
+  useEffect(() => {
+    if (configRulesMapper === undefined || configRulesMapper === null) {
+      return;
+    }
+
+    if (!installationData?.configuration) {
+      return;
+    }
+
+    // Skip if configRulesMapper hasn't actually changed (using ref to avoid unnecessary updates)
+    if (isEqual(configRulesMapper, prevConfigRulesMapperRef.current)) {
+      return;
+    }
+
+    const currentConfigRules = installationData.configuration.config_rules;
+
+    // Use isEqual for proper deep comparison instead of JSON.stringify
+    if (isEqual(configRulesMapper, currentConfigRules)) {
+      prevConfigRulesMapperRef.current = configRulesMapper;
+      return; // No changes, skip update
+    }
+
+    console.log(" $$$ configRulesMapper", configRulesMapper); // eslint-disable-line no-console
+
+    const updatedConfiguration = {
+      ...installationData.configuration,
+      config_rules: configRulesMapper,
+    };
+
+    const updatedInstallationData = {
+      ...installationData,
+      configuration: updatedConfiguration,
+    };
+
+    prevConfigRulesMapperRef.current = configRulesMapper;
+    setInstallationData(updatedInstallationData);
+
+    checkConfigFields({
+      configuration: updatedConfiguration,
+      serverConfiguration: installationData.serverConfiguration,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configRulesMapper]);
 
   useEffect(() => {
     const multiConfigKeys = installationData?.configuration?.multi_config_keys;
@@ -141,9 +198,6 @@ const ConfigScreen: React.FC = function () {
     };
   };
 
-  /** updateConfig - Function where you should update the State variable
-   * Call this function whenever any field value is changed in the DOM
-   * */
   const updateConfig = useCallback(
     async (
       e:
@@ -617,13 +671,27 @@ const ConfigScreen: React.FC = function () {
       renderValue?.push(...(value ?? []));
     }
 
+    renderValue?.push(<JsonComponent />);
+
     return renderValue;
   };
 
-  /* If need to get any data from API then use,
-  getDataFromAPI({queryParams, headers, method, body}) function.
-  Refer services/index.ts for more details and update the API
-  call there as per requirement. */
+  /* If need to get any data from API then use makeAPIRequest function.
+  Access it via MarketplaceAppContext:
+  
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
+  
+  Example usage:
+  const response = await makeAPIRequest({
+    queryParams: "param=value",
+    headers: { "Content-Type": "application/json" },
+    method: "GET",
+    body: {}
+  });
+  const data = await response.json();
+  
+  Refer services/index.ts for more details and update 
+  the API call there as per requirement. */
 
   return (
     <div className="layout-container">
@@ -633,8 +701,36 @@ const ConfigScreen: React.FC = function () {
         ) : (
           <ConfigStateProvider updateValueFunc={updateValueFunc}>
             <div className="config-wrapper" data-testid="config-wrapper">
-              {renderConfig()}
-              <JsonComponent />
+              <div className="config">
+                <Tabs
+                  tabInfo={[
+                    {
+                      componentData: renderConfig(),
+                      id: "config",
+                      title: localeTexts.ConfigFields.tabs.basic,
+                    },
+                    {
+                      componentData: (
+                        <AdvancedConfig
+                          branches={appConfig?.current?._data?.stack?.branches}
+                          configList={Object.keys(
+                            installationData?.serverConfiguration
+                              ?.multi_config_keys ?? {}
+                          )}
+                          appConfig={appConfig}
+                          setConfigRulesMapper={setConfigRulesMapper}
+                        />
+                      ),
+                      id: "advanced-config",
+                      title: localeTexts.ConfigFields.tabs.advanced,
+                    },
+                  ]}
+                  tabSize="small"
+                  type="primary"
+                  version="v2"
+                  className="config-tabs"
+                />
+              </div>
             </div>
           </ConfigStateProvider>
         )}

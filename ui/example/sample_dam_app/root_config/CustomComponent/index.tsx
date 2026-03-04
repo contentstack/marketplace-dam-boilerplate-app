@@ -5,7 +5,7 @@ import {
   Icon,
   InfiniteScrollTable,
 } from "@contentstack/venus-components";
-import utils from "../../common/utils/index";
+import utils from "../../../../src/common/utils/index";
 import "../styles.scss";
 
 interface TypeCustomComponent {

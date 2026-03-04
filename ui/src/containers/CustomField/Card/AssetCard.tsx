@@ -22,6 +22,7 @@ const AssetCard: React.FC<TypeAssetCard> = function ({ id }) {
     state,
   } = useContext(CustomFieldContext);
   const asset = CustomFieldUtils.findAsset(assets, id);
+  console.log(" $$$ asset", asset); // eslint-disable-line no-console
 
   let name = "";
   let type = "";
@@ -34,8 +35,8 @@ const AssetCard: React.FC<TypeAssetCard> = function ({ id }) {
 
   if (asset) {
     name = asset?.name;
-    type = asset?.type;
-    thumbnailUrl = asset?.thumbnailUrl;
+    type = utils.getAssetType(asset?.type);
+    thumbnailUrl = asset?.thumbnailUrl ?? "";
     previewUrl = asset?.previewUrl ?? "";
     platformUrl = asset?.platformUrl ?? "";
     width = asset?.width;

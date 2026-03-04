@@ -6,6 +6,23 @@ import InfoMessage from "../../components/InfoMessage";
 import { TypeErrorFn, Props } from "../../common/types";
 import "./style.scss";
 
+/* If need to get any data from API then use makeAPIRequest function.
+  Access it via MarketplaceAppContext:
+  
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
+  
+  For regular API calls:
+  const response = await makeAPIRequest({
+    queryParams: "param=value",
+    headers: { "Content-Type": "application/json" },
+    method: "GET",
+    body: {}
+  });
+  const data = await response.json();
+  
+  Refer services/index.ts for more details and update 
+  the API call there as per requirement. */
+
 let isScriptLoaded: boolean = false;
 let url: string = "";
 
@@ -95,7 +112,7 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  const handleMessage = (event: MessageEvent) => {
+  const handleMessage = async (event: MessageEvent) => {
     const allowedOrigin = [process.env.REACT_APP_CUSTOM_FIELD_URL, url];
     if (!allowedOrigin?.includes(event?.origin)) return;
     const { data } = event;
@@ -105,8 +122,8 @@ const SelectorPage: React.FC = function () {
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
         setConfig(data?.config);
-        compactViewImplementation(data?.config, data?.selectedIds);
         setSelectedAssetIds(data?.selectedIds);
+        compactViewImplementation(data?.config, data?.selectedIds);
       }
     }
   };
@@ -159,7 +176,7 @@ const SelectorPage: React.FC = function () {
         </div>
       </div>
       <div
-        className="selector_container mt-30 mr-20 ml-20 mb-20"
+        className="selector_container"
         id="selector_container"
         data-testid="selector-container"
         ref={damContainer}
