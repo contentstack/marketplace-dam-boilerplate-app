@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 /* Import ContentStack modules */
 import { Button, Tooltip } from "@contentstack/venus-components";
 /* Import our modules */
@@ -12,15 +12,34 @@ import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types";
-import constants from "../../common/constants";
+import constants, { UI_LOCATIONS } from "../../common/constants";
 import utils from "../../common/utils";
 /* Import our CSS */
 import "./styles.scss";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
+/* If need to get any data from API then use makeAPIRequest function.
+  Access it via MarketplaceAppContext:
+  
+  const { makeAPIRequest } = useContext(MarketplaceAppContext);
+  
+  Example usage:
+  const response = await makeAPIRequest({
+    queryParams: "param=value",
+    headers: { "Content-Type": "application/json" },
+    method: "GET",
+    body: {}
+  });
+  const data = await response.json();
+  
+  Refer services/index.ts for more details and update 
+  the API call there as per requirement. */
+
 const CustomField: React.FC = function () {
-  const { appFailed } = useContext(MarketplaceAppContext);
+  const { appFailed, appSdk, makeAPIRequest } = useContext(
+    MarketplaceAppContext
+  );
   const {
     renderAssets,
     setRenderAssets,
@@ -45,13 +64,32 @@ const CustomField: React.FC = function () {
   let selectorPageWindow: any;
 
   const getCurrentConfigLabel = () => {
-    const { config_label: configLabel, locale } = state?.contentTypeConfig;
-    let finalConfigLabel =
-      configLabel?.[0] ?? state?.config?.default_multi_config_key;
-    if (locale?.[currentLocale]?.config_label?.length) {
-      finalConfigLabel = locale?.[currentLocale]?.config_label?.[0];
+    const { config, contentTypeConfig } = state;
+    const branch = appSdk?.stack?.getCurrentBranch()?.uid;
+    const locale = contentTypeConfig?.locale;
+    // Priority order:
+    // 1 : Custom Field Advanced Settings - Locale Specific
+    if (locale?.[currentLocale]?.config_label?.length > 0) {
+      return locale[currentLocale].config_label[0];
     }
-    return finalConfigLabel;
+    // 2 : Custom Field Advanced Settings - Default
+    if (contentTypeConfig?.config_label?.length > 0) {
+      return contentTypeConfig.config_label[0];
+    }
+    // 3 : Locale-Specific Config
+    if (
+      branch &&
+      config?.config_rules?.[branch]?.locales?.[currentLocale]?.config_label
+        ?.length > 0
+    ) {
+      return config.config_rules[branch].locales[currentLocale].config_label[0];
+    }
+    // 4 :  Branch-Specific Config
+    if (branch && config?.config_rules?.[branch]?.config_label?.length > 0) {
+      return config.config_rules[branch].config_label[0];
+    }
+    // 5. Main Default
+    return config?.default_multi_config_key;
   };
 
   const getConfig = () => {
@@ -73,6 +111,8 @@ const CustomField: React.FC = function () {
         delete finalConfig.default_multi_config_key;
         delete finalConfig.multi_config_keys;
       }
+      // Delete config_rules before sending to selector page
+      delete finalConfig.config_rules;
 
       const finalContentTypeConfig = { ...contentTypeConfig };
       if (finalContentTypeConfig?.advanced)
@@ -83,28 +123,73 @@ const CustomField: React.FC = function () {
 
       return { config: finalConfig, contentTypeConfig: finalContentTypeConfig };
     }
-    return { config, contentTypeConfig };
+    // Delete config_rules before sending to selector page (fallback case)
+    const configWithoutRules = { ...config };
+    delete configWithoutRules.config_rules;
+    return { config: configWithoutRules, contentTypeConfig };
   };
 
   // save data of "selectedAssets" state in contentstack when updated
   React.useEffect(() => {
-    if (Array.isArray(selectedAssets)) {
-      setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
-      setSelectedAssetIds(
-        (selectedAssets as any[])?.map((item: any) => item?.[uniqueID])
-      );
-      const finalConfig = getConfig();
-      const assetsToSave =
-        rootConfig?.modifyAssetsToSave?.(
-          finalConfig?.config,
-          finalConfig?.contentTypeConfig,
-          selectedAssets
-        ) ?? selectedAssets;
-      state?.location?.field?.setData(assetsToSave);
+    if (Array.isArray(selectedAssets) && selectedAssets.length > 0) {
+      // Fetch asset details from API for each selected asset
+      const fetchAssetDetails = async () => {
+        const finalConfig = getConfig();
+        const assetPromises = selectedAssets.map(async (asset) => {
+          try {
+            const assetId = asset?.[uniqueID];
+            if (!assetId) return asset;
+
+            const response = await makeAPIRequest({
+              queryParams: `mode=getAssetById&location=${
+                UI_LOCATIONS.CUSTOM_FIELD
+              }&assetId=${assetId}&config=${encodeURIComponent(
+                JSON.stringify(finalConfig?.config)
+              )}`,
+              method: "GET",
+            });
+            const assetData = await response.json();
+            // Merge API data with existing asset data
+            return { ...asset, ...assetData };
+          } catch (error) {
+            console.error(`Error fetching asset ${asset?.[uniqueID]}:`, error);
+            // Return original asset if API call fails
+            return asset;
+          }
+        });
+
+        const assetsWithDetails = await Promise.all(assetPromises);
+        const filteredAssets = rootConfig?.filterAssetData?.(assetsWithDetails);
+        setRenderAssets(filteredAssets);
+
+        const assetIds = assetsWithDetails?.map(
+          (item: any) => item?.[uniqueID]
+        );
+        setSelectedAssetIds(assetIds);
+
+        const assetsToSave =
+          rootConfig?.modifyAssetsToSave?.(
+            finalConfig?.config,
+            finalConfig?.contentTypeConfig,
+            assetsWithDetails
+          ) ?? assetsWithDetails;
+
+        if (state?.location?.field) {
+          state.location.field.setData(assetsToSave);
+        }
+      };
+
+      fetchAssetDetails();
+    } else if (Array.isArray(selectedAssets) && selectedAssets.length === 0) {
+      // Handle empty assets
+      setRenderAssets([]);
+      setSelectedAssetIds([]);
+      if (state?.location?.field) {
+        state.location.field.setData([]);
+      }
     }
-  }, [
-    selectedAssets, // Your Custom Field State Data
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAssets]);
 
   const handleUniqueSelectedData = (dataArr: any[]) => {
     if (dataArr?.length) {
@@ -119,6 +204,7 @@ const CustomField: React.FC = function () {
         }));
       }
       const assetLimit = state?.contentTypeConfig?.advanced?.max_limit;
+
       let finalAssets = CustomFieldUtils.uniqBy(
         [
           ...(Array.isArray(selectedAssets) ? selectedAssets : []),
@@ -126,6 +212,7 @@ const CustomField: React.FC = function () {
         ],
         uniqueID
       );
+
       if (assetLimit && finalAssets?.length > assetLimit) {
         finalAssets = finalAssets?.slice(0, assetLimit);
         utils.toastMessage({
@@ -139,7 +226,7 @@ const CustomField: React.FC = function () {
         });
       }
       if (finalAssets?.length) {
-        setSelectedAssets(finalAssets); // selectedAssets is array of assets selected in selectorpage
+        setSelectedAssets(finalAssets);
         handleBtnDisable(
           finalAssets,
           state?.contentTypeConfig?.advanced?.max_limit
@@ -183,7 +270,9 @@ const CustomField: React.FC = function () {
   const saveData = useCallback(
     (event: any) => {
       if (event?.origin !== process.env.REACT_APP_CUSTOM_FIELD_URL) return;
+
       const { data } = event;
+
       if (data?.message === "openedReady") {
         event?.source?.postMessage(
           {
@@ -265,8 +354,14 @@ const CustomField: React.FC = function () {
 
   // function called onClick of "add asset" button. Handles opening of modal and selector window
   const openDAMSelectorPage = useCallback(() => {
-    if (state?.appSdkInitialized && !selectorPageWindow) {
+    const hasConfig = state?.config && Object.keys(state?.config)?.length;
+    if (!hasConfig || !state?.appSdkInitialized) {
+      return;
+    }
+
+    if (!selectorPageWindow) {
       const finalConfig = getConfig();
+
       if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "novalue") {
         handleSelectorOpen();
       } else if (rootConfig?.damEnv?.DIRECT_SELECTOR_PAGE === "authWindow") {
@@ -299,8 +394,8 @@ const CustomField: React.FC = function () {
           selectorPageWindow = CustomFieldUtils.popupWindow({
             url,
             title: `${localeTexts.SelectorPage.title}`,
-            w: 1500, // You Change These According To Your App
-            h: 800, // You Change These According To Your App
+            w: 1500,
+            h: 800,
           });
         }
         window.addEventListener("message", handleMessage, false);
@@ -314,6 +409,14 @@ const CustomField: React.FC = function () {
     saveData,
     getConfig,
   ]);
+
+  const [isConfigReady, setIsConfigReady] = useState(false);
+
+  useEffect(() => {
+    const hasConfig = state?.config && Object.keys(state?.config)?.length;
+    const isReady = hasConfig && state?.appSdkInitialized;
+    setIsConfigReady(isReady);
+  }, [state?.config, state?.appSdkInitialized]);
 
   return (
     <div className="field-extension-wrapper">
@@ -332,9 +435,15 @@ const CustomField: React.FC = function () {
                   </div>
                 )}
                 <Tooltip
-                  content={localeTexts.CustomFields.assetLimit.btnTooltip}
+                  content={
+                    !isConfigReady
+                      ? localeTexts.CustomFields.button.loadingTooltip
+                      : localeTexts.CustomFields.assetLimit.btnTooltip
+                  }
                   position="top"
-                  disabled={!(renderAssets?.length && isBtnDisable)}
+                  disabled={
+                    !(renderAssets?.length && isBtnDisable) && isConfigReady
+                  }
                   style={constants.constantStyles.addBtnTooltip}
                 >
                   <Button
@@ -343,7 +452,9 @@ const CustomField: React.FC = function () {
                     version="v2"
                     onClick={openDAMSelectorPage}
                     data-testid="add-btn"
-                    disabled={renderAssets?.length && isBtnDisable}
+                    disabled={
+                      !isConfigReady || (renderAssets?.length && isBtnDisable)
+                    }
                   >
                     {localeTexts.CustomFields.button.btnText}
                   </Button>

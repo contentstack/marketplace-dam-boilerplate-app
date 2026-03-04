@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { TypeAsset, TypeSDKData } from "../types";
 
-interface TypeCustomFieldContext {
+export interface TypeCustomFieldContext {
   renderAssets: TypeAsset[];
   setRenderAssets: Function;
   selectedAssets: any;

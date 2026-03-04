@@ -56,12 +56,14 @@ const CustomFieldProvider: React.FC = function ({ children }) {
       window.iframeRef = null;
       const contenttypeConfig = location?.fieldConfig;
       const initialData = location?.field?.getData();
+
       // set App's Custom Field Data
       setSelectedAssets(initialData);
       // check for saved data length and handling button disable state
       handleBtnDisable(initialData, contenttypeConfig?.advanced?.max_limit);
       setCurrentLocale(location?.entry?.locale);
       location?.frame?.enableAutoResizing();
+
       await setState({
         config: isEmpty(appConfig) ? {} : appConfig,
         contentTypeConfig: contenttypeConfig,
@@ -86,7 +88,7 @@ const CustomFieldProvider: React.FC = function ({ children }) {
         handleBtnDisable(finalAssets);
       }
     },
-    [selectedAssets, handleBtnDisable]
+    [selectedAssets, handleBtnDisable, uniqueID]
   );
 
   // rearrange the order of assets

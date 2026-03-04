@@ -10,8 +10,6 @@ import {
   TypeSelectorContainer,
 } from "../../common/types";
 import CustomSelector from "../Components/CustomSelector";
-import assetData from "../AssetData";
-
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
   interface Window {
@@ -29,34 +27,30 @@ const openComptactView = (
 ) => {
   /* Implement your DAM compact view implementation here
   declare your selected DAM variable in the above scope and call the open function from DAM compact view on that variable
-  use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]  */
+  use onSuccess function to send your data to custom field [onSuccess accepts an array of asset objects]
+  Note: If you need to fetch data from API, use makeAPIRequest via MarketplaceAppContext
+  in the SelectorPage component. */
 };
 
 // If there is no script then provide a custom component here
+// Note: If you need to fetch data from API in CustomSelector component,
+// use makeAPIRequest via MarketplaceAppContext in the SelectorPage component
+// and pass it as a prop to CustomSelector.
 const customSelectorComponent = (
   config: Props,
   setError: (errObj: TypeErrorFn) => void,
   successFn: (assets: any[]) => void,
   closeFn: () => void,
   selectedAssetIds: string[]
-) => {
-  const getSelectedIDs = (assetIds: any[]) => {
-    const ids: any = {};
-    assetIds?.forEach((assetId: string) => {
-      ids[parseInt(assetId, 10)] = true;
-    });
-    return ids;
-  };
-
-  return (
-    <CustomSelector
-      selectedAssetIds={getSelectedIDs(selectedAssetIds)}
-      successFn={successFn}
-      closeFn={closeFn}
-      assetData={assetData}
-    />
-  );
-};
+) => (
+  <CustomSelector
+    config={config}
+    setError={setError}
+    successFn={successFn}
+    closeFn={closeFn}
+    selectedAssetIds={selectedAssetIds}
+  />
+);
 
 const rootSelectorPage: TypeRootSelector = {
   openComptactView,
