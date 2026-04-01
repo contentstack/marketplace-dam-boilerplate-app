@@ -10,7 +10,6 @@ import {
   TypeSelectorContainer,
 } from "../../common/types";
 import CustomSelector from "../Components/CustomSelector";
-
 /* These variables are to be used in openCompactView function. The developer should change these variables according to the DAM platform that is being implemented */
 declare global {
   interface Window {
