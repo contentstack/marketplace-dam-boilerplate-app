@@ -57,6 +57,9 @@
       "last 1 safari version"
     ]
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.3"
+  },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/plugin-transform-react-jsx": "^7.16.0",
