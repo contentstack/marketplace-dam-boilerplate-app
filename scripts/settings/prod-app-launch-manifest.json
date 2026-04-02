@@ -1,10 +1,9 @@
 {
-    "project_name": "app-name",
-    "env_name": "production",
-    "subdomain": "",
-    "project_uid": "",
-    "env_uid": "",
-    "deployment_uid": "",
-    "deployment_url": "https://example.com"
-  }
-  
+  "project_name": "app-name",
+  "env_name": "production",
+  "subdomain": "",
+  "project_uid": "",
+  "env_uid": "",
+  "deployment_uid": "",
+  "deployment_url": "https://example.com"
+}

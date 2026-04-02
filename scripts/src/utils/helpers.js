@@ -188,49 +188,6 @@ const runCommand = (command, options = {}) => {
   });
 };
 
-const authenticateUser = () => {
-  let loginData;
-  try {
-    loginData = require(path.join(
-      __dirname,
-      "../../settings/credentials.json"
-    ));
-  } catch (error) {
-    loginData = null;
-  }
-
-  if (!loginData?.authtoken) {
-    console.info("Login credentials not found. Please login.");
-    return null;
-  }
-
-  if (!loginData?.userOrgs?.length) {
-    console.info("No organisations found...");
-    return null;
-  }
-
-  const orgIndex = readlineSync.keyInSelect(
-    loginData.userOrgs.map((org) => org.name),
-    "Please select an organization"
-  );
-
-  if (orgIndex === -1) {
-    console.info("No organization selected...");
-    return null;
-  }
-
-  const selectedOrgUid = loginData.userOrgs[orgIndex].uid;
-
-  return {
-    authtoken: loginData.authtoken,
-    userOrgs: loginData.userOrgs,
-    region: loginData.region,
-    selectedOrgUid,
-    csBaseUrl: getBaseUrl(loginData.region),
-    appBaseUrl: getAppBaseUrl(loginData.region),
-  };
-};
-
 // File system helper functions
 const safeDelete = (filePath) => {
   if (fs.existsSync(filePath)) {
@@ -247,8 +204,10 @@ const updateEnvFile = (filePath, key, value) => {
   const regex = new RegExp(`^${key}=.*$`, "m");
   const updatedContent = regex.test(originalContent || "")
     ? (originalContent || "").replace(regex, `${key}=${value}`)
-    : `${originalContent || ""}${originalContent && !originalContent.endsWith("\n") ? "\n" : ""}${key}=${value}\n`;
-  
+    : `${originalContent || ""}${
+        originalContent && !originalContent.endsWith("\n") ? "\n" : ""
+      }${key}=${value}\n`;
+
   fs.writeFileSync(filePath, updatedContent, "utf-8");
   return originalContent;
 };
@@ -256,11 +215,14 @@ const updateEnvFile = (filePath, key, value) => {
 const authenticateUser = () => {
   let loginData;
   try {
-    loginData = require(path.join(__dirname, "../../settings/credentials.json"));
+    loginData = require(path.join(
+      __dirname,
+      "../../settings/credentials.json"
+    ));
   } catch (error) {
     loginData = null;
   }
-  
+
   if (!loginData?.authtoken) {
     console.info("Login credentials not found. Please login.");
     return null;
@@ -308,7 +270,4 @@ module.exports = {
   readFileSafe,
   updateEnvFile,
   authenticateUser,
-  safeDelete,
-  readFileSafe,
-  updateEnvFile,
 };

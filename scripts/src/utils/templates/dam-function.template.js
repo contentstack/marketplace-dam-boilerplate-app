@@ -1,6 +1,6 @@
 function getAllowedOrigins() {
   const allowedOrigins = [];
-  
+
   const regionMapping = process.env.REACT_APP_REGION_MAPPING;
   if (regionMapping) {
     try {
@@ -20,7 +20,7 @@ function getAllowedOrigins() {
       console.error("Error parsing REACT_APP_REGION_MAPPING:", e);
     }
   }
-  
+
   // Also add REACT_APP_CUSTOM_FIELD_URL if available
   const customFieldUrl = process.env.REACT_APP_CUSTOM_FIELD_URL;
   if (customFieldUrl) {
@@ -31,14 +31,14 @@ function getAllowedOrigins() {
       allowedOrigins.push(customFieldUrl);
     }
   }
-  
+
   return allowedOrigins;
 }
 
 function allowCors(req, res) {
   const allowedOrigins = getAllowedOrigins();
   const origin = req.headers.origin;
-  
+
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Credentials", true);
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -48,7 +48,7 @@ function allowCors(req, res) {
   } else {
     return false;
   }
-  
+
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,OPTIONS,PATCH,DELETE,POST,PUT"
@@ -61,15 +61,13 @@ function allowCors(req, res) {
     res.status(200).end();
     return true;
   }
-  
+
   return true;
 }
 
 async function getFile() {
   try {
-    const response = await fetch(
-      "{{PLUGIN_URL}}"
-    );
+    const response = await fetch("{{PLUGIN_URL}}");
     if (!response.ok) {
       throw new Error(`Failed to fetch file: ${response.statusText}`);
     }
@@ -83,7 +81,7 @@ async function getFile() {
 
 export default async function handler(req, res) {
   const corsAllowed = allowCors(req, res);
-  
+
   if (corsAllowed === false) {
     res.status(403).send("Access denied");
     return;
@@ -96,4 +94,3 @@ export default async function handler(req, res) {
     res.status(500).send("Internal Server Error");
   }
 }
-
