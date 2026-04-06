@@ -32,7 +32,7 @@
     "webpack-dev-server": "^4.7.3"
   },
   "dependencies": {
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@contentstack/app-sdk": "^2.3.1",
