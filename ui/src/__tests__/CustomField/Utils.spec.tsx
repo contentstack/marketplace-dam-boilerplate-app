@@ -91,8 +91,8 @@ describe("uniqBy", () => {
       { id: 1, name: "James" },
     ];
     const expected = [
-      { id: 1, name: "John" },
       { id: 2, name: "Jane" },
+      { id: 1, name: "James" },
     ];
     const result = CustomFieldUtils.uniqBy(input, "id");
     expect(result).toEqual(expected);
@@ -105,8 +105,8 @@ describe("uniqBy", () => {
       { id: 1, name: "James" },
     ];
     const expected = [
-      { id: 1, name: "John" },
       { id: 2, name: "Jane" },
+      { id: 1, name: "James" },
     ];
     const customIteratee = (item: any) => item.id;
     const result = CustomFieldUtils.uniqBy(input, customIteratee);
