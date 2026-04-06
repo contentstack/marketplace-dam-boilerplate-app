@@ -5,7 +5,9 @@ import { GenericObjectType } from "@contentstack/app-sdk/dist/src/types/common.t
 import { isNull } from "lodash";
 import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 
-const MarketplaceAppProvider: React.FC = function ({ children }) {
+const MarketplaceAppProvider: React.FC<{ children: React.ReactNode }> = function ({
+  children,
+}) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
   const [appConfig, setAppConfig] = useState<GenericObjectType>({});

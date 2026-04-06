@@ -81,7 +81,6 @@ const configScreenUIElementsIDs = [
   "select_label",
   "select_help",
   "select_instruction",
-  "custom-config-component",
 ];
 
 const configLabels = [
@@ -148,7 +147,7 @@ describe(`UI Elements of Config Screen`, () => {
     expect(screen.getByText(`Save In Entry`)).toBeTruthy();
     expect(
       screen.getByText(
-        `When you change the settings from All Fields to Custom Fields, and vice versa, the existing assets follow the old configuration settings, whereas new assets added to the entry will store the data according to the updated configuration settings.`
+        /Changing between 'All' and 'Custom' Fields only applies to newly added assets/i
       )
     ).toBeTruthy();
     const allFieldsRadio = screen.getByLabelText("All Fields");
