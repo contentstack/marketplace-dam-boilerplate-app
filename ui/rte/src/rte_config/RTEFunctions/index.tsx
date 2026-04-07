@@ -18,13 +18,12 @@ const getDisplayUrl = (asset: any) => {
     Note: The values of the properties are url values for preview and openInDam.
   */
   return {
-    preview: `${process.env.REACT_APP_CUSTOM_FIELD_URL}${asset?.assetUrl}`, // preview_url present in asset object
-    // openInDam: asset?.openInDAM_url ?? "", // openInDAM_url present in asset object
+    preview: asset?.preview_url ?? "", // preview_url present in asset object
+    openInDam: asset?.openInDAM_url ?? "", // openInDAM_url present in asset object
   };
 };
 
 const getAssetType = (asset: any) => {
-  return "image";
   /* possible return values ==> Document, Image, Pdf, Archive, Video, Audio */
 };
 
@@ -35,7 +34,7 @@ const getViewIconforTooltip = (type: string) => {
   */
   return {
     preview: PREVIEW_ICON,
-    // openInDam: NEWTAB_ICON,
+    openInDam: NEWTAB_ICON,
   };
 };
 
