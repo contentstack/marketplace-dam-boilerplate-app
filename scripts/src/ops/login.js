@@ -30,7 +30,7 @@ const path = require("path");
       data: { user: { email, password } },
       printError: false,
     }),
-    "Login failed."
+    "Login in progress."
   );
 
   let authtoken, userOrgs;
