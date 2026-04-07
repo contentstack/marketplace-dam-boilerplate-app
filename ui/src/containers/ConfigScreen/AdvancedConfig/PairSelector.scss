@@ -1,0 +1,274 @@
+/* PairSelector Component Styles */
+
+.custom-pair-container {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0px;
+  padding-bottom: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+
+  .Select {
+    min-width: auto !important;
+  }
+
+  &:hover {
+    border-color: #c1c7cd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &:has(.Select__menu) {
+    z-index: 1000;
+  }
+
+  .Select__single-value,
+  .Select__multi-value__label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .truncated-label {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  .select-wrapper {
+    display: inline-flex;
+    cursor: help;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+
+    .Select {
+      width: 100% !important;
+    }
+
+    .Select__single-value {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .Select__multi-value {
+      max-width: 100%;
+    }
+
+    .Select__multi-value__label {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .Select__menu {
+      z-index: 10000 !important;
+    }
+  }
+}
+
+.separator {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6c757d;
+  user-select: none;
+  min-width: 16px;
+  max-width: 16px;
+  text-align: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #495057;
+    transform: scale(1.1);
+  }
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: #dc3545;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #c82333;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    transition: all 0.2s ease;
+  }
+}
+
+.tippy-wrapper-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+
+  .delete-icon {
+    cursor: not-allowed;
+    
+    &:hover {
+      background: transparent;
+      color: #dc3545;
+      transform: none;
+    }
+  }
+}
+
+// Empty State  
+.pair-selector-empty {
+  text-align: center;
+  padding: 48px 24px;
+  border-radius: 8px;
+  margin: 16px 0;
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .empty-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+// Responsiveness 
+@media (max-width: 768px) {
+  .pair-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 12px;
+
+    &::before {
+      width: 100%;
+      height: 3px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: auto;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .separator {
+      transform: rotate(90deg);
+      font-size: 14px;
+    }
+
+    .venus-select {
+      width: 100%;
+    }
+  }
+
+  .pair-selector-empty {
+    padding: 32px 16px;
+
+    .empty-icon {
+      font-size: 36px;
+    }
+
+    .empty-title {
+      font-size: 14px;
+    }
+
+    .empty-description {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .pair-container {
+    margin-bottom: 12px;
+    padding: 12px;
+    gap: 8px;
+
+    .separator {
+      font-size: 12px;
+    }
+
+    .delete-icon {
+      padding: 4px;
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}
+
+.pair-container-enter {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+}
+
+.pair-container-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.3s ease;
+}
+
+.pair-container-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.pair-container-exit-active {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+  transition: all 0.3s ease;
+}
+
+.field-content__content {
+  height: auto;
+  min-height: auto;
+}
+
+.add-more-btn {
+  display: flex;
+  justify-content: start;
+  margin-top: 0px;
+  margin-left: 12px;
+  margin-bottom: 12px;
+  padding-top: 4px;
+  position: relative;
+  z-index: 0;
+}
+
+.Select .Select__indicators {
+  align-items: center;
+}

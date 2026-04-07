@@ -78,6 +78,24 @@ const localeTexts = {
     emptyValue: "Field value missing",
     noSelectedDefault: "Select at least one default configuration",
     noConfiguration: "Add at least one configuration",
+    AdvancedConfig: {
+      unified: {
+        label: "Config Rule Selector",
+        helpText: "help",
+        heading: "Choose your default config rules",
+        tableTitle: "Config Mapping",
+        leftPlaceholder: "Select Branch",
+        middlePlaceholder: "Select Locale (Optional)",
+        rightPlaceholder: "Select Config",
+        addMoreBtn: "add more",
+        localeHelperText: "Leave empty to apply to all locales",
+      },
+      common: {
+        noOptionsMessage: "No options available",
+        deleteTooltip: "Remove mapping",
+        separator: "-",
+      },
+    },
   },
   CustomFields: {
     assetLimit: {
@@ -92,6 +110,7 @@ const localeTexts = {
     },
     button: {
       btnText: "Choose Asset(s)",
+      loadingTooltip: "Loading configuration...",
     },
     assetCard: {
       hoverActions: {
