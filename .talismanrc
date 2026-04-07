@@ -7,9 +7,9 @@ fileignoreconfig:
 - filename: ui/src/containers/ConfigScreen/AdvancedConfig/PairSelector.tsx
   checksum: 0b24195591fc347cc8f762bc4b72a103bebae00dd9a14d998de031f9fc915d2d
 - filename: ui/rte/package-lock.json
-  checksum: 8c4ce30559e611f3817ab7571b52d12bb7bfbc2187816ba608582e95b5ce7491
+  checksum: 54ab373cdd3c9c2ef22318dfc92c22786da4867998a2777b27d9895a0a6fec3c
 - filename: ui/package-lock.json
-  checksum: 1f1b7a6fe8a3b2a8bf8c06a733f620c3849114f6c325aedd279ecd9b42f91d4d
+  checksum: efd0c378156994cd6469e576719944fcbbc83f2ed2c9c76ef6c86e49abcce721
 - filename: ui/src/common/types/index.ts
   checksum: d9e4960615601bbc81299fafcc6814ea7db1d3d772b8f1b1ad1f0fdf110712ec
 - filename: ui/src/root_config/ConfigScreen/index.tsx
@@ -23,9 +23,7 @@ fileignoreconfig:
 - filename: api/.env.example
   checksum: 8a8125077434e92558d89069a20213018b517263c724af25d0e0e1f38c3b99cd
 - filename: api/package-lock.json
-  checksum: a3bf805ee00891a4326e6b26e35f3ab8350d7cb0a385e1fdf6508210a87e0d3b
+  checksum: abecd235305627d60a0a7148c2d66a8e6cbc17a12d0133bda37dd60d5a693bf4
 - filename: api/README.md
   checksum: 3ecd1e9e47f5bbc01e0c70de24c996db2284b32691cbd96ea3b0b2684b31f2f1
-- filename: ui/package-lock.json
-  checksum: 71c77f988a911e690782097e62c041b1fd97e6a732a46119ac8e9f8bfea074a9
 version: "1.0"
