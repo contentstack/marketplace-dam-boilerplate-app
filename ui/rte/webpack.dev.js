@@ -7,7 +7,6 @@ const pkg = require("./package.json");
 module.exports = merge(common, {
   mode: "development",
   devtool: "inline-source-map",
-  watch: true,
   devServer: {
     static: path.join(__dirname, "../build/dist"),
     // https: true,

@@ -40,5 +40,5 @@ module.exports = {
     "react/jsx-props-no-spreading": 0,
     "no-prototype-builtins": 0,
   },
-  ignorePatterns: ["rte/*", "example/*"],
+  ignorePatterns: ["build/**", "rte/*", "example/*"],
 };
