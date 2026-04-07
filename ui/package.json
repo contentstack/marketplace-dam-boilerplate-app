@@ -1,10 +1,6 @@
 {
   "name": "marketplace-dam-app-ui",
   "version": "1.0.0",
-  "engines": {
-    "node": ">=18.0.0 <23.0.0",
-    "npm": ">=8.19.3"
-  },
   "dependencies": {
     "@contentstack/app-sdk": "^2.3.1",
     "@contentstack/venus-components": "^3.0.4",
