@@ -9,7 +9,7 @@ fileignoreconfig:
 - filename: ui/rte/package-lock.json
   checksum: 54ab373cdd3c9c2ef22318dfc92c22786da4867998a2777b27d9895a0a6fec3c
 - filename: ui/package-lock.json
-  checksum: e200e90a9d0ee0c10d8240e7c41b146a20520102ea28d551ec62bbfe5c71430d
+  checksum: efd0c378156994cd6469e576719944fcbbc83f2ed2c9c76ef6c86e49abcce721
 - filename: ui/src/common/types/index.ts
   checksum: d9e4960615601bbc81299fafcc6814ea7db1d3d772b8f1b1ad1f0fdf110712ec
 - filename: ui/src/root_config/ConfigScreen/index.tsx
