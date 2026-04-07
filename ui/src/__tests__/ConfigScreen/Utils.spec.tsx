@@ -1,9 +1,12 @@
+import React from "react";
 import { Notification } from "@contentstack/venus-components";
 import ConfigScreenUtils from "../../common/utils/ConfigScreenUtils";
+import appUtils from "../../common/utils";
 import { Configurations } from "../../common/types";
 
 jest.mock("@contentstack/venus-components", () => ({
   Notification: jest.fn(),
+  Link: jest.fn(({ children }: { children?: React.ReactNode }) => children),
 }));
 
 jest.mock("../../root_config/index.tsx", () => ({
@@ -127,12 +130,10 @@ describe("mergeObjects", () => {
 describe("toastMessage", () => {
   it("should call Notification with correct params", () => {
     const type = "success";
-    const text = "Test message";
-    ConfigScreenUtils.toastMessage({ type, text });
+    const content = { text: "Test message" };
+    appUtils.toastMessage({ type, content });
     expect(Notification).toHaveBeenCalledWith({
-      notificationContent: {
-        text,
-      },
+      notificationContent: content,
       notifyProps: {
         className: "modal_toast_message",
         hideProgressBar: true,
@@ -173,7 +174,7 @@ describe("configRootUtils", () => {
       customJsonConfigObj: {
         dam_keys: [
           {
-            isDisabled: false,
+            isDisabled: true,
             label: "option 1",
             value: "option 1",
           },
@@ -182,7 +183,7 @@ describe("configRootUtils", () => {
       },
       defaultFeilds: [
         {
-          isDisabled: false,
+          isDisabled: true,
           label: "option 1",
           value: "option 1",
         },
@@ -200,7 +201,12 @@ describe("configRootUtils", () => {
         },
       ],
     };
-    expect(ConfigScreenUtils.configRootUtils()).toEqual(expected);
+    expect(
+      ConfigScreenUtils.configRootUtils({
+        customJsonOptions: ["option 1", "option 2"],
+        rootConfigDefaultOptions: ["option 1"],
+      })
+    ).toEqual(expected);
   });
 });
 
@@ -232,15 +238,12 @@ describe("getSaveConfigOptions", () => {
     };
     const expected = {
       saveInConfig: {
-        field1: {
-          saveInConfig: true,
-        },
+        field1: configInputFields.field1,
       },
       saveInServerConfig: {
-        field2: {
-          saveInServerConfig: true,
-        },
+        field2: configInputFields.field2,
       },
+      isLegacy: true,
     };
     const result = ConfigScreenUtils.getSaveConfigOptions(configInputFields);
     expect(result).toEqual(expected);
