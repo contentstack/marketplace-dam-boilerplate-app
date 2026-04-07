@@ -48,7 +48,7 @@ const configureConfigScreen = (
         { label: "option 4", value: "option4" },
         { label: "option 5", value: "option5" },
       ],
-      defaultSelectedOption: "option5",
+      defaultSelectedOption: "option1",
       saveInConfig: true,
       saveInServerConfig: false,
       isMultiConfig: true,
@@ -105,7 +105,7 @@ const customWholeJson = () => {
   const defaultFeilds: string[] = ["option 1", "option 2", "option 3"];
 
   const conditionalFieldExec = (config: any, serverConfig: any) => {
-    const options = ["option 10"];
+    const options = ["option 1"];
     const defaultOpObj: TypedefaultOp = { operation: "add", options };
     const conditionalDefaults: TypedefaultOp[] = [];
 

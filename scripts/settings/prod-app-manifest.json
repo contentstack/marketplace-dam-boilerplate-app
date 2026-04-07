@@ -1,0 +1,55 @@
+{
+  "name": "dam-prod-app",
+  "description": "Dam integration app for Contentstack",
+  "target_type": "stack",
+  "ui_location": {
+    "signed": false,
+    "base_url": "https://example.com",
+    "locations": [
+      {
+        "type": "cs.cm.stack.config",
+        "meta": [
+          {
+            "path": "/#/config",
+						"signed": false,
+						"enabled": true,
+						"required": true
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.rte",
+        "meta": [
+          {
+            "name": "RTE Field",
+            "path": "/dam",
+						"signed": false,
+						"enabled": true,
+						"required": false
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.custom_field",
+        "meta": [
+          {
+            "name": "DAM Field",
+            "multiple": false,
+						"path": "/#/custom-field",
+						"signed": false,
+						"enabled": true,
+						"data_type": "json",
+						"required": false
+          }
+        ]
+      }
+    ]
+  },
+  "hosting": {
+    "provider": "launch",
+    "deployment_url": "https://example.com",
+    "environment_uid": "",
+    "project_uid": ""
+  },
+  "uid": ""
+}
