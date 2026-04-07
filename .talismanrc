@@ -23,7 +23,7 @@ fileignoreconfig:
 - filename: api/.env.example
   checksum: 8a8125077434e92558d89069a20213018b517263c724af25d0e0e1f38c3b99cd
 - filename: api/package-lock.json
-  checksum: a3bf805ee00891a4326e6b26e35f3ab8350d7cb0a385e1fdf6508210a87e0d3b
+  checksum: abecd235305627d60a0a7148c2d66a8e6cbc17a12d0133bda37dd60d5a693bf4
 - filename: api/README.md
   checksum: 3ecd1e9e47f5bbc01e0c70de24c996db2284b32691cbd96ea3b0b2684b31f2f1
 version: "1.0"
