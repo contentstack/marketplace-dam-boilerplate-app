@@ -1,6 +1,10 @@
 {
   "name": "marketplace-dam-app-ui",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0 <23.0.0",
+    "npm": ">=8.19.3"
+  },
   "dependencies": {
     "@contentstack/app-sdk": "^2.3.1",
     "@contentstack/venus-components": "^3.0.4",
@@ -17,7 +21,7 @@
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.30.3",
     "react-scripts": "^5.0.1",
-    "sass": "^1.43.4",
+    "sass": "^1.99.0",
     "typescript": "^4.5.2",
     "web-vitals": "^1.1.2"
   },
@@ -59,7 +63,7 @@
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "ajv": "^8.17.1",
+    "ajv": "8.18.0",
     "babel-jest": "^29.7.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^19.0.0",
@@ -74,5 +78,16 @@
     "jest-fetch-mock": "^3.0.3",
     "prettier": "^2.5.1",
     "ts-jest": "^29.1.1"
+  },
+  "overrides": {
+    "form-data": "4.0.4",
+    "node-forge": "1.4.0",
+    "jsonpath": "1.2.0",
+    "immutable": "5.1.5",
+    "qs": "6.14.2",
+    "flatted": "3.4.2",
+    "js-yaml": "3.14.2",
+    "underscore": "1.13.8",
+    "serialize-javascript": "7.0.5"
   }
 }
