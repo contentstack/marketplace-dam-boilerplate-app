@@ -6,7 +6,7 @@ const {
   updateApp,
   openLink,
   authenticateUser,
-} = require("../utils");
+} = require("../utils/index.js");
 const installApp = require("./install-app.js");
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
 const devAppManifest = require("../../settings/dev-app-manifest.json");
@@ -18,7 +18,7 @@ const appInstallations = require("../../settings/app-installations.json");
     const op = process.argv[2];
     const appEnv = process.argv[3];
     const context = authenticateUser();
-    if (!context) return;
+    if (!context) process.exit(1);
 
     const { authtoken, selectedOrgUid, region, baseUrl, appBaseUrl } = context;
 

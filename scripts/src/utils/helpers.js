@@ -225,12 +225,12 @@ const authenticateUser = () => {
 
   if (!loginData?.authtoken) {
     console.info("Login credentials not found. Please login.");
-    return null;
+    process.exit(1);
   }
 
   if (!loginData?.userOrgs?.length) {
     console.info("No organisations found...");
-    return null;
+    process.exit(1);
   }
 
   const orgIndex = readlineSync.keyInSelect(
@@ -240,7 +240,7 @@ const authenticateUser = () => {
 
   if (orgIndex === -1) {
     console.info("No organization selected...");
-    return null;
+    process.exit(1);
   }
 
   const selectedOrgUid = loginData.userOrgs[orgIndex].uid;
