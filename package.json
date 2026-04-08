@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Contentstack Marketplace DAM Boilerplate",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "audit": "npm audit && (cd ui && npm audit) && (cd ui/rte && npm audit)",
+    "audit:fix": "(cd ui && npm audit fix) && (cd ui/rte && npm audit fix)"
   },
   "repository": {
     "type": "git",
