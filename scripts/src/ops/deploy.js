@@ -16,7 +16,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 (async () => {
   try {
     const context = authenticateUser();
-    if (!context) return;
+    if (!context) process.exit(1);
 
     const { authtoken, selectedOrgUid, appBaseUrl, region } = context;
     const launchManifest = getLaunchManifest();
@@ -77,7 +77,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         appBaseUrl,
         launchMetaData,
         authtoken,
-        selectedOrgUid
+        selectedOrgUid,
+        region
       );
 
       updateLaunchManifest({
