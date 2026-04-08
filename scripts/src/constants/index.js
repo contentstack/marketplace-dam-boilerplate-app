@@ -101,8 +101,7 @@ const constants = {
   EXCLUDED_ENVS: [
     "NODE_ENV",
     "REACT_APP_CUSTOM_FIELD_URL"
-  ],
-  LAUNCH_DOMAIN: "https://$.contentstackapps.com",
+  ]
 };
 
 module.exports = constants;
