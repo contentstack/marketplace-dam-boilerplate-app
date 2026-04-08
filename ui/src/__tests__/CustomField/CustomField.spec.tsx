@@ -4,12 +4,14 @@ import {
   screen,
   fireEvent,
   cleanup,
+  waitFor,
 } from "@testing-library/react/pure";
 import CustomField from "../../containers/CustomField/index";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import AssetContainer from "../../containers/CustomField/AssetContainer";
 import DeleteModal from "../../components/DeleteModal";
+import rootConfig from "../../root_config/index";
 
 const fieldsWithWarning = [
   "field-wrapper",
@@ -79,14 +81,13 @@ beforeAll(() => {
       ASSET_UNIQUE_ID: "id",
     })),
   }));
-  jest.spyOn(React, "useEffect").mockImplementation();
-  jest.spyOn(window, "open").mockImplementation(jest.fn());
-  jest.spyOn(window, "postMessage").mockImplementation();
 });
 
-beforeEach(() => {
-  const setStateMock = React.useState;
-  const useStateMock: any = (useState: any) => [useState, setStateMock];
+beforeEach(async () => {
+  jest.restoreAllMocks();
+  jest.spyOn(window, "open").mockImplementation(jest.fn());
+  jest.spyOn(window, "postMessage").mockImplementation();
+
   const testName = expect.getState().currentTestName;
   let mockContextValue: any = {
     renderAssets: [],
@@ -96,18 +97,19 @@ beforeEach(() => {
     removeAsset: jest.fn(),
     uniqueID: "id",
     setRearrangedAssets: jest.fn(),
+    handleBtnDisable: jest.fn(),
+    isBtnDisable: false,
     state: {
       appSdkInitialized: true,
+      config: { _testConfigReady: true },
+      contentTypeConfig: {},
+      location: { field: { setData: jest.fn() } },
     },
     currentLocale: "",
   };
   let appcontextValue = { appSdk: null, appConfig: {}, appFailed: false };
 
-  if (testName?.includes("**")) {
-    jest
-      .spyOn(React, "useState")
-      .mockImplementationOnce(() => useStateMock(false));
-
+  if (testName?.includes("with Assets")) {
     mockContextValue = {
       renderAssets: assetData,
       setRenderAssets: jest.fn(),
@@ -116,15 +118,22 @@ beforeEach(() => {
       removeAsset: jest.fn(),
       uniqueID: "id",
       setRearrangedAssets: jest.fn(),
+      handleBtnDisable: jest.fn(),
+      isBtnDisable: false,
       state: {
         appSdkInitialized: true,
+        config: { _testConfigReady: true },
+        contentTypeConfig: {},
+        location: { field: { setData: jest.fn() } },
       },
       currentLocale: "",
     };
   } else if (testName?.includes("AssetList")) {
-    jest
-      .spyOn(React, "useState")
-      .mockImplementationOnce(() => useStateMock({ value: "list" }));
+    const ReactActual = jest.requireActual<typeof React>("react");
+    const useStateSpy = jest.spyOn(React, "useState");
+    useStateSpy.mockImplementationOnce(() =>
+      ReactActual.useState({ value: "list" } as any)
+    );
 
     mockContextValue = {
       renderAssets: assetData,
@@ -134,19 +143,25 @@ beforeEach(() => {
       removeAsset: jest.fn(),
       uniqueID: "id",
       setRearrangedAssets: jest.fn(),
+      handleBtnDisable: jest.fn(),
+      isBtnDisable: false,
       state: {
         appSdkInitialized: true,
+        config: { _testConfigReady: true },
+        contentTypeConfig: {},
+        location: { field: { setData: jest.fn() } },
       },
       currentLocale: "",
     };
-  } else if (testName?.includes("*")) {
+  } else if (testName?.includes("without Assets")) {
+    // Real useState for config-ready + add button.
+  } else if (testName?.includes("UI Elements of CustomField Warning")) {
+    rootConfig.damEnv.DIRECT_SELECTOR_PAGE = "window";
     jest
-      .spyOn(React, "useState")
-      .mockImplementationOnce(() => useStateMock(false));
-  } else {
-    jest
-      .spyOn(React, "useState")
-      .mockImplementationOnce(() => useStateMock(true));
+      .spyOn(rootConfig, "handleSelectorWindow")
+      .mockImplementation((_config, _ctc, setError) => {
+        setError({ isErr: true });
+      });
   }
 
   if (testName?.includes("AppFailed")) {
@@ -177,6 +192,17 @@ beforeEach(() => {
       </MarketplaceAppContext.Provider>
     );
   }
+
+  if (testName?.includes("UI Elements of CustomField Warning")) {
+    const addBtn = screen.getByTestId("add-btn");
+    await waitFor(() => {
+      expect(addBtn).not.toBeDisabled();
+    });
+    fireEvent.click(addBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId("warning-component")).toBeInTheDocument();
+    });
+  }
 });
 
 describe("UI Elements of CustomField Warning", () => {
@@ -203,6 +229,9 @@ describe(`*UI Elements of CustomField without Assets`, () => {
   test(`Add Button Functionality`, async () => {
     const addBtn = screen.getByTestId(`add-btn`);
     expect(addBtn).toHaveTextContent(`Choose Asset(s)`);
+    await waitFor(() => {
+      expect(addBtn).not.toBeDisabled();
+    });
     fireEvent.click(addBtn);
     expect(window.open).toHaveBeenCalled();
   });
@@ -294,4 +323,7 @@ describe("Rendered DeleteModal Component", () => {
   });
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  rootConfig.damEnv.DIRECT_SELECTOR_PAGE = "novalue";
+  cleanup();
+});

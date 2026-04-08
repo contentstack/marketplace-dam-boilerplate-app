@@ -15,7 +15,9 @@ import localeTexts from "../locale/en-us";
 import ConfigScreenUtils from "../utils/ConfigScreenUtils";
 import CustomFieldUtils from "../utils/CustomFieldUtils";
 
-const AppConfigProvider: React.FC = function ({ children }) {
+const AppConfigProvider: React.FC<{ children: React.ReactNode }> = function ({
+  children,
+}) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
   const {
     customJsonOptions,

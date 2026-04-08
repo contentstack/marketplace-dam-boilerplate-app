@@ -17,7 +17,9 @@ declare global {
   }
 }
 
-const CustomFieldProvider: React.FC = function ({ children }) {
+const CustomFieldProvider: React.FC<{ children: React.ReactNode }> = function ({
+  children,
+}) {
   const { appConfig } = useContext(MarketplaceAppContext);
   // state for configuration
   const [state, setState] = React.useState<TypeSDKData>({
