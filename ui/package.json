@@ -94,6 +94,7 @@
     "follow-redirects": "1.16.0",
     "http-proxy-middleware": "2.0.10",
     "js-cookie": "3.0.7",
-    "launch-editor": "2.14.1"
+    "launch-editor": "2.14.1",
+    "nanoid": "3.3.17"
   }
 }
