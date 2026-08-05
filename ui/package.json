@@ -84,6 +84,7 @@
     "flatted": "3.4.2",
     "js-yaml": "3.14.2",
     "underscore": "1.13.8",
-    "serialize-javascript": "7.0.5"
+    "serialize-javascript": "7.0.5",
+    "@babel/plugin-transform-modules-systemjs": "7.29.4"
   }
 }
