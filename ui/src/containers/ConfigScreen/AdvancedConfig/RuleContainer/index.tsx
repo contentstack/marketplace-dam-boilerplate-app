@@ -16,6 +16,16 @@ import "./styles.scss";
 
 const { customSelectStyles, getInvalidConfigSelectStyles } = ConfigScreenUtils;
 
+// Escape untrusted text before it is interpolated into an HTML string sink.
+function escapeHtml(value: string): string {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Small helpers to make intent clear without changing structure
 function isBranchLevel(locales: string | string[] | null | undefined): boolean {
   return Array.isArray(locales) ? !locales?.length : !locales;
@@ -428,9 +438,9 @@ function RuleContainer({
                   __html:
                     localeTexts?.ConfigFields?.AdvancedConfig?.common?.invalidConfigErrorMessage?.replace(
                       "{configName}",
-                      rowConfig
+                      escapeHtml(rowConfig)
                     ) ||
-                    `"${rowConfig}" was removed. Please select a new config.`,
+                    `"${escapeHtml(rowConfig)}" was removed. Please select a new config.`,
                 }}
               />
             </div>
