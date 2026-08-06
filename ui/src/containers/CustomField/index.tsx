@@ -62,6 +62,8 @@ const CustomField: React.FC = function () {
   );
   // window variable for selector page
   let selectorPageWindow: any;
+  // origin of the selector window we opened, used to validate incoming postMessages
+  let selectorPageOrigin = "";
 
   const getCurrentConfigLabel = () => {
     const { config, contentTypeConfig } = state;
@@ -251,10 +253,13 @@ const CustomField: React.FC = function () {
 
   // handle message event for selector window
   const handleMessage = (event: MessageEvent) => {
-    if (selectorPageWindow) {
-      const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
-      handleUniqueSelectedData(dataArr);
-    }
+    if (!selectorPageWindow) return;
+    // Only trust messages coming from the selector window this component opened,
+    // and from the origin that window was opened on.
+    if (event?.source !== selectorPageWindow) return;
+    if (selectorPageOrigin && event?.origin !== selectorPageOrigin) return;
+    const dataArr: Array<any> = rootConfig?.handleSelectorPageData?.(event);
+    handleUniqueSelectedData(dataArr);
   };
 
   // function to set error
@@ -397,6 +402,13 @@ const CustomField: React.FC = function () {
             w: 1500,
             h: 800,
           });
+          try {
+            selectorPageOrigin = url
+              ? new URL(url, window.location.href).origin
+              : "";
+          } catch {
+            selectorPageOrigin = "";
+          }
         }
         window.addEventListener("message", handleMessage, false);
       }
