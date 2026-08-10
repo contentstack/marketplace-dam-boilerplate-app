@@ -11,7 +11,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "axios": "^1.13.5",
-    "dompurify": "3.3.2",
+    "dompurify": "3.4.0",
     "form-data": "^4.0.4",
     "html-react-parser": "^5.1.19",
     "immutable": "5.1.5",
