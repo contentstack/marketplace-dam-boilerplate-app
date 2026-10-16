@@ -78,7 +78,7 @@ module.exports = {
     "\\.(css|less|scss)$": "<rootDir>/jest.CSStub.js",
     "\\.(svg|png|jpg|jpeg|gif|webp)$": "<rootDir>/jest.CSStub.js",
     // Jest resolves uuid to ESM browser build under jsdom; force CommonJS entry.
-    "^uuid$": "<rootDir>/node_modules/uuid/dist/index.js",
+    "^uuid$": "<rootDir>/node_modules/uuid/dist/cjs/index.js",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
