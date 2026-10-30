@@ -1,11 +1,13 @@
 # Contentstack Marketplace DAM App Boilerplate
 
+Epic: [MKT-20016](https://contentstack.atlassian.net/browse/MKT-20016). Agent and contributor notes: `CLAUDE.md`. This repo is a template, not a deployed app.
+
 This boilerplate provides a template to create your own [Marketplace](https://www.contentstack.com/marketplace) DAM app, and can be deployed on [Launch](https://www.contentstack.com/launch).
 
 ## Prerequisite
 
 * [Contentstack Account](https://app.contentstack.com/#!/login) with marketplace & Launch enabled
-* Nodejs - v20.10.0 & NPM - v10.2.4
+* Nodejs - v20.10.0 & NPM - v10.2.4 (no `.nvmrc` or `engines` field pins this; CI runs only the policy and SCA scans)
 
 ## Features
 
@@ -349,6 +351,8 @@ npm run create-dev-content-model
 npm run update-dev-app
 ```
 
+The code also reads `REACT_APP_API_URL`, `REACT_APP_API_KEY` and `REACT_APP_MULTI_CONFIG_LIMIT` (see `.env.sample` for every name).
+
 ## Providers (Use of React's Contexts)
 
 - `<MarketplaceAppProvider>`: The MarketplaceAppProvider uses `MarketplaceAppContext` and initializes the Contentstack App SDK and shares its instance and configuration across components using the useContext hook, eliminating the need for prop drilling.
@@ -480,10 +484,10 @@ Alternatively, to create build for development, staging and production environme
 Command to run the build script is:
 
 ```
-bash build.sh <UI_URL>
+bash build.sh
 ```
 
-This command takes one argument, which is the UI URL of the app. We are taking this argument to rename the app URL as per the environment in the .env files of ui and ui/rte.
+`build.sh` takes no arguments. It installs and builds `ui` and `ui/rte`, zips `ui/build` and moves it to `to-deploy/ui.zip`. (Earlier versions of this README said it takes a `<UI_URL>` argument; the script does not read one.) Set the app URL in the `.env` files yourself.
 
 After the execution of the build script, the build folder will get created inside the ui folder. Inside that build folder, there will be a dist folder which has the webpack output files for RTE location. Other folders and files from the build folder will be for Configuration and Custom Field locations.
 
