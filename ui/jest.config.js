@@ -18,6 +18,12 @@ module.exports = {
 
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/__tests__/**",
+    "!src/**/*.d.ts",
+    "!src/common/types/**",
+  ],
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
@@ -32,6 +38,8 @@ module.exports = {
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "v8",
+  // ratchet target 90 — MKT-20047 (measured floor: lines 80.3, branches 40.8)
+  coverageThreshold: { global: { lines: 80, branches: 40 } },
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
