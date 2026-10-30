@@ -6,4 +6,12 @@ fileignoreconfig:
   checksum: 1300d4387eb60bbc7414db99f7926a4b2bd50e6386a20ed087d3d09b5b9add76
 - filename: ui/src/containers/ConfigScreen/AdvancedConfig/PairSelector.tsx
   checksum: 0b24195591fc347cc8f762bc4b72a103bebae00dd9a14d998de031f9fc915d2d
+- filename: scripts/package-lock.json
+  checksum: 684d3b0b649edc97098623c6b15fd7c6e4faf9d5f3144d9821609e7d1a4ebf45
+- filename: ui/package-lock.json
+  checksum: d12825f265cd2927511dec594e86ac4d1f375b97736e432fa9beb003e9526a6f
+- filename: ui/rte/package-lock.json
+  checksum: 1bd704a2cf8ca07465fd2ab7efbf0ca9a6db9dd25133d1d5c9e589c6cbd16792
+- filename: package-lock.json
+  checksum: 23bda0ab957aa5b896629a44c880c917d0ea598bfa3144c72d36814fe4c28040
 version: "1.0"
