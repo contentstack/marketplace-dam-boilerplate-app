@@ -43,7 +43,7 @@
     "copy-webpack-plugin": "^13.0.1",
     "dotenv": "^16.0.1",
     "html-react-parser": "^5.1.13",
-    "immutable": "5.1.5",
+    "immutable": "5.1.9",
     "lodash.clonedeep": "^4.5.0",
     "picomatch": "4.0.4",
     "prop-types": "^15.8.1",
