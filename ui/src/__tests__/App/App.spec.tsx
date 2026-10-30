@@ -91,6 +91,7 @@ const send = (data: any, init: any = {}) =>
     );
   });
 const lastSaved = () => setData.mock.calls[setData.mock.calls.length - 1][0];
+// eslint-disable-next-line no-underscore-dangle
 const savedIds = () => lastSaved().map((a: any) => a._id);
 const nothingSaved = () => setData.mock.calls.every(([v]) => v.length === 0);
 
